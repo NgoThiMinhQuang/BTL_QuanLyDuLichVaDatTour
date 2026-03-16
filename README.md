@@ -23,9 +23,9 @@ Hệ thống gồm **2 actor chính**:
 
 ---
 
-## 4. Chức năng chi tiết theo từng actor
+# 4. Chức năng chi tiết theo từng actor
 
-# 4.1. Chức năng của Admin
+## 4.1. Chức năng của Admin
 
 Admin là người quản trị toàn bộ hệ thống, chịu trách nhiệm quản lý dữ liệu tour, booking, thanh toán, phản hồi và báo cáo.
 
