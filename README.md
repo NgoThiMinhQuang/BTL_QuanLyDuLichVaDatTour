@@ -96,16 +96,7 @@ Hệ thống quản lý các dữ liệu sau:
 - **Google Maps**: hỗ trợ hiển thị địa điểm du lịch.
 - **Xuất voucher PDF**: in/xuất phiếu xác nhận đặt tour.
 
----
 
-## 7. Yêu cầu phi chức năng (NFR)
-- Giao diện thân thiện, dễ sử dụng.
-- Hệ thống phản hồi nhanh khi tìm kiếm và đặt tour.
-- Bảo mật thông tin khách hàng và thanh toán.
-- Dữ liệu lưu trữ chính xác, ổn định.
-- Hỗ trợ nhiều thiết bị: máy tính, điện thoại.
-
----
 
 ## 8. Quy trình nghiệp vụ chính
 
@@ -124,17 +115,4 @@ Hệ thống quản lý các dữ liệu sau:
 3. Cập nhật trạng thái booking.
 4. Xử lý hoàn tiền nếu đủ điều kiện.
 
----
 
-## 9. Bàn giao
-Sản phẩm bàn giao gồm:
-- **Flow booking – thanh toán**
-- **Template quản lý tour**
-- **Dashboard doanh thu**
-- **Chức năng xuất voucher PDF**
-
----
-
-## 10. Kết luận
-Hệ thống **Quản lý du lịch & đặt tour** giúp số hóa toàn bộ quy trình quản lý tour và đặt tour trực tuyến.  
-Với 2 actor chính là **Admin** và **Khách hàng**, hệ thống vẫn đảm bảo đầy đủ các chức năng cốt lõi như quản lý tour, booking, thanh toán, báo cáo doanh thu và phản hồi khách hàng.
