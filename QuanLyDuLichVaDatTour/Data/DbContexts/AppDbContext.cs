@@ -13,6 +13,8 @@ public class AppDbContext : DbContext
 
     public DbSet<LoaiTour> LoaiTours => Set<LoaiTour>();
 
+    public DbSet<DiaDiem> DiaDiems => Set<DiaDiem>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -123,6 +125,57 @@ public class AppDbContext : DbContext
 
             entity.HasIndex(x => x.Ten)
                 .IsUnique();
+        });
+
+        modelBuilder.Entity<DiaDiem>(entity =>
+        {
+            entity.ToTable("dia_diem");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("id")
+                .HasColumnType("bigint unsigned")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.TenDiaDiem)
+                .HasColumnName("ten_dia_diem")
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(x => x.TinhThanh)
+                .HasColumnName("tinh_thanh")
+                .HasMaxLength(100);
+
+            entity.Property(x => x.QuocGia)
+                .HasColumnName("quoc_gia")
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(x => x.MoTa)
+                .HasColumnName("mo_ta")
+                .HasColumnType("text");
+
+            entity.Property(x => x.TrangThai)
+                .HasColumnName("trang_thai")
+                .HasColumnType("enum('hoat_dong','an')")
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("created_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAddOrUpdate();
+
+            entity.HasIndex(x => new { x.TinhThanh, x.QuocGia })
+                .HasDatabaseName("idx_dia_diem_tinh_thanh_quoc_gia");
         });
     }
 }
