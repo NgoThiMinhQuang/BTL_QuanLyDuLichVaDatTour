@@ -132,6 +132,50 @@ public class AuthService : IAuthService
             throw new UnauthorizedAccessException("Người dùng không tồn tại hoặc token không hợp lệ.");
         }
 
+        return MapCurrentUserResponse(nguoiDung);
+    }
+
+    public async Task<CurrentUserResponseDto> UpdateCurrentUserAsync(ulong userId, UpdateCurrentUserRequestDto request)
+    {
+        var nguoiDung = await _nguoiDungRepository.GetTrackedByIdAsync(userId);
+        if (nguoiDung is null)
+        {
+            throw new UnauthorizedAccessException("Người dùng không tồn tại hoặc token không hợp lệ.");
+        }
+
+        nguoiDung.HoTen = request.HoTen.Trim();
+        nguoiDung.SoDienThoai = NormalizeOptionalValue(request.SoDienThoai);
+        nguoiDung.DiaChi = NormalizeOptionalValue(request.DiaChi);
+        nguoiDung.AnhDaiDien = NormalizeOptionalValue(request.AnhDaiDien);
+        nguoiDung.UpdatedAt = DateTime.UtcNow;
+
+        await _nguoiDungRepository.SaveChangesAsync();
+
+        return MapCurrentUserResponse(nguoiDung);
+    }
+
+    public async Task ChangePasswordAsync(ulong userId, ChangePasswordRequestDto request)
+    {
+        var nguoiDung = await _nguoiDungRepository.GetTrackedByIdAsync(userId);
+        if (nguoiDung is null)
+        {
+            throw new UnauthorizedAccessException("Người dùng không tồn tại hoặc token không hợp lệ.");
+        }
+
+        var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(nguoiDung, nguoiDung.MatKhau, request.MatKhauHienTai);
+        if (passwordVerificationResult == PasswordVerificationResult.Failed)
+        {
+            throw new UnauthorizedAccessException("Mật khẩu hiện tại không chính xác.");
+        }
+
+        nguoiDung.MatKhau = _passwordHasher.HashPassword(nguoiDung, request.MatKhauMoi);
+        nguoiDung.UpdatedAt = DateTime.UtcNow;
+
+        await _nguoiDungRepository.SaveChangesAsync();
+    }
+
+    private static CurrentUserResponseDto MapCurrentUserResponse(NguoiDung nguoiDung)
+    {
         return new CurrentUserResponseDto
         {
             Id = nguoiDung.Id,

@@ -28,6 +28,12 @@ public class NguoiDungRepository : INguoiDungRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<NguoiDung?> GetTrackedByIdAsync(ulong id)
+    {
+        return await _dbContext.NguoiDungs
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
     public async Task AddAsync(NguoiDung nguoiDung)
     {
         await _dbContext.NguoiDungs.AddAsync(nguoiDung);

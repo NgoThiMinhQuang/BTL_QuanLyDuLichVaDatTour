@@ -8,6 +8,8 @@ public interface INguoiDungRepository
 
     Task<NguoiDung?> GetByIdAsync(ulong id);
 
+    Task<NguoiDung?> GetTrackedByIdAsync(ulong id);
+
     Task AddAsync(NguoiDung nguoiDung);
 
     Task<int> SaveChangesAsync();
