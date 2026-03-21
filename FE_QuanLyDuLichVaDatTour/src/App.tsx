@@ -13,33 +13,42 @@ export default function App() {
   const items = [
     { key: '/', label: <Link to="/">Trang chủ</Link> },
     { key: '/about', label: <Link to="/about">Giới thiệu</Link> },
+    { key: '#tour-noi-bat', label: <a href="#tour-noi-bat">Tour</a> },
+    { key: '#danh-muc-tour', label: <a href="#danh-muc-tour">Điểm đến</a> },
+    { key: '#uu-dai', label: <a href="#uu-dai">Ưu đãi</a> },
+    { key: '#tu-van-tour', label: <a href="#tu-van-tour">Liên hệ</a> },
   ]
+
+  const selectedKey = items.some((item) => item.key === location.pathname) ? location.pathname : '/'
 
   return (
     <Layout className="app-shell">
       <Header className="app-header">
-        <div className="app-brand">
-          <Title level={3} className="app-brand-title">
-            Du lịch và đặt tour
-          </Title>
-          <Text className="app-brand-subtitle">
-            Thiết kế theo hướng khách hàng và bám sát nghiệp vụ hiện có
-          </Text>
+        <div className="app-header-inner">
+          <Link to="/" className="app-brand">
+            <span className="app-brand-mark">✈</span>
+            <div>
+              <Title level={3} className="app-brand-title">
+                TravelViet Tour
+              </Title>
+              <Text className="app-brand-subtitle">Khám phá hành trình đẹp khắp Việt Nam</Text>
+            </div>
+          </Link>
+
+          <Menu
+            mode="horizontal"
+            selectedKeys={[selectedKey]}
+            items={items}
+            className="app-menu"
+          />
+
+          <Space className="app-header-actions">
+            <Button className="app-header-button">Đăng nhập</Button>
+            <Button type="primary" className="app-header-button app-header-button-primary" href="#tu-van-tour">
+              Đăng ký
+            </Button>
+          </Space>
         </div>
-
-        <Menu
-          mode="horizontal"
-          theme="dark"
-          selectedKeys={[location.pathname]}
-          items={items}
-          className="app-menu"
-        />
-
-        <Space>
-          <Button type="primary" href="#tu-van-tour">
-            Tư vấn tour
-          </Button>
-        </Space>
       </Header>
 
       <Content className="app-content">

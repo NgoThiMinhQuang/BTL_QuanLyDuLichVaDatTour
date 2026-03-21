@@ -6,7 +6,7 @@ const { Paragraph, Text, Title } = Typography
 
 export function FeaturedToursSection() {
   return (
-    <Card className="home-section">
+    <Card id="tour-noi-bat" className="home-section">
       <SectionHeader
         title="Tour nổi bật mô phỏng theo nghiệp vụ"
         description="Dữ liệu tour chi tiết chưa có API công khai, nên phần này dùng mock data đúng ngữ cảnh bài toán du lịch và đặt tour."

@@ -6,7 +6,7 @@ const { Paragraph, Title } = Typography
 
 export function WhyChooseUsSection() {
   return (
-    <Card className="home-section">
+    <Card id="ly-do-chon" className="home-section">
       <SectionHeader
         title="Vì sao bố cục này phù hợp đề tài"
         description="Các khối nội dung được sắp theo luồng khách hàng thực tế: khám phá, so sánh, tin tưởng, rồi liên hệ hoặc đặt tour."

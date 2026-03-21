@@ -4,7 +4,7 @@ const { Paragraph, Text, Title } = Typography
 
 export function PromoSection() {
   return (
-    <Card className="home-section promo-section" bordered={false}>
+    <Card id="uu-dai" className="home-section promo-section" bordered={false}>
       <Row gutter={[24, 24]} align="middle">
         <Col xs={24} lg={16}>
           <Space direction="vertical" size={12}>

@@ -1,71 +1,76 @@
-import { Button, Card, Col, Input, Row, Space, Typography } from 'antd'
+import { Button, Card, Col, Input, Row, Space, Tag, Typography } from 'antd'
 import { heroStats, searchSuggestions } from '../data/homeMocks'
 
 const { Paragraph, Text, Title } = Typography
 
 export function HeroSection() {
   return (
-    <Card className="home-section hero-section">
-      <Space direction="vertical" size={20} style={{ width: '100%' }}>
-        <span className="hero-kicker">Website quản lý du lịch và đặt tour</span>
+    <Card className="home-section hero-section" bordered={false}>
+      <div className="hero-overlay" />
+      <div className="hero-content">
+        <Space direction="vertical" size={22} className="hero-intro">
+          <span className="hero-kicker">Khám phá Việt Nam</span>
 
-        <Space direction="vertical" size={10}>
-          <Title level={1} className="hero-title" style={{ margin: 0 }}>
-            Khám phá tour phù hợp và sẵn sàng mở rộng tới luồng đặt tour hoàn chỉnh
-          </Title>
-          <Paragraph className="hero-description">
-            Trang chủ được thiết kế theo đúng hướng nghiệp vụ khách hàng: xem danh mục tour,
-            khám phá gợi ý nổi bật, theo dõi lịch khởi hành và chuẩn bị cho quy trình booking,
-            thanh toán, đánh giá sau chuyến đi.
-          </Paragraph>
-        </Space>
+          <Space direction="vertical" size={12}>
+            <Title level={1} className="hero-title" style={{ margin: 0 }}>
+              Khám phá vẻ đẹp Việt Nam qua những hành trình được thiết kế rõ ràng và dễ đặt tour
+            </Title>
+            <Paragraph className="hero-description">
+              Giao diện trang chủ được nâng cấp theo hướng landing page du lịch hiện đại: nổi bật
+              trải nghiệm khám phá, dễ xem danh mục tour, dễ tiếp cận tư vấn và sẵn sàng mở rộng
+              sang booking, lịch khởi hành, thanh toán và đánh giá.
+            </Paragraph>
+          </Space>
 
-        <Space wrap size={12}>
-          <Button type="primary" size="large" href="#danh-muc-tour">
-            Khám phá danh mục
-          </Button>
-          <Button size="large" ghost href="#tu-van-tour">
-            Tư vấn đặt tour
-          </Button>
+          <Space wrap size={12} className="hero-actions">
+            <Button type="primary" size="large" className="hero-primary-button" href="#danh-muc-tour">
+              Khám phá tour
+            </Button>
+            <Button size="large" className="hero-secondary-button" href="#tu-van-tour">
+              Tìm hiểu thêm
+            </Button>
+          </Space>
         </Space>
 
         <Card className="hero-search" bordered={false}>
           <Row gutter={[16, 16]} align="middle">
-            <Col xs={24} lg={8}>
+            <Col xs={24} lg={9}>
               <Text className="hero-search-label">Tìm nhanh theo điểm đến</Text>
               <Input size="large" placeholder="Ví dụ: Đà Nẵng, Phú Quốc, Sapa" />
             </Col>
-            <Col xs={24} lg={10}>
-              <Text className="hero-search-label">Gợi ý nghiệp vụ sẽ triển khai tiếp</Text>
-              <Space wrap size={8} style={{ display: 'flex', marginTop: 8 }}>
+            <Col xs={24} lg={9}>
+              <Text className="hero-search-label">Gợi ý đang được ưu tiên phát triển</Text>
+              <Space wrap size={8} style={{ display: 'flex', marginTop: 10 }}>
                 {searchSuggestions.map((item) => (
-                  <Button key={item.id}>{item.label}: {item.value}</Button>
+                  <Tag key={item.id} className="hero-suggestion-tag">
+                    {item.value}
+                  </Tag>
                 ))}
               </Space>
             </Col>
             <Col xs={24} lg={6}>
-              <Button type="primary" size="large" block>
+              <Button type="primary" size="large" block className="hero-search-button">
                 Tìm tour phù hợp
               </Button>
             </Col>
           </Row>
         </Card>
 
-        <Row gutter={[16, 16]}>
+        <Row gutter={[20, 20]} className="hero-stats-row">
           {heroStats.map((item) => (
             <Col xs={24} md={8} key={item.id}>
               <Card className="hero-stat-card" bordered={false}>
-                <Space direction="vertical" size={4}>
-                  <Text className="hero-stat-label">{item.label}</Text>
-                  <Title level={3} className="hero-stat-value" style={{ margin: 0 }}>
+                <Space direction="vertical" size={6}>
+                  <Title level={2} className="hero-stat-value" style={{ margin: 0 }}>
                     {item.value}
                   </Title>
+                  <Text className="hero-stat-label">{item.label}</Text>
                 </Space>
               </Card>
             </Col>
           ))}
         </Row>
-      </Space>
+      </div>
     </Card>
   )
 }
