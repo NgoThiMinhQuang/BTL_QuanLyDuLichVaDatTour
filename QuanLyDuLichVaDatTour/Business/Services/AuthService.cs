@@ -124,6 +124,27 @@ public class AuthService : IAuthService
         };
     }
 
+    public async Task<CurrentUserResponseDto> GetCurrentUserAsync(ulong userId)
+    {
+        var nguoiDung = await _nguoiDungRepository.GetByIdAsync(userId);
+        if (nguoiDung is null)
+        {
+            throw new UnauthorizedAccessException("Người dùng không tồn tại hoặc token không hợp lệ.");
+        }
+
+        return new CurrentUserResponseDto
+        {
+            Id = nguoiDung.Id,
+            Email = nguoiDung.Email,
+            HoTen = nguoiDung.HoTen,
+            SoDienThoai = nguoiDung.SoDienThoai,
+            DiaChi = nguoiDung.DiaChi,
+            AnhDaiDien = nguoiDung.AnhDaiDien,
+            VaiTro = nguoiDung.VaiTro.ToString(),
+            TrangThai = nguoiDung.TrangThai.ToString()
+        };
+    }
+
     private static string NormalizeEmail(string email)
     {
         return email.Trim().ToLowerInvariant();
