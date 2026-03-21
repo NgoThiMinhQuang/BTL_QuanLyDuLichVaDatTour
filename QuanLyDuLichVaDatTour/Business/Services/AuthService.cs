@@ -4,6 +4,11 @@ using DAL.Interfaces;
 using Entity.Entities;
 using Entity.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace BLL.Services;
 
@@ -11,16 +16,18 @@ public class AuthService : IAuthService
 {
     private readonly INguoiDungRepository _nguoiDungRepository;
     private readonly IPasswordHasher<NguoiDung> _passwordHasher;
+    private readonly IConfiguration _configuration;
 
-    public AuthService(INguoiDungRepository nguoiDungRepository, IPasswordHasher<NguoiDung> passwordHasher)
+    public AuthService(INguoiDungRepository nguoiDungRepository, IPasswordHasher<NguoiDung> passwordHasher, IConfiguration configuration)
     {
         _nguoiDungRepository = nguoiDungRepository;
         _passwordHasher = passwordHasher;
+        _configuration = configuration;
     }
 
     public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto request)
     {
-        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        var normalizedEmail = NormalizeEmail(request.Email);
         var existingUser = await _nguoiDungRepository.GetByEmailAsync(normalizedEmail);
 
         if (existingUser is not null)
@@ -52,6 +59,74 @@ public class AuthService : IAuthService
             VaiTro = nguoiDung.VaiTro.ToString(),
             TrangThai = nguoiDung.TrangThai.ToString()
         };
+    }
+
+    public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
+    {
+        var normalizedEmail = NormalizeEmail(request.Email);
+        var nguoiDung = await _nguoiDungRepository.GetByEmailAsync(normalizedEmail);
+
+        if (nguoiDung is null)
+        {
+            throw new UnauthorizedAccessException("Email hoặc mật khẩu không chính xác.");
+        }
+
+        if (nguoiDung.TrangThai == TrangThaiNguoiDung.bi_khoa)
+        {
+            throw new InvalidOperationException("Tài khoản đã bị khóa.");
+        }
+
+        var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(nguoiDung, nguoiDung.MatKhau, request.MatKhau);
+        if (passwordVerificationResult == PasswordVerificationResult.Failed)
+        {
+            throw new UnauthorizedAccessException("Email hoặc mật khẩu không chính xác.");
+        }
+
+        var jwtSection = _configuration.GetSection("Jwt");
+        var secret = jwtSection["Secret"] ?? throw new InvalidOperationException("Jwt:Secret chưa được cấu hình.");
+        var issuer = jwtSection["Issuer"] ?? throw new InvalidOperationException("Jwt:Issuer chưa được cấu hình.");
+        var audience = jwtSection["Audience"] ?? throw new InvalidOperationException("Jwt:Audience chưa được cấu hình.");
+        var expiryMinutes = int.TryParse(jwtSection["ExpiryMinutes"], out var parsedExpiryMinutes)
+            ? parsedExpiryMinutes
+            : throw new InvalidOperationException("Jwt:ExpiryMinutes chưa hợp lệ.");
+
+        var expiresIn = TimeSpan.FromMinutes(expiryMinutes);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(
+            [
+                new Claim(ClaimTypes.NameIdentifier, nguoiDung.Id.ToString()),
+                new Claim(ClaimTypes.Email, nguoiDung.Email),
+                new Claim(ClaimTypes.Name, nguoiDung.HoTen),
+                new Claim(ClaimTypes.Role, nguoiDung.VaiTro.ToString())
+            ]),
+            Expires = DateTime.UtcNow.Add(expiresIn),
+            Issuer = issuer,
+            Audience = audience,
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                SecurityAlgorithms.HmacSha256)
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var accessToken = tokenHandler.CreateToken(tokenDescriptor);
+
+        return new LoginResponseDto
+        {
+            AccessToken = tokenHandler.WriteToken(accessToken),
+            TokenType = "Bearer",
+            ExpiresIn = (int)expiresIn.TotalSeconds,
+            Id = nguoiDung.Id,
+            Email = nguoiDung.Email,
+            HoTen = nguoiDung.HoTen,
+            VaiTro = nguoiDung.VaiTro.ToString(),
+            TrangThai = nguoiDung.TrangThai.ToString()
+        };
+    }
+
+    private static string NormalizeEmail(string email)
+    {
+        return email.Trim().ToLowerInvariant();
     }
 
     private static string? NormalizeOptionalValue(string? value)

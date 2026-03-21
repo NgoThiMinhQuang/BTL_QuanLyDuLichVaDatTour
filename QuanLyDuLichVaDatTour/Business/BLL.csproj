@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="DTOs\Auth\" />
     <Folder Include="DTOs\Booking\" />
     <Folder Include="DTOs\Payment\" />
