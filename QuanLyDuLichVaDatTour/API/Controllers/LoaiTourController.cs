@@ -14,15 +14,15 @@ public class LoaiTourController : ControllerBase
         _loaiTourService = loaiTourService;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetVisibleLoaiTours()
+    [HttpGet("get-all")]
+    public async Task<IActionResult> GetAll()
     {
         var response = await _loaiTourService.GetVisibleAsync();
         return Ok(response);
     }
 
-    [HttpGet("{id:ulong}")]
-    public async Task<IActionResult> GetVisibleLoaiTourById(ulong id)
+    [HttpGet("get-by-id/{id}")]
+    public async Task<IActionResult> GetById(ulong id)
     {
         try
         {

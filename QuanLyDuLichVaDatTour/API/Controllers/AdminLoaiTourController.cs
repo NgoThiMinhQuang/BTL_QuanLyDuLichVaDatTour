@@ -17,15 +17,15 @@ public class AdminLoaiTourController : ControllerBase
         _loaiTourService = loaiTourService;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAllLoaiTours()
+    [HttpGet("get-all")]
+    public async Task<IActionResult> GetAll()
     {
         var response = await _loaiTourService.GetAllAsync();
         return Ok(response);
     }
 
-    [HttpGet("{id:ulong}")]
-    public async Task<IActionResult> GetLoaiTourById(ulong id)
+    [HttpGet("get-by-id/{id}")]
+    public async Task<IActionResult> GetById(ulong id)
     {
         try
         {
@@ -38,8 +38,8 @@ public class AdminLoaiTourController : ControllerBase
         }
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateLoaiTour([FromBody] CreateLoaiTourRequestDto request)
+    [HttpPost("create")]
+    public async Task<IActionResult> Create([FromBody] CreateLoaiTourRequestDto request)
     {
         if (!ModelState.IsValid)
         {
@@ -57,8 +57,8 @@ public class AdminLoaiTourController : ControllerBase
         }
     }
 
-    [HttpPut("{id:ulong}")]
-    public async Task<IActionResult> UpdateLoaiTour(ulong id, [FromBody] UpdateLoaiTourRequestDto request)
+    [HttpPut("update/{id}")]
+    public async Task<IActionResult> Update(ulong id, [FromBody] UpdateLoaiTourRequestDto request)
     {
         if (!ModelState.IsValid)
         {
@@ -80,8 +80,8 @@ public class AdminLoaiTourController : ControllerBase
         }
     }
 
-    [HttpPatch("{id:ulong}/trang-thai")]
-    public async Task<IActionResult> UpdateLoaiTourStatus(ulong id, [FromBody] UpdateLoaiTourStatusRequestDto request)
+    [HttpPatch("update-status/{id}")]
+    public async Task<IActionResult> UpdateStatus(ulong id, [FromBody] UpdateLoaiTourStatusRequestDto request)
     {
         if (!ModelState.IsValid)
         {
