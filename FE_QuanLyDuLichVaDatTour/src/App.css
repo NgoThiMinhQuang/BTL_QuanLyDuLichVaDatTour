@@ -1,0 +1,232 @@
+.app-shell {
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 32px;
+  background: rgba(7, 22, 51, 0.92);
+  backdrop-filter: blur(12px);
+}
+
+.app-brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 220px;
+}
+
+.app-brand-title.ant-typography {
+  margin: 0 !important;
+  color: #ffffff;
+}
+
+.app-brand-subtitle.ant-typography {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+}
+
+.app-menu {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border-bottom: none;
+}
+
+.app-content {
+  padding: 24px;
+}
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.home-section {
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+}
+
+.home-section .ant-card-body {
+  padding: 28px;
+}
+
+.hero-section {
+  position: relative;
+  border: none;
+  background:
+    linear-gradient(135deg, rgba(5, 22, 51, 0.96), rgba(17, 75, 95, 0.88)),
+    url('./assets/hero.png') center/cover no-repeat;
+}
+
+.hero-section .ant-card-body {
+  padding: 40px;
+}
+
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.hero-title.ant-typography,
+.hero-description.ant-typography,
+.hero-stat-label.ant-typography,
+.hero-stat-value.ant-typography {
+  color: #ffffff !important;
+}
+
+.hero-description.ant-typography {
+  max-width: 720px;
+  color: rgba(255, 255, 255, 0.82) !important;
+  font-size: 16px;
+}
+
+.hero-search {
+  margin-top: 24px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+}
+
+.hero-search .ant-card-body {
+  padding: 20px;
+}
+
+.hero-search-label.ant-typography {
+  color: rgba(255, 255, 255, 0.74) !important;
+}
+
+.hero-stat-card {
+  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.section-header {
+  margin-bottom: 20px;
+}
+
+.section-title.ant-typography {
+  margin-bottom: 8px !important;
+}
+
+.section-description.ant-typography {
+  color: #667085;
+}
+
+.category-card,
+.featured-tour-card,
+.benefit-card,
+.review-card {
+  height: 100%;
+  border-radius: 20px;
+}
+
+.category-card {
+  border: 1px solid #eef2f6;
+}
+
+.category-card .ant-tag {
+  margin-inline-end: 0;
+}
+
+.featured-tour-cover {
+  min-height: 180px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #1b6ca8, #40a9ff);
+}
+
+.featured-tour-meta {
+  color: #667085;
+}
+
+.featured-tour-price.ant-typography {
+  color: #1677ff !important;
+}
+
+.promo-section {
+  border: none;
+  background: linear-gradient(135deg, #fff7e6, #ffe0b2);
+}
+
+.promo-code {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff;
+  color: #d46b08;
+  font-weight: 700;
+}
+
+.benefit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  font-size: 22px;
+  background: #e6f4ff;
+  color: #1677ff;
+}
+
+.review-card {
+  border: 1px solid #eef2f6;
+}
+
+.cta-section {
+  border: none;
+  background: linear-gradient(135deg, #102a56, #1d4d8f);
+}
+
+.cta-section .ant-card-body {
+  padding: 32px 28px;
+}
+
+.cta-title.ant-typography,
+.cta-description.ant-typography {
+  color: #ffffff !important;
+}
+
+.cta-description.ant-typography {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+@media (max-width: 992px) {
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    padding: 18px 20px;
+  }
+
+  .app-brand {
+    min-width: unset;
+  }
+
+  .app-content {
+    padding: 16px;
+  }
+
+  .hero-section .ant-card-body,
+  .home-section .ant-card-body {
+    padding: 20px;
+  }
+}
