@@ -8,8 +8,8 @@ export function CustomerReviewSection() {
   return (
     <Card className="home-section">
       <SectionHeader
-        title="Đánh giá mô phỏng từ khách hàng"
-        description="API đánh giá và comment chưa hoàn thiện, nên phần này đang được dựng sẵn để chuẩn bị cho bước phát triển tiếp theo."
+        title="Khách hàng nói gì về trải nghiệm tìm tour và lên kế hoạch chuyến đi"
+        description="Những phản hồi ngắn gọn giúp bạn hình dung rõ hơn về cảm giác sử dụng trang web và cách thông tin tour được trình bày."
       />
 
       <Row gutter={[16, 16]}>

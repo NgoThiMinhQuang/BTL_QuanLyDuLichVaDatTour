@@ -1,0 +1,348 @@
+using BLL.DTOs.Booking;
+using BLL.Interfaces;
+using DAL.Interfaces;
+using Entity.Entities;
+using Entity.Enums;
+using System.Security.Cryptography;
+
+namespace BLL.Services;
+
+public class BookingService : IBookingService
+{
+    private readonly IBookingRepository _bookingRepository;
+    private readonly ILichKhoiHanhRepository _lichKhoiHanhRepository;
+    private readonly INguoiDungRepository _nguoiDungRepository;
+
+    public BookingService(
+        IBookingRepository bookingRepository,
+        ILichKhoiHanhRepository lichKhoiHanhRepository,
+        INguoiDungRepository nguoiDungRepository)
+    {
+        _bookingRepository = bookingRepository;
+        _lichKhoiHanhRepository = lichKhoiHanhRepository;
+        _nguoiDungRepository = nguoiDungRepository;
+    }
+
+    public async Task<BookingResponseDto> CreateAsync(ulong currentUserId, CreateBookingRequestDto request)
+    {
+        var nguoiDung = await EnsureNguoiDungExistsAsync(currentUserId);
+        var lichKhoiHanh = await EnsureLichKhoiHanhAvailableAsync(request.LichKhoiHanhId);
+        var tour = lichKhoiHanh.Tour!;
+
+        ValidatePassengerCounts(request.SoNguoiLon, request.SoTreEm, request.SoEmBe, lichKhoiHanh.SoChoToiDa);
+
+        var hoTenLienHe = NormalizeRequiredValue(request.HoTenLienHe ?? nguoiDung.HoTen, "Họ tên liên hệ không được để trống.");
+        var emailLienHe = NormalizeRequiredValue(request.EmailLienHe ?? nguoiDung.Email, "Email liên hệ không được để trống.");
+        var soDienThoaiLienHe = NormalizeRequiredValue(request.SoDienThoaiLienHe ?? nguoiDung.SoDienThoai, "Số điện thoại liên hệ không được để trống.");
+        var diaChiLienHe = NormalizeOptionalValue(request.DiaChiLienHe ?? nguoiDung.DiaChi);
+        var ghiChu = NormalizeOptionalValue(request.GhiChu);
+
+        var maBooking = await GenerateUniqueMaBookingAsync();
+        var donGiaNguoiLon = tour.GiaNguoiLonMacDinh ?? 0m;
+        var donGiaTreEm = tour.GiaTreEmMacDinh ?? 0m;
+        var donGiaEmBe = 0m;
+        ValidatePrice(donGiaNguoiLon, "Đơn giá người lớn không hợp lệ.");
+        ValidatePrice(donGiaTreEm, "Đơn giá trẻ em không hợp lệ.");
+
+        var tamTinh = request.SoNguoiLon * donGiaNguoiLon
+            + request.SoTreEm * donGiaTreEm
+            + request.SoEmBe * donGiaEmBe;
+
+        var now = DateTime.UtcNow;
+        var booking = new Booking
+        {
+            MaBooking = maBooking,
+            LichKhoiHanhId = lichKhoiHanh.Id,
+            NguoiDungId = nguoiDung.Id,
+            HoTenLienHe = hoTenLienHe,
+            EmailLienHe = emailLienHe,
+            SoDienThoaiLienHe = soDienThoaiLienHe,
+            DiaChiLienHe = diaChiLienHe,
+            NgayDat = now,
+            SoNguoiLon = request.SoNguoiLon,
+            SoTreEm = request.SoTreEm,
+            SoEmBe = request.SoEmBe,
+            LoaiGiaApDung = LoaiGiaApDung.ngay_thuong,
+            DonGiaNguoiLon = donGiaNguoiLon,
+            DonGiaTreEm = donGiaTreEm,
+            DonGiaEmBe = donGiaEmBe,
+            TamTinh = tamTinh,
+            GiamGia = 0m,
+            TongTien = tamTinh,
+            SoTienDaThanhToan = 0m,
+            TienCocYeuCau = 0m,
+            PhuongThucThanhToanDuKien = request.PhuongThucThanhToanDuKien,
+            TrangThaiBooking = TrangThaiBooking.cho_thanh_toan,
+            TrangThaiThanhToan = TrangThaiThanhToan.chua_thanh_toan,
+            HanThanhToan = now.AddHours(24),
+            GhiChu = ghiChu,
+            CreatedAt = now,
+            UpdatedAt = now,
+            LichKhoiHanh = lichKhoiHanh,
+            NguoiDung = nguoiDung
+        };
+
+        await _bookingRepository.AddAsync(booking);
+        await _bookingRepository.SaveChangesAsync();
+
+        return MapBookingResponse(booking);
+    }
+
+    public async Task<List<BookingListItemDto>> GetMyBookingsAsync(ulong currentUserId)
+    {
+        await EnsureNguoiDungExistsAsync(currentUserId);
+
+        var bookings = await _bookingRepository.GetByNguoiDungIdAsync(currentUserId);
+        return bookings.Select(MapBookingListItem).ToList();
+    }
+
+    public async Task<BookingResponseDto> GetMyBookingByIdAsync(ulong currentUserId, ulong id)
+    {
+        var booking = await _bookingRepository.GetByIdAsync(id)
+            ?? throw new KeyNotFoundException("Booking không tồn tại.");
+
+        if (booking.NguoiDungId != currentUserId)
+        {
+            throw new KeyNotFoundException("Booking không tồn tại.");
+        }
+
+        return MapBookingResponse(booking);
+    }
+
+    public async Task<List<BookingAdminResponseDto>> GetAllAsync()
+    {
+        var bookings = await _bookingRepository.GetAllAsync();
+        return bookings.Select(MapBookingAdminResponse).ToList();
+    }
+
+    public async Task<BookingAdminResponseDto> GetByIdAsync(ulong id)
+    {
+        var booking = await _bookingRepository.GetByIdAsync(id)
+            ?? throw new KeyNotFoundException("Booking không tồn tại.");
+
+        return MapBookingAdminResponse(booking);
+    }
+
+    public async Task UpdateStatusAsync(ulong adminUserId, ulong id, UpdateBookingStatusRequestDto request)
+    {
+        var adminUser = await EnsureNguoiDungExistsAsync(adminUserId);
+        var booking = await _bookingRepository.GetTrackedByIdAsync(id)
+            ?? throw new KeyNotFoundException("Booking không tồn tại.");
+
+        booking.TrangThaiBooking = request.TrangThaiBooking;
+        if (request.TrangThaiThanhToan.HasValue)
+        {
+            booking.TrangThaiThanhToan = request.TrangThaiThanhToan.Value;
+        }
+
+        var ghiChu = NormalizeOptionalValue(request.GhiChu);
+        if (ghiChu is not null)
+        {
+            booking.GhiChu = ghiChu;
+        }
+
+        if (request.TrangThaiBooking == TrangThaiBooking.da_xac_nhan)
+        {
+            booking.NguoiXacNhanId = adminUser.Id;
+            booking.NguoiXacNhan = adminUser;
+            booking.ThoiGianXacNhan = DateTime.UtcNow;
+        }
+
+        booking.UpdatedAt = DateTime.UtcNow;
+        await _bookingRepository.SaveChangesAsync();
+    }
+
+    private async Task<NguoiDung> EnsureNguoiDungExistsAsync(ulong nguoiDungId)
+    {
+        return await _nguoiDungRepository.GetByIdAsync(nguoiDungId)
+            ?? throw new KeyNotFoundException("Người dùng không tồn tại.");
+    }
+
+    private async Task<LichKhoiHanh> EnsureLichKhoiHanhAvailableAsync(ulong lichKhoiHanhId)
+    {
+        var lichKhoiHanh = await _lichKhoiHanhRepository.GetByIdAsync(lichKhoiHanhId)
+            ?? throw new KeyNotFoundException("Lịch khởi hành không tồn tại.");
+
+        if (lichKhoiHanh.TrangThai != TrangThaiLichKhoiHanh.mo_ban)
+        {
+            throw new InvalidOperationException("Lịch khởi hành hiện không mở bán.");
+        }
+
+        if (lichKhoiHanh.Tour is null || lichKhoiHanh.Tour.TrangThai != TrangThaiTour.dang_mo_ban)
+        {
+            throw new InvalidOperationException("Tour hiện không mở bán.");
+        }
+
+        return lichKhoiHanh;
+    }
+
+    private static void ValidatePassengerCounts(ushort soNguoiLon, ushort soTreEm, ushort soEmBe, ushort soChoToiDa)
+    {
+        if (soNguoiLon < 1)
+        {
+            throw new InvalidOperationException("Booking phải có ít nhất 1 người lớn.");
+        }
+
+        var tongHanhKhach = soNguoiLon + soTreEm + soEmBe;
+        if (tongHanhKhach > soChoToiDa)
+        {
+            throw new InvalidOperationException("Số lượng hành khách vượt quá số chỗ tối đa.");
+        }
+    }
+
+    private static void ValidatePrice(decimal value, string errorMessage)
+    {
+        if (value < 0)
+        {
+            throw new InvalidOperationException(errorMessage);
+        }
+    }
+
+    private async Task<string> GenerateUniqueMaBookingAsync()
+    {
+        for (var i = 0; i < 10; i++)
+        {
+            var maBooking = $"BK-{DateTime.UtcNow:yyyyMMddHHmmss}-{RandomNumberGenerator.GetInt32(1000, 10000)}";
+            var existing = await _bookingRepository.GetByMaBookingAsync(maBooking);
+            if (existing is null)
+            {
+                return maBooking;
+            }
+        }
+
+        throw new InvalidOperationException("Không thể tạo mã booking duy nhất.");
+    }
+
+    private static string NormalizeRequiredValue(string? value, string errorMessage)
+    {
+        var normalizedValue = value?.Trim();
+        if (string.IsNullOrWhiteSpace(normalizedValue))
+        {
+            throw new InvalidOperationException(errorMessage);
+        }
+
+        return normalizedValue;
+    }
+
+    private static string? NormalizeOptionalValue(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        return value.Trim();
+    }
+
+    private static ushort GetTongHanhKhach(Booking booking)
+    {
+        return (ushort)(booking.SoNguoiLon + booking.SoTreEm + booking.SoEmBe);
+    }
+
+    private static BookingListItemDto MapBookingListItem(Booking booking)
+    {
+        return new BookingListItemDto
+        {
+            Id = booking.Id,
+            MaBooking = booking.MaBooking,
+            TenTour = booking.LichKhoiHanh?.Tour?.TenTour ?? string.Empty,
+            MaDotTour = booking.LichKhoiHanh?.MaDotTour ?? string.Empty,
+            NgayKhoiHanh = booking.LichKhoiHanh?.NgayKhoiHanh ?? default,
+            TongHanhKhach = GetTongHanhKhach(booking),
+            TongTien = booking.TongTien,
+            TrangThaiBooking = booking.TrangThaiBooking.ToString(),
+            TrangThaiThanhToan = booking.TrangThaiThanhToan.ToString(),
+            NgayDat = booking.NgayDat
+        };
+    }
+
+    private static BookingResponseDto MapBookingResponse(Booking booking)
+    {
+        return new BookingResponseDto
+        {
+            Id = booking.Id,
+            MaBooking = booking.MaBooking,
+            LichKhoiHanhId = booking.LichKhoiHanhId,
+            MaDotTour = booking.LichKhoiHanh?.MaDotTour ?? string.Empty,
+            NgayKhoiHanh = booking.LichKhoiHanh?.NgayKhoiHanh ?? default,
+            NgayKetThuc = booking.LichKhoiHanh?.NgayKetThuc ?? default,
+            TourId = booking.LichKhoiHanh?.TourId ?? 0,
+            MaTour = booking.LichKhoiHanh?.Tour?.MaTour ?? string.Empty,
+            TenTour = booking.LichKhoiHanh?.Tour?.TenTour ?? string.Empty,
+            HoTenLienHe = booking.HoTenLienHe,
+            EmailLienHe = booking.EmailLienHe,
+            SoDienThoaiLienHe = booking.SoDienThoaiLienHe,
+            DiaChiLienHe = booking.DiaChiLienHe,
+            NgayDat = booking.NgayDat,
+            SoNguoiLon = booking.SoNguoiLon,
+            SoTreEm = booking.SoTreEm,
+            SoEmBe = booking.SoEmBe,
+            TongHanhKhach = GetTongHanhKhach(booking),
+            LoaiGiaApDung = booking.LoaiGiaApDung.ToString(),
+            DonGiaNguoiLon = booking.DonGiaNguoiLon,
+            DonGiaTreEm = booking.DonGiaTreEm,
+            DonGiaEmBe = booking.DonGiaEmBe,
+            TamTinh = booking.TamTinh,
+            GiamGia = booking.GiamGia,
+            TongTien = booking.TongTien,
+            SoTienDaThanhToan = booking.SoTienDaThanhToan,
+            TienCocYeuCau = booking.TienCocYeuCau,
+            PhuongThucThanhToanDuKien = booking.PhuongThucThanhToanDuKien?.ToString(),
+            TrangThaiBooking = booking.TrangThaiBooking.ToString(),
+            TrangThaiThanhToan = booking.TrangThaiThanhToan.ToString(),
+            HanThanhToan = booking.HanThanhToan,
+            GhiChu = booking.GhiChu,
+            CreatedAt = booking.CreatedAt,
+            UpdatedAt = booking.UpdatedAt
+        };
+    }
+
+    private static BookingAdminResponseDto MapBookingAdminResponse(Booking booking)
+    {
+        var response = new BookingAdminResponseDto
+        {
+            NguoiDungId = booking.NguoiDungId,
+            HoTenNguoiDat = booking.NguoiDung?.HoTen ?? string.Empty,
+            EmailNguoiDat = booking.NguoiDung?.Email ?? string.Empty,
+            NguoiXacNhanId = booking.NguoiXacNhanId,
+            ThoiGianXacNhan = booking.ThoiGianXacNhan
+        };
+
+        var detail = MapBookingResponse(booking);
+        response.Id = detail.Id;
+        response.MaBooking = detail.MaBooking;
+        response.LichKhoiHanhId = detail.LichKhoiHanhId;
+        response.MaDotTour = detail.MaDotTour;
+        response.NgayKhoiHanh = detail.NgayKhoiHanh;
+        response.NgayKetThuc = detail.NgayKetThuc;
+        response.TourId = detail.TourId;
+        response.MaTour = detail.MaTour;
+        response.TenTour = detail.TenTour;
+        response.HoTenLienHe = detail.HoTenLienHe;
+        response.EmailLienHe = detail.EmailLienHe;
+        response.SoDienThoaiLienHe = detail.SoDienThoaiLienHe;
+        response.DiaChiLienHe = detail.DiaChiLienHe;
+        response.NgayDat = detail.NgayDat;
+        response.SoNguoiLon = detail.SoNguoiLon;
+        response.SoTreEm = detail.SoTreEm;
+        response.SoEmBe = detail.SoEmBe;
+        response.TongHanhKhach = detail.TongHanhKhach;
+        response.LoaiGiaApDung = detail.LoaiGiaApDung;
+        response.DonGiaNguoiLon = detail.DonGiaNguoiLon;
+        response.DonGiaTreEm = detail.DonGiaTreEm;
+        response.DonGiaEmBe = detail.DonGiaEmBe;
+        response.TamTinh = detail.TamTinh;
+        response.GiamGia = detail.GiamGia;
+        response.TongTien = detail.TongTien;
+        response.SoTienDaThanhToan = detail.SoTienDaThanhToan;
+        response.TienCocYeuCau = detail.TienCocYeuCau;
+        response.PhuongThucThanhToanDuKien = detail.PhuongThucThanhToanDuKien;
+        response.TrangThaiBooking = detail.TrangThaiBooking;
+        response.TrangThaiThanhToan = detail.TrangThaiThanhToan;
+        response.HanThanhToan = detail.HanThanhToan;
+        response.GhiChu = detail.GhiChu;
+        response.CreatedAt = detail.CreatedAt;
+        response.UpdatedAt = detail.UpdatedAt;
+        return response;
+    }
+}

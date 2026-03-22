@@ -14,7 +14,8 @@ export default function App() {
     { key: '/', label: <Link to="/">Trang chủ</Link> },
     { key: '/about', label: <Link to="/about">Giới thiệu</Link> },
     { key: '#tour-noi-bat', label: <a href="#tour-noi-bat">Tour</a> },
-    { key: '#danh-muc-tour', label: <a href="#danh-muc-tour">Điểm đến</a> },
+    { key: '#lich-khoi-hanh', label: <a href="#lich-khoi-hanh">Lịch khởi hành</a> },
+    { key: '#danh-muc-tour', label: <a href="#danh-muc-tour">Danh mục</a> },
     { key: '#uu-dai', label: <a href="#uu-dai">Ưu đãi</a> },
     { key: '#tu-van-tour', label: <a href="#tu-van-tour">Liên hệ</a> },
   ]
@@ -28,7 +29,7 @@ export default function App() {
           <Link to="/" className="app-brand">
             <span className="app-brand-mark">✈</span>
             <div>
-              <Title level={3} className="app-brand-title">
+              <Title level={2} className="app-brand-title">
                 TravelViet Tour
               </Title>
               <Text className="app-brand-subtitle">Khám phá hành trình đẹp khắp Việt Nam</Text>
@@ -44,7 +45,7 @@ export default function App() {
 
           <Space className="app-header-actions">
             <Button className="app-header-button">Đăng nhập</Button>
-            <Button type="primary" className="app-header-button app-header-button-primary" href="#tu-van-tour">
+            <Button type="primary" className="app-header-button app-header-button-primary">
               Đăng ký
             </Button>
           </Space>

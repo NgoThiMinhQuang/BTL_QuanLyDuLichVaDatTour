@@ -8,8 +8,8 @@ export function WhyChooseUsSection() {
   return (
     <Card id="ly-do-chon" className="home-section">
       <SectionHeader
-        title="Vì sao bố cục này phù hợp đề tài"
-        description="Các khối nội dung được sắp theo luồng khách hàng thực tế: khám phá, so sánh, tin tưởng, rồi liên hệ hoặc đặt tour."
+        title="Vì sao nhiều khách hàng chọn chúng tôi cho chuyến đi tiếp theo"
+        description="Không chỉ đẹp về hình ảnh, hành trình còn được trình bày rõ ràng để bạn dễ chọn tour, so sánh lịch khởi hành và lên kế hoạch phù hợp."
       />
 
       <Row gutter={[16, 16]}>

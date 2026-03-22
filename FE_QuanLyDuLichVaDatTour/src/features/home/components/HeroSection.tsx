@@ -1,5 +1,5 @@
-import { Button, Card, Col, Input, Row, Space, Tag, Typography } from 'antd'
-import { heroStats, searchSuggestions } from '../data/homeMocks'
+import { Button, Card, Col, Row, Space, Typography } from 'antd'
+import { heroStats } from '../data/homeMocks'
 
 const { Paragraph, Text, Title } = Typography
 
@@ -11,56 +11,30 @@ export function HeroSection() {
         <Space direction="vertical" size={22} className="hero-intro">
           <span className="hero-kicker">Khám phá Việt Nam</span>
 
-          <Space direction="vertical" size={12}>
+          <Space direction="vertical" size={14}>
             <Title level={1} className="hero-title" style={{ margin: 0 }}>
-              Khám phá vẻ đẹp Việt Nam qua những hành trình được thiết kế rõ ràng và dễ đặt tour
+              Khám phá vẻ đẹp Việt Nam
             </Title>
             <Paragraph className="hero-description">
-              Giao diện trang chủ được nâng cấp theo hướng landing page du lịch hiện đại: nổi bật
-              trải nghiệm khám phá, dễ xem danh mục tour, dễ tiếp cận tư vấn và sẵn sàng mở rộng
-              sang booking, lịch khởi hành, thanh toán và đánh giá.
+              Trải nghiệm những hành trình tuyệt vời, xem tour nổi bật, theo dõi lịch khởi hành và chọn chuyến đi phù hợp cho từng kế hoạch của bạn.
             </Paragraph>
           </Space>
 
-          <Space wrap size={12} className="hero-actions">
-            <Button type="primary" size="large" className="hero-primary-button" href="#danh-muc-tour">
-              Khám phá tour
+          <Space wrap size={16} className="hero-actions">
+            <Button type="primary" size="large" className="hero-primary-button" href="#tour-noi-bat">
+              Khám phá Tour
             </Button>
-            <Button size="large" className="hero-secondary-button" href="#tu-van-tour">
+            <Button size="large" className="hero-secondary-button" href="#danh-muc-tour">
               Tìm hiểu thêm
             </Button>
           </Space>
         </Space>
 
-        <Card className="hero-search" bordered={false}>
-          <Row gutter={[16, 16]} align="middle">
-            <Col xs={24} lg={9}>
-              <Text className="hero-search-label">Tìm nhanh theo điểm đến</Text>
-              <Input size="large" placeholder="Ví dụ: Đà Nẵng, Phú Quốc, Sapa" />
-            </Col>
-            <Col xs={24} lg={9}>
-              <Text className="hero-search-label">Gợi ý đang được ưu tiên phát triển</Text>
-              <Space wrap size={8} style={{ display: 'flex', marginTop: 10 }}>
-                {searchSuggestions.map((item) => (
-                  <Tag key={item.id} className="hero-suggestion-tag">
-                    {item.value}
-                  </Tag>
-                ))}
-              </Space>
-            </Col>
-            <Col xs={24} lg={6}>
-              <Button type="primary" size="large" block className="hero-search-button">
-                Tìm tour phù hợp
-              </Button>
-            </Col>
-          </Row>
-        </Card>
-
-        <Row gutter={[20, 20]} className="hero-stats-row">
+        <Row gutter={[24, 24]} className="hero-stats-row">
           {heroStats.map((item) => (
             <Col xs={24} md={8} key={item.id}>
               <Card className="hero-stat-card" bordered={false}>
-                <Space direction="vertical" size={6}>
+                <Space direction="vertical" size={8}>
                   <Title level={2} className="hero-stat-value" style={{ margin: 0 }}>
                     {item.value}
                   </Title>

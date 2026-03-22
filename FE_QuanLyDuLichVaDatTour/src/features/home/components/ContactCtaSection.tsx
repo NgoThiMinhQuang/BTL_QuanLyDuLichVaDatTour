@@ -7,18 +7,17 @@ export function ContactCtaSection() {
     <Card id="tu-van-tour" className="home-section cta-section" bordered={false}>
       <Space direction="vertical" size={16} style={{ width: '100%' }}>
         <Title level={2} className="cta-title" style={{ margin: 0 }}>
-          Bạn muốn tư vấn lịch trình, giá tour hoặc hỗ trợ booking?
+          Bạn cần tư vấn để chọn tour, lịch khởi hành hoặc ngân sách phù hợp?
         </Title>
         <Paragraph className="cta-description" style={{ marginBottom: 0 }}>
-          Đây là vị trí hợp lý để mở rộng sang luồng liên hệ, phản hồi khách hàng, hỗ trợ đặt tour và
-          theo dõi booking sau này.
+          Hãy bắt đầu từ danh mục tour, xem các đợt khởi hành gần nhất hoặc để lại nhu cầu để được hỗ trợ chọn hành trình phù hợp với gia đình, nhóm bạn hay công ty.
         </Paragraph>
         <Space wrap>
-          <Button type="primary" size="large">
-            Liên hệ tư vấn
+          <Button type="primary" size="large" href="#tour-noi-bat">
+            Xem tour nổi bật
           </Button>
-          <Button size="large" ghost>
-            Xem lộ trình phát triển tiếp
+          <Button size="large" ghost href="#lich-khoi-hanh">
+            Xem lịch khởi hành
           </Button>
         </Space>
       </Space>

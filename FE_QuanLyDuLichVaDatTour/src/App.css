@@ -7,9 +7,8 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  padding: 10px 24px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(18px);
+  padding: 12px 28px;
+  background: #ffffff;
   border-bottom: 1px solid rgba(15, 23, 42, 0.06);
 }
 
@@ -19,29 +18,29 @@
   justify-content: space-between;
   gap: 24px;
   width: 100%;
-  max-width: 1320px;
+  max-width: 1360px;
   margin: 0 auto;
 }
 
 .app-brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  min-width: 220px;
+  gap: 14px;
+  min-width: 250px;
 }
 
 .app-brand-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #1677ff, #36cfc9);
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #2f80ed, #38d2c1);
   color: #fff;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
-  box-shadow: 0 12px 24px rgba(22, 119, 255, 0.2);
+  box-shadow: 0 12px 30px rgba(47, 128, 237, 0.22);
 }
 
 .app-brand-title.ant-typography {
@@ -51,8 +50,8 @@
 }
 
 .app-brand-subtitle.ant-typography {
-  color: #64748b;
-  font-size: 12px;
+  color: #7c8aa5;
+  font-size: 13px;
 }
 
 .app-menu {
@@ -67,12 +66,13 @@
 .app-menu.ant-menu-horizontal > .ant-menu-item,
 .app-menu.ant-menu-horizontal > .ant-menu-overflow-item {
   color: #0f172a;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 16px;
 }
 
 .app-menu.ant-menu-horizontal > .ant-menu-item::after,
 .app-menu.ant-menu-horizontal > .ant-menu-overflow-item::after {
-  border-bottom: 3px solid #1677ff;
+  border-bottom: 3px solid #2f80ed;
 }
 
 .app-header-actions {
@@ -81,15 +81,16 @@
 }
 
 .app-header-button {
-  height: 42px;
-  padding-inline: 18px;
-  border-radius: 12px;
+  height: 56px;
+  padding-inline: 28px;
+  border-radius: 18px;
   border: 1px solid rgba(15, 23, 42, 0.08);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 16px;
 }
 
 .app-header-button-primary {
-  box-shadow: 0 14px 28px rgba(22, 119, 255, 0.22);
+  box-shadow: 0 14px 30px rgba(47, 128, 237, 0.22);
 }
 
 .app-content {
@@ -118,25 +119,24 @@
 .hero-section {
   position: relative;
   width: 100%;
-  min-height: calc(100vh - 76px);
+  min-height: calc(100vh - 88px);
   border-radius: 0;
   box-shadow: none;
   background:
-    linear-gradient(180deg, rgba(8, 15, 37, 0.28), rgba(8, 15, 37, 0.58)),
-    linear-gradient(135deg, rgba(7, 55, 99, 0.55), rgba(5, 150, 105, 0.22)),
+    linear-gradient(180deg, rgba(8, 15, 37, 0.20), rgba(8, 15, 37, 0.45)),
     url('./assets/hero.png') center/cover no-repeat;
 }
 
 .hero-section .ant-card-body {
   position: relative;
-  min-height: calc(100vh - 76px);
+  min-height: calc(100vh - 88px);
   padding: 0;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(9, 19, 47, 0.08), rgba(9, 19, 47, 0.42));
+  background: rgba(14, 33, 60, 0.34);
 }
 
 .hero-content {
@@ -146,30 +146,30 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 28px;
-  min-height: calc(100vh - 76px);
+  gap: 34px;
+  min-height: calc(100vh - 88px);
   width: min(1320px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 120px 0 48px;
+  padding: 120px 0 64px;
   text-align: center;
 }
 
 .hero-intro {
   align-items: center;
-  width: min(860px, 100%);
+  width: min(1040px, 100%);
 }
 
 .hero-kicker {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 18px;
+  padding: 12px 22px;
   border-radius: 999px;
-  background: rgba(22, 119, 255, 0.9);
+  background: linear-gradient(90deg, #2f80ed, #35d0c2);
   color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  box-shadow: 0 12px 30px rgba(22, 119, 255, 0.28);
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 12px 30px rgba(47, 128, 237, 0.28);
 }
 
 .hero-title.ant-typography,
@@ -180,18 +180,18 @@
 }
 
 .hero-title.ant-typography {
-  font-size: clamp(42px, 6vw, 74px);
-  line-height: 1.08;
+  font-size: clamp(56px, 7vw, 102px);
+  line-height: 1.05;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
 
 .hero-description.ant-typography {
-  max-width: 760px;
+  max-width: 920px;
   margin: 0 auto !important;
-  color: rgba(255, 255, 255, 0.86) !important;
+  color: rgba(255, 255, 255, 0.88) !important;
   font-size: 18px;
-  line-height: 1.75;
+  line-height: 1.8;
 }
 
 .hero-actions {
@@ -199,16 +199,17 @@
 }
 
 .hero-primary-button,
-.hero-secondary-button,
-.hero-search-button {
-  height: 54px;
-  padding-inline: 28px;
-  border-radius: 16px;
+.hero-secondary-button {
+  height: 60px;
+  min-width: 240px;
+  padding-inline: 30px;
+  border-radius: 18px;
   font-weight: 700;
+  font-size: 18px;
 }
 
 .hero-primary-button {
-  box-shadow: 0 18px 36px rgba(22, 119, 255, 0.3);
+  box-shadow: 0 18px 36px rgba(17, 171, 123, 0.28);
 }
 
 .hero-secondary-button {
@@ -224,67 +225,35 @@
   background: rgba(255, 255, 255, 0.14) !important;
 }
 
-.hero-search {
-  width: min(1080px, 100%);
-  margin-top: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 26px 60px rgba(15, 23, 42, 0.2);
-}
-
-.hero-search .ant-card-body {
-  padding: 22px;
-}
-
-.hero-search .ant-input {
-  border-radius: 14px;
-  border: none;
-}
-
-.hero-search-label.ant-typography {
-  display: block;
-  margin-bottom: 8px;
-  color: rgba(255, 255, 255, 0.76) !important;
-  font-size: 13px;
-}
-
-.hero-suggestion-tag {
-  padding: 7px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-}
-
 .hero-stats-row {
-  width: min(920px, 100%);
+  width: min(980px, 100%);
   justify-content: center;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .hero-stat-card {
   height: 100%;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 24px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(16px);
   box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
 }
 
 .hero-stat-card .ant-card-body {
-  padding: 28px 24px;
+  padding: 30px 24px;
   text-align: center;
 }
 
 .hero-stat-value.ant-typography {
-  font-size: clamp(32px, 4vw, 56px);
+  font-size: clamp(34px, 4vw, 64px);
   font-weight: 800;
 }
 
 .hero-stat-label.ant-typography {
-  color: rgba(255, 255, 255, 0.82) !important;
-  font-size: 15px;
+  color: rgba(255, 255, 255, 0.84) !important;
+  font-size: 16px;
 }
 
 .section-header {
@@ -306,26 +275,34 @@
 .category-card,
 .featured-tour-card,
 .benefit-card,
-.review-card {
+.review-card,
+.departure-card {
   height: 100%;
   border-radius: 24px;
   border: 1px solid rgba(15, 23, 42, 0.06);
   box-shadow: 0 18px 42px rgba(15, 23, 42, 0.06);
 }
 
-.category-card {
+.category-card,
+.featured-tour-card,
+.review-card,
+.benefit-card,
+.departure-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .category-card:hover,
 .featured-tour-card:hover,
 .review-card:hover,
-.benefit-card:hover {
+.benefit-card:hover,
+.departure-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 24px 50px rgba(15, 23, 42, 0.1);
 }
 
-.category-card .ant-tag {
+.category-card .ant-tag,
+.departure-card .ant-tag,
+.featured-tour-card .ant-tag {
   margin-inline-end: 0;
   border-radius: 999px;
   padding-inline: 10px;
@@ -337,7 +314,7 @@
 
 .featured-tour-cover {
   position: relative;
-  min-height: 220px;
+  min-height: 240px;
   border-radius: 20px;
   background:
     linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.34)),
@@ -348,16 +325,21 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(22, 119, 255, 0.28), rgba(54, 207, 201, 0.08));
+  background: linear-gradient(135deg, rgba(22, 119, 255, 0.22), rgba(54, 207, 201, 0.06));
   border-radius: inherit;
 }
 
-.featured-tour-meta {
+.featured-tour-meta,
+.departure-meta {
   color: #667085;
 }
 
 .featured-tour-price.ant-typography {
   color: #1677ff !important;
+}
+
+.departures-section {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
 }
 
 .promo-section {
@@ -424,80 +406,84 @@
 
 @media (max-width: 992px) {
   .app-header {
-    padding: 12px 16px;
+    padding-inline: 16px;
   }
 
   .app-header-inner {
-    flex-direction: column;
-    align-items: stretch;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
-  .app-brand {
-    min-width: unset;
+  .app-brand,
+  .app-header-actions {
+    min-width: auto;
+    width: 100%;
+    justify-content: center;
   }
 
   .app-menu {
-    justify-content: flex-start;
-  }
-
-  .app-header-actions {
-    justify-content: stretch;
-  }
-
-  .app-header-actions .ant-space-item,
-  .app-header-actions .ant-btn {
+    order: 3;
     width: 100%;
   }
 
+  .hero-content {
+    padding-top: 110px;
+  }
+}
+
+@media (max-width: 768px) {
   .home-page {
     gap: 24px;
   }
 
   .home-section {
-    width: min(100%, calc(100% - 20px));
+    width: min(100%, calc(100% - 24px));
+    border-radius: 22px;
   }
 
   .home-section .ant-card-body {
-    padding: 22px;
-  }
-
-  .hero-section,
-  .hero-section .ant-card-body,
-  .hero-content {
-    min-height: auto;
+    padding: 24px;
   }
 
   .hero-content {
+    gap: 24px;
+    width: min(100%, calc(100% - 24px));
     padding: 96px 0 32px;
-    gap: 20px;
   }
 
   .hero-title.ant-typography {
-    font-size: 38px;
+    font-size: clamp(38px, 11vw, 62px);
   }
 
   .hero-description.ant-typography {
     font-size: 16px;
+    line-height: 1.7;
   }
 
-  .hero-search .ant-card-body {
-    padding: 18px;
+  .hero-primary-button,
+  .hero-secondary-button {
+    min-width: 220px;
   }
 }
 
 @media (max-width: 576px) {
+  .app-header {
+    padding-inline: 12px;
+  }
+
   .app-header-button,
   .hero-primary-button,
-  .hero-secondary-button,
-  .hero-search-button {
+  .hero-secondary-button {
     width: 100%;
   }
 
-  .hero-title.ant-typography {
-    font-size: 32px;
+  .hero-actions,
+  .app-header-actions {
+    width: 100%;
   }
 
-  .hero-content {
-    width: min(100%, calc(100% - 20px));
+  .hero-stat-card .ant-card-body,
+  .cta-section .ant-card-body {
+    padding-inline: 20px;
   }
 }

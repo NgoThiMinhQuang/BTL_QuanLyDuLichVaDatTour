@@ -1,15 +1,9 @@
-import type {
-  BenefitItem,
-  FeaturedTour,
-  HeroStat,
-  ReviewItem,
-  SearchSuggestion,
-} from '../types/home'
+import type { BenefitItem, HeroStat, ReviewItem, SearchSuggestion } from '../types/home'
 
 export const heroStats: HeroStat[] = [
-  { id: 1, label: 'Danh mục đang mở', value: 'Nhiều loại tour' },
-  { id: 2, label: 'Hỗ trợ tư vấn', value: '24/7 nhanh chóng' },
-  { id: 3, label: 'Hình thức giá', value: 'Ngày thường & cuối tuần' },
+  { id: 1, label: 'Hành trình nổi bật', value: '500+' },
+  { id: 2, label: 'Khách hàng tin chọn', value: '10K+' },
+  { id: 3, label: 'Điểm đến hấp dẫn', value: '50+' },
 ]
 
 export const searchSuggestions: SearchSuggestion[] = [
@@ -18,65 +12,29 @@ export const searchSuggestions: SearchSuggestion[] = [
   { id: 3, label: 'Khởi hành gợi ý', value: 'Cuối tuần này' },
 ]
 
-export const featuredTours: FeaturedTour[] = [
-  {
-    id: 1,
-    title: 'Đà Nẵng - Hội An - Bà Nà',
-    subtitle: 'Hành trình biển và phố cổ phù hợp gia đình',
-    duration: '3 ngày 2 đêm',
-    transport: 'Máy bay + xe du lịch',
-    location: 'Miền Trung',
-    departure: 'Khởi hành thứ 6 hằng tuần',
-    price: 'Từ 3.490.000đ',
-    highlight: 'Lịch trình rõ ràng, dễ đặt theo nhóm',
-  },
-  {
-    id: 2,
-    title: 'Phú Quốc nghỉ dưỡng cao cấp',
-    subtitle: 'Kết hợp vui chơi và nghỉ dưỡng cuối tuần',
-    duration: '3 ngày 2 đêm',
-    transport: 'Máy bay',
-    location: 'Miền Nam',
-    departure: 'Khởi hành thứ 5 và thứ 7',
-    price: 'Từ 4.990.000đ',
-    highlight: 'Phù hợp khách muốn đặt tour nhanh',
-  },
-  {
-    id: 3,
-    title: 'Sapa - Fansipan săn mây',
-    subtitle: 'Tour thiên nhiên cho nhóm bạn và công ty',
-    duration: '4 ngày 3 đêm',
-    transport: 'Xe giường nằm + cáp treo',
-    location: 'Miền Bắc',
-    departure: 'Khởi hành theo đợt',
-    price: 'Từ 3.850.000đ',
-    highlight: 'Dễ theo dõi lịch khởi hành và chỗ trống',
-  },
-]
-
 export const benefitItems: BenefitItem[] = [
   {
     id: 1,
-    title: 'Đặt tour đúng nghiệp vụ',
-    description: 'Khách hàng chọn theo lịch khởi hành cụ thể thay vì đặt tour chung chung.',
+    title: 'Lịch trình rõ ràng',
+    description: 'Dễ xem từng ngày trong tour để biết hành trình, thời gian và điểm dừng nổi bật trước khi đặt.',
     icon: '🗓️',
   },
   {
     id: 2,
-    title: 'Giá minh bạch',
-    description: 'Dễ mở rộng giá ngày thường, cuối tuần và giá theo từng nhóm khách.',
-    icon: '💳',
+    title: 'Khởi hành linh hoạt',
+    description: 'Theo dõi các đợt khởi hành sắp tới để chủ động chọn thời gian phù hợp với gia đình hoặc nhóm bạn.',
+    icon: '🧳',
   },
   {
     id: 3,
-    title: 'Theo dõi booking thuận tiện',
-    description: 'Hỗ trợ luồng đặt tour, thanh toán và xác nhận dịch vụ nhất quán.',
-    icon: '📋',
+    title: 'Giá minh bạch',
+    description: 'Thông tin giá được hiển thị rõ ràng để bạn dễ so sánh tour, ngân sách và kế hoạch chuyến đi.',
+    icon: '💳',
   },
   {
     id: 4,
-    title: 'Hỗ trợ khách hàng nhanh',
-    description: 'Phù hợp với nghiệp vụ liên hệ, phản hồi và chăm sóc sau chuyến đi.',
+    title: 'Hỗ trợ nhanh chóng',
+    description: 'Luôn sẵn sàng hỗ trợ tư vấn tour, chọn lịch khởi hành và giải đáp các bước đặt chuyến đi phù hợp.',
     icon: '🎧',
   },
 ]
@@ -87,20 +45,20 @@ export const reviewItems: ReviewItem[] = [
     name: 'Nguyễn Minh Anh',
     tour: 'Đà Nẵng - Hội An',
     rating: 5,
-    comment: 'Giao diện rõ ràng, dễ xem thông tin tour và phù hợp để mở rộng phần đặt chỗ sau này.',
+    comment: 'Trang chủ dễ nhìn, xem tour nhanh và phần lịch khởi hành giúp mình chọn chuyến phù hợp mà không bị rối.',
   },
   {
     id: 2,
     name: 'Trần Thu Hà',
     tour: 'Phú Quốc nghỉ dưỡng',
     rating: 5,
-    comment: 'Các phần giá, lịch trình và hỗ trợ tư vấn được sắp xếp hợp lý như một website đặt tour thực tế.',
+    comment: 'Mình thích cách hiển thị tour nổi bật và ưu đãi, cảm giác giống một website đặt tour thực tế hơn nhiều.',
   },
   {
     id: 3,
     name: 'Lê Hoàng Nam',
     tour: 'Sapa săn mây',
     rating: 4,
-    comment: 'Trang chủ tạo được cảm giác chuyên nghiệp và đúng hướng bài toán quản lý du lịch.',
+    comment: 'Giao diện hiện đại, rõ ràng và hợp với nhu cầu xem nhanh điểm đến, thời lượng tour và các đợt khởi hành gần nhất.',
   },
 ]

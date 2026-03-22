@@ -5,16 +5,32 @@ export interface TourCategory {
   trangThai: string
 }
 
-export interface FeaturedTour {
+export interface FeaturedTourApiItem {
   id: number
-  title: string
-  subtitle: string
-  duration: string
-  transport: string
-  location: string
-  departure: string
-  price: string
-  highlight: string
+  maTour: string
+  tenTour: string
+  tenLoaiTour: string
+  tenDiaDiemKhoiHanh: string
+  soNgay: number
+  soDem: number
+  phuongTien: string | null
+  moTaNgan: string | null
+  giaNguoiLonMacDinh: number | null
+  giaTreEmMacDinh: number | null
+  trangThai: string
+}
+
+export interface DepartureItem {
+  id: number
+  tourId: number
+  maTour: string
+  tenTour: string
+  maDotTour: string
+  ngayKhoiHanh: string
+  ngayKetThuc: string
+  noiTapTrung: string | null
+  soChoToiDa: number
+  trangThai: string
 }
 
 export interface BenefitItem {

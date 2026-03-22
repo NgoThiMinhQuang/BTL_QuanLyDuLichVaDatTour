@@ -21,6 +21,8 @@ public class AppDbContext : DbContext
 
     public DbSet<LichKhoiHanh> LichKhoiHanhs => Set<LichKhoiHanh>();
 
+    public DbSet<Booking> Bookings => Set<Booking>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -426,6 +428,185 @@ public class AppDbContext : DbContext
             entity.HasOne(x => x.Tour)
                 .WithMany()
                 .HasForeignKey(x => x.TourId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Booking>(entity =>
+        {
+            entity.ToTable("booking");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("id")
+                .HasColumnType("bigint unsigned")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.MaBooking)
+                .HasColumnName("ma_booking")
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.Property(x => x.LichKhoiHanhId)
+                .HasColumnName("lich_khoi_hanh_id")
+                .HasColumnType("bigint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.NguoiDungId)
+                .HasColumnName("nguoi_dung_id")
+                .HasColumnType("bigint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.VoucherId)
+                .HasColumnName("voucher_id")
+                .HasColumnType("bigint unsigned");
+
+            entity.Property(x => x.HoTenLienHe)
+                .HasColumnName("ho_ten_lien_he")
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(x => x.EmailLienHe)
+                .HasColumnName("email_lien_he")
+                .HasMaxLength(255)
+                .IsRequired();
+
+            entity.Property(x => x.SoDienThoaiLienHe)
+                .HasColumnName("so_dien_thoai_lien_he")
+                .HasMaxLength(20)
+                .IsRequired();
+
+            entity.Property(x => x.DiaChiLienHe)
+                .HasColumnName("dia_chi_lien_he")
+                .HasMaxLength(300);
+
+            entity.Property(x => x.NgayDat)
+                .HasColumnName("ngay_dat")
+                .HasColumnType("datetime")
+                .IsRequired();
+
+            entity.Property(x => x.SoNguoiLon)
+                .HasColumnName("so_nguoi_lon")
+                .HasColumnType("smallint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.SoTreEm)
+                .HasColumnName("so_tre_em")
+                .HasColumnType("smallint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.SoEmBe)
+                .HasColumnName("so_em_be")
+                .HasColumnType("smallint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.LoaiGiaApDung)
+                .HasColumnName("loai_gia_ap_dung")
+                .HasColumnType("enum('ngay_thuong','cuoi_tuan')")
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(x => x.DonGiaNguoiLon)
+                .HasColumnName("don_gia_nguoi_lon")
+                .HasColumnType("decimal(15,2)")
+                .IsRequired();
+
+            entity.Property(x => x.DonGiaTreEm)
+                .HasColumnName("don_gia_tre_em")
+                .HasColumnType("decimal(15,2)")
+                .IsRequired();
+
+            entity.Property(x => x.DonGiaEmBe)
+                .HasColumnName("don_gia_em_be")
+                .HasColumnType("decimal(15,2)")
+                .IsRequired();
+
+            entity.Property(x => x.TamTinh)
+                .HasColumnName("tam_tinh")
+                .HasColumnType("decimal(15,2)")
+                .IsRequired();
+
+            entity.Property(x => x.GiamGia)
+                .HasColumnName("giam_gia")
+                .HasColumnType("decimal(15,2)")
+                .IsRequired();
+
+            entity.Property(x => x.TongTien)
+                .HasColumnName("tong_tien")
+                .HasColumnType("decimal(15,2)")
+                .IsRequired();
+
+            entity.Property(x => x.SoTienDaThanhToan)
+                .HasColumnName("so_tien_da_thanh_toan")
+                .HasColumnType("decimal(15,2)")
+                .IsRequired();
+
+            entity.Property(x => x.TienCocYeuCau)
+                .HasColumnName("tien_coc_yeu_cau")
+                .HasColumnType("decimal(15,2)")
+                .IsRequired();
+
+            entity.Property(x => x.PhuongThucThanhToanDuKien)
+                .HasColumnName("phuong_thuc_thanh_toan_du_kien")
+                .HasColumnType("enum('tien_mat','chuyen_khoan','the','vi_dien_tu','cong_thanh_toan')")
+                .HasConversion<string>();
+
+            entity.Property(x => x.TrangThaiBooking)
+                .HasColumnName("trang_thai_booking")
+                .HasColumnType("enum('moi_tao','cho_thanh_toan','da_coc','da_xac_nhan','da_huy','hoan_tat')")
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(x => x.TrangThaiThanhToan)
+                .HasColumnName("trang_thai_thanh_toan")
+                .HasColumnType("enum('chua_thanh_toan','thanh_toan_mot_phan','da_thanh_toan_du','that_bai','da_hoan_tien')")
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(x => x.HanThanhToan)
+                .HasColumnName("han_thanh_toan")
+                .HasColumnType("datetime");
+
+            entity.Property(x => x.GhiChu)
+                .HasColumnName("ghi_chu")
+                .HasColumnType("text");
+
+            entity.Property(x => x.NguoiXacNhanId)
+                .HasColumnName("nguoi_xac_nhan_id")
+                .HasColumnType("bigint unsigned");
+
+            entity.Property(x => x.ThoiGianXacNhan)
+                .HasColumnName("thoi_gian_xac_nhan")
+                .HasColumnType("datetime");
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("created_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAddOrUpdate();
+
+            entity.HasIndex(x => x.MaBooking)
+                .IsUnique();
+
+            entity.HasOne(x => x.LichKhoiHanh)
+                .WithMany()
+                .HasForeignKey(x => x.LichKhoiHanhId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.NguoiDung)
+                .WithMany()
+                .HasForeignKey(x => x.NguoiDungId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.NguoiXacNhan)
+                .WithMany()
+                .HasForeignKey(x => x.NguoiXacNhanId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }
