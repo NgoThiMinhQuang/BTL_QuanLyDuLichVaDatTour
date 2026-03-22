@@ -7,7 +7,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  padding: 12px 28px;
+  padding: 10px 28px;
   background: #ffffff;
   border-bottom: 1px solid rgba(15, 23, 42, 0.06);
 }
@@ -27,18 +27,19 @@
   align-items: center;
   gap: 14px;
   min-width: 250px;
+  line-height: 1;
 }
 
 .app-brand-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 58px;
-  height: 58px;
-  border-radius: 18px;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #2f80ed, #38d2c1);
   color: #fff;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   box-shadow: 0 12px 30px rgba(47, 128, 237, 0.22);
 }
@@ -47,11 +48,12 @@
   margin: 0 !important;
   color: #0f172a;
   font-weight: 800;
+  font-size: 24px !important;
+  line-height: 1.1 !important;
 }
 
 .app-brand-subtitle.ant-typography {
-  color: #7c8aa5;
-  font-size: 13px;
+  display: none;
 }
 
 .app-menu {
@@ -70,8 +72,8 @@
   font-size: 16px;
 }
 
-.app-menu.ant-menu-horizontal > .ant-menu-item::after,
-.app-menu.ant-menu-horizontal > .ant-menu-overflow-item::after {
+.app-menu.ant-menu-horizontal > .ant-menu-item-selected::after,
+.app-menu.ant-menu-horizontal > .ant-menu-overflow-item-selected::after {
   border-bottom: 3px solid #2f80ed;
 }
 
@@ -146,28 +148,34 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 34px;
+  gap: 28px;
   min-height: calc(100vh - 88px);
   width: min(1320px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 120px 0 64px;
+  padding: 108px 0 24px;
   text-align: center;
 }
 
 .hero-intro {
   align-items: center;
+  justify-content: center;
   width: min(1040px, 100%);
+}
+
+.hero-stats-wrap {
+  width: min(880px, 100%);
+  margin-top: 8px;
 }
 
 .hero-kicker {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 22px;
+  padding: 10px 20px;
   border-radius: 999px;
   background: linear-gradient(90deg, #2f80ed, #35d0c2);
   color: #ffffff;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   box-shadow: 0 12px 30px rgba(47, 128, 237, 0.28);
 }
@@ -180,18 +188,18 @@
 }
 
 .hero-title.ant-typography {
-  font-size: clamp(56px, 7vw, 102px);
-  line-height: 1.05;
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: 1.08;
   font-weight: 800;
   letter-spacing: -0.04em;
 }
 
 .hero-description.ant-typography {
-  max-width: 920px;
+  max-width: 760px;
   margin: 0 auto !important;
   color: rgba(255, 255, 255, 0.88) !important;
-  font-size: 18px;
-  line-height: 1.8;
+  font-size: 17px;
+  line-height: 1.65;
 }
 
 .hero-actions {
@@ -200,12 +208,12 @@
 
 .hero-primary-button,
 .hero-secondary-button {
-  height: 60px;
-  min-width: 240px;
-  padding-inline: 30px;
+  height: 56px;
+  min-width: 220px;
+  padding-inline: 28px;
   border-radius: 18px;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 17px;
 }
 
 .hero-primary-button {
@@ -226,34 +234,34 @@
 }
 
 .hero-stats-row {
-  width: min(980px, 100%);
+  width: 100%;
   justify-content: center;
-  padding-top: 16px;
+  padding-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .hero-stat-card {
   height: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(16px);
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
 }
 
 .hero-stat-card .ant-card-body {
-  padding: 30px 24px;
+  padding: 14px 16px;
   text-align: center;
 }
 
 .hero-stat-value.ant-typography {
-  font-size: clamp(34px, 4vw, 64px);
+  font-size: clamp(26px, 3vw, 44px);
   font-weight: 800;
 }
 
 .hero-stat-label.ant-typography {
   color: rgba(255, 255, 255, 0.84) !important;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .section-header {
@@ -425,10 +433,6 @@
     order: 3;
     width: 100%;
   }
-
-  .hero-content {
-    padding-top: 110px;
-  }
 }
 
 @media (max-width: 768px) {
@@ -446,23 +450,27 @@
   }
 
   .hero-content {
-    gap: 24px;
     width: min(100%, calc(100% - 24px));
-    padding: 96px 0 32px;
+    gap: 22px;
+    padding: 96px 0 18px;
   }
 
   .hero-title.ant-typography {
-    font-size: clamp(38px, 11vw, 62px);
+    font-size: clamp(36px, 11vw, 56px);
   }
 
   .hero-description.ant-typography {
-    font-size: 16px;
-    line-height: 1.7;
+    font-size: 15px;
+    line-height: 1.65;
   }
 
   .hero-primary-button,
   .hero-secondary-button {
-    min-width: 220px;
+    min-width: 200px;
+  }
+
+  .hero-stats-wrap {
+    width: 100%;
   }
 }
 

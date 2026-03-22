@@ -16,7 +16,7 @@ export function HeroSection() {
               Khám phá vẻ đẹp Việt Nam
             </Title>
             <Paragraph className="hero-description">
-              Trải nghiệm những hành trình tuyệt vời, xem tour nổi bật, theo dõi lịch khởi hành và chọn chuyến đi phù hợp cho từng kế hoạch của bạn.
+              Trải nghiệm những hành trình tuyệt vời và tạo nên kỷ niệm đáng nhớ cùng chúng tôi.
             </Paragraph>
           </Space>
 
@@ -30,20 +30,22 @@ export function HeroSection() {
           </Space>
         </Space>
 
-        <Row gutter={[24, 24]} className="hero-stats-row">
-          {heroStats.map((item) => (
-            <Col xs={24} md={8} key={item.id}>
-              <Card className="hero-stat-card" bordered={false}>
-                <Space direction="vertical" size={8}>
-                  <Title level={2} className="hero-stat-value" style={{ margin: 0 }}>
-                    {item.value}
-                  </Title>
-                  <Text className="hero-stat-label">{item.label}</Text>
-                </Space>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+        <div className="hero-stats-wrap">
+          <Row gutter={[20, 20]} className="hero-stats-row">
+            {heroStats.map((item) => (
+              <Col xs={24} md={8} key={item.id}>
+                <Card className="hero-stat-card" bordered={false}>
+                  <Space direction="vertical" size={8}>
+                    <Title level={2} className="hero-stat-value" style={{ margin: 0 }}>
+                      {item.value}
+                    </Title>
+                    <Text className="hero-stat-label">{item.label}</Text>
+                  </Space>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </div>
       </div>
     </Card>
   )
