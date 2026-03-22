@@ -40,12 +40,12 @@ export function HeroSection() {
             {heroStats.map((item) => (
               <Col xs={24} md={8} key={item.id}>
                 <Card className="hero-stat-card" bordered={false}>
-                  <Space direction="vertical" size={8}>
+                  <div className="hero-stat-content">
                     <Title level={2} className="hero-stat-value" style={{ margin: 0 }}>
                       {item.value}
                     </Title>
                     <Text className="hero-stat-label">{item.label}</Text>
-                  </Space>
+                  </div>
                 </Card>
               </Col>
             ))}
