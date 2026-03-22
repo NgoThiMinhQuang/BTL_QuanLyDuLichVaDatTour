@@ -49,11 +49,13 @@ builder.Services.AddScoped<ILoaiTourRepository, LoaiTourRepository>();
 builder.Services.AddScoped<IDiaDiemRepository, DiaDiemRepository>();
 builder.Services.AddScoped<ITourRepository, TourRepository>();
 builder.Services.AddScoped<ILichTrinhRepository, LichTrinhRepository>();
+builder.Services.AddScoped<ILichKhoiHanhRepository, LichKhoiHanhRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILoaiTourService, LoaiTourService>();
 builder.Services.AddScoped<IDiaDiemService, DiaDiemService>();
 builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<ILichTrinhService, LichTrinhService>();
+builder.Services.AddScoped<ILichKhoiHanhService, LichKhoiHanhService>();
 builder.Services.AddScoped<IPasswordHasher<NguoiDung>, PasswordHasher<NguoiDung>>();
 
 var app = builder.Build();

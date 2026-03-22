@@ -1,0 +1,32 @@
+namespace BLL.DTOs.LichKhoiHanh;
+
+public class LichKhoiHanhAdminResponseDto
+{
+    public ulong Id { get; set; }
+
+    public ulong TourId { get; set; }
+
+    public string MaTour { get; set; } = string.Empty;
+
+    public string TenTour { get; set; } = string.Empty;
+
+    public string MaDotTour { get; set; } = string.Empty;
+
+    public DateTime NgayKhoiHanh { get; set; }
+
+    public DateTime NgayKetThuc { get; set; }
+
+    public string? NoiTapTrung { get; set; }
+
+    public ushort SoChoToiDa { get; set; }
+
+    public string? GhiChu { get; set; }
+
+    public string? LyDoHuy { get; set; }
+
+    public string TrangThai { get; set; } = string.Empty;
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
+}

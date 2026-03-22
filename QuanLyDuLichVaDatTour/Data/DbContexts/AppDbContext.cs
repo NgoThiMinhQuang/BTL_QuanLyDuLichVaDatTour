@@ -19,6 +19,8 @@ public class AppDbContext : DbContext
 
     public DbSet<LichTrinh> LichTrinhs => Set<LichTrinh>();
 
+    public DbSet<LichKhoiHanh> LichKhoiHanhs => Set<LichKhoiHanh>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -346,6 +348,84 @@ public class AppDbContext : DbContext
             entity.HasOne(x => x.DiaDiem)
                 .WithMany()
                 .HasForeignKey(x => x.DiaDiemId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<LichKhoiHanh>(entity =>
+        {
+            entity.ToTable("lich_khoi_hanh");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("id")
+                .HasColumnType("bigint unsigned")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.TourId)
+                .HasColumnName("tour_id")
+                .HasColumnType("bigint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.MaDotTour)
+                .HasColumnName("ma_dot_tour")
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.Property(x => x.NgayKhoiHanh)
+                .HasColumnName("ngay_khoi_hanh")
+                .HasColumnType("date")
+                .IsRequired();
+
+            entity.Property(x => x.NgayKetThuc)
+                .HasColumnName("ngay_ket_thuc")
+                .HasColumnType("date")
+                .IsRequired();
+
+            entity.Property(x => x.NoiTapTrung)
+                .HasColumnName("noi_tap_trung")
+                .HasMaxLength(300);
+
+            entity.Property(x => x.SoChoToiDa)
+                .HasColumnName("so_cho_toi_da")
+                .HasColumnType("smallint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.GhiChu)
+                .HasColumnName("ghi_chu")
+                .HasMaxLength(500);
+
+            entity.Property(x => x.LyDoHuy)
+                .HasColumnName("ly_do_huy")
+                .HasMaxLength(500);
+
+            entity.Property(x => x.TrangThai)
+                .HasColumnName("trang_thai")
+                .HasColumnType("enum('mo_ban','het_cho','da_khoi_hanh','da_ket_thuc','da_huy')")
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("created_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAddOrUpdate();
+
+            entity.HasIndex(x => x.MaDotTour)
+                .IsUnique();
+
+            entity.HasIndex(x => new { x.TourId, x.NgayKhoiHanh, x.TrangThai })
+                .HasDatabaseName("idx_lich_khoi_hanh_tim_kiem");
+
+            entity.HasOne(x => x.Tour)
+                .WithMany()
+                .HasForeignKey(x => x.TourId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }
