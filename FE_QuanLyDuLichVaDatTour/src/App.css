@@ -124,9 +124,9 @@
   min-height: calc(100vh - 88px);
   border-radius: 0;
   box-shadow: none;
-  background:
-    linear-gradient(180deg, rgba(8, 15, 37, 0.20), rgba(8, 15, 37, 0.45)),
-    url('./assets/hero.png') center/cover no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .hero-section .ant-card-body {
@@ -148,30 +148,59 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 28px;
+  gap: 30px;
   min-height: calc(100vh - 88px);
   width: min(1320px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 108px 0 24px;
+  padding: 120px 0 18px;
   text-align: center;
 }
 
 .hero-intro {
   align-items: center;
   justify-content: center;
-  width: min(1040px, 100%);
+  width: min(1020px, 100%);
+  margin-top: 10px;
 }
 
 .hero-stats-wrap {
   width: min(880px, 100%);
+  margin-top: 18px;
+}
+
+.hero-intro > .ant-space-item:first-child {
+  margin-bottom: 8px;
+}
+
+.hero-intro > .ant-space-item:last-child {
   margin-top: 8px;
+}
+
+.hero-intro > .ant-space-item:nth-child(2) {
+  width: 100%;
+}
+
+.hero-intro > .ant-space-item:nth-child(2) .ant-space {
+  width: 100%;
+}
+
+.hero-intro > .ant-space-item:nth-child(2) .ant-space-item {
+  width: 100%;
+}
+
+.hero-actions {
+  justify-content: center;
+}
+
+.hero-actions .ant-space-item {
+  width: auto;
 }
 
 .hero-kicker {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 20px;
+  padding: 10px 22px;
   border-radius: 999px;
   background: linear-gradient(90deg, #2f80ed, #35d0c2);
   color: #ffffff;
@@ -188,30 +217,28 @@
 }
 
 .hero-title.ant-typography {
-  font-size: clamp(42px, 5vw, 72px);
+  max-width: 1080px;
+  margin: 0 auto !important;
+  font-size: clamp(44px, 5vw, 78px);
   line-height: 1.08;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
 }
 
 .hero-description.ant-typography {
-  max-width: 760px;
+  max-width: 900px;
   margin: 0 auto !important;
   color: rgba(255, 255, 255, 0.88) !important;
   font-size: 17px;
   line-height: 1.65;
 }
 
-.hero-actions {
-  justify-content: center;
-}
-
 .hero-primary-button,
 .hero-secondary-button {
   height: 56px;
-  min-width: 220px;
+  min-width: 230px;
   padding-inline: 28px;
-  border-radius: 18px;
+  border-radius: 16px;
   font-weight: 700;
   font-size: 17px;
 }
@@ -236,21 +263,21 @@
 .hero-stats-row {
   width: 100%;
   justify-content: center;
-  padding-top: 10px;
+  padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .hero-stat-card {
   height: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
 }
 
 .hero-stat-card .ant-card-body {
-  padding: 14px 16px;
+  padding: 16px 16px;
   text-align: center;
 }
 
@@ -262,6 +289,137 @@
 .hero-stat-label.ant-typography {
   color: rgba(255, 255, 255, 0.84) !important;
   font-size: 14px;
+}
+
+.hero-intro .ant-space-item {
+  width: 100%;
+}
+
+.hero-intro > .ant-space-item:first-child {
+  width: auto;
+}
+
+.hero-intro > .ant-space-item:last-child {
+  width: auto;
+}
+
+.hero-intro > .ant-space-item:nth-child(2) {
+  width: 100%;
+}
+
+.hero-intro > .ant-space-item:nth-child(2) .ant-space {
+  width: 100%;
+}
+
+.hero-intro > .ant-space-item:nth-child(2) .ant-space-item {
+  width: 100%;
+}
+
+.hero-actions {
+  justify-content: center;
+}
+
+.hero-actions .ant-space-item {
+  width: auto;
+}
+
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2f80ed, #35d0c2);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 12px 30px rgba(47, 128, 237, 0.28);
+}
+
+.hero-title.ant-typography,
+.hero-description.ant-typography,
+.hero-stat-label.ant-typography,
+.hero-stat-value.ant-typography {
+  color: #ffffff !important;
+}
+
+.hero-title.ant-typography {
+  max-width: 980px;
+  margin: 0 auto !important;
+  font-size: clamp(38px, 4.5vw, 64px);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.hero-description.ant-typography {
+  max-width: 720px;
+  margin: 0 auto !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  justify-content: center;
+}
+
+.hero-primary-button,
+.hero-secondary-button {
+  height: 52px;
+  min-width: 210px;
+  padding-inline: 24px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.hero-primary-button {
+  box-shadow: 0 18px 36px rgba(17, 171, 123, 0.28);
+}
+
+.hero-secondary-button {
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.hero-secondary-button:hover,
+.hero-secondary-button:focus {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.68) !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+}
+
+.hero-stats-row {
+  width: 100%;
+  justify-content: center;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.hero-stat-card {
+  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+}
+
+.hero-stat-card .ant-card-body {
+  padding: 12px 14px;
+  text-align: center;
+}
+
+.hero-stat-value.ant-typography {
+  font-size: clamp(22px, 2.6vw, 38px);
+  font-weight: 800;
+}
+
+.hero-stat-label.ant-typography {
+  color: rgba(255, 255, 255, 0.84) !important;
+  font-size: 13px;
 }
 
 .section-header {
@@ -451,26 +609,31 @@
 
   .hero-content {
     width: min(100%, calc(100% - 24px));
-    gap: 22px;
-    padding: 96px 0 18px;
+    gap: 18px;
+    padding: 104px 0 16px;
   }
 
   .hero-title.ant-typography {
-    font-size: clamp(36px, 11vw, 56px);
+    font-size: clamp(34px, 10vw, 56px);
   }
 
   .hero-description.ant-typography {
     font-size: 15px;
-    line-height: 1.65;
+    line-height: 1.6;
   }
 
   .hero-primary-button,
   .hero-secondary-button {
-    min-width: 200px;
+    min-width: 190px;
   }
 
   .hero-stats-wrap {
     width: 100%;
+    margin-top: 8px;
+  }
+
+  .hero-stat-card .ant-card-body {
+    padding: 14px 14px;
   }
 }
 

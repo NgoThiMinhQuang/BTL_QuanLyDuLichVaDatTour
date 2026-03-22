@@ -1,11 +1,16 @@
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
+import bannerImage from '../../../img/Banner.jpg'
 import { heroStats } from '../data/homeMocks'
+
+const heroBackgroundStyle = {
+  backgroundImage: `linear-gradient(180deg, rgba(8, 15, 37, 0.20), rgba(8, 15, 37, 0.45)), url(${bannerImage})`,
+}
 
 const { Paragraph, Text, Title } = Typography
 
 export function HeroSection() {
   return (
-    <Card className="home-section hero-section" bordered={false}>
+    <Card className="home-section hero-section" bordered={false} style={heroBackgroundStyle}>
       <div className="hero-overlay" />
       <div className="hero-content">
         <Space direction="vertical" size={22} className="hero-intro">
