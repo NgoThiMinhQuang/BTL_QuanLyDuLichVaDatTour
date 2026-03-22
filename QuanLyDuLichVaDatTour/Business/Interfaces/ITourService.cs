@@ -17,4 +17,6 @@ public interface ITourService
     Task<TourAdminResponseDto> UpdateAsync(ulong id, UpdateTourRequestDto request);
 
     Task UpdateStatusAsync(ulong id, UpdateTourStatusRequestDto request);
+
+    Task HideAsync(ulong id);
 }

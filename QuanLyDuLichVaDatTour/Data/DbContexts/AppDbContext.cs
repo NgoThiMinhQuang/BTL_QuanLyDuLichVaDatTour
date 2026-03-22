@@ -17,6 +17,8 @@ public class AppDbContext : DbContext
 
     public DbSet<Tour> Tours => Set<Tour>();
 
+    public DbSet<LichTrinh> LichTrinhs => Set<LichTrinh>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -272,6 +274,78 @@ public class AppDbContext : DbContext
             entity.HasOne(x => x.DiaDiemKhoiHanh)
                 .WithMany()
                 .HasForeignKey(x => x.DiaDiemKhoiHanhId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<LichTrinh>(entity =>
+        {
+            entity.ToTable("lich_trinh");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("id")
+                .HasColumnType("bigint unsigned")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.TourId)
+                .HasColumnName("tour_id")
+                .HasColumnType("bigint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.NgayThu)
+                .HasColumnName("ngay_thu")
+                .HasColumnType("tinyint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.ThuTuTrongNgay)
+                .HasColumnName("thu_tu_trong_ngay")
+                .HasColumnType("smallint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.GioBatDau)
+                .HasColumnName("gio_bat_dau")
+                .HasColumnType("time");
+
+            entity.Property(x => x.GioKetThuc)
+                .HasColumnName("gio_ket_thuc")
+                .HasColumnType("time");
+
+            entity.Property(x => x.TieuDe)
+                .HasColumnName("tieu_de")
+                .HasMaxLength(300);
+
+            entity.Property(x => x.NoiDung)
+                .HasColumnName("noi_dung")
+                .HasColumnType("text");
+
+            entity.Property(x => x.DiaDiemId)
+                .HasColumnName("dia_diem_id")
+                .HasColumnType("bigint unsigned");
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("created_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAddOrUpdate();
+
+            entity.HasIndex(x => new { x.TourId, x.NgayThu, x.ThuTuTrongNgay })
+                .IsUnique();
+
+            entity.HasOne(x => x.Tour)
+                .WithMany()
+                .HasForeignKey(x => x.TourId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.DiaDiem)
+                .WithMany()
+                .HasForeignKey(x => x.DiaDiemId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

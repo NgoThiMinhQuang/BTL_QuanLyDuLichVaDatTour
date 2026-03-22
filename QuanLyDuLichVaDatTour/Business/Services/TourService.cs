@@ -140,6 +140,17 @@ public class TourService : ITourService
         await _tourRepository.SaveChangesAsync();
     }
 
+    public async Task HideAsync(ulong id)
+    {
+        var tour = await _tourRepository.GetTrackedByIdAsync(id)
+            ?? throw new KeyNotFoundException("Tour không tồn tại.");
+
+        tour.TrangThai = TrangThaiTour.an;
+        tour.UpdatedAt = DateTime.UtcNow;
+
+        await _tourRepository.SaveChangesAsync();
+    }
+
     private async Task EnsureMaTourIsUniqueAsync(string maTour, ulong? currentId = null)
     {
         var existingTour = await _tourRepository.GetByMaTourAsync(maTour);

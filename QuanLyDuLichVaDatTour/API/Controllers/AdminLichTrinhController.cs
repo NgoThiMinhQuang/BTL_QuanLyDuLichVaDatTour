@@ -1,4 +1,4 @@
-using BLL.DTOs.Tour;
+using BLL.DTOs.LichTrinh;
 using BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,20 +7,20 @@ namespace API.Controllers;
 
 [ApiController]
 [Authorize(Roles = "admin")]
-[Route("api/admin/tour")]
-public class AdminTourController : ControllerBase
+[Route("api/admin/lich-trinh")]
+public class AdminLichTrinhController : ControllerBase
 {
-    private readonly ITourService _tourService;
+    private readonly ILichTrinhService _lichTrinhService;
 
-    public AdminTourController(ITourService tourService)
+    public AdminLichTrinhController(ILichTrinhService lichTrinhService)
     {
-        _tourService = tourService;
+        _lichTrinhService = lichTrinhService;
     }
 
     [HttpGet("get-all")]
     public async Task<IActionResult> GetAll()
     {
-        var response = await _tourService.GetAllAsync();
+        var response = await _lichTrinhService.GetAllAsync();
         return Ok(response);
     }
 
@@ -29,7 +29,21 @@ public class AdminTourController : ControllerBase
     {
         try
         {
-            var response = await _tourService.GetByIdAsync(id);
+            var response = await _lichTrinhService.GetByIdAsync(id);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("get-by-tour/{tourId}")]
+    public async Task<IActionResult> GetByTourId(ulong tourId)
+    {
+        try
+        {
+            var response = await _lichTrinhService.GetByTourIdAsync(tourId);
             return Ok(response);
         }
         catch (KeyNotFoundException ex)
@@ -39,7 +53,7 @@ public class AdminTourController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] CreateTourRequestDto request)
+    public async Task<IActionResult> Create([FromBody] CreateLichTrinhRequestDto request)
     {
         if (!ModelState.IsValid)
         {
@@ -48,7 +62,7 @@ public class AdminTourController : ControllerBase
 
         try
         {
-            var response = await _tourService.CreateAsync(request);
+            var response = await _lichTrinhService.CreateAsync(request);
             return StatusCode(StatusCodes.Status201Created, response);
         }
         catch (InvalidOperationException ex)
@@ -62,7 +76,7 @@ public class AdminTourController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    public async Task<IActionResult> Update(ulong id, [FromBody] UpdateTourRequestDto request)
+    public async Task<IActionResult> Update(ulong id, [FromBody] UpdateLichTrinhRequestDto request)
     {
         if (!ModelState.IsValid)
         {
@@ -71,7 +85,7 @@ public class AdminTourController : ControllerBase
 
         try
         {
-            var response = await _tourService.UpdateAsync(id, request);
+            var response = await _lichTrinhService.UpdateAsync(id, request);
             return Ok(response);
         }
         catch (InvalidOperationException ex)
@@ -84,31 +98,12 @@ public class AdminTourController : ControllerBase
         }
     }
 
-    [HttpPatch("update-status/{id}")]
-    public async Task<IActionResult> UpdateStatus(ulong id, [FromBody] UpdateTourStatusRequestDto request)
-    {
-        if (!ModelState.IsValid)
-        {
-            return ValidationProblem(ModelState);
-        }
-
-        try
-        {
-            await _tourService.UpdateStatusAsync(id, request);
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-    }
-
-    [HttpPatch("hide/{id}")]
-    public async Task<IActionResult> Hide(ulong id)
+    [HttpDelete("delete/{id}")]
+    public async Task<IActionResult> Delete(ulong id)
     {
         try
         {
-            await _tourService.HideAsync(id);
+            await _lichTrinhService.DeleteAsync(id);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
