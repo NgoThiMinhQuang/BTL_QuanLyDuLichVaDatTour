@@ -52,6 +52,7 @@ builder.Services.AddScoped<ILichTrinhRepository, LichTrinhRepository>();
 builder.Services.AddScoped<ILichKhoiHanhRepository, LichKhoiHanhRepository>();
 builder.Services.AddScoped<IBangGiaLichKhoiHanhRepository, BangGiaLichKhoiHanhRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILoaiTourService, LoaiTourService>();
 builder.Services.AddScoped<IDiaDiemService, DiaDiemService>();
@@ -59,6 +60,7 @@ builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<ILichTrinhService, LichTrinhService>();
 builder.Services.AddScoped<ILichKhoiHanhService, LichKhoiHanhService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPasswordHasher<NguoiDung>, PasswordHasher<NguoiDung>>();
 
 var app = builder.Build();

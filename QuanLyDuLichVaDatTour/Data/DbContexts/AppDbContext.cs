@@ -25,6 +25,8 @@ public class AppDbContext : DbContext
 
     public DbSet<Booking> Bookings => Set<Booking>();
 
+    public DbSet<ThanhToan> ThanhToans => Set<ThanhToan>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -689,6 +691,111 @@ public class AppDbContext : DbContext
             entity.HasOne(x => x.NguoiDung)
                 .WithMany()
                 .HasForeignKey(x => x.NguoiDungId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.NguoiXacNhan)
+                .WithMany()
+                .HasForeignKey(x => x.NguoiXacNhanId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ThanhToan>(entity =>
+        {
+            entity.ToTable("ThanhToan");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("Id")
+                .HasColumnType("bigint unsigned")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.BookingId)
+                .HasColumnName("BookingId")
+                .HasColumnType("bigint unsigned")
+                .IsRequired();
+
+            entity.Property(x => x.LoaiGiaoDich)
+                .HasColumnName("LoaiGiaoDich")
+                .HasColumnType("enum('dat_coc','thanh_toan_con_lai','thanh_toan_toan_bo','hoan_tien')")
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(x => x.KenhThanhToan)
+                .HasColumnName("KenhThanhToan")
+                .HasColumnType("enum('noi_bo','ben_thu_ba')")
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(x => x.PhuongThucThanhToan)
+                .HasColumnName("PhuongThucThanhToan")
+                .HasColumnType("enum('tien_mat','chuyen_khoan','the','vi_dien_tu','cong_thanh_toan')")
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(x => x.NhaCungCap)
+                .HasColumnName("NhaCungCap")
+                .HasMaxLength(100);
+
+            entity.Property(x => x.SoTien)
+                .HasColumnName("SoTien")
+                .HasColumnType("decimal(15,2)")
+                .IsRequired();
+
+            entity.Property(x => x.MaGiaoDichNoiBo)
+                .HasColumnName("MaGiaoDichNoiBo")
+                .HasMaxLength(100);
+
+            entity.Property(x => x.MaGiaoDichBenThuBa)
+                .HasColumnName("MaGiaoDichBenThuBa")
+                .HasMaxLength(150);
+
+            entity.Property(x => x.MaThamChieuBenThuBa)
+                .HasColumnName("MaThamChieuBenThuBa")
+                .HasMaxLength(150);
+
+            entity.Property(x => x.TrangThai)
+                .HasColumnName("TrangThai")
+                .HasColumnType("enum('khoi_tao','cho_xu_ly','thanh_cong','that_bai','da_hoan_tien')")
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(x => x.DuLieuPhanHoi)
+                .HasColumnName("DuLieuPhanHoi")
+                .HasColumnType("json");
+
+            entity.Property(x => x.GhiChu)
+                .HasColumnName("GhiChu")
+                .HasMaxLength(500);
+
+            entity.Property(x => x.NguoiXacNhanId)
+                .HasColumnName("NguoiXacNhanId")
+                .HasColumnType("bigint unsigned");
+
+            entity.Property(x => x.ThoiGianTao)
+                .HasColumnName("ThoiGianTao")
+                .HasColumnType("datetime")
+                .IsRequired();
+
+            entity.Property(x => x.ThoiGianXacNhan)
+                .HasColumnName("ThoiGianXacNhan")
+                .HasColumnType("datetime");
+
+            entity.Property(x => x.UpdatedAt)
+                .HasColumnName("UpdatedAt")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAddOrUpdate();
+
+            entity.HasIndex(x => new { x.BookingId, x.TrangThai, x.ThoiGianTao })
+                .HasDatabaseName("IdxThanhToanBooking");
+
+            entity.HasIndex(x => x.MaGiaoDichBenThuBa)
+                .HasDatabaseName("IdxThanhToanMaGiaoDichBenThuBa");
+
+            entity.HasOne(x => x.Booking)
+                .WithMany()
+                .HasForeignKey(x => x.BookingId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(x => x.NguoiXacNhan)

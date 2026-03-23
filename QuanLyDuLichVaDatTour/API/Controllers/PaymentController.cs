@@ -1,0 +1,92 @@
+using BLL.DTOs.Payment;
+using BLL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace API.Controllers;
+
+[ApiController]
+[Authorize]
+[Route("api/payment")]
+public class PaymentController : ControllerBase
+{
+    private readonly IPaymentService _paymentService;
+
+    public PaymentController(IPaymentService paymentService)
+    {
+        _paymentService = paymentService;
+    }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> Create([FromBody] CreatePaymentRequestDto request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized(new { message = "Token không hợp lệ." });
+        }
+
+        try
+        {
+            var response = await _paymentService.CreateAsync(userId, request);
+            return StatusCode(StatusCodes.Status201Created, response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("booking/{bookingId}")]
+    public async Task<IActionResult> GetByBookingId(ulong bookingId)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized(new { message = "Token không hợp lệ." });
+        }
+
+        try
+        {
+            var response = await _paymentService.GetByBookingIdAsync(userId, bookingId);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(ulong id)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized(new { message = "Token không hợp lệ." });
+        }
+
+        try
+        {
+            var response = await _paymentService.GetByIdAsync(userId, id);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    private bool TryGetCurrentUserId(out ulong userId)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return ulong.TryParse(userIdClaim, out userId);
+    }
+}

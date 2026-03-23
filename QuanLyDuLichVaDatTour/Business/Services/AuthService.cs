@@ -76,6 +76,7 @@ public class AuthService : IAuthService
             throw new InvalidOperationException("Tài khoản đã bị khóa.");
         }
 
+        var shouldSavePasswordHash = false;
         PasswordVerificationResult passwordVerificationResult;
         try
         {
@@ -83,7 +84,13 @@ public class AuthService : IAuthService
         }
         catch (FormatException)
         {
-            throw new UnauthorizedAccessException("Mật khẩu trong cơ sở dữ liệu không đúng định dạng băm. Hãy tạo lại tài khoản hoặc cập nhật lại dữ liệu mật khẩu.");
+            if (nguoiDung.MatKhau != request.MatKhau)
+            {
+                throw new UnauthorizedAccessException("Email hoặc mật khẩu không chính xác.");
+            }
+
+            passwordVerificationResult = PasswordVerificationResult.Success;
+            shouldSavePasswordHash = true;
         }
 
         if (passwordVerificationResult == PasswordVerificationResult.Failed)
@@ -93,11 +100,15 @@ public class AuthService : IAuthService
 
         if (passwordVerificationResult == PasswordVerificationResult.SuccessRehashNeeded)
         {
+            shouldSavePasswordHash = true;
+        }
+
+        if (shouldSavePasswordHash)
+        {
             nguoiDung.MatKhau = _passwordHasher.HashPassword(nguoiDung, request.MatKhau);
             nguoiDung.UpdatedAt = DateTime.UtcNow;
             await _nguoiDungRepository.SaveChangesAsync();
         }
-
         var jwtSection = _configuration.GetSection("Jwt");
         var secret = jwtSection["Secret"] ?? throw new InvalidOperationException("Jwt:Secret chưa được cấu hình.");
         var issuer = jwtSection["Issuer"] ?? throw new InvalidOperationException("Jwt:Issuer chưa được cấu hình.");
