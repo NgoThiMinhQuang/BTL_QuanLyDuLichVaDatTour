@@ -56,12 +56,11 @@ public class TourService : ITourService
         var tenTour = NormalizeRequiredValue(request.TenTour, "Tên tour không được để trống.");
 
         ValidateDuration(request.SoNgay, request.SoDem);
-        ValidatePrice(request.GiaNguoiLonMacDinh, "Giá người lớn mặc định không hợp lệ.");
-        ValidatePrice(request.GiaTreEmMacDinh, "Giá trẻ em mặc định không hợp lệ.");
+        ValidatePrice(request.GiaTuThamKhao, "Giá từ tham khảo không hợp lệ.");
 
         await EnsureMaTourIsUniqueAsync(maTour);
         var loaiTour = await EnsureLoaiTourExistsAsync(request.LoaiTourId);
-        var diaDiemKhoiHanh = await EnsureDiaDiemExistsAsync(request.DiaDiemKhoiHanhId);
+        var diemXuatPhat = await EnsureDiaDiemExistsAsync(request.DiemXuatPhatId);
 
         var now = DateTime.UtcNow;
         var tour = new Tour
@@ -69,20 +68,20 @@ public class TourService : ITourService
             MaTour = maTour,
             TenTour = tenTour,
             LoaiTourId = loaiTour.Id,
-            DiaDiemKhoiHanhId = diaDiemKhoiHanh.Id,
+            DiemXuatPhatId = diemXuatPhat.Id,
             SoNgay = request.SoNgay,
             SoDem = request.SoDem,
             PhuongTien = NormalizeOptionalValue(request.PhuongTien),
+            GiaTuThamKhao = request.GiaTuThamKhao,
             MoTaNgan = NormalizeOptionalValue(request.MoTaNgan),
             MoTaChiTiet = NormalizeOptionalValue(request.MoTaChiTiet),
             DieuKienTour = NormalizeOptionalValue(request.DieuKienTour),
-            GiaNguoiLonMacDinh = request.GiaNguoiLonMacDinh,
-            GiaTreEmMacDinh = request.GiaTreEmMacDinh,
+            IsNoiBat = request.IsNoiBat,
             TrangThai = request.TrangThai ?? TrangThaiTour.nhap,
             CreatedAt = now,
             UpdatedAt = now,
             LoaiTour = loaiTour,
-            DiaDiemKhoiHanh = diaDiemKhoiHanh
+            DiemXuatPhat = diemXuatPhat
         };
 
         await _tourRepository.AddAsync(tour);
@@ -100,29 +99,28 @@ public class TourService : ITourService
         var tenTour = NormalizeRequiredValue(request.TenTour, "Tên tour không được để trống.");
 
         ValidateDuration(request.SoNgay, request.SoDem);
-        ValidatePrice(request.GiaNguoiLonMacDinh, "Giá người lớn mặc định không hợp lệ.");
-        ValidatePrice(request.GiaTreEmMacDinh, "Giá trẻ em mặc định không hợp lệ.");
+        ValidatePrice(request.GiaTuThamKhao, "Giá từ tham khảo không hợp lệ.");
 
         await EnsureMaTourIsUniqueAsync(maTour, id);
         var loaiTour = await EnsureLoaiTourExistsAsync(request.LoaiTourId);
-        var diaDiemKhoiHanh = await EnsureDiaDiemExistsAsync(request.DiaDiemKhoiHanhId);
+        var diemXuatPhat = await EnsureDiaDiemExistsAsync(request.DiemXuatPhatId);
 
         tour.MaTour = maTour;
         tour.TenTour = tenTour;
         tour.LoaiTourId = loaiTour.Id;
-        tour.DiaDiemKhoiHanhId = diaDiemKhoiHanh.Id;
+        tour.DiemXuatPhatId = diemXuatPhat.Id;
         tour.SoNgay = request.SoNgay;
         tour.SoDem = request.SoDem;
         tour.PhuongTien = NormalizeOptionalValue(request.PhuongTien);
+        tour.GiaTuThamKhao = request.GiaTuThamKhao;
         tour.MoTaNgan = NormalizeOptionalValue(request.MoTaNgan);
         tour.MoTaChiTiet = NormalizeOptionalValue(request.MoTaChiTiet);
         tour.DieuKienTour = NormalizeOptionalValue(request.DieuKienTour);
-        tour.GiaNguoiLonMacDinh = request.GiaNguoiLonMacDinh;
-        tour.GiaTreEmMacDinh = request.GiaTreEmMacDinh;
+        tour.IsNoiBat = request.IsNoiBat;
         tour.TrangThai = request.TrangThai;
         tour.UpdatedAt = DateTime.UtcNow;
         tour.LoaiTour = loaiTour;
-        tour.DiaDiemKhoiHanh = diaDiemKhoiHanh;
+        tour.DiemXuatPhat = diemXuatPhat;
 
         await _tourRepository.SaveChangesAsync();
 
@@ -169,30 +167,25 @@ public class TourService : ITourService
     private async Task<DiaDiem> EnsureDiaDiemExistsAsync(ulong diaDiemId)
     {
         return await _diaDiemRepository.GetByIdAsync(diaDiemId)
-            ?? throw new KeyNotFoundException("Địa điểm khởi hành không tồn tại.");
+            ?? throw new KeyNotFoundException("Điểm xuất phát không tồn tại.");
     }
 
-    private static void ValidateDuration(int soNgay, int soDem)
+    private static void ValidateDuration(byte soNgay, byte soDem)
     {
         if (soNgay <= 0)
         {
             throw new InvalidOperationException("Số ngày phải lớn hơn 0.");
         }
 
-        if (soDem < 0)
+        if (soDem > soNgay)
         {
-            throw new InvalidOperationException("Số đêm không được nhỏ hơn 0.");
-        }
-
-        if (soDem >= soNgay)
-        {
-            throw new InvalidOperationException("Số đêm phải nhỏ hơn số ngày.");
+            throw new InvalidOperationException("Số đêm không được lớn hơn số ngày.");
         }
     }
 
-    private static void ValidatePrice(decimal? value, string errorMessage)
+    private static void ValidatePrice(decimal value, string errorMessage)
     {
-        if (value.HasValue && value.Value < 0)
+        if (value < 0)
         {
             throw new InvalidOperationException(errorMessage);
         }
@@ -228,14 +221,14 @@ public class TourService : ITourService
             TenTour = tour.TenTour,
             LoaiTourId = tour.LoaiTourId,
             TenLoaiTour = tour.LoaiTour?.Ten ?? string.Empty,
-            DiaDiemKhoiHanhId = tour.DiaDiemKhoiHanhId,
-            TenDiaDiemKhoiHanh = tour.DiaDiemKhoiHanh?.TenDiaDiem ?? string.Empty,
+            DiemXuatPhatId = tour.DiemXuatPhatId,
+            TenDiemXuatPhat = tour.DiemXuatPhat?.TenDiaDiem ?? string.Empty,
             SoNgay = tour.SoNgay,
             SoDem = tour.SoDem,
             PhuongTien = tour.PhuongTien,
             MoTaNgan = tour.MoTaNgan,
-            GiaNguoiLonMacDinh = tour.GiaNguoiLonMacDinh,
-            GiaTreEmMacDinh = tour.GiaTreEmMacDinh,
+            GiaTuThamKhao = tour.GiaTuThamKhao,
+            IsNoiBat = tour.IsNoiBat,
             TrangThai = tour.TrangThai.ToString()
         };
     }
@@ -249,16 +242,16 @@ public class TourService : ITourService
             TenTour = tour.TenTour,
             LoaiTourId = tour.LoaiTourId,
             TenLoaiTour = tour.LoaiTour?.Ten ?? string.Empty,
-            DiaDiemKhoiHanhId = tour.DiaDiemKhoiHanhId,
-            TenDiaDiemKhoiHanh = tour.DiaDiemKhoiHanh?.TenDiaDiem ?? string.Empty,
+            DiemXuatPhatId = tour.DiemXuatPhatId,
+            TenDiemXuatPhat = tour.DiemXuatPhat?.TenDiaDiem ?? string.Empty,
             SoNgay = tour.SoNgay,
             SoDem = tour.SoDem,
             PhuongTien = tour.PhuongTien,
+            GiaTuThamKhao = tour.GiaTuThamKhao,
             MoTaNgan = tour.MoTaNgan,
             MoTaChiTiet = tour.MoTaChiTiet,
             DieuKienTour = tour.DieuKienTour,
-            GiaNguoiLonMacDinh = tour.GiaNguoiLonMacDinh,
-            GiaTreEmMacDinh = tour.GiaTreEmMacDinh,
+            IsNoiBat = tour.IsNoiBat,
             TrangThai = tour.TrangThai.ToString(),
             CreatedAt = tour.CreatedAt,
             UpdatedAt = tour.UpdatedAt

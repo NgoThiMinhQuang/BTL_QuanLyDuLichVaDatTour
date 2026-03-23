@@ -1,12 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import 'antd/dist/reset.css'
 import './index.css'
 import App from './App'
-
-const queryClient = new QueryClient()
+import { AppProvider } from './shared/providers/AppProvider'
 
 const rootElement = document.getElementById('root')
 
@@ -16,10 +13,8 @@ if (!rootElement) {
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </QueryClientProvider>
+    <AppProvider>
+      <App />
+    </AppProvider>
   </React.StrictMode>,
 )

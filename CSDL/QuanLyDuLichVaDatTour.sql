@@ -1,547 +1,541 @@
-CREATE DATABASE IF NOT EXISTS quan_ly_du_lich
+CREATE DATABASE IF NOT EXISTS QuanLyDuLich
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
-USE quan_ly_du_lich;
+USE QuanLyDuLich;
 
-CREATE TABLE nguoi_dung (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    mat_khau VARCHAR(255) NOT NULL,
-    ho_ten VARCHAR(200) NOT NULL,
-    so_dien_thoai VARCHAR(20) NULL,
-    dia_chi VARCHAR(300) NULL,
-    anh_dai_dien VARCHAR(500) NULL,
-    vai_tro ENUM('admin', 'khach_hang') NOT NULL DEFAULT 'khach_hang',
-    trang_thai ENUM('hoat_dong', 'bi_khoa') NOT NULL DEFAULT 'hoat_dong',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+-- =========================================================
+-- 1. NGUOI DUNG
+-- =========================================================
+CREATE TABLE NguoiDung (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    MatKhau VARCHAR(255) NOT NULL,
+    HoTen VARCHAR(200) NOT NULL,
+    SoDienThoai VARCHAR(20) NULL,
+    DiaChi VARCHAR(300) NULL,
+    AnhDaiDien VARCHAR(500) NULL,
+    VaiTro ENUM('admin', 'khach_hang') NOT NULL DEFAULT 'khach_hang',
+    TrangThai ENUM('hoat_dong', 'bi_khoa') NOT NULL DEFAULT 'hoat_dong',
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_nguoi_dung_vai_tro_trang_thai
-ON nguoi_dung(vai_tro, trang_thai);
+CREATE INDEX IdxNguoiDungVaiTroTrangThai
+ON NguoiDung(VaiTro, TrangThai);
 
 -- =========================================================
 -- 2. LOAI TOUR
 -- =========================================================
-CREATE TABLE loai_tour (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    ten_loai VARCHAR(100) NOT NULL UNIQUE,
-    mo_ta TEXT NULL,
-    trang_thai ENUM('hoat_dong', 'an') NOT NULL DEFAULT 'hoat_dong',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+CREATE TABLE LoaiTour (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    TenLoai VARCHAR(100) NOT NULL UNIQUE,
+    MoTa TEXT NULL,
+    TrangThai ENUM('hoat_dong', 'an') NOT NULL DEFAULT 'hoat_dong',
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- =========================================================
 -- 3. DIA DIEM
 -- =========================================================
-CREATE TABLE dia_diem (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    ten_dia_diem VARCHAR(200) NOT NULL,
-    tinh_thanh VARCHAR(100) NULL,
-    quoc_gia VARCHAR(100) NOT NULL DEFAULT 'Viet Nam',
-    mo_ta TEXT NULL,
-    trang_thai ENUM('hoat_dong', 'an') NOT NULL DEFAULT 'hoat_dong',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+CREATE TABLE DiaDiem (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    TenDiaDiem VARCHAR(200) NOT NULL,
+    TinhThanh VARCHAR(100) NULL,
+    QuocGia VARCHAR(100) NOT NULL DEFAULT 'Viet Nam',
+    MoTa TEXT NULL,
+    TrangThai ENUM('hoat_dong', 'an') NOT NULL DEFAULT 'hoat_dong',
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_dia_diem_tinh_thanh_quoc_gia
-ON dia_diem(tinh_thanh, quoc_gia);
+CREATE INDEX IdxDiaDiemTinhThanhQuocGia
+ON DiaDiem(TinhThanh, QuocGia);
 
 -- =========================================================
 -- 4. TOUR
 -- =========================================================
-CREATE TABLE tour (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    ma_tour VARCHAR(50) NOT NULL UNIQUE,
-    ten_tour VARCHAR(300) NOT NULL,
-    loai_tour_id BIGINT UNSIGNED NOT NULL,
-    diem_xuat_phat_id BIGINT UNSIGNED NOT NULL,
-    so_ngay TINYINT UNSIGNED NOT NULL,
-    so_dem TINYINT UNSIGNED NOT NULL,
-    phuong_tien VARCHAR(100) NULL,
-    gia_tu_tham_khao DECIMAL(15,2) NOT NULL DEFAULT 0,
-    mo_ta_ngan VARCHAR(500) NULL,
-    mo_ta_chi_tiet LONGTEXT NULL,
-    dieu_kien_tour LONGTEXT NULL,
-    is_noi_bat BOOLEAN NOT NULL DEFAULT FALSE,
-    trang_thai ENUM('nhap', 'dang_mo_ban', 'tam_ngung', 'an', 'ngung_kinh_doanh') NOT NULL DEFAULT 'nhap',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT chk_tour_so_dem CHECK (so_dem <= so_ngay),
-    CONSTRAINT fk_tour_loai_tour FOREIGN KEY (loai_tour_id) REFERENCES loai_tour(id),
-    CONSTRAINT fk_tour_diem_xuat_phat FOREIGN KEY (diem_xuat_phat_id) REFERENCES dia_diem(id)
+CREATE TABLE Tour (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    MaTour VARCHAR(50) NOT NULL UNIQUE,
+    TenTour VARCHAR(300) NOT NULL,
+    LoaiTourId BIGINT UNSIGNED NOT NULL,
+    DiemXuatPhatId BIGINT UNSIGNED NOT NULL,
+    SoNgay TINYINT UNSIGNED NOT NULL,
+    SoDem TINYINT UNSIGNED NOT NULL,
+    PhuongTien VARCHAR(100) NULL,
+    GiaTuThamKhao DECIMAL(15,2) NOT NULL DEFAULT 0,
+    MoTaNgan VARCHAR(500) NULL,
+    MoTaChiTiet LONGTEXT NULL,
+    DieuKienTour LONGTEXT NULL,
+    IsNoiBat BOOLEAN NOT NULL DEFAULT FALSE,
+    TrangThai ENUM('nhap', 'dang_mo_ban', 'tam_ngung', 'an', 'ngung_kinh_doanh') NOT NULL DEFAULT 'nhap',
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT ChkTourSoDem CHECK (SoDem <= SoNgay),
+    CONSTRAINT FkTourLoaiTour FOREIGN KEY (LoaiTourId) REFERENCES LoaiTour(Id),
+    CONSTRAINT FkTourDiemXuatPhat FOREIGN KEY (DiemXuatPhatId) REFERENCES DiaDiem(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_tour_tim_kiem
-ON tour(trang_thai, loai_tour_id, diem_xuat_phat_id, is_noi_bat, gia_tu_tham_khao);
+CREATE INDEX IdxTourTimKiem
+ON Tour(TrangThai, LoaiTourId, DiemXuatPhatId, IsNoiBat, GiaTuThamKhao);
 
 -- =========================================================
--- 5. TOUR - DIEM DEN
+-- 5. TOUR DIEM DEN
 -- =========================================================
-CREATE TABLE tour_diem_den (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    tour_id BIGINT UNSIGNED NOT NULL,
-    dia_diem_id BIGINT UNSIGNED NOT NULL,
-    thu_tu SMALLINT UNSIGNED NOT NULL,
-    ghi_chu VARCHAR(300) NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_tour_diem_den_thu_tu (tour_id, thu_tu),
-    CONSTRAINT fk_tour_diem_den_tour FOREIGN KEY (tour_id) REFERENCES tour(id),
-    CONSTRAINT fk_tour_diem_den_dia_diem FOREIGN KEY (dia_diem_id) REFERENCES dia_diem(id)
+CREATE TABLE TourDiemDen (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    TourId BIGINT UNSIGNED NOT NULL,
+    DiaDiemId BIGINT UNSIGNED NOT NULL,
+    ThuTu SMALLINT UNSIGNED NOT NULL,
+    GhiChu VARCHAR(300) NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY UkTourDiemDenThuTu (TourId, ThuTu),
+    CONSTRAINT FkTourDiemDenTour FOREIGN KEY (TourId) REFERENCES Tour(Id),
+    CONSTRAINT FkTourDiemDenDiaDiem FOREIGN KEY (DiaDiemId) REFERENCES DiaDiem(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_tour_diem_den_dia_diem
-ON tour_diem_den(dia_diem_id, tour_id);
+CREATE INDEX IdxTourDiemDenDiaDiem
+ON TourDiemDen(DiaDiemId, TourId);
 
 -- =========================================================
 -- 6. ANH TOUR
 -- =========================================================
-CREATE TABLE anh_tour (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    tour_id BIGINT UNSIGNED NOT NULL,
-    link_anh VARCHAR(500) NOT NULL,
-    mo_ta VARCHAR(300) NULL,
-    is_avatar BOOLEAN NOT NULL DEFAULT FALSE,
-    thu_tu SMALLINT UNSIGNED NOT NULL DEFAULT 1,
-    avatar_tour_id BIGINT UNSIGNED GENERATED ALWAYS AS (
-        CASE WHEN is_avatar = 1 THEN tour_id ELSE NULL END
+CREATE TABLE AnhTour (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    TourId BIGINT UNSIGNED NOT NULL,
+    LinkAnh VARCHAR(500) NOT NULL,
+    MoTa VARCHAR(300) NULL,
+    IsAvatar BOOLEAN NOT NULL DEFAULT FALSE,
+    ThuTu SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+    AvatarTourId BIGINT UNSIGNED GENERATED ALWAYS AS (
+        CASE WHEN IsAvatar = 1 THEN TourId ELSE NULL END
     ) STORED,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_anh_tour_mot_avatar (avatar_tour_id),
-    CONSTRAINT fk_anh_tour_tour FOREIGN KEY (tour_id) REFERENCES tour(id)
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY UkAnhTourMotAvatar (AvatarTourId),
+    CONSTRAINT FkAnhTourTour FOREIGN KEY (TourId) REFERENCES Tour(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_anh_tour_tour
-ON anh_tour(tour_id, thu_tu);
+CREATE INDEX IdxAnhTourTour
+ON AnhTour(TourId, ThuTu);
 
 -- =========================================================
--- 7. LICH TRINH TOUR
--- Phan biet ro:
--- - so_ngay / so_dem la thoi gian tong the
--- - gio_bat_dau / gio_ket_thuc la thoi diem chi tiet trong tour
+-- 7. LICH TRINH
 -- =========================================================
-CREATE TABLE lich_trinh (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    tour_id BIGINT UNSIGNED NOT NULL,
-    ngay_thu TINYINT UNSIGNED NOT NULL,
-    thu_tu_trong_ngay SMALLINT UNSIGNED NOT NULL DEFAULT 1,
-    gio_bat_dau TIME NULL,
-    gio_ket_thuc TIME NULL,
-    tieu_de VARCHAR(300) NULL,
-    noi_dung TEXT NULL,
-    dia_diem_id BIGINT UNSIGNED NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_lich_trinh (tour_id, ngay_thu, thu_tu_trong_ngay),
-    CONSTRAINT chk_lich_trinh_gio CHECK (
-        gio_ket_thuc IS NULL OR gio_bat_dau IS NULL OR gio_ket_thuc >= gio_bat_dau
+CREATE TABLE LichTrinh (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    TourId BIGINT UNSIGNED NOT NULL,
+    NgayThu TINYINT UNSIGNED NOT NULL,
+    ThuTuTrongNgay SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+    GioBatDau TIME NULL,
+    GioKetThuc TIME NULL,
+    TieuDe VARCHAR(300) NULL,
+    NoiDung TEXT NULL,
+    DiaDiemId BIGINT UNSIGNED NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY UkLichTrinh (TourId, NgayThu, ThuTuTrongNgay),
+    CONSTRAINT ChkLichTrinhGio CHECK (
+        GioKetThuc IS NULL OR GioBatDau IS NULL OR GioKetThuc >= GioBatDau
     ),
-    CONSTRAINT fk_lich_trinh_tour FOREIGN KEY (tour_id) REFERENCES tour(id),
-    CONSTRAINT fk_lich_trinh_dia_diem FOREIGN KEY (dia_diem_id) REFERENCES dia_diem(id)
+    CONSTRAINT FkLichTrinhTour FOREIGN KEY (TourId) REFERENCES Tour(Id),
+    CONSTRAINT FkLichTrinhDiaDiem FOREIGN KEY (DiaDiemId) REFERENCES DiaDiem(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_lich_trinh_tour_ngay
-ON lich_trinh(tour_id, ngay_thu, thu_tu_trong_ngay);
+CREATE INDEX IdxLichTrinhTourNgay
+ON LichTrinh(TourId, NgayThu, ThuTuTrongNgay);
 
 -- =========================================================
 -- 8. LICH KHOI HANH
--- Bo cot so_cho_da_dat de tranh du thua.
--- So cho da dat se tinh tu booking hop le.
 -- =========================================================
-CREATE TABLE lich_khoi_hanh (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    tour_id BIGINT UNSIGNED NOT NULL,
-    ma_dot_tour VARCHAR(50) NOT NULL UNIQUE,
-    ngay_khoi_hanh DATE NOT NULL,
-    ngay_ket_thuc DATE NOT NULL,
-    noi_tap_trung VARCHAR(300) NULL,
-    so_cho_toi_da SMALLINT UNSIGNED NOT NULL,
-    ghi_chu VARCHAR(500) NULL,
-    ly_do_huy VARCHAR(500) NULL,
-    trang_thai ENUM('mo_ban', 'het_cho', 'da_khoi_hanh', 'da_ket_thuc', 'da_huy') NOT NULL DEFAULT 'mo_ban',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT chk_lich_khoi_hanh_ngay CHECK (ngay_ket_thuc >= ngay_khoi_hanh),
-    CONSTRAINT fk_lich_khoi_hanh_tour FOREIGN KEY (tour_id) REFERENCES tour(id)
+CREATE TABLE LichKhoiHanh (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    TourId BIGINT UNSIGNED NOT NULL,
+    MaDotTour VARCHAR(50) NOT NULL UNIQUE,
+    NgayKhoiHanh DATE NOT NULL,
+    NgayKetThuc DATE NOT NULL,
+    NoiTapTrung VARCHAR(300) NULL,
+    SoChoToiDa SMALLINT UNSIGNED NOT NULL,
+    GhiChu VARCHAR(500) NULL,
+    LyDoHuy VARCHAR(500) NULL,
+    TrangThai ENUM('mo_ban', 'het_cho', 'da_khoi_hanh', 'da_ket_thuc', 'da_huy') NOT NULL DEFAULT 'mo_ban',
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT ChkLichKhoiHanhNgay CHECK (NgayKetThuc >= NgayKhoiHanh),
+    CONSTRAINT FkLichKhoiHanhTour FOREIGN KEY (TourId) REFERENCES Tour(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_lich_khoi_hanh_tim_kiem
-ON lich_khoi_hanh(tour_id, ngay_khoi_hanh, trang_thai);
+CREATE INDEX IdxLichKhoiHanhTimKiem
+ON LichKhoiHanh(TourId, NgayKhoiHanh, TrangThai);
 
 -- =========================================================
 -- 9. BANG GIA LICH KHOI HANH
--- Ho tro gia ngay thuong / cuoi tuan + nhieu loai khach
 -- =========================================================
-CREATE TABLE bang_gia_lich_khoi_hanh (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    lich_khoi_hanh_id BIGINT UNSIGNED NOT NULL,
-    loai_khach ENUM('nguoi_lon', 'tre_em', 'em_be') NOT NULL,
-    loai_gia ENUM('ngay_thuong', 'cuoi_tuan') NOT NULL,
-    don_gia DECIMAL(15,2) NOT NULL,
-    mo_ta VARCHAR(300) NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_bang_gia_lich_khoi_hanh (lich_khoi_hanh_id, loai_khach, loai_gia),
-    CONSTRAINT chk_bang_gia_duong CHECK (don_gia >= 0),
-    CONSTRAINT fk_bang_gia_lich_khoi_hanh FOREIGN KEY (lich_khoi_hanh_id) REFERENCES lich_khoi_hanh(id)
+CREATE TABLE BangGiaLichKhoiHanh (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    LichKhoiHanhId BIGINT UNSIGNED NOT NULL,
+    LoaiKhach ENUM('nguoi_lon', 'tre_em', 'em_be') NOT NULL,
+    LoaiGia ENUM('ngay_thuong', 'cuoi_tuan') NOT NULL,
+    DonGia DECIMAL(15,2) NOT NULL,
+    MoTa VARCHAR(300) NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY UkBangGiaLichKhoiHanh (LichKhoiHanhId, LoaiKhach, LoaiGia),
+    CONSTRAINT ChkBangGiaDuong CHECK (DonGia >= 0),
+    CONSTRAINT FkBangGiaLichKhoiHanh FOREIGN KEY (LichKhoiHanhId) REFERENCES LichKhoiHanh(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_bang_gia_lich_khoi_hanh
-ON bang_gia_lich_khoi_hanh(lich_khoi_hanh_id, loai_khach, loai_gia);
+CREATE INDEX IdxBangGiaLichKhoiHanh
+ON BangGiaLichKhoiHanh(LichKhoiHanhId, LoaiKhach, LoaiGia);
 
 -- =========================================================
 -- 10. VOUCHER
--- Bo sung giam_toi_da de ho tro voucher phan tram thuc te hon
--- tour_id = NULL => ap dung toan he thong
 -- =========================================================
-CREATE TABLE voucher (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    ma_voucher VARCHAR(50) NOT NULL UNIQUE,
-    ten_voucher VARCHAR(200) NOT NULL,
-    tour_id BIGINT UNSIGNED NULL,
-    kieu_giam ENUM('phan_tram', 'so_tien') NOT NULL,
-    gia_tri_giam DECIMAL(15,2) NOT NULL,
-    giam_toi_da DECIMAL(15,2) NULL,
-    don_hang_toi_thieu DECIMAL(15,2) NOT NULL DEFAULT 0,
-    ngay_bat_dau DATETIME NOT NULL,
-    ngay_ket_thuc DATETIME NOT NULL,
-    so_luong_toi_da INT UNSIGNED NOT NULL DEFAULT 0,
-    so_luong_da_dung INT UNSIGNED NOT NULL DEFAULT 0,
-    mo_ta VARCHAR(500) NULL,
-    trang_thai ENUM('hoat_dong', 'an') NOT NULL DEFAULT 'hoat_dong',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT chk_voucher_ngay CHECK (ngay_ket_thuc >= ngay_bat_dau),
-    CONSTRAINT chk_voucher_so_luong CHECK (so_luong_da_dung <= so_luong_toi_da),
-    CONSTRAINT chk_voucher_gia_tri CHECK (
-        (kieu_giam = 'phan_tram' AND gia_tri_giam > 0 AND gia_tri_giam <= 100)
+CREATE TABLE Voucher (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    MaVoucher VARCHAR(50) NOT NULL UNIQUE,
+    TenVoucher VARCHAR(200) NOT NULL,
+    TourId BIGINT UNSIGNED NULL,
+    KieuGiam ENUM('phan_tram', 'so_tien') NOT NULL,
+    GiaTriGiam DECIMAL(15,2) NOT NULL,
+    GiamToiDa DECIMAL(15,2) NULL,
+    DonHangToiThieu DECIMAL(15,2) NOT NULL DEFAULT 0,
+    NgayBatDau DATETIME NOT NULL,
+    NgayKetThuc DATETIME NOT NULL,
+    SoLuongToiDa INT UNSIGNED NOT NULL DEFAULT 0,
+    SoLuongDaDung INT UNSIGNED NOT NULL DEFAULT 0,
+    MoTa VARCHAR(500) NULL,
+    TrangThai ENUM('hoat_dong', 'an') NOT NULL DEFAULT 'hoat_dong',
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT ChkVoucherNgay CHECK (NgayKetThuc >= NgayBatDau),
+    CONSTRAINT ChkVoucherSoLuong CHECK (SoLuongDaDung <= SoLuongToiDa),
+    CONSTRAINT ChkVoucherGiaTri CHECK (
+        (KieuGiam = 'phan_tram' AND GiaTriGiam > 0 AND GiaTriGiam <= 100)
         OR
-        (kieu_giam = 'so_tien' AND gia_tri_giam > 0)
+        (KieuGiam = 'so_tien' AND GiaTriGiam > 0)
     ),
-    CONSTRAINT fk_voucher_tour FOREIGN KEY (tour_id) REFERENCES tour(id)
+    CONSTRAINT FkVoucherTour FOREIGN KEY (TourId) REFERENCES Tour(Id)
 ) ENGINE=InnoDB;
 
 -- =========================================================
 -- 11. BOOKING
 -- =========================================================
-CREATE TABLE booking (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    ma_booking VARCHAR(50) NOT NULL UNIQUE,
-    lich_khoi_hanh_id BIGINT UNSIGNED NOT NULL,
-    nguoi_dung_id BIGINT UNSIGNED NOT NULL,
-    voucher_id BIGINT UNSIGNED NULL,
+CREATE TABLE Booking (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    MaBooking VARCHAR(50) NOT NULL UNIQUE,
+    LichKhoiHanhId BIGINT UNSIGNED NOT NULL,
+    NguoiDungId BIGINT UNSIGNED NOT NULL,
+    VoucherId BIGINT UNSIGNED NULL,
 
-    ho_ten_lien_he VARCHAR(200) NOT NULL,
-    email_lien_he VARCHAR(255) NOT NULL,
-    so_dien_thoai_lien_he VARCHAR(20) NOT NULL,
-    dia_chi_lien_he VARCHAR(300) NULL,
+    HoTenLienHe VARCHAR(200) NOT NULL,
+    EmailLienHe VARCHAR(255) NOT NULL,
+    SoDienThoaiLienHe VARCHAR(20) NOT NULL,
+    DiaChiLienHe VARCHAR(300) NULL,
 
-    ngay_dat DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    NgayDat DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    so_nguoi_lon SMALLINT UNSIGNED NOT NULL DEFAULT 1,
-    so_tre_em SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-    so_em_be SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    SoNguoiLon SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+    SoTreEm SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    SoEmBe SMALLINT UNSIGNED NOT NULL DEFAULT 0,
 
-    tong_hanh_khach SMALLINT UNSIGNED GENERATED ALWAYS AS (
-        so_nguoi_lon + so_tre_em + so_em_be
+    TongHanhKhach SMALLINT UNSIGNED GENERATED ALWAYS AS (
+        SoNguoiLon + SoTreEm + SoEmBe
     ) STORED,
 
-    loai_gia_ap_dung ENUM('ngay_thuong', 'cuoi_tuan') NOT NULL DEFAULT 'ngay_thuong',
+    LoaiGiaApDung ENUM('ngay_thuong', 'cuoi_tuan') NOT NULL DEFAULT 'ngay_thuong',
 
-    don_gia_nguoi_lon DECIMAL(15,2) NOT NULL DEFAULT 0,
-    don_gia_tre_em DECIMAL(15,2) NOT NULL DEFAULT 0,
-    don_gia_em_be DECIMAL(15,2) NOT NULL DEFAULT 0,
+    DonGiaNguoiLon DECIMAL(15,2) NOT NULL DEFAULT 0,
+    DonGiaTreEm DECIMAL(15,2) NOT NULL DEFAULT 0,
+    DonGiaEmBe DECIMAL(15,2) NOT NULL DEFAULT 0,
 
-    tam_tinh DECIMAL(15,2) NOT NULL DEFAULT 0,
-    giam_gia DECIMAL(15,2) NOT NULL DEFAULT 0,
-    tong_tien DECIMAL(15,2) NOT NULL DEFAULT 0,
-    so_tien_da_thanh_toan DECIMAL(15,2) NOT NULL DEFAULT 0,
-    tien_coc_yeu_cau DECIMAL(15,2) NOT NULL DEFAULT 0,
+    TamTinh DECIMAL(15,2) NOT NULL DEFAULT 0,
+    GiamGia DECIMAL(15,2) NOT NULL DEFAULT 0,
+    TongTien DECIMAL(15,2) NOT NULL DEFAULT 0,
+    SoTienDaThanhToan DECIMAL(15,2) NOT NULL DEFAULT 0,
+    TienCocYeuCau DECIMAL(15,2) NOT NULL DEFAULT 0,
 
-    phuong_thuc_thanh_toan_du_kien ENUM('tien_mat', 'chuyen_khoan', 'the', 'vi_dien_tu', 'cong_thanh_toan') NULL,
+    PhuongThucThanhToanDuKien ENUM('tien_mat', 'chuyen_khoan', 'the', 'vi_dien_tu', 'cong_thanh_toan') NULL,
 
-    trang_thai_booking ENUM('moi_tao', 'cho_thanh_toan', 'da_coc', 'da_xac_nhan', 'da_huy', 'hoan_tat') NOT NULL DEFAULT 'cho_thanh_toan',
-    trang_thai_thanh_toan ENUM('chua_thanh_toan', 'thanh_toan_mot_phan', 'da_thanh_toan_du', 'that_bai', 'da_hoan_tien') NOT NULL DEFAULT 'chua_thanh_toan',
+    TrangThaiBooking ENUM('moi_tao', 'cho_thanh_toan', 'da_coc', 'da_xac_nhan', 'da_huy', 'hoan_tat') NOT NULL DEFAULT 'cho_thanh_toan',
+    TrangThaiThanhToan ENUM('chua_thanh_toan', 'thanh_toan_mot_phan', 'da_thanh_toan_du', 'that_bai', 'da_hoan_tien') NOT NULL DEFAULT 'chua_thanh_toan',
 
-    han_thanh_toan DATETIME NULL,
-    ghi_chu TEXT NULL,
+    HanThanhToan DATETIME NULL,
+    GhiChu TEXT NULL,
 
-    nguoi_xac_nhan_id BIGINT UNSIGNED NULL,
-    thoi_gian_xac_nhan DATETIME NULL,
+    NguoiXacNhanId BIGINT UNSIGNED NULL,
+    ThoiGianXacNhan DATETIME NULL,
 
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT chk_booking_khach CHECK (so_nguoi_lon >= 1),
-    CONSTRAINT chk_booking_giam_gia CHECK (giam_gia <= tam_tinh),
-    CONSTRAINT chk_booking_tien_da_tt CHECK (so_tien_da_thanh_toan <= tong_tien),
-    CONSTRAINT chk_booking_tien_coc CHECK (tien_coc_yeu_cau <= tong_tien),
+    CONSTRAINT ChkBookingKhach CHECK (SoNguoiLon >= 1),
+    CONSTRAINT ChkBookingGiamGia CHECK (GiamGia <= TamTinh),
+    CONSTRAINT ChkBookingTienDaTt CHECK (SoTienDaThanhToan <= TongTien),
+    CONSTRAINT ChkBookingTienCoc CHECK (TienCocYeuCau <= TongTien),
 
-    CONSTRAINT fk_booking_lich_khoi_hanh FOREIGN KEY (lich_khoi_hanh_id) REFERENCES lich_khoi_hanh(id),
-    CONSTRAINT fk_booking_nguoi_dung FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id),
-    CONSTRAINT fk_booking_voucher FOREIGN KEY (voucher_id) REFERENCES voucher(id),
-    CONSTRAINT fk_booking_nguoi_xac_nhan FOREIGN KEY (nguoi_xac_nhan_id) REFERENCES nguoi_dung(id)
+    CONSTRAINT FkBookingLichKhoiHanh FOREIGN KEY (LichKhoiHanhId) REFERENCES LichKhoiHanh(Id),
+    CONSTRAINT FkBookingNguoiDung FOREIGN KEY (NguoiDungId) REFERENCES NguoiDung(Id),
+    CONSTRAINT FkBookingVoucher FOREIGN KEY (VoucherId) REFERENCES Voucher(Id),
+    CONSTRAINT FkBookingNguoiXacNhan FOREIGN KEY (NguoiXacNhanId) REFERENCES NguoiDung(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_booking_nguoi_dung
-ON booking(nguoi_dung_id, ngay_dat);
+CREATE INDEX IdxBookingNguoiDung
+ON Booking(NguoiDungId, NgayDat);
 
-CREATE INDEX idx_booking_trang_thai
-ON booking(trang_thai_booking, trang_thai_thanh_toan, ngay_dat);
+CREATE INDEX IdxBookingTrangThai
+ON Booking(TrangThaiBooking, TrangThaiThanhToan, NgayDat);
 
-CREATE INDEX idx_booking_lich_khoi_hanh
-ON booking(lich_khoi_hanh_id);
+CREATE INDEX IdxBookingLichKhoiHanh
+ON Booking(LichKhoiHanhId);
 
 -- =========================================================
 -- 12. HANH KHACH
 -- =========================================================
-CREATE TABLE hanh_khach (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    booking_id BIGINT UNSIGNED NOT NULL,
-    ho_ten VARCHAR(200) NOT NULL,
-    loai_khach ENUM('nguoi_lon', 'tre_em', 'em_be') NOT NULL,
-    ngay_sinh DATE NULL,
-    gioi_tinh ENUM('nam', 'nu', 'khac') NULL,
-    so_giay_to VARCHAR(50) NULL,
-    quoc_tich VARCHAR(100) NULL,
-    ghi_chu VARCHAR(300) NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_hanh_khach_booking FOREIGN KEY (booking_id) REFERENCES booking(id)
+CREATE TABLE HanhKhach (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    BookingId BIGINT UNSIGNED NOT NULL,
+    HoTen VARCHAR(200) NOT NULL,
+    LoaiKhach ENUM('nguoi_lon', 'tre_em', 'em_be') NOT NULL,
+    NgaySinh DATE NULL,
+    GioiTinh ENUM('nam', 'nu', 'khac') NULL,
+    SoGiayTo VARCHAR(50) NULL,
+    QuocTich VARCHAR(100) NULL,
+    GhiChu VARCHAR(300) NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT FkHanhKhachBooking FOREIGN KEY (BookingId) REFERENCES Booking(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_hanh_khach_booking
-ON hanh_khach(booking_id, loai_khach);
+CREATE INDEX IdxHanhKhachBooking
+ON HanhKhach(BookingId, LoaiKhach);
 
 -- =========================================================
 -- 13. THANH TOAN
-
 -- =========================================================
-CREATE TABLE thanh_toan (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    booking_id BIGINT UNSIGNED NOT NULL,
+CREATE TABLE ThanhToan (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    BookingId BIGINT UNSIGNED NOT NULL,
 
-    loai_giao_dich ENUM('dat_coc', 'thanh_toan_con_lai', 'thanh_toan_toan_bo', 'hoan_tien') NOT NULL DEFAULT 'thanh_toan_toan_bo',
-    kenh_thanh_toan ENUM('noi_bo', 'ben_thu_ba') NOT NULL DEFAULT 'noi_bo',
-    phuong_thuc_thanh_toan ENUM('tien_mat', 'chuyen_khoan', 'the', 'vi_dien_tu', 'cong_thanh_toan') NOT NULL,
+    LoaiGiaoDich ENUM('dat_coc', 'thanh_toan_con_lai', 'thanh_toan_toan_bo', 'hoan_tien') NOT NULL DEFAULT 'thanh_toan_toan_bo',
+    KenhThanhToan ENUM('noi_bo', 'ben_thu_ba') NOT NULL DEFAULT 'noi_bo',
+    PhuongThucThanhToan ENUM('tien_mat', 'chuyen_khoan', 'the', 'vi_dien_tu', 'cong_thanh_toan') NOT NULL,
 
-    nha_cung_cap VARCHAR(100) NULL,
-    so_tien DECIMAL(15,2) NOT NULL,
-    ma_giao_dich_noi_bo VARCHAR(100) NULL,
-    ma_giao_dich_ben_thu_ba VARCHAR(150) NULL,
-    ma_tham_chieu_ben_thu_ba VARCHAR(150) NULL,
+    NhaCungCap VARCHAR(100) NULL,
+    SoTien DECIMAL(15,2) NOT NULL,
+    MaGiaoDichNoiBo VARCHAR(100) NULL,
+    MaGiaoDichBenThuBa VARCHAR(150) NULL,
+    MaThamChieuBenThuBa VARCHAR(150) NULL,
 
-    trang_thai ENUM('khoi_tao', 'cho_xu_ly', 'thanh_cong', 'that_bai', 'da_hoan_tien') NOT NULL DEFAULT 'cho_xu_ly',
+    TrangThai ENUM('khoi_tao', 'cho_xu_ly', 'thanh_cong', 'that_bai', 'da_hoan_tien') NOT NULL DEFAULT 'cho_xu_ly',
 
-    du_lieu_phan_hoi JSON NULL,
-    ghi_chu VARCHAR(500) NULL,
+    DuLieuPhanHoi JSON NULL,
+    GhiChu VARCHAR(500) NULL,
 
-    nguoi_xac_nhan_id BIGINT UNSIGNED NULL,
-    thoi_gian_tao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    thoi_gian_xac_nhan DATETIME NULL,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    NguoiXacNhanId BIGINT UNSIGNED NULL,
+    ThoiGianTao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ThoiGianXacNhan DATETIME NULL,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT chk_thanh_toan_so_tien CHECK (so_tien > 0),
-    CONSTRAINT fk_thanh_toan_booking FOREIGN KEY (booking_id) REFERENCES booking(id),
-    CONSTRAINT fk_thanh_toan_nguoi_xac_nhan FOREIGN KEY (nguoi_xac_nhan_id) REFERENCES nguoi_dung(id)
+    CONSTRAINT ChkThanhToanSoTien CHECK (SoTien > 0),
+    CONSTRAINT FkThanhToanBooking FOREIGN KEY (BookingId) REFERENCES Booking(Id),
+    CONSTRAINT FkThanhToanNguoiXacNhan FOREIGN KEY (NguoiXacNhanId) REFERENCES NguoiDung(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_thanh_toan_booking
-ON thanh_toan(booking_id, trang_thai, thoi_gian_tao);
+CREATE INDEX IdxThanhToanBooking
+ON ThanhToan(BookingId, TrangThai, ThoiGianTao);
 
-CREATE INDEX idx_thanh_toan_ma_giao_dich_ben_thu_ba
-ON thanh_toan(ma_giao_dich_ben_thu_ba);
+CREATE INDEX IdxThanhToanMaGiaoDichBenThuBa
+ON ThanhToan(MaGiaoDichBenThuBa);
 
 -- =========================================================
 -- 14. HOA DON
 -- =========================================================
-CREATE TABLE hoa_don (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    booking_id BIGINT UNSIGNED NOT NULL UNIQUE,
-    so_hoa_don VARCHAR(50) NOT NULL UNIQUE,
-    ngay_lap DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    tong_tien_truoc_thue DECIMAL(15,2) NOT NULL DEFAULT 0,
-    thue_vat DECIMAL(15,2) NOT NULL DEFAULT 0,
-    tong_thanh_toan DECIMAL(15,2) NOT NULL DEFAULT 0,
-    email_nhan_hoa_don VARCHAR(255) NULL,
-    file_pdf VARCHAR(500) NULL,
-    ghi_chu VARCHAR(500) NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT chk_hoa_don_tien CHECK (
-        tong_tien_truoc_thue >= 0 AND thue_vat >= 0 AND tong_thanh_toan >= 0
+CREATE TABLE HoaDon (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    BookingId BIGINT UNSIGNED NOT NULL UNIQUE,
+    SoHoaDon VARCHAR(50) NOT NULL UNIQUE,
+    NgayLap DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    TongTienTruocThue DECIMAL(15,2) NOT NULL DEFAULT 0,
+    ThueVat DECIMAL(15,2) NOT NULL DEFAULT 0,
+    TongThanhToan DECIMAL(15,2) NOT NULL DEFAULT 0,
+    EmailNhanHoaDon VARCHAR(255) NULL,
+    FilePdf VARCHAR(500) NULL,
+    GhiChu VARCHAR(500) NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT ChkHoaDonTien CHECK (
+        TongTienTruocThue >= 0 AND ThueVat >= 0 AND TongThanhToan >= 0
     ),
-    CONSTRAINT fk_hoa_don_booking FOREIGN KEY (booking_id) REFERENCES booking(id)
+    CONSTRAINT FkHoaDonBooking FOREIGN KEY (BookingId) REFERENCES Booking(Id)
 ) ENGINE=InnoDB;
 
 -- =========================================================
 -- 15. PHIEU XAC NHAN TOUR
 -- =========================================================
-CREATE TABLE phieu_xac_nhan_tour (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    booking_id BIGINT UNSIGNED NOT NULL UNIQUE,
-    ma_phieu VARCHAR(50) NOT NULL UNIQUE,
-    ngay_phat_hanh DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    file_pdf VARCHAR(500) NULL,
-    ghi_chu VARCHAR(300) NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_phieu_xac_nhan_booking FOREIGN KEY (booking_id) REFERENCES booking(id)
+CREATE TABLE PhieuXacNhanTour (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    BookingId BIGINT UNSIGNED NOT NULL UNIQUE,
+    MaPhieu VARCHAR(50) NOT NULL UNIQUE,
+    NgayPhatHanh DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FilePdf VARCHAR(500) NULL,
+    GhiChu VARCHAR(300) NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT FkPhieuXacNhanBooking FOREIGN KEY (BookingId) REFERENCES Booking(Id)
 ) ENGINE=InnoDB;
 
 -- =========================================================
 -- 16. HUY BOOKING
 -- =========================================================
-CREATE TABLE huy_booking (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    booking_id BIGINT UNSIGNED NOT NULL UNIQUE,
-    ngay_yeu_cau DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ly_do VARCHAR(500) NOT NULL,
-    phi_huy DECIMAL(15,2) NOT NULL DEFAULT 0,
-    so_tien_hoan DECIMAL(15,2) NOT NULL DEFAULT 0,
-    trang_thai_xu_ly ENUM('cho_xu_ly', 'da_duyet', 'tu_choi', 'da_hoan_tien') NOT NULL DEFAULT 'cho_xu_ly',
-    nguoi_xu_ly_id BIGINT UNSIGNED NULL,
-    ngay_xu_ly DATETIME NULL,
-    ghi_chu TEXT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT chk_huy_booking_tien CHECK (phi_huy >= 0 AND so_tien_hoan >= 0),
-    CONSTRAINT fk_huy_booking_booking FOREIGN KEY (booking_id) REFERENCES booking(id),
-    CONSTRAINT fk_huy_booking_nguoi_xu_ly FOREIGN KEY (nguoi_xu_ly_id) REFERENCES nguoi_dung(id)
+CREATE TABLE HuyBooking (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    BookingId BIGINT UNSIGNED NOT NULL UNIQUE,
+    NgayYeuCau DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    LyDo VARCHAR(500) NOT NULL,
+    PhiHuy DECIMAL(15,2) NOT NULL DEFAULT 0,
+    SoTienHoan DECIMAL(15,2) NOT NULL DEFAULT 0,
+    TrangThaiXuLy ENUM('cho_xu_ly', 'da_duyet', 'tu_choi', 'da_hoan_tien') NOT NULL DEFAULT 'cho_xu_ly',
+    NguoiXuLyId BIGINT UNSIGNED NULL,
+    NgayXuLy DATETIME NULL,
+    GhiChu TEXT NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT ChkHuyBookingTien CHECK (PhiHuy >= 0 AND SoTienHoan >= 0),
+    CONSTRAINT FkHuyBookingBooking FOREIGN KEY (BookingId) REFERENCES Booking(Id),
+    CONSTRAINT FkHuyBookingNguoiXuLy FOREIGN KEY (NguoiXuLyId) REFERENCES NguoiDung(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_huy_booking_trang_thai
-ON huy_booking(trang_thai_xu_ly, ngay_yeu_cau);
+CREATE INDEX IdxHuyBookingTrangThai
+ON HuyBooking(TrangThaiXuLy, NgayYeuCau);
 
 -- =========================================================
 -- 17. DANH GIA TOUR
-
 -- =========================================================
-CREATE TABLE danh_gia_tour (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    booking_id BIGINT UNSIGNED NOT NULL UNIQUE,
-    tour_id BIGINT UNSIGNED NOT NULL,
-    nguoi_dung_id BIGINT UNSIGNED NOT NULL,
-    so_sao TINYINT UNSIGNED NOT NULL,
-    noi_dung_comment TEXT NULL,
-    phan_hoi_admin TEXT NULL,
-    trang_thai ENUM('cho_duyet', 'hien_thi', 'an') NOT NULL DEFAULT 'hien_thi',
-    nguoi_duyet_id BIGINT UNSIGNED NULL,
-    ngay_duyet DATETIME NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT chk_danh_gia_so_sao CHECK (so_sao BETWEEN 1 AND 5),
-    CONSTRAINT fk_danh_gia_booking FOREIGN KEY (booking_id) REFERENCES booking(id),
-    CONSTRAINT fk_danh_gia_tour FOREIGN KEY (tour_id) REFERENCES tour(id),
-    CONSTRAINT fk_danh_gia_nguoi_dung FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id),
-    CONSTRAINT fk_danh_gia_nguoi_duyet FOREIGN KEY (nguoi_duyet_id) REFERENCES nguoi_dung(id)
+CREATE TABLE DanhGiaTour (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    BookingId BIGINT UNSIGNED NOT NULL UNIQUE,
+    TourId BIGINT UNSIGNED NOT NULL,
+    NguoiDungId BIGINT UNSIGNED NOT NULL,
+    SoSao TINYINT UNSIGNED NOT NULL,
+    NoiDungComment TEXT NULL,
+    PhanHoiAdmin TEXT NULL,
+    TrangThai ENUM('cho_duyet', 'hien_thi', 'an') NOT NULL DEFAULT 'hien_thi',
+    NguoiDuyetId BIGINT UNSIGNED NULL,
+    NgayDuyet DATETIME NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT ChkDanhGiaSoSao CHECK (SoSao BETWEEN 1 AND 5),
+    CONSTRAINT FkDanhGiaBooking FOREIGN KEY (BookingId) REFERENCES Booking(Id),
+    CONSTRAINT FkDanhGiaTour FOREIGN KEY (TourId) REFERENCES Tour(Id),
+    CONSTRAINT FkDanhGiaNguoiDung FOREIGN KEY (NguoiDungId) REFERENCES NguoiDung(Id),
+    CONSTRAINT FkDanhGiaNguoiDuyet FOREIGN KEY (NguoiDuyetId) REFERENCES NguoiDung(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_danh_gia_tour
-ON danh_gia_tour(tour_id, trang_thai, created_at);
+CREATE INDEX IdxDanhGiaTour
+ON DanhGiaTour(TourId, TrangThai, CreatedAt);
 
 -- =========================================================
 -- 18. TIN TUC
 -- =========================================================
-CREATE TABLE tin_tuc (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    tieu_de VARCHAR(300) NOT NULL,
-    slug VARCHAR(320) NULL UNIQUE,
-    tom_tat VARCHAR(500) NULL,
-    noi_dung LONGTEXT NULL,
-    anh_dai_dien VARCHAR(500) NULL,
-    trang_thai ENUM('nhap', 'hien_thi', 'an') NOT NULL DEFAULT 'nhap',
-    nguoi_dang_id BIGINT UNSIGNED NOT NULL,
-    ngay_dang DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_tin_tuc_nguoi_dang FOREIGN KEY (nguoi_dang_id) REFERENCES nguoi_dung(id)
+CREATE TABLE TinTuc (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    TieuDe VARCHAR(300) NOT NULL,
+    Slug VARCHAR(320) NULL UNIQUE,
+    TomTat VARCHAR(500) NULL,
+    NoiDung LONGTEXT NULL,
+    AnhDaiDien VARCHAR(500) NULL,
+    TrangThai ENUM('nhap', 'hien_thi', 'an') NOT NULL DEFAULT 'nhap',
+    NguoiDangId BIGINT UNSIGNED NOT NULL,
+    NgayDang DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT FkTinTucNguoiDang FOREIGN KEY (NguoiDangId) REFERENCES NguoiDung(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_tin_tuc_trang_thai_ngay
-ON tin_tuc(trang_thai, ngay_dang);
+CREATE INDEX IdxTinTucTrangThaiNgay
+ON TinTuc(TrangThai, NgayDang);
 
 -- =========================================================
 -- 19. HO TRO KHACH HANG
 -- =========================================================
-CREATE TABLE ho_tro_khach_hang (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    ma_ho_tro VARCHAR(50) NOT NULL UNIQUE,
-    nguoi_dung_id BIGINT UNSIGNED NULL,
-    booking_id BIGINT UNSIGNED NULL,
-    ho_ten VARCHAR(200) NULL,
-    email VARCHAR(255) NULL,
-    so_dien_thoai VARCHAR(20) NULL,
-    loai_yeu_cau ENUM('tu_van_tour', 'ho_tro_booking', 'thanh_toan', 'khieu_nai', 'gop_y', 'khac') NOT NULL DEFAULT 'khac',
-    tieu_de VARCHAR(300) NOT NULL,
-    noi_dung TEXT NOT NULL,
-    trang_thai ENUM('moi', 'dang_xu_ly', 'da_phan_hoi', 'da_dong') NOT NULL DEFAULT 'moi',
-    muc_do_uu_tien ENUM('thap', 'trung_binh', 'cao') NOT NULL DEFAULT 'trung_binh',
-    nguoi_xu_ly_id BIGINT UNSIGNED NULL,
-    phan_hoi_admin TEXT NULL,
-    ngay_xu_ly DATETIME NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_ho_tro_nguoi_dung FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id),
-    CONSTRAINT fk_ho_tro_booking FOREIGN KEY (booking_id) REFERENCES booking(id),
-    CONSTRAINT fk_ho_tro_nguoi_xu_ly FOREIGN KEY (nguoi_xu_ly_id) REFERENCES nguoi_dung(id)
+CREATE TABLE HoTroKhachHang (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    MaHoTro VARCHAR(50) NOT NULL UNIQUE,
+    NguoiDungId BIGINT UNSIGNED NULL,
+    BookingId BIGINT UNSIGNED NULL,
+    HoTen VARCHAR(200) NULL,
+    Email VARCHAR(255) NULL,
+    SoDienThoai VARCHAR(20) NULL,
+    LoaiYeuCau ENUM('tu_van_tour', 'ho_tro_booking', 'thanh_toan', 'khieu_nai', 'gop_y', 'khac') NOT NULL DEFAULT 'khac',
+    TieuDe VARCHAR(300) NOT NULL,
+    NoiDung TEXT NOT NULL,
+    TrangThai ENUM('moi', 'dang_xu_ly', 'da_phan_hoi', 'da_dong') NOT NULL DEFAULT 'moi',
+    MucDoUuTien ENUM('thap', 'trung_binh', 'cao') NOT NULL DEFAULT 'trung_binh',
+    NguoiXuLyId BIGINT UNSIGNED NULL,
+    PhanHoiAdmin TEXT NULL,
+    NgayXuLy DATETIME NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT FkHoTroNguoiDung FOREIGN KEY (NguoiDungId) REFERENCES NguoiDung(Id),
+    CONSTRAINT FkHoTroBooking FOREIGN KEY (BookingId) REFERENCES Booking(Id),
+    CONSTRAINT FkHoTroNguoiXuLy FOREIGN KEY (NguoiXuLyId) REFERENCES NguoiDung(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_ho_tro_trang_thai
-ON ho_tro_khach_hang(trang_thai, loai_yeu_cau, created_at);
+CREATE INDEX IdxHoTroTrangThai
+ON HoTroKhachHang(TrangThai, LoaiYeuCau, CreatedAt);
 
 -- =========================================================
--- 20. TOUR YEU THICH
+-- 20. YEU THICH TOUR
 -- =========================================================
-CREATE TABLE yeu_thich_tour (
-    nguoi_dung_id BIGINT UNSIGNED NOT NULL,
-    tour_id BIGINT UNSIGNED NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (nguoi_dung_id, tour_id),
-    CONSTRAINT fk_yeu_thich_nguoi_dung FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id),
-    CONSTRAINT fk_yeu_thich_tour FOREIGN KEY (tour_id) REFERENCES tour(id)
+CREATE TABLE YeuThichTour (
+    NguoiDungId BIGINT UNSIGNED NOT NULL,
+    TourId BIGINT UNSIGNED NOT NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (NguoiDungId, TourId),
+    CONSTRAINT FkYeuThichNguoiDung FOREIGN KEY (NguoiDungId) REFERENCES NguoiDung(Id),
+    CONSTRAINT FkYeuThichTour FOREIGN KEY (TourId) REFERENCES Tour(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_yeu_thich_tour_tour
-ON yeu_thich_tour(tour_id);
+CREATE INDEX IdxYeuThichTourTour
+ON YeuThichTour(TourId);
 
 -- =========================================================
 -- 21. LICH SU TRANG THAI BOOKING
 -- =========================================================
-CREATE TABLE lich_su_trang_thai_booking (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    booking_id BIGINT UNSIGNED NOT NULL,
-    trang_thai_booking_cu VARCHAR(50) NULL,
-    trang_thai_booking_moi VARCHAR(50) NOT NULL,
-    trang_thai_thanh_toan_cu VARCHAR(50) NULL,
-    trang_thai_thanh_toan_moi VARCHAR(50) NULL,
-    thoi_gian DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    nguoi_thuc_hien_id BIGINT UNSIGNED NULL,
-    ghi_chu VARCHAR(300) NULL,
-    CONSTRAINT fk_ls_booking FOREIGN KEY (booking_id) REFERENCES booking(id),
-    CONSTRAINT fk_ls_nguoi_thuc_hien FOREIGN KEY (nguoi_thuc_hien_id) REFERENCES nguoi_dung(id)
+CREATE TABLE LichSuTrangThaiBooking (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    BookingId BIGINT UNSIGNED NOT NULL,
+    TrangThaiBookingCu VARCHAR(50) NULL,
+    TrangThaiBookingMoi VARCHAR(50) NOT NULL,
+    TrangThaiThanhToanCu VARCHAR(50) NULL,
+    TrangThaiThanhToanMoi VARCHAR(50) NULL,
+    ThoiGian DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    NguoiThucHienId BIGINT UNSIGNED NULL,
+    GhiChu VARCHAR(300) NULL,
+    CONSTRAINT FkLsBooking FOREIGN KEY (BookingId) REFERENCES Booking(Id),
+    CONSTRAINT FkLsNguoiThucHien FOREIGN KEY (NguoiThucHienId) REFERENCES NguoiDung(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_lich_su_trang_thai_booking
-ON lich_su_trang_thai_booking(booking_id, thoi_gian);
+CREATE INDEX IdxLichSuTrangThaiBooking
+ON LichSuTrangThaiBooking(BookingId, ThoiGian);
 
 -- =========================================================
 -- 22. THONG BAO
 -- =========================================================
-CREATE TABLE thong_bao (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nguoi_dung_id BIGINT UNSIGNED NOT NULL,
-    tieu_de VARCHAR(200) NOT NULL,
-    noi_dung VARCHAR(500) NOT NULL,
-    loai_thong_bao ENUM('booking', 'payment', 'support', 'news', 'system') NOT NULL DEFAULT 'system',
-    link_dieu_huong VARCHAR(500) NULL,
-    da_doc BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_thong_bao_nguoi_dung FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id)
+CREATE TABLE ThongBao (
+    Id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    NguoiDungId BIGINT UNSIGNED NOT NULL,
+    TieuDe VARCHAR(200) NOT NULL,
+    NoiDung VARCHAR(500) NOT NULL,
+    LoaiThongBao ENUM('booking', 'payment', 'support', 'news', 'system') NOT NULL DEFAULT 'system',
+    LinkDieuHuong VARCHAR(500) NULL,
+    DaDoc BOOLEAN NOT NULL DEFAULT FALSE,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FkThongBaoNguoiDung FOREIGN KEY (NguoiDungId) REFERENCES NguoiDung(Id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_thong_bao_nguoi_dung
-ON thong_bao(nguoi_dung_id, da_doc, created_at);
+CREATE INDEX IdxThongBaoNguoiDung
+ON ThongBao(NguoiDungId, DaDoc, CreatedAt);
+

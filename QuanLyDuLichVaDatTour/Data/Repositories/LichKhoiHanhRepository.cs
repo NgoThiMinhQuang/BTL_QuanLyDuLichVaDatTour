@@ -30,6 +30,9 @@ public class LichKhoiHanhRepository : ILichKhoiHanhRepository
         return await _dbContext.LichKhoiHanhs
             .AsNoTracking()
             .Include(x => x.Tour)
+                .ThenInclude(x => x!.LoaiTour)
+            .Include(x => x.Tour)
+                .ThenInclude(x => x!.DiemXuatPhat)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -37,6 +40,9 @@ public class LichKhoiHanhRepository : ILichKhoiHanhRepository
     {
         return await _dbContext.LichKhoiHanhs
             .Include(x => x.Tour)
+                .ThenInclude(x => x!.LoaiTour)
+            .Include(x => x.Tour)
+                .ThenInclude(x => x!.DiemXuatPhat)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 

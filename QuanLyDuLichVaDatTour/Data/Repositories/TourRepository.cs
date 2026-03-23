@@ -20,7 +20,7 @@ public class TourRepository : ITourRepository
         return await _dbContext.Tours
             .AsNoTracking()
             .Include(x => x.LoaiTour)
-            .Include(x => x.DiaDiemKhoiHanh)
+            .Include(x => x.DiemXuatPhat)
             .Where(x => x.TrangThai == TrangThaiTour.dang_mo_ban)
             .OrderBy(x => x.TenTour)
             .ToListAsync();
@@ -31,7 +31,7 @@ public class TourRepository : ITourRepository
         return await _dbContext.Tours
             .AsNoTracking()
             .Include(x => x.LoaiTour)
-            .Include(x => x.DiaDiemKhoiHanh)
+            .Include(x => x.DiemXuatPhat)
             .FirstOrDefaultAsync(x => x.Id == id && x.TrangThai == TrangThaiTour.dang_mo_ban);
     }
 
@@ -40,7 +40,7 @@ public class TourRepository : ITourRepository
         return await _dbContext.Tours
             .AsNoTracking()
             .Include(x => x.LoaiTour)
-            .Include(x => x.DiaDiemKhoiHanh)
+            .Include(x => x.DiemXuatPhat)
             .OrderBy(x => x.TenTour)
             .ToListAsync();
     }
@@ -50,7 +50,7 @@ public class TourRepository : ITourRepository
         return await _dbContext.Tours
             .AsNoTracking()
             .Include(x => x.LoaiTour)
-            .Include(x => x.DiaDiemKhoiHanh)
+            .Include(x => x.DiemXuatPhat)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -58,7 +58,7 @@ public class TourRepository : ITourRepository
     {
         return await _dbContext.Tours
             .Include(x => x.LoaiTour)
-            .Include(x => x.DiaDiemKhoiHanh)
+            .Include(x => x.DiemXuatPhat)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 

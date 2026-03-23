@@ -11,15 +11,18 @@ public class BookingService : IBookingService
 {
     private readonly IBookingRepository _bookingRepository;
     private readonly ILichKhoiHanhRepository _lichKhoiHanhRepository;
+    private readonly IBangGiaLichKhoiHanhRepository _bangGiaLichKhoiHanhRepository;
     private readonly INguoiDungRepository _nguoiDungRepository;
 
     public BookingService(
         IBookingRepository bookingRepository,
         ILichKhoiHanhRepository lichKhoiHanhRepository,
+        IBangGiaLichKhoiHanhRepository bangGiaLichKhoiHanhRepository,
         INguoiDungRepository nguoiDungRepository)
     {
         _bookingRepository = bookingRepository;
         _lichKhoiHanhRepository = lichKhoiHanhRepository;
+        _bangGiaLichKhoiHanhRepository = bangGiaLichKhoiHanhRepository;
         _nguoiDungRepository = nguoiDungRepository;
     }
 
@@ -27,7 +30,6 @@ public class BookingService : IBookingService
     {
         var nguoiDung = await EnsureNguoiDungExistsAsync(currentUserId);
         var lichKhoiHanh = await EnsureLichKhoiHanhAvailableAsync(request.LichKhoiHanhId);
-        var tour = lichKhoiHanh.Tour!;
 
         ValidatePassengerCounts(request.SoNguoiLon, request.SoTreEm, request.SoEmBe, lichKhoiHanh.SoChoToiDa);
 
@@ -36,14 +38,14 @@ public class BookingService : IBookingService
         var soDienThoaiLienHe = NormalizeRequiredValue(request.SoDienThoaiLienHe ?? nguoiDung.SoDienThoai, "Số điện thoại liên hệ không được để trống.");
         var diaChiLienHe = NormalizeOptionalValue(request.DiaChiLienHe ?? nguoiDung.DiaChi);
         var ghiChu = NormalizeOptionalValue(request.GhiChu);
+        var loaiGiaApDung = ResolveLoaiGiaApDung(lichKhoiHanh.NgayKhoiHanh);
+
+        var bangGia = await _bangGiaLichKhoiHanhRepository.GetBangGiaAsync(lichKhoiHanh.Id, loaiGiaApDung);
+        var donGiaNguoiLon = GetDonGia(bangGia, LoaiKhach.nguoi_lon, "người lớn");
+        var donGiaTreEm = GetDonGia(bangGia, LoaiKhach.tre_em, "trẻ em");
+        var donGiaEmBe = GetDonGia(bangGia, LoaiKhach.em_be, "em bé");
 
         var maBooking = await GenerateUniqueMaBookingAsync();
-        var donGiaNguoiLon = tour.GiaNguoiLonMacDinh ?? 0m;
-        var donGiaTreEm = tour.GiaTreEmMacDinh ?? 0m;
-        var donGiaEmBe = 0m;
-        ValidatePrice(donGiaNguoiLon, "Đơn giá người lớn không hợp lệ.");
-        ValidatePrice(donGiaTreEm, "Đơn giá trẻ em không hợp lệ.");
-
         var tamTinh = request.SoNguoiLon * donGiaNguoiLon
             + request.SoTreEm * donGiaTreEm
             + request.SoEmBe * donGiaEmBe;
@@ -62,7 +64,7 @@ public class BookingService : IBookingService
             SoNguoiLon = request.SoNguoiLon,
             SoTreEm = request.SoTreEm,
             SoEmBe = request.SoEmBe,
-            LoaiGiaApDung = LoaiGiaApDung.ngay_thuong,
+            LoaiGiaApDung = loaiGiaApDung,
             DonGiaNguoiLon = donGiaNguoiLon,
             DonGiaTreEm = donGiaTreEm,
             DonGiaEmBe = donGiaEmBe,
@@ -190,12 +192,26 @@ public class BookingService : IBookingService
         }
     }
 
-    private static void ValidatePrice(decimal value, string errorMessage)
+    private static LoaiGiaApDung ResolveLoaiGiaApDung(DateTime ngayKhoiHanh)
     {
-        if (value < 0)
+        return ngayKhoiHanh.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday
+            ? LoaiGiaApDung.cuoi_tuan
+            : LoaiGiaApDung.ngay_thuong;
+    }
+
+    private static decimal GetDonGia(Dictionary<LoaiKhach, decimal> bangGia, LoaiKhach loaiKhach, string tenLoaiKhach)
+    {
+        if (!bangGia.TryGetValue(loaiKhach, out var donGia))
         {
-            throw new InvalidOperationException(errorMessage);
+            throw new InvalidOperationException($"Chưa cấu hình bảng giá cho {tenLoaiKhach}.");
         }
+
+        if (donGia < 0)
+        {
+            throw new InvalidOperationException($"Đơn giá {tenLoaiKhach} không hợp lệ.");
+        }
+
+        return donGia;
     }
 
     private async Task<string> GenerateUniqueMaBookingAsync()

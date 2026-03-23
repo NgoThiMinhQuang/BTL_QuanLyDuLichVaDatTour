@@ -10,23 +10,28 @@ public class CreateTourRequestDto
     public string MaTour { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(200)]
+    [MaxLength(300)]
     public string TenTour { get; set; } = string.Empty;
 
     [Required]
     public ulong LoaiTourId { get; set; }
 
     [Required]
-    public ulong DiaDiemKhoiHanhId { get; set; }
+    public ulong DiemXuatPhatId { get; set; }
 
     [Required]
-    public int SoNgay { get; set; }
+    [Range(1, byte.MaxValue)]
+    public byte SoNgay { get; set; }
 
     [Required]
-    public int SoDem { get; set; }
+    [Range(0, byte.MaxValue)]
+    public byte SoDem { get; set; }
 
     [MaxLength(100)]
     public string? PhuongTien { get; set; }
+
+    [Range(0, double.MaxValue)]
+    public decimal GiaTuThamKhao { get; set; }
 
     [MaxLength(500)]
     public string? MoTaNgan { get; set; }
@@ -35,11 +40,7 @@ public class CreateTourRequestDto
 
     public string? DieuKienTour { get; set; }
 
-    [Range(0, double.MaxValue)]
-    public decimal? GiaNguoiLonMacDinh { get; set; }
-
-    [Range(0, double.MaxValue)]
-    public decimal? GiaTreEmMacDinh { get; set; }
+    public bool IsNoiBat { get; set; }
 
     public TrangThaiTour? TrangThai { get; set; }
 }

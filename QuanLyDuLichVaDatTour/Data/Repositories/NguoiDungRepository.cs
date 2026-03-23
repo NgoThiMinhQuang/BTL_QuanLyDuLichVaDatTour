@@ -21,6 +21,12 @@ public class NguoiDungRepository : INguoiDungRepository
             .FirstOrDefaultAsync(x => x.Email == email);
     }
 
+    public async Task<NguoiDung?> GetTrackedByEmailAsync(string email)
+    {
+        return await _dbContext.NguoiDungs
+            .FirstOrDefaultAsync(x => x.Email == email);
+    }
+
     public async Task<NguoiDung?> GetByIdAsync(ulong id)
     {
         return await _dbContext.NguoiDungs

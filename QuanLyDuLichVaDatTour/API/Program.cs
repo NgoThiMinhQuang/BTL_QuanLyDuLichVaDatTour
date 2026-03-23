@@ -50,6 +50,7 @@ builder.Services.AddScoped<IDiaDiemRepository, DiaDiemRepository>();
 builder.Services.AddScoped<ITourRepository, TourRepository>();
 builder.Services.AddScoped<ILichTrinhRepository, LichTrinhRepository>();
 builder.Services.AddScoped<ILichKhoiHanhRepository, LichKhoiHanhRepository>();
+builder.Services.AddScoped<IBangGiaLichKhoiHanhRepository, BangGiaLichKhoiHanhRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILoaiTourService, LoaiTourService>();

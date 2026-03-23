@@ -12,13 +12,15 @@ public class Tour
 
     public ulong LoaiTourId { get; set; }
 
-    public ulong DiaDiemKhoiHanhId { get; set; }
+    public ulong DiemXuatPhatId { get; set; }
 
-    public int SoNgay { get; set; }
+    public byte SoNgay { get; set; }
 
-    public int SoDem { get; set; }
+    public byte SoDem { get; set; }
 
     public string? PhuongTien { get; set; }
+
+    public decimal GiaTuThamKhao { get; set; }
 
     public string? MoTaNgan { get; set; }
 
@@ -26,9 +28,7 @@ public class Tour
 
     public string? DieuKienTour { get; set; }
 
-    public decimal? GiaNguoiLonMacDinh { get; set; }
-
-    public decimal? GiaTreEmMacDinh { get; set; }
+    public bool IsNoiBat { get; set; }
 
     public TrangThaiTour TrangThai { get; set; }
 
@@ -38,5 +38,5 @@ public class Tour
 
     public LoaiTour? LoaiTour { get; set; }
 
-    public DiaDiem? DiaDiemKhoiHanh { get; set; }
+    public DiaDiem? DiemXuatPhat { get; set; }
 }

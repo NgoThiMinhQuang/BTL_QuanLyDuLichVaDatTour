@@ -64,7 +64,7 @@ public class AuthService : IAuthService
     public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
     {
         var normalizedEmail = NormalizeEmail(request.Email);
-        var nguoiDung = await _nguoiDungRepository.GetByEmailAsync(normalizedEmail);
+        var nguoiDung = await _nguoiDungRepository.GetTrackedByEmailAsync(normalizedEmail);
 
         if (nguoiDung is null)
         {
@@ -76,10 +76,26 @@ public class AuthService : IAuthService
             throw new InvalidOperationException("Tài khoản đã bị khóa.");
         }
 
-        var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(nguoiDung, nguoiDung.MatKhau, request.MatKhau);
+        PasswordVerificationResult passwordVerificationResult;
+        try
+        {
+            passwordVerificationResult = _passwordHasher.VerifyHashedPassword(nguoiDung, nguoiDung.MatKhau, request.MatKhau);
+        }
+        catch (FormatException)
+        {
+            throw new UnauthorizedAccessException("Mật khẩu trong cơ sở dữ liệu không đúng định dạng băm. Hãy tạo lại tài khoản hoặc cập nhật lại dữ liệu mật khẩu.");
+        }
+
         if (passwordVerificationResult == PasswordVerificationResult.Failed)
         {
             throw new UnauthorizedAccessException("Email hoặc mật khẩu không chính xác.");
+        }
+
+        if (passwordVerificationResult == PasswordVerificationResult.SuccessRehashNeeded)
+        {
+            nguoiDung.MatKhau = _passwordHasher.HashPassword(nguoiDung, request.MatKhau);
+            nguoiDung.UpdatedAt = DateTime.UtcNow;
+            await _nguoiDungRepository.SaveChangesAsync();
         }
 
         var jwtSection = _configuration.GetSection("Jwt");
@@ -162,7 +178,16 @@ public class AuthService : IAuthService
             throw new UnauthorizedAccessException("Người dùng không tồn tại hoặc token không hợp lệ.");
         }
 
-        var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(nguoiDung, nguoiDung.MatKhau, request.MatKhauHienTai);
+        PasswordVerificationResult passwordVerificationResult;
+        try
+        {
+            passwordVerificationResult = _passwordHasher.VerifyHashedPassword(nguoiDung, nguoiDung.MatKhau, request.MatKhauHienTai);
+        }
+        catch (FormatException)
+        {
+            throw new UnauthorizedAccessException("Mật khẩu hiện tại trong cơ sở dữ liệu không đúng định dạng băm.");
+        }
+
         if (passwordVerificationResult == PasswordVerificationResult.Failed)
         {
             throw new UnauthorizedAccessException("Mật khẩu hiện tại không chính xác.");

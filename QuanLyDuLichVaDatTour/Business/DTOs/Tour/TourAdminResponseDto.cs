@@ -12,15 +12,17 @@ public class TourAdminResponseDto
 
     public string TenLoaiTour { get; set; } = string.Empty;
 
-    public ulong DiaDiemKhoiHanhId { get; set; }
+    public ulong DiemXuatPhatId { get; set; }
 
-    public string TenDiaDiemKhoiHanh { get; set; } = string.Empty;
+    public string TenDiemXuatPhat { get; set; } = string.Empty;
 
-    public int SoNgay { get; set; }
+    public byte SoNgay { get; set; }
 
-    public int SoDem { get; set; }
+    public byte SoDem { get; set; }
 
     public string? PhuongTien { get; set; }
+
+    public decimal GiaTuThamKhao { get; set; }
 
     public string? MoTaNgan { get; set; }
 
@@ -28,9 +30,7 @@ public class TourAdminResponseDto
 
     public string? DieuKienTour { get; set; }
 
-    public decimal? GiaNguoiLonMacDinh { get; set; }
-
-    public decimal? GiaTreEmMacDinh { get; set; }
+    public bool IsNoiBat { get; set; }
 
     public string TrangThai { get; set; } = string.Empty;
 

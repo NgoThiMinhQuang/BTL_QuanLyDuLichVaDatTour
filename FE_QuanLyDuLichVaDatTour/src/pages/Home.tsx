@@ -1,27 +1,27 @@
 import { Space } from 'antd'
-import { ContactCtaSection } from '../features/home/components/ContactCtaSection'
-import { CustomerReviewSection } from '../features/home/components/CustomerReviewSection'
-import { FeaturedToursSection } from '../features/home/components/FeaturedToursSection'
-import { HeroSection } from '../features/home/components/HeroSection'
-import { PromoSection } from '../features/home/components/PromoSection'
-import { TourCategorySection } from '../features/home/components/TourCategorySection'
-import { UpcomingDeparturesSection } from '../features/home/components/UpcomingDeparturesSection'
-import { WhyChooseUsSection } from '../features/home/components/WhyChooseUsSection'
-import { useFeaturedTours } from '../features/home/hooks/useFeaturedTours'
+import { MucTuVan } from '../components/home/MucTuVan'
+import { MucDanhGia } from '../components/home/MucDanhGia'
+import { MucTourNoiBat } from '../components/home/MucTourNoiBat'
+import { MucBanner } from '../components/home/MucBanner'
+import { MucUuDai } from '../components/home/MucUuDai'
+import { MucLoaiTour } from '../components/home/MucLoaiTour'
+import { MucLichKhoiHanh } from '../components/home/MucLichKhoiHanh'
+import { MucLyDoChon } from '../components/home/MucLyDoChon'
+import { useTourNoiBat } from '../services/home/useTourNoiBat'
 
 export default function Home() {
-  const { data: featuredTours = [] } = useFeaturedTours()
+  const { data: featuredTours = [] } = useTourNoiBat()
 
   return (
     <Space direction="vertical" size={0} className="home-page">
-      <HeroSection />
-      <FeaturedToursSection />
-      <TourCategorySection />
-      <UpcomingDeparturesSection tours={featuredTours} />
-      <PromoSection />
-      <WhyChooseUsSection />
-      <CustomerReviewSection />
-      <ContactCtaSection />
+      <MucBanner />
+      <MucTourNoiBat />
+      <MucLoaiTour />
+      <MucLichKhoiHanh tours={featuredTours} />
+      <MucUuDai />
+      <MucLyDoChon />
+      <MucDanhGia />
+      <MucTuVan />
     </Space>
   )
 }
