@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Tour from './pages/Tour'
+import LichKhoiHanh from './pages/LichKhoiHanh'
 
 const { Content } = Layout
 
@@ -22,6 +23,7 @@ export default function AppRouter() {
           <Route path={PATHS.home} element={<Home />} />
           <Route path={PATHS.about} element={<About />} />
           <Route path={PATHS.tour} element={<Tour />} />
+          <Route path={PATHS.lichKhoiHanh} element={<LichKhoiHanh />} />
           <Route path={PATHS.login} element={<Login />} />
           <Route path={PATHS.register} element={<Register />} />
         </Routes>
