@@ -1,7 +1,8 @@
 import { Button, Card, Rate, Typography } from 'antd'
+import bannerImage from '../../assets/Banner.jpg'
 import type { FeaturedTourApiItem } from '../../shared/home'
 import { formatTien } from '../../utils/formatTien'
-
+'},
 const { Paragraph, Text, Title } = Typography
 
 interface TourTheProps {
@@ -10,15 +11,15 @@ interface TourTheProps {
   viewMode: 'grid' | 'list'
 }
 
-const tourImages = [
-  'linear-gradient(135deg, rgba(11, 90, 160, 0.18), rgba(11, 90, 160, 0.05)), url(https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80)',
-  'linear-gradient(135deg, rgba(22, 163, 74, 0.18), rgba(22, 163, 74, 0.05)), url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80)',
-  'linear-gradient(135deg, rgba(2, 132, 199, 0.18), rgba(2, 132, 199, 0.05)), url(https://images.unsplash.com/photo-1468413253725-0d5181091126?auto=format&fit=crop&w=1200&q=80)',
-  'linear-gradient(135deg, rgba(234, 88, 12, 0.18), rgba(234, 88, 12, 0.05)), url(https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80)',
+const tourGradients = [
+  'linear-gradient(135deg, rgba(11, 90, 160, 0.32), rgba(11, 90, 160, 0.08))',
+  'linear-gradient(135deg, rgba(22, 163, 74, 0.28), rgba(22, 163, 74, 0.08))',
+  'linear-gradient(135deg, rgba(2, 132, 199, 0.28), rgba(2, 132, 199, 0.08))',
+  'linear-gradient(135deg, rgba(234, 88, 12, 0.26), rgba(234, 88, 12, 0.08))',
 ]
 
 export function TourThe({ tour, imageIndex, viewMode }: TourTheProps) {
-  const backgroundImage = tourImages[imageIndex % tourImages.length]
+  const backgroundImage = `${tourGradients[imageIndex % tourGradients.length]}, url(${bannerImage})`
   const rating = 4.5 + ((tour.id % 5) * 0.1)
   const reviewCount = 120 + tour.id * 11
   const originalPrice = tour.giaNguoiLonMacDinh ? Math.round(tour.giaNguoiLonMacDinh * 1.18) : null

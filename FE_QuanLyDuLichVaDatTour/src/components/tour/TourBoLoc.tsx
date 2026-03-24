@@ -31,7 +31,6 @@ export function TourBoLoc(props: TourBoLocProps) {
     diemDen,
     giaRange,
     thoiGian,
-    ngayKhoiHanh,
     selectedLoaiTours,
     selectedPhuongTiens,
     categories,
@@ -154,7 +153,6 @@ export function TourBoLoc(props: TourBoLocProps) {
             format="DD/MM/YYYY"
             placeholder="dd/mm/yyyy"
             className="tour-filter-date"
-            value={null}
             onChange={(_, dateString) => onNgayKhoiHanhChange(typeof dateString === 'string' && dateString ? dateString : null)}
           />
         </div>

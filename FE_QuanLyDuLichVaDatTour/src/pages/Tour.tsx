@@ -1,4 +1,4 @@
-import { Alert, Col, Empty, Row, Skeleton, Space, Typography } from 'antd'
+import { Alert, Col, Empty, Row, Skeleton, Typography } from 'antd'
 import { useMemo, useState } from 'react'
 import { TourBoLoc } from '../components/tour/TourBoLoc'
 import { TourPhanTrang } from '../components/tour/TourPhanTrang'
