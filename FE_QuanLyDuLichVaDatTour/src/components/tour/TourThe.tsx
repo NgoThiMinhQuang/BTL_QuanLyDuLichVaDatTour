@@ -2,7 +2,7 @@ import { Button, Card, Rate, Typography } from 'antd'
 import bannerImage from '../../assets/Banner.jpg'
 import type { FeaturedTourApiItem } from '../../shared/home'
 import { formatTien } from '../../utils/formatTien'
-'},
+
 const { Paragraph, Text, Title } = Typography
 
 interface TourTheProps {

@@ -6,7 +6,7 @@ import { formatTien } from '../../utils/formatTien'
 const { Paragraph, Text, Title } = Typography
 
 export function MucTourNoiBat() {
-  const { data, error, isLoading, refetch } = useTourNoiBat()
+  const { data, error, isLoading, refetch } = useTourNoiBat(6)
 
   return (
     <Card id="tour-noi-bat" className="home-section">

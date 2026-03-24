@@ -11,7 +11,7 @@ import { MucGioiThieu } from '../components/home/MucGioiThieu'
 import { useTourNoiBat } from '../services/home/useTourNoiBat'
 
 export default function Home() {
-  const { data: featuredTours = [] } = useTourNoiBat()
+  const { data: featuredTours = [] } = useTourNoiBat(6)
 
   return (
     <Space orientation="vertical" size={0} className="home-page">
