@@ -36,7 +36,7 @@ export function MucLichKhoiHanh({ tours }: MucLichKhoiHanhProps) {
         <Alert
           type="warning"
           showIcon
-          message="Không tải được lịch khởi hành"
+          title="Không tải được lịch khởi hành"
           description="Bạn vẫn có thể xem tour nổi bật, sau đó tải lại để xem các đợt khởi hành gần nhất."
           action={<Button onClick={() => refetch()}>Thử lại</Button>}
         />
@@ -51,13 +51,13 @@ export function MucLichKhoiHanh({ tours }: MucLichKhoiHanhProps) {
           {data.map((item) => (
             <Col xs={24} md={12} xl={6} key={item.id}>
               <Card className="departure-card">
-                <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                <Space orientation="vertical" size={12} style={{ width: '100%' }}>
                   <Space wrap>
                     <Tag color="blue">{formatNgay(item.ngayKhoiHanh)}</Tag>
                     <Tag color="cyan">{item.maDotTour}</Tag>
                   </Space>
 
-                  <Space direction="vertical" size={4}>
+                  <Space orientation="vertical" size={4}>
                     <Title level={4} style={{ margin: 0 }}>
                       {item.tenTour}
                     </Title>

@@ -30,7 +30,7 @@ export function MucLoaiTour() {
         <Alert
           type="error"
           showIcon
-          message="Không tải được danh mục tour"
+          title="Không tải được danh mục tour"
           description="Hãy kiểm tra backend đang chạy hoặc tải lại để xem các danh mục hiện có."
           action={<Button onClick={() => refetch()}>Thử lại</Button>}
         />
@@ -43,7 +43,7 @@ export function MucLoaiTour() {
           {data.map((item) => (
             <Col xs={24} md={12} xl={8} key={item.id}>
               <Card className="category-card">
-                <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                <Space orientation="vertical" size={12} style={{ width: '100%' }}>
                   <Tag color="blue">{item.trangThai === 'hoat_dong' ? 'Đang mở' : item.trangThai}</Tag>
                   <Title level={4} style={{ margin: 0 }}>
                     {item.ten}

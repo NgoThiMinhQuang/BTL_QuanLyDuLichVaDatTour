@@ -13,7 +13,7 @@ export default function Home() {
   const { data: featuredTours = [] } = useTourNoiBat()
 
   return (
-    <Space direction="vertical" size={0} className="home-page">
+    <Space orientation="vertical" size={0} className="home-page">
       <MucBanner />
       <MucTourNoiBat />
       <MucLoaiTour />

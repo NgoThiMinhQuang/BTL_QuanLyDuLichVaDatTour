@@ -5,7 +5,7 @@ const { Paragraph, Title } = Typography
 export default function About() {
   return (
     <Card className="home-section">
-      <Space direction="vertical" size={12}>
+      <Space orientation="vertical" size={12}>
         <Title level={2} style={{ margin: 0 }}>
           Giới thiệu đề tài
         </Title>

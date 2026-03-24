@@ -31,7 +31,7 @@ export function MucTourNoiBat() {
         <Alert
           type="error"
           showIcon
-          message="Không tải được tour nổi bật"
+          title="Không tải được tour nổi bật"
           description="Hãy kiểm tra API /api/tour/get-all hoặc tải lại để tiếp tục xem các tour đang mở bán."
           action={<Button onClick={() => refetch()}>Thử lại</Button>}
         />
@@ -47,13 +47,13 @@ export function MucTourNoiBat() {
             <Col xs={24} xl={8} key={tour.id}>
               <Card className="featured-tour-card">
                 <div className="featured-tour-cover" />
-                <Space direction="vertical" size={14} style={{ width: '100%', marginTop: 18 }}>
+                <Space orientation="vertical" size={14} style={{ width: '100%', marginTop: 18 }}>
                   <Space wrap>
                     <Tag color="blue">{tour.tenLoaiTour}</Tag>
                     <Tag color="gold">{tour.soNgay} ngày {tour.soDem} đêm</Tag>
                   </Space>
 
-                  <Space direction="vertical" size={4}>
+                  <Space orientation="vertical" size={4}>
                     <Title level={4} style={{ marginBottom: 0 }}>
                       {tour.tenTour}
                     </Title>
@@ -64,7 +64,7 @@ export function MucTourNoiBat() {
                     {tour.moTaNgan ?? 'Hành trình được thiết kế để dễ theo dõi lịch trình và lựa chọn lịch khởi hành phù hợp.'}
                   </Paragraph>
 
-                  <Space direction="vertical" size={4}>
+                  <Space orientation="vertical" size={4}>
                     <Text className="featured-tour-meta">Phương tiện: {tour.phuongTien ?? 'Đang cập nhật'}</Text>
                     <Text className="featured-tour-meta">Mã tour: {tour.maTour}</Text>
                   </Space>

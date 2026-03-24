@@ -16,8 +16,8 @@ export function MucDanhGia() {
         {reviewItems.map((item) => (
           <Col xs={24} xl={8} key={item.id}>
             <Card className="review-card">
-              <Space direction="vertical" size={12}>
-                <Space direction="vertical" size={2}>
+              <Space orientation="vertical" size={12}>
+                <Space orientation="vertical" size={2}>
                   <Title level={5} style={{ margin: 0 }}>
                     {item.name}
                   </Title>

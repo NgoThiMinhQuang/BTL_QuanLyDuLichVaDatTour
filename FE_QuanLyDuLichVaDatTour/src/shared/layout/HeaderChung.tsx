@@ -36,8 +36,19 @@ export function HeaderChung() {
         <Menu mode="horizontal" selectedKeys={[selectedKey]} items={items} className="app-menu" />
 
         <Space className="app-header-actions">
-          <Button className="app-header-button">Đăng nhập</Button>
-          <Button type="primary" className="app-header-button app-header-button-primary">
+          <Button className="app-header-button" href={PATHS.login}>
+            Đăng nhập
+          </Button>
+          <Button type="primary" className="app-header-button app-header-button-primary" href={PATHS.register}>
+            Đăng ký
+          </Button>
+        </Space>
+
+        <Space className="app-header-actions-mobile">
+          <Button className="app-header-button" href={PATHS.login}>
+            Đăng nhập
+          </Button>
+          <Button type="primary" className="app-header-button app-header-button-primary" href={PATHS.register}>
             Đăng ký
           </Button>
         </Space>

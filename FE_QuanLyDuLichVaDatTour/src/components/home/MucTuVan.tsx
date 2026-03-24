@@ -4,8 +4,8 @@ const { Paragraph, Title } = Typography
 
 export function MucTuVan() {
   return (
-    <Card id="tu-van-tour" className="home-section cta-section" bordered={false}>
-      <Space direction="vertical" size={16} style={{ width: '100%' }}>
+    <Card id="tu-van-tour" className="home-section cta-section" variant="borderless">
+      <Space orientation="vertical" size={16} style={{ width: '100%' }}>
         <Title level={2} className="cta-title" style={{ margin: 0 }}>
           Bạn cần tư vấn để chọn tour, lịch khởi hành hoặc ngân sách phù hợp?
         </Title>

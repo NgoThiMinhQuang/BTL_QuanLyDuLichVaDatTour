@@ -4,10 +4,10 @@ const { Paragraph, Text, Title } = Typography
 
 export function MucUuDai() {
   return (
-    <Card id="uu-dai" className="home-section promo-section" bordered={false}>
+    <Card id="uu-dai" className="home-section promo-section" variant="borderless">
       <Row gutter={[24, 24]} align="middle">
         <Col xs={24} lg={16}>
-          <Space direction="vertical" size={12}>
+          <Space orientation="vertical" size={12}>
             <Text className="promo-code">Ưu đãi mùa hè • TOURHE2026</Text>
             <Title level={2} style={{ margin: 0 }}>
               Đặt tour sớm để giữ chỗ đẹp cho những hành trình đang được quan tâm nhiều nhất

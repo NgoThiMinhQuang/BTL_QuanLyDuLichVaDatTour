@@ -16,7 +16,7 @@ export function MucLyDoChon() {
         {benefitItems.map((item) => (
           <Col xs={24} md={12} key={item.id}>
             <Card className="benefit-card">
-              <Space direction="vertical" size={12}>
+              <Space orientation="vertical" size={12}>
                 <span className="benefit-icon">{item.icon}</span>
                 <Title level={4} style={{ margin: 0 }}>
                   {item.title}
