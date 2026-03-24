@@ -18,7 +18,7 @@ interface RawFeaturedTour {
   trangThai: string
 }
 
-export async function layTourNoiBat(): Promise<FeaturedTourApiItem[]> {
+export async function layTourNoiBat(limit?: number): Promise<FeaturedTourApiItem[]> {
   const response = await fetch(`${API_BASE_URL}/tour/get-all`)
 
   if (!response.ok) {
@@ -26,8 +26,7 @@ export async function layTourNoiBat(): Promise<FeaturedTourApiItem[]> {
   }
 
   const data = (await response.json()) as RawFeaturedTour[]
-
-  return data.slice(0, 6).map((item) => ({
+  const mapped = data.map((item) => ({
     id: item.id,
     maTour: item.maTour,
     tenTour: item.tenTour,
@@ -41,4 +40,6 @@ export async function layTourNoiBat(): Promise<FeaturedTourApiItem[]> {
     giaTreEmMacDinh: item.giaTreEmMacDinh ?? null,
     trangThai: item.trangThai,
   }))
+
+  return typeof limit === 'number' ? mapped.slice(0, limit) : mapped
 }

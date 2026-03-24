@@ -7,6 +7,7 @@ import { MucUuDai } from '../components/home/MucUuDai'
 import { MucLoaiTour } from '../components/home/MucLoaiTour'
 import { MucLichKhoiHanh } from '../components/home/MucLichKhoiHanh'
 import { MucLyDoChon } from '../components/home/MucLyDoChon'
+import { MucGioiThieu } from '../components/home/MucGioiThieu'
 import { useTourNoiBat } from '../services/home/useTourNoiBat'
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
   return (
     <Space orientation="vertical" size={0} className="home-page">
       <MucBanner />
+      <MucGioiThieu />
       <MucTourNoiBat />
       <MucLoaiTour />
       <MucLichKhoiHanh tours={featuredTours} />

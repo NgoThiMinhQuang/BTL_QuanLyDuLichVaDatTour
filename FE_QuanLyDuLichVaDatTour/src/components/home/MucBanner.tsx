@@ -9,22 +9,26 @@ const { Paragraph, Title } = Typography
 
 export function MucBanner() {
   return (
-    <Card className="home-section hero-section" variant="borderless" style={heroBackgroundStyle}>
-      <div className="hero-overlay" />
-      <div className="hero-content">
-        <Space orientation="vertical" size={22} className="hero-intro">
-          <span className="hero-kicker">Khám phá Việt Nam</span>
+    <>
+      <Card className="home-section hero-section" variant="borderless" style={heroBackgroundStyle}>
+        <div className="hero-overlay" />
+        <div className="hero-content">
+          <Space orientation="vertical" size={22} className="hero-intro">
+            <span className="hero-kicker">Khám phá Việt Nam</span>
 
-          <Space orientation="vertical" size={14}>
-            <Title level={1} className="hero-title" style={{ margin: 0 }}>
-              Khám phá vẻ đẹp Việt Nam
-            </Title>
-            <Paragraph className="hero-description">
-              Trải nghiệm những hành trình tuyệt vời và tạo nên kỷ niệm đáng nhớ cùng chúng tôi.
-            </Paragraph>
+            <Space orientation="vertical" size={14}>
+              <Title level={1} className="hero-title" style={{ margin: 0 }}>
+                Khám phá vẻ đẹp Việt Nam
+              </Title>
+              <Paragraph className="hero-description">
+                Trải nghiệm những hành trình tuyệt vời và tạo nên kỷ niệm đáng nhớ cùng chúng tôi.
+              </Paragraph>
+            </Space>
           </Space>
-        </Space>
+        </div>
+      </Card>
 
+      <Card className="home-section hero-search-section" variant="borderless">
         <Card className="hero-search-card" variant="borderless">
           <Space direction="vertical" size={28} className="hero-search-stack">
             <Title level={2} className="hero-search-title">
@@ -86,7 +90,7 @@ export function MucBanner() {
             </div>
           </Space>
         </Card>
-      </div>
-    </Card>
+      </Card>
+    </>
   )
 }

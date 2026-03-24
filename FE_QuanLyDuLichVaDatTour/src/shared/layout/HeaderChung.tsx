@@ -10,7 +10,7 @@ export function HeaderChung() {
 
   const items = [
     { key: PATHS.home, label: <Link to={PATHS.home}>Trang chủ</Link> },
-    { key: '#tour-noi-bat', label: <a href="#tour-noi-bat">Tour</a> },
+    { key: PATHS.tour, label: <Link to={PATHS.tour}>Tour</Link> },
     { key: '#lich-khoi-hanh', label: <a href="#lich-khoi-hanh">Lịch khởi hành</a> },
     { key: '#uu-dai', label: <a href="#uu-dai">Tin tức</a> },
     { key: '#tu-van-tour', label: <a href="#tu-van-tour">Liên hệ</a> },
