@@ -6,6 +6,8 @@ public interface ITourService
 {
     Task<List<TourResponseDto>> GetVisibleAsync();
 
+    Task<List<TourResponseDto>> SearchVisibleAsync(SearchTourRequestDto request);
+
     Task<TourResponseDto> GetVisibleByIdAsync(ulong id);
 
     Task<List<TourAdminResponseDto>> GetAllAsync();

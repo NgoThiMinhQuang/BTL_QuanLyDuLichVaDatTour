@@ -1,3 +1,4 @@
+using BLL.DTOs.Tour;
 using BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,20 @@ public class TourController : ControllerBase
     {
         var response = await _tourService.GetVisibleAsync();
         return Ok(response);
+    }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] SearchTourRequestDto request)
+    {
+        try
+        {
+            var response = await _tourService.SearchVisibleAsync(request);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpGet("get-by-id/{id}")]

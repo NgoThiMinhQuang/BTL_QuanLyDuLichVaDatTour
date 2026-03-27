@@ -28,6 +28,24 @@ public class TourService : ITourService
         return tours.Select(MapPublicResponse).ToList();
     }
 
+    public async Task<List<TourResponseDto>> SearchVisibleAsync(SearchTourRequestDto request)
+    {
+        ValidateSearchPriceRange(request.MinPrice, request.MaxPrice);
+        ValidateSearchDurationRange(request.MinSoNgay, request.MaxSoNgay);
+
+        var tours = await _tourRepository.SearchVisibleAsync(
+            NormalizeOptionalValue(request.Keyword),
+            request.DiemXuatPhatId,
+            request.LoaiTourIds,
+            request.PhuongTiens?.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()).ToList(),
+            request.MinPrice,
+            request.MaxPrice,
+            request.MinSoNgay,
+            request.MaxSoNgay);
+
+        return tours.Select(MapPublicResponse).ToList();
+    }
+
     public async Task<TourResponseDto> GetVisibleByIdAsync(ulong id)
     {
         var tour = await _tourRepository.GetVisibleByIdAsync(id)
@@ -188,6 +206,32 @@ public class TourService : ITourService
         if (value < 0)
         {
             throw new InvalidOperationException(errorMessage);
+        }
+    }
+
+    private static void ValidateSearchPriceRange(decimal? minPrice, decimal? maxPrice)
+    {
+        if (minPrice is < 0 || maxPrice is < 0)
+        {
+            throw new InvalidOperationException("Khoảng giá không hợp lệ.");
+        }
+
+        if (minPrice.HasValue && maxPrice.HasValue && minPrice > maxPrice)
+        {
+            throw new InvalidOperationException("Giá nhỏ nhất không được lớn hơn giá lớn nhất.");
+        }
+    }
+
+    private static void ValidateSearchDurationRange(byte? minSoNgay, byte? maxSoNgay)
+    {
+        if (minSoNgay is 0 || maxSoNgay is 0)
+        {
+            throw new InvalidOperationException("Số ngày phải lớn hơn 0.");
+        }
+
+        if (minSoNgay.HasValue && maxSoNgay.HasValue && minSoNgay > maxSoNgay)
+        {
+            throw new InvalidOperationException("Số ngày tối thiểu không được lớn hơn số ngày tối đa.");
         }
     }
 

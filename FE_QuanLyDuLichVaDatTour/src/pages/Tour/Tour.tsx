@@ -17,6 +17,7 @@ export default function Tour() {
     paginatedTours,
     isLoadingTours,
     isLoadingCategories,
+    isLoadingDiaDiems,
     toursError,
     refetchTours,
     keyword,
@@ -43,7 +44,7 @@ export default function Tour() {
   } = useTourPage()
 
   const pageSize = TOUR_PAGE_SIZE
-  const isLoading = isLoadingTours || isLoadingCategories
+  const isLoading = isLoadingTours || isLoadingCategories || isLoadingDiaDiems
   const shouldShowEmpty = !isLoadingTours && !toursError && filteredTours.length === 0
   const shouldShowResults = !isLoadingTours && !toursError && filteredTours.length > 0
 

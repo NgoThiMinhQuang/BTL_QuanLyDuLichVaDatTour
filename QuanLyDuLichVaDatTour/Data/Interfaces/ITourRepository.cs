@@ -6,6 +6,8 @@ public interface ITourRepository
 {
     Task<List<Tour>> GetVisibleAsync();
 
+    Task<List<Tour>> SearchVisibleAsync(string? keyword, ulong? diemXuatPhatId, List<ulong>? loaiTourIds, List<string>? phuongTiens, decimal? minPrice, decimal? maxPrice, byte? minSoNgay, byte? maxSoNgay);
+
     Task<Tour?> GetVisibleByIdAsync(ulong id);
 
     Task<List<Tour>> GetAllAsync();

@@ -9,7 +9,9 @@ export interface FeaturedTourApiItem {
   id: number
   maTour: string
   tenTour: string
+  loaiTourId: number
   tenLoaiTour: string
+  diemXuatPhatId: number
   tenDiaDiemKhoiHanh: string
   soNgay: number
   soDem: number
@@ -18,6 +20,26 @@ export interface FeaturedTourApiItem {
   giaNguoiLonMacDinh: number | null
   giaTreEmMacDinh: number | null
   trangThai: string
+}
+
+export interface DiaDiemItem {
+  id: number
+  tenDiaDiem: string
+  tinhThanh: string | null
+  quocGia: string
+  moTa: string | null
+  trangThai: string
+}
+
+export interface SearchTourParams {
+  keyword?: string
+  diemXuatPhatId?: number
+  loaiTourIds?: number[]
+  phuongTiens?: string[]
+  minPrice?: number
+  maxPrice?: number
+  minSoNgay?: number
+  maxSoNgay?: number
 }
 
 export interface DepartureItem {
