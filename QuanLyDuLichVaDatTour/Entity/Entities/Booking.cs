@@ -65,4 +65,8 @@ public class Booking
     public LichKhoiHanh? LichKhoiHanh { get; set; }
 
     public NguoiDung? KhachHang { get; set; }
+
+    public Voucher? Voucher { get; set; }
+
+    public ICollection<HanhKhach> HanhKhachs { get; set; } = new List<HanhKhach>();
 }

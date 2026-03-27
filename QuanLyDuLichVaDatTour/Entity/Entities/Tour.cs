@@ -39,4 +39,8 @@ public class Tour
     public LoaiTour? LoaiTour { get; set; }
 
     public DiaDiem? DiemXuatPhat { get; set; }
+
+    public ICollection<TourDiemDen> TourDiemDens { get; set; } = new List<TourDiemDen>();
+
+    public ICollection<AnhTour> AnhTours { get; set; } = new List<AnhTour>();
 }

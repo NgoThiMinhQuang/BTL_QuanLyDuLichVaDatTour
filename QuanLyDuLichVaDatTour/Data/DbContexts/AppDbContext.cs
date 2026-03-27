@@ -24,7 +24,15 @@ public class AppDbContext : DbContext
 
     public DbSet<BangGiaLichKhoiHanh> BangGiaLichKhoiHanhs => Set<BangGiaLichKhoiHanh>();
 
+    public DbSet<TourDiemDen> TourDiemDens => Set<TourDiemDen>();
+
+    public DbSet<AnhTour> AnhTours => Set<AnhTour>();
+
+    public DbSet<Voucher> Vouchers => Set<Voucher>();
+
     public DbSet<Booking> Bookings => Set<Booking>();
+
+    public DbSet<HanhKhach> HanhKhachs => Set<HanhKhach>();
 
     public DbSet<ThanhToan> ThanhToans => Set<ThanhToan>();
 
