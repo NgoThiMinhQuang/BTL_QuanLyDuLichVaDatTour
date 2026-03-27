@@ -14,19 +14,22 @@ public class BookingService : IBookingService
     private readonly IBangGiaLichKhoiHanhRepository _bangGiaLichKhoiHanhRepository;
     private readonly INguoiDungRepository _nguoiDungRepository;
     private readonly IVoucherRepository _voucherRepository;
+    private readonly IHanhKhachRepository _hanhKhachRepository;
 
     public BookingService(
         IBookingRepository bookingRepository,
         ILichKhoiHanhRepository lichKhoiHanhRepository,
         IBangGiaLichKhoiHanhRepository bangGiaLichKhoiHanhRepository,
         INguoiDungRepository nguoiDungRepository,
-        IVoucherRepository voucherRepository)
+        IVoucherRepository voucherRepository,
+        IHanhKhachRepository hanhKhachRepository)
     {
         _bookingRepository = bookingRepository;
         _lichKhoiHanhRepository = lichKhoiHanhRepository;
         _bangGiaLichKhoiHanhRepository = bangGiaLichKhoiHanhRepository;
         _nguoiDungRepository = nguoiDungRepository;
         _voucherRepository = voucherRepository;
+        _hanhKhachRepository = hanhKhachRepository;
     }
 
     public async Task<BookingResponseDto> CreateAsync(long currentUserId, CreateBookingRequestDto request)
@@ -35,6 +38,10 @@ public class BookingService : IBookingService
         var lichKhoiHanh = await EnsureLichKhoiHanhAvailableAsync(request.LichKhoiHanhId);
 
         ValidatePassengerCounts(request.SoNguoiLon, request.SoTreEm, request.SoEmBe, lichKhoiHanh.SoChoToiDa);
+        ValidateHanhKhachList(request.HanhKhachs, request.SoNguoiLon, request.SoTreEm, request.SoEmBe);
+
+        var now = DateTime.UtcNow;
+        var hanhKhachs = MapHanhKhachs(request.HanhKhachs, now);
 
         var hoTenLienHe = NormalizeRequiredValue(request.HoTenLienHe ?? nguoiDung.HoTen, "Họ tên liên hệ không được để trống.");
         var emailLienHe = NormalizeRequiredValue(request.EmailLienHe ?? nguoiDung.Email, "Email liên hệ không được để trống.");
@@ -55,7 +62,6 @@ public class BookingService : IBookingService
         var voucher = await ResolveVoucherAsync(request.VoucherId, request.MaVoucher, lichKhoiHanh.TourId, tamTinh);
         var giamGia = voucher is null ? 0m : CalculateDiscount(voucher, tamTinh);
 
-        var now = DateTime.UtcNow;
         var booking = new Booking
         {
             MaBooking = maBooking,
@@ -88,7 +94,8 @@ public class BookingService : IBookingService
             UpdatedAt = now,
             LichKhoiHanh = lichKhoiHanh,
             KhachHang = nguoiDung,
-            Voucher = voucher
+            Voucher = voucher,
+            HanhKhachs = hanhKhachs
         };
 
         if (voucher is not null)
@@ -196,6 +203,44 @@ public class BookingService : IBookingService
         {
             throw new InvalidOperationException("Số lượng hành khách vượt quá số chỗ tối đa.");
         }
+    }
+
+    private static void ValidateHanhKhachList(List<CreateHanhKhachRequestDto>? hanhKhachs, int soNguoiLon, int soTreEm, int soEmBe)
+    {
+        if (hanhKhachs is null || hanhKhachs.Count == 0)
+        {
+            return;
+        }
+
+        var countNguoiLon = hanhKhachs.Count(x => x.LoaiKhach == LoaiKhach.nguoi_lon);
+        var countTreEm = hanhKhachs.Count(x => x.LoaiKhach == LoaiKhach.tre_em);
+        var countEmBe = hanhKhachs.Count(x => x.LoaiKhach == LoaiKhach.em_be);
+
+        if (countNguoiLon != soNguoiLon || countTreEm != soTreEm || countEmBe != soEmBe)
+        {
+            throw new InvalidOperationException("Danh sách hành khách không khớp với số lượng người lớn, trẻ em, em bé.");
+        }
+    }
+
+    private static List<HanhKhach> MapHanhKhachs(List<CreateHanhKhachRequestDto>? hanhKhachs, DateTime now)
+    {
+        if (hanhKhachs is null || hanhKhachs.Count == 0)
+        {
+            return new List<HanhKhach>();
+        }
+
+        return hanhKhachs.Select(x => new HanhKhach
+        {
+            HoTen = NormalizeRequiredValue(x.HoTen, "Họ tên hành khách không được để trống."),
+            LoaiKhach = x.LoaiKhach,
+            NgaySinh = x.NgaySinh,
+            GioiTinh = NormalizeOptionalValue(x.GioiTinh),
+            SoGiayTo = NormalizeOptionalValue(x.SoGiayTo),
+            QuocTich = NormalizeOptionalValue(x.QuocTich),
+            GhiChu = NormalizeOptionalValue(x.GhiChu),
+            CreatedAt = now,
+            UpdatedAt = now
+        }).ToList();
     }
 
     private static LoaiGiaApDung ResolveLoaiGiaApDung(DateTime ngayKhoiHanh)
@@ -396,8 +441,27 @@ public class BookingService : IBookingService
             TrangThaiThanhToan = booking.TrangThaiThanhToan.ToString(),
             HanThanhToan = booking.HanThanhToan,
             GhiChu = booking.GhiChu,
+            HanhKhachs = booking.HanhKhachs
+                .OrderBy(x => x.Id)
+                .Select(MapHanhKhachResponse)
+                .ToList(),
             CreatedAt = booking.CreatedAt,
             UpdatedAt = booking.UpdatedAt
+        };
+    }
+
+    private static HanhKhachResponseDto MapHanhKhachResponse(HanhKhach hanhKhach)
+    {
+        return new HanhKhachResponseDto
+        {
+            Id = hanhKhach.Id,
+            HoTen = hanhKhach.HoTen,
+            LoaiKhach = hanhKhach.LoaiKhach.ToString(),
+            NgaySinh = hanhKhach.NgaySinh,
+            GioiTinh = hanhKhach.GioiTinh,
+            SoGiayTo = hanhKhach.SoGiayTo,
+            QuocTich = hanhKhach.QuocTich,
+            GhiChu = hanhKhach.GhiChu
         };
     }
 

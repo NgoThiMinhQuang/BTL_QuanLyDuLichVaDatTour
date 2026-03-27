@@ -72,6 +72,8 @@ public class BookingResponseDto
 
     public string? GhiChu { get; set; }
 
+    public List<HanhKhachResponseDto> HanhKhachs { get; set; } = new();
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

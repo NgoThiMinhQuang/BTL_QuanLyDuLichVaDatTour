@@ -38,5 +38,7 @@ public class CreateBookingRequestDto
     [MaxLength(50)]
     public string? MaVoucher { get; set; }
 
+    public List<CreateHanhKhachRequestDto>? HanhKhachs { get; set; }
+
     public string? GhiChu { get; set; }
 }
