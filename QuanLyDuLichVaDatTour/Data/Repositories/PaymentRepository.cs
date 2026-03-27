@@ -24,7 +24,7 @@ public class PaymentRepository : IPaymentRepository
         return await _dbContext.Set<ThanhToan>()
             .AsNoTracking()
             .Include(x => x.Booking)
-            .Include(x => x.NguoiXacNhan)
+                .ThenInclude(x => x!.KhachHang)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -32,7 +32,7 @@ public class PaymentRepository : IPaymentRepository
     {
         return await _dbContext.Set<ThanhToan>()
             .Include(x => x.Booking)
-            .Include(x => x.NguoiXacNhan)
+                .ThenInclude(x => x!.KhachHang)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -41,7 +41,7 @@ public class PaymentRepository : IPaymentRepository
         return await _dbContext.Set<ThanhToan>()
             .AsNoTracking()
             .Include(x => x.Booking)
-            .Include(x => x.NguoiXacNhan)
+                .ThenInclude(x => x!.KhachHang)
             .Where(x => x.BookingId == bookingId)
             .OrderByDescending(x => x.ThoiGianTao)
             .ToListAsync();
@@ -52,7 +52,7 @@ public class PaymentRepository : IPaymentRepository
         return await _dbContext.Set<ThanhToan>()
             .AsNoTracking()
             .Include(x => x.Booking)
-            .Include(x => x.NguoiXacNhan)
+                .ThenInclude(x => x!.KhachHang)
             .OrderByDescending(x => x.ThoiGianTao)
             .ToListAsync();
     }

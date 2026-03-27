@@ -10,7 +10,7 @@ public class Booking
 
     public long LichKhoiHanhId { get; set; }
 
-    public long NguoiDungId { get; set; }
+    public long KhachHangId { get; set; }
 
     public long? VoucherId { get; set; }
 
@@ -58,17 +58,11 @@ public class Booking
 
     public string? GhiChu { get; set; }
 
-    public long? NguoiXacNhanId { get; set; }
-
-    public DateTime? ThoiGianXacNhan { get; set; }
-
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 
     public LichKhoiHanh? LichKhoiHanh { get; set; }
 
-    public NguoiDung? NguoiDung { get; set; }
-
-    public NguoiDung? NguoiXacNhan { get; set; }
+    public NguoiDung? KhachHang { get; set; }
 }

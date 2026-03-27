@@ -24,7 +24,7 @@ public class PaymentService : IPaymentService
         var booking = await _bookingRepository.GetTrackedByIdAsync(request.BookingId)
             ?? throw new KeyNotFoundException("Booking không tồn tại.");
 
-        if (booking.NguoiDungId != currentUserId)
+        if (booking.KhachHangId != currentUserId)
         {
             throw new KeyNotFoundException("Booking không tồn tại.");
         }
@@ -86,7 +86,7 @@ public class PaymentService : IPaymentService
         var booking = await _bookingRepository.GetByIdAsync(bookingId)
             ?? throw new KeyNotFoundException("Booking không tồn tại.");
 
-        if (booking.NguoiDungId != currentUserId)
+        if (booking.KhachHangId != currentUserId)
         {
             throw new KeyNotFoundException("Booking không tồn tại.");
         }
@@ -100,7 +100,7 @@ public class PaymentService : IPaymentService
         var payment = await _paymentRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Thanh toán không tồn tại.");
 
-        if (payment.Booking?.NguoiDungId != currentUserId)
+        if (payment.Booking?.KhachHangId != currentUserId)
         {
             throw new KeyNotFoundException("Thanh toán không tồn tại.");
         }
@@ -124,7 +124,7 @@ public class PaymentService : IPaymentService
 
     public async Task UpdateStatusAsync(long adminUserId, long id, UpdatePaymentStatusRequestDto request)
     {
-        var admin = await _nguoiDungRepository.GetByIdAsync(adminUserId)
+        await _nguoiDungRepository.GetByIdAsync(adminUserId)
             ?? throw new KeyNotFoundException("Người dùng không tồn tại.");
 
         var payment = await _paymentRepository.GetTrackedByIdAsync(id)
@@ -139,10 +139,6 @@ public class PaymentService : IPaymentService
 
         if (request.TrangThai == TrangThaiGiaoDichThanhToan.thanh_cong)
         {
-            payment.NguoiXacNhanId = admin.Id;
-            payment.NguoiXacNhan = admin;
-            payment.ThoiGianXacNhan = DateTime.UtcNow;
-
             booking.SoTienDaThanhToan = await TinhTongTienThanhCongAsync(booking.Id, payment.Id, payment.SoTien);
             booking.TrangThaiThanhToan = booking.SoTienDaThanhToan >= booking.TongTien
                 ? TrangThaiThanhToan.da_thanh_toan_du
@@ -206,10 +202,7 @@ public class PaymentService : IPaymentService
             DuLieuPhanHoi = payment.DuLieuPhanHoi,
             GhiChu = payment.GhiChu,
             TrangThai = payment.TrangThai.ToString(),
-            NguoiXacNhanId = payment.NguoiXacNhanId,
-            HoTenNguoiXacNhan = payment.NguoiXacNhan?.HoTen,
             ThoiGianTao = payment.ThoiGianTao,
-            ThoiGianXacNhan = payment.ThoiGianXacNhan,
             UpdatedAt = payment.UpdatedAt
         };
     }

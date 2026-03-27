@@ -55,7 +55,7 @@ public class BookingService : IBookingService
         {
             MaBooking = maBooking,
             LichKhoiHanhId = lichKhoiHanh.Id,
-            NguoiDungId = nguoiDung.Id,
+            KhachHangId = nguoiDung.Id,
             HoTenLienHe = hoTenLienHe,
             EmailLienHe = emailLienHe,
             SoDienThoaiLienHe = soDienThoaiLienHe,
@@ -81,7 +81,7 @@ public class BookingService : IBookingService
             CreatedAt = now,
             UpdatedAt = now,
             LichKhoiHanh = lichKhoiHanh,
-            NguoiDung = nguoiDung
+            KhachHang = nguoiDung
         };
 
         await _bookingRepository.AddAsync(booking);
@@ -103,7 +103,7 @@ public class BookingService : IBookingService
         var booking = await _bookingRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Booking không tồn tại.");
 
-        if (booking.NguoiDungId != currentUserId)
+        if (booking.KhachHangId != currentUserId)
         {
             throw new KeyNotFoundException("Booking không tồn tại.");
         }
@@ -141,13 +141,6 @@ public class BookingService : IBookingService
         if (ghiChu is not null)
         {
             booking.GhiChu = ghiChu;
-        }
-
-        if (request.TrangThaiBooking == TrangThaiBooking.da_xac_nhan)
-        {
-            booking.NguoiXacNhanId = adminUser.Id;
-            booking.NguoiXacNhan = adminUser;
-            booking.ThoiGianXacNhan = DateTime.UtcNow;
         }
 
         booking.UpdatedAt = DateTime.UtcNow;
@@ -317,11 +310,9 @@ public class BookingService : IBookingService
     {
         var response = new BookingAdminResponseDto
         {
-            NguoiDungId = booking.NguoiDungId,
-            HoTenNguoiDat = booking.NguoiDung?.HoTen ?? string.Empty,
-            EmailNguoiDat = booking.NguoiDung?.Email ?? string.Empty,
-            NguoiXacNhanId = booking.NguoiXacNhanId,
-            ThoiGianXacNhan = booking.ThoiGianXacNhan
+            NguoiDungId = booking.KhachHangId,
+            HoTenNguoiDat = booking.KhachHang?.HoTen ?? string.Empty,
+            EmailNguoiDat = booking.KhachHang?.Email ?? string.Empty
         };
 
         var detail = MapBookingResponse(booking);

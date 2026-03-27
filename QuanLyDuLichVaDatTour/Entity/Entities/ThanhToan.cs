@@ -30,15 +30,9 @@ public class ThanhToan
 
     public TrangThaiGiaoDichThanhToan TrangThai { get; set; }
 
-    public long? NguoiXacNhanId { get; set; }
-
     public DateTime ThoiGianTao { get; set; }
-
-    public DateTime? ThoiGianXacNhan { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 
     public Booking? Booking { get; set; }
-
-    public NguoiDung? NguoiXacNhan { get; set; }
 }

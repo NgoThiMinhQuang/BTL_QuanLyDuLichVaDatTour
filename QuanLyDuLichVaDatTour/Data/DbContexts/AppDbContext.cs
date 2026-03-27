@@ -39,7 +39,7 @@ public class AppDbContext : DbContext
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Id)
-                .HasColumnName("Id")
+                .HasColumnName("NguoiDungId")
                 .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
@@ -84,14 +84,14 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => x.Email)
@@ -108,7 +108,7 @@ public class AppDbContext : DbContext
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Id)
-                .HasColumnName("Id")
+                .HasColumnName("LoaiTourId")
                 .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
@@ -129,14 +129,14 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => x.Ten)
@@ -150,7 +150,7 @@ public class AppDbContext : DbContext
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Id)
-                .HasColumnName("Id")
+                .HasColumnName("DiaDiemId")
                 .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
@@ -180,14 +180,14 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => new { x.TinhThanh, x.QuocGia })
@@ -201,7 +201,7 @@ public class AppDbContext : DbContext
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Id)
-                .HasColumnName("Id")
+                .HasColumnName("TourId")
                 .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
@@ -227,12 +227,12 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.SoNgay)
                 .HasColumnName("SoNgay")
-                .HasColumnType("int")
+                .HasColumnType("tinyint")
                 .IsRequired();
 
             entity.Property(x => x.SoDem)
                 .HasColumnName("SoDem")
-                .HasColumnType("int")
+                .HasColumnType("tinyint")
                 .IsRequired();
 
             entity.Property(x => x.PhuongTien)
@@ -269,14 +269,14 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => x.MaTour)
@@ -303,7 +303,7 @@ public class AppDbContext : DbContext
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Id)
-                .HasColumnName("Id")
+                .HasColumnName("LichTrinhId")
                 .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
@@ -314,12 +314,12 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.NgayThu)
                 .HasColumnName("NgayThu")
-                .HasColumnType("int")
+                .HasColumnType("tinyint")
                 .IsRequired();
 
             entity.Property(x => x.ThuTuTrongNgay)
                 .HasColumnName("ThuTuTrongNgay")
-                .HasColumnType("int")
+                .HasColumnType("smallint")
                 .IsRequired();
 
             entity.Property(x => x.GioBatDau)
@@ -344,14 +344,14 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => new { x.TourId, x.NgayThu, x.ThuTuTrongNgay })
@@ -379,7 +379,7 @@ public class AppDbContext : DbContext
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Id)
-                .HasColumnName("Id")
+                .HasColumnName("LichKhoiHanhId")
                 .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
@@ -409,7 +409,7 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.SoChoToiDa)
                 .HasColumnName("SoChoToiDa")
-                .HasColumnType("int")
+                .HasColumnType("smallint")
                 .IsRequired();
 
             entity.Property(x => x.GhiChu)
@@ -428,14 +428,14 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => x.MaDotTour)
@@ -457,7 +457,7 @@ public class AppDbContext : DbContext
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Id)
-                .HasColumnName("Id")
+                .HasColumnName("BangGiaLichKhoiHanhId")
                 .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
@@ -489,14 +489,14 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => new { x.LichKhoiHanhId, x.LoaiKhach, x.LoaiGia })
@@ -519,7 +519,7 @@ public class AppDbContext : DbContext
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Id)
-                .HasColumnName("Id")
+                .HasColumnName("BookingId")
                 .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
@@ -533,8 +533,8 @@ public class AppDbContext : DbContext
                 .HasColumnType("bigint")
                 .IsRequired();
 
-            entity.Property(x => x.NguoiDungId)
-                .HasColumnName("NguoiDungId")
+            entity.Property(x => x.KhachHangId)
+                .HasColumnName("KhachHangId")
                 .HasColumnType("bigint")
                 .IsRequired();
 
@@ -563,22 +563,23 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.NgayDat)
                 .HasColumnName("NgayDat")
-                .HasColumnType("datetime")
-                .IsRequired();
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
 
             entity.Property(x => x.SoNguoiLon)
                 .HasColumnName("SoNguoiLon")
-                .HasColumnType("int")
+                .HasColumnType("tinyint")
                 .IsRequired();
 
             entity.Property(x => x.SoTreEm)
                 .HasColumnName("SoTreEm")
-                .HasColumnType("int")
+                .HasColumnType("tinyint")
                 .IsRequired();
 
             entity.Property(x => x.SoEmBe)
                 .HasColumnName("SoEmBe")
-                .HasColumnType("int")
+                .HasColumnType("tinyint")
                 .IsRequired();
 
             entity.Property(x => x.LoaiGiaApDung)
@@ -646,37 +647,29 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.HanThanhToan)
                 .HasColumnName("HanThanhToan")
-                .HasColumnType("datetime");
+                .HasColumnType("datetime2");
 
             entity.Property(x => x.GhiChu)
                 .HasColumnName("GhiChu")
                 .HasColumnType("nvarchar(max)");
 
-            entity.Property(x => x.NguoiXacNhanId)
-                .HasColumnName("NguoiXacNhanId")
-                .HasColumnType("bigint");
-
-            entity.Property(x => x.ThoiGianXacNhan)
-                .HasColumnName("ThoiGianXacNhan")
-                .HasColumnType("datetime");
-
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => x.MaBooking)
                 .IsUnique();
 
-            entity.HasIndex(x => new { x.NguoiDungId, x.NgayDat })
-                .HasDatabaseName("IdxBookingNguoiDung");
+            entity.HasIndex(x => new { x.KhachHangId, x.NgayDat })
+                .HasDatabaseName("IdxBookingKhachHang");
 
             entity.HasIndex(x => new { x.TrangThaiBooking, x.TrangThaiThanhToan, x.NgayDat })
                 .HasDatabaseName("IdxBookingTrangThai");
@@ -689,14 +682,9 @@ public class AppDbContext : DbContext
                 .HasForeignKey(x => x.LichKhoiHanhId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(x => x.NguoiDung)
+            entity.HasOne(x => x.KhachHang)
                 .WithMany()
-                .HasForeignKey(x => x.NguoiDungId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasOne(x => x.NguoiXacNhan)
-                .WithMany()
-                .HasForeignKey(x => x.NguoiXacNhanId)
+                .HasForeignKey(x => x.KhachHangId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
@@ -707,7 +695,7 @@ public class AppDbContext : DbContext
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Id)
-                .HasColumnName("Id")
+                .HasColumnName("ThanhToanId")
                 .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
@@ -769,23 +757,16 @@ public class AppDbContext : DbContext
                 .HasColumnName("GhiChu")
                 .HasMaxLength(500);
 
-            entity.Property(x => x.NguoiXacNhanId)
-                .HasColumnName("NguoiXacNhanId")
-                .HasColumnType("bigint");
-
             entity.Property(x => x.ThoiGianTao)
                 .HasColumnName("ThoiGianTao")
-                .HasColumnType("datetime")
-                .IsRequired();
-
-            entity.Property(x => x.ThoiGianXacNhan)
-                .HasColumnName("ThoiGianXacNhan")
-                .HasColumnType("datetime");
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("GETUTCDATE()")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
                 .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => new { x.BookingId, x.TrangThai, x.ThoiGianTao })
@@ -797,11 +778,6 @@ public class AppDbContext : DbContext
             entity.HasOne(x => x.Booking)
                 .WithMany()
                 .HasForeignKey(x => x.BookingId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasOne(x => x.NguoiXacNhan)
-                .WithMany()
-                .HasForeignKey(x => x.NguoiXacNhanId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }
