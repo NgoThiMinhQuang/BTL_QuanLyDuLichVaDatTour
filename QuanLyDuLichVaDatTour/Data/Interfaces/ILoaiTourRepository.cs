@@ -6,13 +6,13 @@ public interface ILoaiTourRepository
 {
     Task<List<LoaiTour>> GetVisibleAsync();
 
-    Task<LoaiTour?> GetVisibleByIdAsync(ulong id);
+    Task<LoaiTour?> GetVisibleByIdAsync(long id);
 
     Task<List<LoaiTour>> GetAllAsync();
 
-    Task<LoaiTour?> GetByIdAsync(ulong id);
+    Task<LoaiTour?> GetByIdAsync(long id);
 
-    Task<LoaiTour?> GetTrackedByIdAsync(ulong id);
+    Task<LoaiTour?> GetTrackedByIdAsync(long id);
 
     Task<LoaiTour?> GetByTenAsync(string ten);
 

@@ -46,7 +46,7 @@ public class TourService : ITourService
         return tours.Select(MapPublicResponse).ToList();
     }
 
-    public async Task<TourResponseDto> GetVisibleByIdAsync(ulong id)
+    public async Task<TourResponseDto> GetVisibleByIdAsync(long id)
     {
         var tour = await _tourRepository.GetVisibleByIdAsync(id)
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
@@ -60,7 +60,7 @@ public class TourService : ITourService
         return tours.Select(MapAdminResponse).ToList();
     }
 
-    public async Task<TourAdminResponseDto> GetByIdAsync(ulong id)
+    public async Task<TourAdminResponseDto> GetByIdAsync(long id)
     {
         var tour = await _tourRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
@@ -108,7 +108,7 @@ public class TourService : ITourService
         return MapAdminResponse(tour);
     }
 
-    public async Task<TourAdminResponseDto> UpdateAsync(ulong id, UpdateTourRequestDto request)
+    public async Task<TourAdminResponseDto> UpdateAsync(long id, UpdateTourRequestDto request)
     {
         var tour = await _tourRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
@@ -145,7 +145,7 @@ public class TourService : ITourService
         return MapAdminResponse(tour);
     }
 
-    public async Task UpdateStatusAsync(ulong id, UpdateTourStatusRequestDto request)
+    public async Task UpdateStatusAsync(long id, UpdateTourStatusRequestDto request)
     {
         var tour = await _tourRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
@@ -156,7 +156,7 @@ public class TourService : ITourService
         await _tourRepository.SaveChangesAsync();
     }
 
-    public async Task HideAsync(ulong id)
+    public async Task HideAsync(long id)
     {
         var tour = await _tourRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
@@ -167,7 +167,7 @@ public class TourService : ITourService
         await _tourRepository.SaveChangesAsync();
     }
 
-    private async Task EnsureMaTourIsUniqueAsync(string maTour, ulong? currentId = null)
+    private async Task EnsureMaTourIsUniqueAsync(string maTour, long? currentId = null)
     {
         var existingTour = await _tourRepository.GetByMaTourAsync(maTour);
         if (existingTour is not null && existingTour.Id != currentId)
@@ -176,19 +176,19 @@ public class TourService : ITourService
         }
     }
 
-    private async Task<LoaiTour> EnsureLoaiTourExistsAsync(ulong loaiTourId)
+    private async Task<LoaiTour> EnsureLoaiTourExistsAsync(long loaiTourId)
     {
         return await _loaiTourRepository.GetByIdAsync(loaiTourId)
             ?? throw new KeyNotFoundException("Loại tour không tồn tại.");
     }
 
-    private async Task<DiaDiem> EnsureDiaDiemExistsAsync(ulong diaDiemId)
+    private async Task<DiaDiem> EnsureDiaDiemExistsAsync(long diaDiemId)
     {
         return await _diaDiemRepository.GetByIdAsync(diaDiemId)
             ?? throw new KeyNotFoundException("Điểm xuất phát không tồn tại.");
     }
 
-    private static void ValidateDuration(byte soNgay, byte soDem)
+    private static void ValidateDuration(int soNgay, int soDem)
     {
         if (soNgay <= 0)
         {
@@ -222,7 +222,7 @@ public class TourService : ITourService
         }
     }
 
-    private static void ValidateSearchDurationRange(byte? minSoNgay, byte? maxSoNgay)
+    private static void ValidateSearchDurationRange(int? minSoNgay, int? maxSoNgay)
     {
         if (minSoNgay is 0 || maxSoNgay is 0)
         {

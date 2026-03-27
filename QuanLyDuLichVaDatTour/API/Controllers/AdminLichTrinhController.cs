@@ -25,7 +25,7 @@ public class AdminLichTrinhController : ControllerBase
     }
 
     [HttpGet("get-by-id/{id}")]
-    public async Task<IActionResult> GetById(ulong id)
+    public async Task<IActionResult> GetById(long id)
     {
         try
         {
@@ -39,7 +39,7 @@ public class AdminLichTrinhController : ControllerBase
     }
 
     [HttpGet("get-by-tour/{tourId}")]
-    public async Task<IActionResult> GetByTourId(ulong tourId)
+    public async Task<IActionResult> GetByTourId(long tourId)
     {
         try
         {
@@ -76,7 +76,7 @@ public class AdminLichTrinhController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    public async Task<IActionResult> Update(ulong id, [FromBody] UpdateLichTrinhRequestDto request)
+    public async Task<IActionResult> Update(long id, [FromBody] UpdateLichTrinhRequestDto request)
     {
         if (!ModelState.IsValid)
         {
@@ -99,7 +99,7 @@ public class AdminLichTrinhController : ControllerBase
     }
 
     [HttpDelete("delete/{id}")]
-    public async Task<IActionResult> Delete(ulong id)
+    public async Task<IActionResult> Delete(long id)
     {
         try
         {

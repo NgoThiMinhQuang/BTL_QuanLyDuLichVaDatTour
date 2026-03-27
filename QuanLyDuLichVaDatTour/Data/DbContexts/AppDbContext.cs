@@ -1,5 +1,6 @@
 using Entity.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace DAL.DbContexts;
 
@@ -39,7 +40,7 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.Email)
@@ -71,27 +72,27 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.VaiTro)
                 .HasColumnName("VaiTro")
-                .HasColumnType("enum('admin','khach_hang')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.TrangThai)
                 .HasColumnName("TrangThai")
-                .HasColumnType("enum('hoat_dong','bi_khoa')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("GETUTCDATE()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAddOrUpdate();
+                .HasDefaultValueSql("GETUTCDATE()")
+                .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => x.Email)
                 .IsUnique();
@@ -108,7 +109,7 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.Ten)
@@ -118,25 +119,25 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.MoTa)
                 .HasColumnName("MoTa")
-                .HasColumnType("text");
+                .HasColumnType("nvarchar(max)");
 
             entity.Property(x => x.TrangThai)
                 .HasColumnName("TrangThai")
-                .HasColumnType("enum('hoat_dong','an')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("GETUTCDATE()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAddOrUpdate();
+                .HasDefaultValueSql("GETUTCDATE()")
+                .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => x.Ten)
                 .IsUnique();
@@ -150,7 +151,7 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.TenDiaDiem)
@@ -169,25 +170,25 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.MoTa)
                 .HasColumnName("MoTa")
-                .HasColumnType("text");
+                .HasColumnType("nvarchar(max)");
 
             entity.Property(x => x.TrangThai)
                 .HasColumnName("TrangThai")
-                .HasColumnType("enum('hoat_dong','an')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("GETUTCDATE()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAddOrUpdate();
+                .HasDefaultValueSql("GETUTCDATE()")
+                .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => new { x.TinhThanh, x.QuocGia })
                 .HasDatabaseName("IdxDiaDiemTinhThanhQuocGia");
@@ -201,7 +202,7 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.MaTour)
@@ -216,22 +217,22 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.LoaiTourId)
                 .HasColumnName("LoaiTourId")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             entity.Property(x => x.DiemXuatPhatId)
                 .HasColumnName("DiemXuatPhatId")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             entity.Property(x => x.SoNgay)
                 .HasColumnName("SoNgay")
-                .HasColumnType("tinyint unsigned")
+                .HasColumnType("int")
                 .IsRequired();
 
             entity.Property(x => x.SoDem)
                 .HasColumnName("SoDem")
-                .HasColumnType("tinyint unsigned")
+                .HasColumnType("int")
                 .IsRequired();
 
             entity.Property(x => x.PhuongTien)
@@ -249,34 +250,34 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.MoTaChiTiet)
                 .HasColumnName("MoTaChiTiet")
-                .HasColumnType("longtext");
+                .HasColumnType("nvarchar(max)");
 
             entity.Property(x => x.DieuKienTour)
                 .HasColumnName("DieuKienTour")
-                .HasColumnType("longtext");
+                .HasColumnType("nvarchar(max)");
 
             entity.Property(x => x.IsNoiBat)
                 .HasColumnName("IsNoiBat")
-                .HasColumnType("tinyint(1)")
+                .HasColumnType("bit")
                 .IsRequired();
 
             entity.Property(x => x.TrangThai)
                 .HasColumnName("TrangThai")
-                .HasColumnType("enum('nhap','dang_mo_ban','tam_ngung','an','ngung_kinh_doanh')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("GETUTCDATE()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAddOrUpdate();
+                .HasDefaultValueSql("GETUTCDATE()")
+                .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => x.MaTour)
                 .IsUnique();
@@ -303,22 +304,22 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.TourId)
                 .HasColumnName("TourId")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             entity.Property(x => x.NgayThu)
                 .HasColumnName("NgayThu")
-                .HasColumnType("tinyint unsigned")
+                .HasColumnType("int")
                 .IsRequired();
 
             entity.Property(x => x.ThuTuTrongNgay)
                 .HasColumnName("ThuTuTrongNgay")
-                .HasColumnType("smallint unsigned")
+                .HasColumnType("int")
                 .IsRequired();
 
             entity.Property(x => x.GioBatDau)
@@ -335,23 +336,23 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.NoiDung)
                 .HasColumnName("NoiDung")
-                .HasColumnType("text");
+                .HasColumnType("nvarchar(max)");
 
             entity.Property(x => x.DiaDiemId)
                 .HasColumnName("DiaDiemId")
-                .HasColumnType("bigint unsigned");
+                .HasColumnType("bigint");
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("GETUTCDATE()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAddOrUpdate();
+                .HasDefaultValueSql("GETUTCDATE()")
+                .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => new { x.TourId, x.NgayThu, x.ThuTuTrongNgay })
                 .IsUnique()
@@ -379,12 +380,12 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.TourId)
                 .HasColumnName("TourId")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             entity.Property(x => x.MaDotTour)
@@ -408,7 +409,7 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.SoChoToiDa)
                 .HasColumnName("SoChoToiDa")
-                .HasColumnType("smallint unsigned")
+                .HasColumnType("int")
                 .IsRequired();
 
             entity.Property(x => x.GhiChu)
@@ -421,21 +422,21 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.TrangThai)
                 .HasColumnName("TrangThai")
-                .HasColumnType("enum('mo_ban','het_cho','da_khoi_hanh','da_ket_thuc','da_huy')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("GETUTCDATE()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAddOrUpdate();
+                .HasDefaultValueSql("GETUTCDATE()")
+                .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => x.MaDotTour)
                 .IsUnique();
@@ -457,24 +458,24 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.LichKhoiHanhId)
                 .HasColumnName("LichKhoiHanhId")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             entity.Property(x => x.LoaiKhach)
                 .HasColumnName("LoaiKhach")
-                .HasColumnType("enum('nguoi_lon','tre_em','em_be')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.LoaiGia)
                 .HasColumnName("LoaiGia")
-                .HasColumnType("enum('ngay_thuong','cuoi_tuan')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.DonGia)
@@ -489,14 +490,14 @@ public class AppDbContext : DbContext
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("GETUTCDATE()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAddOrUpdate();
+                .HasDefaultValueSql("GETUTCDATE()")
+                .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => new { x.LichKhoiHanhId, x.LoaiKhach, x.LoaiGia })
                 .IsUnique()
@@ -519,7 +520,7 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.MaBooking)
@@ -529,17 +530,17 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.LichKhoiHanhId)
                 .HasColumnName("LichKhoiHanhId")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             entity.Property(x => x.NguoiDungId)
                 .HasColumnName("NguoiDungId")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             entity.Property(x => x.VoucherId)
                 .HasColumnName("VoucherId")
-                .HasColumnType("bigint unsigned");
+                .HasColumnType("bigint");
 
             entity.Property(x => x.HoTenLienHe)
                 .HasColumnName("HoTenLienHe")
@@ -567,23 +568,23 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.SoNguoiLon)
                 .HasColumnName("SoNguoiLon")
-                .HasColumnType("smallint unsigned")
+                .HasColumnType("int")
                 .IsRequired();
 
             entity.Property(x => x.SoTreEm)
                 .HasColumnName("SoTreEm")
-                .HasColumnType("smallint unsigned")
+                .HasColumnType("int")
                 .IsRequired();
 
             entity.Property(x => x.SoEmBe)
                 .HasColumnName("SoEmBe")
-                .HasColumnType("smallint unsigned")
+                .HasColumnType("int")
                 .IsRequired();
 
             entity.Property(x => x.LoaiGiaApDung)
                 .HasColumnName("LoaiGiaApDung")
-                .HasColumnType("enum('ngay_thuong','cuoi_tuan')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.DonGiaNguoiLon)
@@ -628,19 +629,19 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.PhuongThucThanhToanDuKien)
                 .HasColumnName("PhuongThucThanhToanDuKien")
-                .HasColumnType("enum('tien_mat','chuyen_khoan','the','vi_dien_tu','cong_thanh_toan')")
-                .HasConversion<string>();
+                .HasConversion<string>()
+                .HasMaxLength(50);
 
             entity.Property(x => x.TrangThaiBooking)
                 .HasColumnName("TrangThaiBooking")
-                .HasColumnType("enum('moi_tao','cho_thanh_toan','da_coc','da_xac_nhan','da_huy','hoan_tat')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.TrangThaiThanhToan)
                 .HasColumnName("TrangThaiThanhToan")
-                .HasColumnType("enum('chua_thanh_toan','thanh_toan_mot_phan','da_thanh_toan_du','that_bai','da_hoan_tien')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.HanThanhToan)
@@ -649,11 +650,11 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.GhiChu)
                 .HasColumnName("GhiChu")
-                .HasColumnType("text");
+                .HasColumnType("nvarchar(max)");
 
             entity.Property(x => x.NguoiXacNhanId)
                 .HasColumnName("NguoiXacNhanId")
-                .HasColumnType("bigint unsigned");
+                .HasColumnType("bigint");
 
             entity.Property(x => x.ThoiGianXacNhan)
                 .HasColumnName("ThoiGianXacNhan")
@@ -662,14 +663,14 @@ public class AppDbContext : DbContext
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("GETUTCDATE()")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAddOrUpdate();
+                .HasDefaultValueSql("GETUTCDATE()")
+                .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => x.MaBooking)
                 .IsUnique();
@@ -707,30 +708,30 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.Id)
                 .HasColumnName("Id")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
             entity.Property(x => x.BookingId)
                 .HasColumnName("BookingId")
-                .HasColumnType("bigint unsigned")
+                .HasColumnType("bigint")
                 .IsRequired();
 
             entity.Property(x => x.LoaiGiaoDich)
                 .HasColumnName("LoaiGiaoDich")
-                .HasColumnType("enum('dat_coc','thanh_toan_con_lai','thanh_toan_toan_bo','hoan_tien')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.KenhThanhToan)
                 .HasColumnName("KenhThanhToan")
-                .HasColumnType("enum('noi_bo','ben_thu_ba')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.PhuongThucThanhToan)
                 .HasColumnName("PhuongThucThanhToan")
-                .HasColumnType("enum('tien_mat','chuyen_khoan','the','vi_dien_tu','cong_thanh_toan')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.NhaCungCap)
@@ -756,13 +757,13 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.TrangThai)
                 .HasColumnName("TrangThai")
-                .HasColumnType("enum('khoi_tao','cho_xu_ly','thanh_cong','that_bai','da_hoan_tien')")
                 .HasConversion<string>()
+                .HasMaxLength(50)
                 .IsRequired();
 
             entity.Property(x => x.DuLieuPhanHoi)
                 .HasColumnName("DuLieuPhanHoi")
-                .HasColumnType("json");
+                .HasColumnType("nvarchar(max)");
 
             entity.Property(x => x.GhiChu)
                 .HasColumnName("GhiChu")
@@ -770,7 +771,7 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.NguoiXacNhanId)
                 .HasColumnName("NguoiXacNhanId")
-                .HasColumnType("bigint unsigned");
+                .HasColumnType("bigint");
 
             entity.Property(x => x.ThoiGianTao)
                 .HasColumnName("ThoiGianTao")
@@ -784,8 +785,8 @@ public class AppDbContext : DbContext
             entity.Property(x => x.UpdatedAt)
                 .HasColumnName("UpdatedAt")
                 .HasColumnType("datetime")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .ValueGeneratedOnAddOrUpdate();
+                .HasDefaultValueSql("GETUTCDATE()")
+                .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => new { x.BookingId, x.TrangThai, x.ThoiGianTao })
                 .HasDatabaseName("IdxThanhToanBooking");

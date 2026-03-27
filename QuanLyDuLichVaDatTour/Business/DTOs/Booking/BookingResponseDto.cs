@@ -2,11 +2,11 @@ namespace BLL.DTOs.Booking;
 
 public class BookingResponseDto
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     public string MaBooking { get; set; } = string.Empty;
 
-    public ulong LichKhoiHanhId { get; set; }
+    public long LichKhoiHanhId { get; set; }
 
     public string MaDotTour { get; set; } = string.Empty;
 
@@ -14,7 +14,7 @@ public class BookingResponseDto
 
     public DateTime NgayKetThuc { get; set; }
 
-    public ulong TourId { get; set; }
+    public long TourId { get; set; }
 
     public string MaTour { get; set; } = string.Empty;
 
@@ -30,13 +30,13 @@ public class BookingResponseDto
 
     public DateTime NgayDat { get; set; }
 
-    public ushort SoNguoiLon { get; set; }
+    public int SoNguoiLon { get; set; }
 
-    public ushort SoTreEm { get; set; }
+    public int SoTreEm { get; set; }
 
-    public ushort SoEmBe { get; set; }
+    public int SoEmBe { get; set; }
 
-    public ushort TongHanhKhach { get; set; }
+    public int TongHanhKhach { get; set; }
 
     public string LoaiGiaApDung { get; set; } = string.Empty;
 

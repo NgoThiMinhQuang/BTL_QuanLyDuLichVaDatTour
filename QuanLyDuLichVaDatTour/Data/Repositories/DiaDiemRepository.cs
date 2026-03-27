@@ -26,7 +26,7 @@ public class DiaDiemRepository : IDiaDiemRepository
             .ToListAsync();
     }
 
-    public async Task<DiaDiem?> GetVisibleByIdAsync(ulong id)
+    public async Task<DiaDiem?> GetVisibleByIdAsync(long id)
     {
         return await _dbContext.DiaDiems
             .AsNoTracking()
@@ -43,14 +43,14 @@ public class DiaDiemRepository : IDiaDiemRepository
             .ToListAsync();
     }
 
-    public async Task<DiaDiem?> GetByIdAsync(ulong id)
+    public async Task<DiaDiem?> GetByIdAsync(long id)
     {
         return await _dbContext.DiaDiems
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<DiaDiem?> GetTrackedByIdAsync(ulong id)
+    public async Task<DiaDiem?> GetTrackedByIdAsync(long id)
     {
         return await _dbContext.DiaDiems
             .FirstOrDefaultAsync(x => x.Id == id);

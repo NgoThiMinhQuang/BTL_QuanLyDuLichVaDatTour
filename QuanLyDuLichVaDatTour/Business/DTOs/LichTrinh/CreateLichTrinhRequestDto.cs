@@ -5,15 +5,15 @@ namespace BLL.DTOs.LichTrinh;
 public class CreateLichTrinhRequestDto
 {
     [Required]
-    public ulong TourId { get; set; }
+    public long TourId { get; set; }
 
     [Required]
-    [Range(1, byte.MaxValue)]
-    public byte NgayThu { get; set; }
+    [Range(1, int.MaxValue)]
+    public int NgayThu { get; set; }
 
     [Required]
-    [Range(1, ushort.MaxValue)]
-    public ushort ThuTuTrongNgay { get; set; }
+    [Range(1, int.MaxValue)]
+    public int ThuTuTrongNgay { get; set; }
 
     public TimeSpan? GioBatDau { get; set; }
 
@@ -24,5 +24,5 @@ public class CreateLichTrinhRequestDto
 
     public string? NoiDung { get; set; }
 
-    public ulong? DiaDiemId { get; set; }
+    public long? DiaDiemId { get; set; }
 }

@@ -24,7 +24,7 @@ public class LoaiTourRepository : ILoaiTourRepository
             .ToListAsync();
     }
 
-    public async Task<LoaiTour?> GetVisibleByIdAsync(ulong id)
+    public async Task<LoaiTour?> GetVisibleByIdAsync(long id)
     {
         return await _dbContext.LoaiTours
             .AsNoTracking()
@@ -39,14 +39,14 @@ public class LoaiTourRepository : ILoaiTourRepository
             .ToListAsync();
     }
 
-    public async Task<LoaiTour?> GetByIdAsync(ulong id)
+    public async Task<LoaiTour?> GetByIdAsync(long id)
     {
         return await _dbContext.LoaiTours
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<LoaiTour?> GetTrackedByIdAsync(ulong id)
+    public async Task<LoaiTour?> GetTrackedByIdAsync(long id)
     {
         return await _dbContext.LoaiTours
             .FirstOrDefaultAsync(x => x.Id == id);

@@ -6,13 +6,13 @@ public interface IDiaDiemRepository
 {
     Task<List<DiaDiem>> GetVisibleAsync();
 
-    Task<DiaDiem?> GetVisibleByIdAsync(ulong id);
+    Task<DiaDiem?> GetVisibleByIdAsync(long id);
 
     Task<List<DiaDiem>> GetAllAsync();
 
-    Task<DiaDiem?> GetByIdAsync(ulong id);
+    Task<DiaDiem?> GetByIdAsync(long id);
 
-    Task<DiaDiem?> GetTrackedByIdAsync(ulong id);
+    Task<DiaDiem?> GetTrackedByIdAsync(long id);
 
     Task<DiaDiem?> GetByTenTinhThanhQuocGiaAsync(string tenDiaDiem, string? tinhThanh, string quocGia);
 

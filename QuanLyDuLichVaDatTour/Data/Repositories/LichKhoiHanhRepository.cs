@@ -25,7 +25,7 @@ public class LichKhoiHanhRepository : ILichKhoiHanhRepository
             .ToListAsync();
     }
 
-    public async Task<LichKhoiHanh?> GetByIdAsync(ulong id)
+    public async Task<LichKhoiHanh?> GetByIdAsync(long id)
     {
         return await _dbContext.LichKhoiHanhs
             .AsNoTracking()
@@ -36,7 +36,7 @@ public class LichKhoiHanhRepository : ILichKhoiHanhRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<LichKhoiHanh?> GetTrackedByIdAsync(ulong id)
+    public async Task<LichKhoiHanh?> GetTrackedByIdAsync(long id)
     {
         return await _dbContext.LichKhoiHanhs
             .Include(x => x.Tour)
@@ -46,7 +46,7 @@ public class LichKhoiHanhRepository : ILichKhoiHanhRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<List<LichKhoiHanh>> GetByTourIdAsync(ulong tourId)
+    public async Task<List<LichKhoiHanh>> GetByTourIdAsync(long tourId)
     {
         return await _dbContext.LichKhoiHanhs
             .AsNoTracking()
@@ -57,7 +57,7 @@ public class LichKhoiHanhRepository : ILichKhoiHanhRepository
             .ToListAsync();
     }
 
-    public async Task<List<LichKhoiHanh>> GetVisibleByTourIdAsync(ulong tourId)
+    public async Task<List<LichKhoiHanh>> GetVisibleByTourIdAsync(long tourId)
     {
         return await _dbContext.LichKhoiHanhs
             .AsNoTracking()

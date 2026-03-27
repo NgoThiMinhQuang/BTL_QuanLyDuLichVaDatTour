@@ -19,7 +19,7 @@ public class PaymentService : IPaymentService
         _nguoiDungRepository = nguoiDungRepository;
     }
 
-    public async Task<PaymentResponseDto> CreateAsync(ulong currentUserId, CreatePaymentRequestDto request)
+    public async Task<PaymentResponseDto> CreateAsync(long currentUserId, CreatePaymentRequestDto request)
     {
         var booking = await _bookingRepository.GetTrackedByIdAsync(request.BookingId)
             ?? throw new KeyNotFoundException("Booking không tồn tại.");
@@ -81,7 +81,7 @@ public class PaymentService : IPaymentService
         return MapResponse(created);
     }
 
-    public async Task<List<PaymentResponseDto>> GetByBookingIdAsync(ulong currentUserId, ulong bookingId)
+    public async Task<List<PaymentResponseDto>> GetByBookingIdAsync(long currentUserId, long bookingId)
     {
         var booking = await _bookingRepository.GetByIdAsync(bookingId)
             ?? throw new KeyNotFoundException("Booking không tồn tại.");
@@ -95,7 +95,7 @@ public class PaymentService : IPaymentService
         return payments.Select(MapResponse).ToList();
     }
 
-    public async Task<PaymentResponseDto> GetByIdAsync(ulong currentUserId, ulong id)
+    public async Task<PaymentResponseDto> GetByIdAsync(long currentUserId, long id)
     {
         var payment = await _paymentRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Thanh toán không tồn tại.");
@@ -114,7 +114,7 @@ public class PaymentService : IPaymentService
         return payments.Select(MapResponse).ToList();
     }
 
-    public async Task<PaymentResponseDto> GetAdminByIdAsync(ulong id)
+    public async Task<PaymentResponseDto> GetAdminByIdAsync(long id)
     {
         var payment = await _paymentRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Thanh toán không tồn tại.");
@@ -122,7 +122,7 @@ public class PaymentService : IPaymentService
         return MapResponse(payment);
     }
 
-    public async Task UpdateStatusAsync(ulong adminUserId, ulong id, UpdatePaymentStatusRequestDto request)
+    public async Task UpdateStatusAsync(long adminUserId, long id, UpdatePaymentStatusRequestDto request)
     {
         var admin = await _nguoiDungRepository.GetByIdAsync(adminUserId)
             ?? throw new KeyNotFoundException("Người dùng không tồn tại.");
@@ -170,7 +170,7 @@ public class PaymentService : IPaymentService
         await _paymentRepository.SaveChangesAsync();
     }
 
-    private async Task<decimal> TinhTongTienThanhCongAsync(ulong bookingId, ulong currentPaymentId, decimal currentPaymentAmount)
+    private async Task<decimal> TinhTongTienThanhCongAsync(long bookingId, long currentPaymentId, decimal currentPaymentAmount)
     {
         var payments = await _paymentRepository.GetByBookingIdAsync(bookingId);
         return payments

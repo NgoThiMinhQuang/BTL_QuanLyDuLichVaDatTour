@@ -25,7 +25,7 @@ public class AdminDiaDiemController : ControllerBase
     }
 
     [HttpGet("get-by-id/{id}")]
-    public async Task<IActionResult> GetById(ulong id)
+    public async Task<IActionResult> GetById(long id)
     {
         try
         {
@@ -58,7 +58,7 @@ public class AdminDiaDiemController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    public async Task<IActionResult> Update(ulong id, [FromBody] UpdateDiaDiemRequestDto request)
+    public async Task<IActionResult> Update(long id, [FromBody] UpdateDiaDiemRequestDto request)
     {
         if (!ModelState.IsValid)
         {
@@ -81,7 +81,7 @@ public class AdminDiaDiemController : ControllerBase
     }
 
     [HttpPatch("update-status/{id}")]
-    public async Task<IActionResult> UpdateStatus(ulong id, [FromBody] UpdateDiaDiemStatusRequestDto request)
+    public async Task<IActionResult> UpdateStatus(long id, [FromBody] UpdateDiaDiemStatusRequestDto request)
     {
         if (!ModelState.IsValid)
         {

@@ -4,9 +4,9 @@ namespace Entity.Entities;
 
 public class BangGiaLichKhoiHanh
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
-    public ulong LichKhoiHanhId { get; set; }
+    public long LichKhoiHanhId { get; set; }
 
     public LoaiKhach LoaiKhach { get; set; }
 

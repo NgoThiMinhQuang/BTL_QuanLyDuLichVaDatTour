@@ -4,7 +4,7 @@ namespace Entity.Entities;
 
 public class NguoiDung
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     public string Email { get; set; } = string.Empty;
 

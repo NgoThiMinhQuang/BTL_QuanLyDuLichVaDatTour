@@ -2,7 +2,7 @@ namespace BLL.DTOs.LoaiTour;
 
 public class LoaiTourAdminResponseDto
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     public string Ten { get; set; } = string.Empty;
 

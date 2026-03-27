@@ -19,7 +19,7 @@ public class PaymentRepository : IPaymentRepository
         await _dbContext.Set<ThanhToan>().AddAsync(thanhToan);
     }
 
-    public async Task<ThanhToan?> GetByIdAsync(ulong id)
+    public async Task<ThanhToan?> GetByIdAsync(long id)
     {
         return await _dbContext.Set<ThanhToan>()
             .AsNoTracking()
@@ -28,7 +28,7 @@ public class PaymentRepository : IPaymentRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<ThanhToan?> GetTrackedByIdAsync(ulong id)
+    public async Task<ThanhToan?> GetTrackedByIdAsync(long id)
     {
         return await _dbContext.Set<ThanhToan>()
             .Include(x => x.Booking)
@@ -36,7 +36,7 @@ public class PaymentRepository : IPaymentRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<List<ThanhToan>> GetByBookingIdAsync(ulong bookingId)
+    public async Task<List<ThanhToan>> GetByBookingIdAsync(long bookingId)
     {
         return await _dbContext.Set<ThanhToan>()
             .AsNoTracking()

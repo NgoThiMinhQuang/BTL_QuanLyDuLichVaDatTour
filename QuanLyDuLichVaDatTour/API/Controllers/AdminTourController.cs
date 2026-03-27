@@ -25,7 +25,7 @@ public class AdminTourController : ControllerBase
     }
 
     [HttpGet("get-by-id/{id}")]
-    public async Task<IActionResult> GetById(ulong id)
+    public async Task<IActionResult> GetById(long id)
     {
         try
         {
@@ -62,7 +62,7 @@ public class AdminTourController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    public async Task<IActionResult> Update(ulong id, [FromBody] UpdateTourRequestDto request)
+    public async Task<IActionResult> Update(long id, [FromBody] UpdateTourRequestDto request)
     {
         if (!ModelState.IsValid)
         {
@@ -85,7 +85,7 @@ public class AdminTourController : ControllerBase
     }
 
     [HttpPatch("update-status/{id}")]
-    public async Task<IActionResult> UpdateStatus(ulong id, [FromBody] UpdateTourStatusRequestDto request)
+    public async Task<IActionResult> UpdateStatus(long id, [FromBody] UpdateTourStatusRequestDto request)
     {
         if (!ModelState.IsValid)
         {
@@ -104,7 +104,7 @@ public class AdminTourController : ControllerBase
     }
 
     [HttpPatch("hide/{id}")]
-    public async Task<IActionResult> Hide(ulong id)
+    public async Task<IActionResult> Hide(long id)
     {
         try
         {

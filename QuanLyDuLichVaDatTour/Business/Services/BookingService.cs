@@ -26,7 +26,7 @@ public class BookingService : IBookingService
         _nguoiDungRepository = nguoiDungRepository;
     }
 
-    public async Task<BookingResponseDto> CreateAsync(ulong currentUserId, CreateBookingRequestDto request)
+    public async Task<BookingResponseDto> CreateAsync(long currentUserId, CreateBookingRequestDto request)
     {
         var nguoiDung = await EnsureNguoiDungExistsAsync(currentUserId);
         var lichKhoiHanh = await EnsureLichKhoiHanhAvailableAsync(request.LichKhoiHanhId);
@@ -90,7 +90,7 @@ public class BookingService : IBookingService
         return MapBookingResponse(booking);
     }
 
-    public async Task<List<BookingListItemDto>> GetMyBookingsAsync(ulong currentUserId)
+    public async Task<List<BookingListItemDto>> GetMyBookingsAsync(long currentUserId)
     {
         await EnsureNguoiDungExistsAsync(currentUserId);
 
@@ -98,7 +98,7 @@ public class BookingService : IBookingService
         return bookings.Select(MapBookingListItem).ToList();
     }
 
-    public async Task<BookingResponseDto> GetMyBookingByIdAsync(ulong currentUserId, ulong id)
+    public async Task<BookingResponseDto> GetMyBookingByIdAsync(long currentUserId, long id)
     {
         var booking = await _bookingRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Booking không tồn tại.");
@@ -117,7 +117,7 @@ public class BookingService : IBookingService
         return bookings.Select(MapBookingAdminResponse).ToList();
     }
 
-    public async Task<BookingAdminResponseDto> GetByIdAsync(ulong id)
+    public async Task<BookingAdminResponseDto> GetByIdAsync(long id)
     {
         var booking = await _bookingRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Booking không tồn tại.");
@@ -125,7 +125,7 @@ public class BookingService : IBookingService
         return MapBookingAdminResponse(booking);
     }
 
-    public async Task UpdateStatusAsync(ulong adminUserId, ulong id, UpdateBookingStatusRequestDto request)
+    public async Task UpdateStatusAsync(long adminUserId, long id, UpdateBookingStatusRequestDto request)
     {
         var adminUser = await EnsureNguoiDungExistsAsync(adminUserId);
         var booking = await _bookingRepository.GetTrackedByIdAsync(id)
@@ -154,13 +154,13 @@ public class BookingService : IBookingService
         await _bookingRepository.SaveChangesAsync();
     }
 
-    private async Task<NguoiDung> EnsureNguoiDungExistsAsync(ulong nguoiDungId)
+    private async Task<NguoiDung> EnsureNguoiDungExistsAsync(long nguoiDungId)
     {
         return await _nguoiDungRepository.GetByIdAsync(nguoiDungId)
             ?? throw new KeyNotFoundException("Người dùng không tồn tại.");
     }
 
-    private async Task<LichKhoiHanh> EnsureLichKhoiHanhAvailableAsync(ulong lichKhoiHanhId)
+    private async Task<LichKhoiHanh> EnsureLichKhoiHanhAvailableAsync(long lichKhoiHanhId)
     {
         var lichKhoiHanh = await _lichKhoiHanhRepository.GetByIdAsync(lichKhoiHanhId)
             ?? throw new KeyNotFoundException("Lịch khởi hành không tồn tại.");
@@ -178,7 +178,7 @@ public class BookingService : IBookingService
         return lichKhoiHanh;
     }
 
-    private static void ValidatePassengerCounts(ushort soNguoiLon, ushort soTreEm, ushort soEmBe, ushort soChoToiDa)
+    private static void ValidatePassengerCounts(int soNguoiLon, int soTreEm, int soEmBe, int soChoToiDa)
     {
         if (soNguoiLon < 1)
         {
@@ -250,9 +250,9 @@ public class BookingService : IBookingService
         return value.Trim();
     }
 
-    private static ushort GetTongHanhKhach(Booking booking)
+    private static int GetTongHanhKhach(Booking booking)
     {
-        return (ushort)(booking.SoNguoiLon + booking.SoTreEm + booking.SoEmBe);
+        return (int)(booking.SoNguoiLon + booking.SoTreEm + booking.SoEmBe);
     }
 
     private static BookingListItemDto MapBookingListItem(Booking booking)

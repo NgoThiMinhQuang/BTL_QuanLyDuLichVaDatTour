@@ -6,13 +6,13 @@ public interface ILichKhoiHanhRepository
 {
     Task<List<LichKhoiHanh>> GetAllAsync();
 
-    Task<LichKhoiHanh?> GetByIdAsync(ulong id);
+    Task<LichKhoiHanh?> GetByIdAsync(long id);
 
-    Task<LichKhoiHanh?> GetTrackedByIdAsync(ulong id);
+    Task<LichKhoiHanh?> GetTrackedByIdAsync(long id);
 
-    Task<List<LichKhoiHanh>> GetByTourIdAsync(ulong tourId);
+    Task<List<LichKhoiHanh>> GetByTourIdAsync(long tourId);
 
-    Task<List<LichKhoiHanh>> GetVisibleByTourIdAsync(ulong tourId);
+    Task<List<LichKhoiHanh>> GetVisibleByTourIdAsync(long tourId);
 
     Task<LichKhoiHanh?> GetByMaDotTourAsync(string maDotTour);
 

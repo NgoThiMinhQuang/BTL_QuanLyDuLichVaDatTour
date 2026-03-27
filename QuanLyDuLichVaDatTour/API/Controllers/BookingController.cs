@@ -66,7 +66,7 @@ public class BookingController : ControllerBase
     }
 
     [HttpGet("get-by-id/{id}")]
-    public async Task<IActionResult> GetById(ulong id)
+    public async Task<IActionResult> GetById(long id)
     {
         if (!TryGetCurrentUserId(out var userId))
         {
@@ -84,9 +84,9 @@ public class BookingController : ControllerBase
         }
     }
 
-    private bool TryGetCurrentUserId(out ulong userId)
+    private bool TryGetCurrentUserId(out long userId)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return ulong.TryParse(userIdClaim, out userId);
+        return long.TryParse(userIdClaim, out userId);
     }
 }

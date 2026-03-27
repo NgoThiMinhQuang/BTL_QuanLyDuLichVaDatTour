@@ -4,15 +4,15 @@ namespace Entity.Entities;
 
 public class Booking
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     public string MaBooking { get; set; } = string.Empty;
 
-    public ulong LichKhoiHanhId { get; set; }
+    public long LichKhoiHanhId { get; set; }
 
-    public ulong NguoiDungId { get; set; }
+    public long NguoiDungId { get; set; }
 
-    public ulong? VoucherId { get; set; }
+    public long? VoucherId { get; set; }
 
     public string HoTenLienHe { get; set; } = string.Empty;
 
@@ -24,11 +24,11 @@ public class Booking
 
     public DateTime NgayDat { get; set; }
 
-    public ushort SoNguoiLon { get; set; }
+    public int SoNguoiLon { get; set; }
 
-    public ushort SoTreEm { get; set; }
+    public int SoTreEm { get; set; }
 
-    public ushort SoEmBe { get; set; }
+    public int SoEmBe { get; set; }
 
     public LoaiGiaApDung LoaiGiaApDung { get; set; }
 
@@ -58,7 +58,7 @@ public class Booking
 
     public string? GhiChu { get; set; }
 
-    public ulong? NguoiXacNhanId { get; set; }
+    public long? NguoiXacNhanId { get; set; }
 
     public DateTime? ThoiGianXacNhan { get; set; }
 

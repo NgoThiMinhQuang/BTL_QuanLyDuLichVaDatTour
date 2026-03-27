@@ -8,17 +8,17 @@ public interface ITourService
 
     Task<List<TourResponseDto>> SearchVisibleAsync(SearchTourRequestDto request);
 
-    Task<TourResponseDto> GetVisibleByIdAsync(ulong id);
+    Task<TourResponseDto> GetVisibleByIdAsync(long id);
 
     Task<List<TourAdminResponseDto>> GetAllAsync();
 
-    Task<TourAdminResponseDto> GetByIdAsync(ulong id);
+    Task<TourAdminResponseDto> GetByIdAsync(long id);
 
     Task<TourAdminResponseDto> CreateAsync(CreateTourRequestDto request);
 
-    Task<TourAdminResponseDto> UpdateAsync(ulong id, UpdateTourRequestDto request);
+    Task<TourAdminResponseDto> UpdateAsync(long id, UpdateTourRequestDto request);
 
-    Task UpdateStatusAsync(ulong id, UpdateTourStatusRequestDto request);
+    Task UpdateStatusAsync(long id, UpdateTourStatusRequestDto request);
 
-    Task HideAsync(ulong id);
+    Task HideAsync(long id);
 }

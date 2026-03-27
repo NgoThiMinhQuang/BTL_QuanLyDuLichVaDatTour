@@ -21,7 +21,7 @@ public class LoaiTourService : ILoaiTourService
         return loaiTours.Select(MapPublicResponse).ToList();
     }
 
-    public async Task<LoaiTourResponseDto> GetVisibleByIdAsync(ulong id)
+    public async Task<LoaiTourResponseDto> GetVisibleByIdAsync(long id)
     {
         var loaiTour = await _loaiTourRepository.GetVisibleByIdAsync(id)
             ?? throw new KeyNotFoundException("Loại tour không tồn tại.");
@@ -35,7 +35,7 @@ public class LoaiTourService : ILoaiTourService
         return loaiTours.Select(MapAdminResponse).ToList();
     }
 
-    public async Task<LoaiTourAdminResponseDto> GetByIdAsync(ulong id)
+    public async Task<LoaiTourAdminResponseDto> GetByIdAsync(long id)
     {
         var loaiTour = await _loaiTourRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Loại tour không tồn tại.");
@@ -64,7 +64,7 @@ public class LoaiTourService : ILoaiTourService
         return MapAdminResponse(loaiTour);
     }
 
-    public async Task<LoaiTourAdminResponseDto> UpdateAsync(ulong id, UpdateLoaiTourRequestDto request)
+    public async Task<LoaiTourAdminResponseDto> UpdateAsync(long id, UpdateLoaiTourRequestDto request)
     {
         var loaiTour = await _loaiTourRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Loại tour không tồn tại.");
@@ -82,7 +82,7 @@ public class LoaiTourService : ILoaiTourService
         return MapAdminResponse(loaiTour);
     }
 
-    public async Task UpdateStatusAsync(ulong id, UpdateLoaiTourStatusRequestDto request)
+    public async Task UpdateStatusAsync(long id, UpdateLoaiTourStatusRequestDto request)
     {
         var loaiTour = await _loaiTourRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Loại tour không tồn tại.");
@@ -93,7 +93,7 @@ public class LoaiTourService : ILoaiTourService
         await _loaiTourRepository.SaveChangesAsync();
     }
 
-    private async Task EnsureTenIsUniqueAsync(string ten, ulong? currentId = null)
+    private async Task EnsureTenIsUniqueAsync(string ten, long? currentId = null)
     {
         var existingLoaiTour = await _loaiTourRepository.GetByTenAsync(ten);
         if (existingLoaiTour is not null && existingLoaiTour.Id != currentId)

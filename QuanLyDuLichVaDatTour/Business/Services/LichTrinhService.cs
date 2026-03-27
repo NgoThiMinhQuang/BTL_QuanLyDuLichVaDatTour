@@ -27,7 +27,7 @@ public class LichTrinhService : ILichTrinhService
         return lichTrinhs.Select(MapAdminResponse).ToList();
     }
 
-    public async Task<LichTrinhAdminResponseDto> GetByIdAsync(ulong id)
+    public async Task<LichTrinhAdminResponseDto> GetByIdAsync(long id)
     {
         var lichTrinh = await _lichTrinhRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Lịch trình không tồn tại.");
@@ -35,7 +35,7 @@ public class LichTrinhService : ILichTrinhService
         return MapAdminResponse(lichTrinh);
     }
 
-    public async Task<List<LichTrinhAdminResponseDto>> GetByTourIdAsync(ulong tourId)
+    public async Task<List<LichTrinhAdminResponseDto>> GetByTourIdAsync(long tourId)
     {
         await EnsureTourExistsAsync(tourId);
 
@@ -43,7 +43,7 @@ public class LichTrinhService : ILichTrinhService
         return lichTrinhs.Select(MapAdminResponse).ToList();
     }
 
-    public async Task<List<LichTrinhResponseDto>> GetVisibleByTourIdAsync(ulong tourId)
+    public async Task<List<LichTrinhResponseDto>> GetVisibleByTourIdAsync(long tourId)
     {
         var tour = await _tourRepository.GetVisibleByIdAsync(tourId)
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
@@ -90,7 +90,7 @@ public class LichTrinhService : ILichTrinhService
         return MapAdminResponse(lichTrinh);
     }
 
-    public async Task<LichTrinhAdminResponseDto> UpdateAsync(ulong id, UpdateLichTrinhRequestDto request)
+    public async Task<LichTrinhAdminResponseDto> UpdateAsync(long id, UpdateLichTrinhRequestDto request)
     {
         var lichTrinh = await _lichTrinhRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Lịch trình không tồn tại.");
@@ -125,7 +125,7 @@ public class LichTrinhService : ILichTrinhService
         return MapAdminResponse(lichTrinh);
     }
 
-    public async Task DeleteAsync(ulong id)
+    public async Task DeleteAsync(long id)
     {
         var lichTrinh = await _lichTrinhRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Lịch trình không tồn tại.");
@@ -134,13 +134,13 @@ public class LichTrinhService : ILichTrinhService
         await _lichTrinhRepository.SaveChangesAsync();
     }
 
-    private async Task<Tour> EnsureTourExistsAsync(ulong tourId)
+    private async Task<Tour> EnsureTourExistsAsync(long tourId)
     {
         return await _tourRepository.GetByIdAsync(tourId)
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
     }
 
-    private async Task<DiaDiem?> EnsureDiaDiemExistsAsync(ulong? diaDiemId)
+    private async Task<DiaDiem?> EnsureDiaDiemExistsAsync(long? diaDiemId)
     {
         if (!diaDiemId.HasValue)
         {
@@ -151,7 +151,7 @@ public class LichTrinhService : ILichTrinhService
             ?? throw new KeyNotFoundException("Địa điểm không tồn tại.");
     }
 
-    private async Task EnsureUniquePositionAsync(ulong tourId, byte ngayThu, ushort thuTuTrongNgay, ulong? currentId = null)
+    private async Task EnsureUniquePositionAsync(long tourId, int ngayThu, int thuTuTrongNgay, long? currentId = null)
     {
         var existing = await _lichTrinhRepository.GetByTourDayOrderAsync(tourId, ngayThu, thuTuTrongNgay);
         if (existing is not null && existing.Id != currentId)
@@ -160,7 +160,7 @@ public class LichTrinhService : ILichTrinhService
         }
     }
 
-    private static void ValidateNgayThu(byte ngayThu, int soNgayTour)
+    private static void ValidateNgayThu(int ngayThu, int soNgayTour)
     {
         if (ngayThu < 1)
         {
@@ -173,7 +173,7 @@ public class LichTrinhService : ILichTrinhService
         }
     }
 
-    private static void ValidateThuTuTrongNgay(ushort thuTuTrongNgay)
+    private static void ValidateThuTuTrongNgay(int thuTuTrongNgay)
     {
         if (thuTuTrongNgay < 1)
         {

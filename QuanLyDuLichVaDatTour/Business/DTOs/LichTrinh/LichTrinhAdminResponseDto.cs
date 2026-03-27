@@ -2,15 +2,15 @@ namespace BLL.DTOs.LichTrinh;
 
 public class LichTrinhAdminResponseDto
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
-    public ulong TourId { get; set; }
+    public long TourId { get; set; }
 
     public string TenTour { get; set; } = string.Empty;
 
-    public byte NgayThu { get; set; }
+    public int NgayThu { get; set; }
 
-    public ushort ThuTuTrongNgay { get; set; }
+    public int ThuTuTrongNgay { get; set; }
 
     public TimeSpan? GioBatDau { get; set; }
 
@@ -20,7 +20,7 @@ public class LichTrinhAdminResponseDto
 
     public string? NoiDung { get; set; }
 
-    public ulong? DiaDiemId { get; set; }
+    public long? DiaDiemId { get; set; }
 
     public string? TenDiaDiem { get; set; }
 

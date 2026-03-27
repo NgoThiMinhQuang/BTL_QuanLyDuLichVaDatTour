@@ -6,11 +6,11 @@ public interface IPaymentRepository
 {
     Task AddAsync(ThanhToan thanhToan);
 
-    Task<ThanhToan?> GetByIdAsync(ulong id);
+    Task<ThanhToan?> GetByIdAsync(long id);
 
-    Task<ThanhToan?> GetTrackedByIdAsync(ulong id);
+    Task<ThanhToan?> GetTrackedByIdAsync(long id);
 
-    Task<List<ThanhToan>> GetByBookingIdAsync(ulong bookingId);
+    Task<List<ThanhToan>> GetByBookingIdAsync(long bookingId);
 
     Task<List<ThanhToan>> GetAllAsync();
 

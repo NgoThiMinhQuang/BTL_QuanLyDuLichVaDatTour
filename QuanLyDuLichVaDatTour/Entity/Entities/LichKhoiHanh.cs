@@ -4,9 +4,9 @@ namespace Entity.Entities;
 
 public class LichKhoiHanh
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
-    public ulong TourId { get; set; }
+    public long TourId { get; set; }
 
     public string MaDotTour { get; set; } = string.Empty;
 
@@ -16,7 +16,7 @@ public class LichKhoiHanh
 
     public string? NoiTapTrung { get; set; }
 
-    public ushort SoChoToiDa { get; set; }
+    public int SoChoToiDa { get; set; }
 
     public string? GhiChu { get; set; }
 

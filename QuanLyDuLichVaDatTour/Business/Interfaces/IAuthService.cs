@@ -8,9 +8,9 @@ public interface IAuthService
 
     Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
 
-    Task<CurrentUserResponseDto> GetCurrentUserAsync(ulong userId);
+    Task<CurrentUserResponseDto> GetCurrentUserAsync(long userId);
 
-    Task<CurrentUserResponseDto> UpdateCurrentUserAsync(ulong userId, UpdateCurrentUserRequestDto request);
+    Task<CurrentUserResponseDto> UpdateCurrentUserAsync(long userId, UpdateCurrentUserRequestDto request);
 
-    Task ChangePasswordAsync(ulong userId, ChangePasswordRequestDto request);
+    Task ChangePasswordAsync(long userId, ChangePasswordRequestDto request);
 }

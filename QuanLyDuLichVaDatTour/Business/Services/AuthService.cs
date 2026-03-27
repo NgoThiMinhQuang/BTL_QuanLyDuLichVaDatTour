@@ -151,7 +151,7 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<CurrentUserResponseDto> GetCurrentUserAsync(ulong userId)
+    public async Task<CurrentUserResponseDto> GetCurrentUserAsync(long userId)
     {
         var nguoiDung = await _nguoiDungRepository.GetByIdAsync(userId);
         if (nguoiDung is null)
@@ -162,7 +162,7 @@ public class AuthService : IAuthService
         return MapCurrentUserResponse(nguoiDung);
     }
 
-    public async Task<CurrentUserResponseDto> UpdateCurrentUserAsync(ulong userId, UpdateCurrentUserRequestDto request)
+    public async Task<CurrentUserResponseDto> UpdateCurrentUserAsync(long userId, UpdateCurrentUserRequestDto request)
     {
         var nguoiDung = await _nguoiDungRepository.GetTrackedByIdAsync(userId);
         if (nguoiDung is null)
@@ -181,7 +181,7 @@ public class AuthService : IAuthService
         return MapCurrentUserResponse(nguoiDung);
     }
 
-    public async Task ChangePasswordAsync(ulong userId, ChangePasswordRequestDto request)
+    public async Task ChangePasswordAsync(long userId, ChangePasswordRequestDto request)
     {
         var nguoiDung = await _nguoiDungRepository.GetTrackedByIdAsync(userId);
         if (nguoiDung is null)

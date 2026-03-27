@@ -15,7 +15,7 @@ public class LichKhoiHanhController : ControllerBase
     }
 
     [HttpGet("get-by-tour/{tourId}")]
-    public async Task<IActionResult> GetByTourId(ulong tourId)
+    public async Task<IActionResult> GetByTourId(long tourId)
     {
         try
         {

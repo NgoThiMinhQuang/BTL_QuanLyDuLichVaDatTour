@@ -6,7 +6,7 @@ namespace BLL.DTOs.LichKhoiHanh;
 public class UpdateLichKhoiHanhRequestDto
 {
     [Required]
-    public ulong TourId { get; set; }
+    public long TourId { get; set; }
 
     [Required]
     [MaxLength(50)]
@@ -22,8 +22,8 @@ public class UpdateLichKhoiHanhRequestDto
     public string? NoiTapTrung { get; set; }
 
     [Required]
-    [Range(1, ushort.MaxValue)]
-    public ushort SoChoToiDa { get; set; }
+    [Range(1, int.MaxValue)]
+    public int SoChoToiDa { get; set; }
 
     [MaxLength(500)]
     public string? GhiChu { get; set; }

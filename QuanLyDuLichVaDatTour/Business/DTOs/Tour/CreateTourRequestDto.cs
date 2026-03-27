@@ -14,18 +14,18 @@ public class CreateTourRequestDto
     public string TenTour { get; set; } = string.Empty;
 
     [Required]
-    public ulong LoaiTourId { get; set; }
+    public long LoaiTourId { get; set; }
 
     [Required]
-    public ulong DiemXuatPhatId { get; set; }
+    public long DiemXuatPhatId { get; set; }
 
     [Required]
-    [Range(1, byte.MaxValue)]
-    public byte SoNgay { get; set; }
+    [Range(1, int.MaxValue)]
+    public int SoNgay { get; set; }
 
     [Required]
-    [Range(0, byte.MaxValue)]
-    public byte SoDem { get; set; }
+    [Range(0, int.MaxValue)]
+    public int SoDem { get; set; }
 
     [MaxLength(100)]
     public string? PhuongTien { get; set; }

@@ -25,7 +25,7 @@ public class AdminLichKhoiHanhController : ControllerBase
     }
 
     [HttpGet("get-by-id/{id}")]
-    public async Task<IActionResult> GetById(ulong id)
+    public async Task<IActionResult> GetById(long id)
     {
         try
         {
@@ -39,7 +39,7 @@ public class AdminLichKhoiHanhController : ControllerBase
     }
 
     [HttpGet("get-by-tour/{tourId}")]
-    public async Task<IActionResult> GetByTourId(ulong tourId)
+    public async Task<IActionResult> GetByTourId(long tourId)
     {
         try
         {
@@ -76,7 +76,7 @@ public class AdminLichKhoiHanhController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    public async Task<IActionResult> Update(ulong id, [FromBody] UpdateLichKhoiHanhRequestDto request)
+    public async Task<IActionResult> Update(long id, [FromBody] UpdateLichKhoiHanhRequestDto request)
     {
         if (!ModelState.IsValid)
         {
@@ -99,7 +99,7 @@ public class AdminLichKhoiHanhController : ControllerBase
     }
 
     [HttpPatch("update-status/{id}")]
-    public async Task<IActionResult> UpdateStatus(ulong id, [FromBody] UpdateLichKhoiHanhStatusRequestDto request)
+    public async Task<IActionResult> UpdateStatus(long id, [FromBody] UpdateLichKhoiHanhStatusRequestDto request)
     {
         if (!ModelState.IsValid)
         {

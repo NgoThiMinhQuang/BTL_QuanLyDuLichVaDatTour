@@ -6,15 +6,15 @@ public interface IDiaDiemService
 {
     Task<List<DiaDiemResponseDto>> GetVisibleAsync();
 
-    Task<DiaDiemResponseDto> GetVisibleByIdAsync(ulong id);
+    Task<DiaDiemResponseDto> GetVisibleByIdAsync(long id);
 
     Task<List<DiaDiemAdminResponseDto>> GetAllAsync();
 
-    Task<DiaDiemAdminResponseDto> GetByIdAsync(ulong id);
+    Task<DiaDiemAdminResponseDto> GetByIdAsync(long id);
 
     Task<DiaDiemAdminResponseDto> CreateAsync(CreateDiaDiemRequestDto request);
 
-    Task<DiaDiemAdminResponseDto> UpdateAsync(ulong id, UpdateDiaDiemRequestDto request);
+    Task<DiaDiemAdminResponseDto> UpdateAsync(long id, UpdateDiaDiemRequestDto request);
 
-    Task UpdateStatusAsync(ulong id, UpdateDiaDiemStatusRequestDto request);
+    Task UpdateStatusAsync(long id, UpdateDiaDiemStatusRequestDto request);
 }

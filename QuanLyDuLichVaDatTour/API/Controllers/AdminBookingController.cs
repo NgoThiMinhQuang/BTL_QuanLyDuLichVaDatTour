@@ -26,7 +26,7 @@ public class AdminBookingController : ControllerBase
     }
 
     [HttpGet("get-by-id/{id}")]
-    public async Task<IActionResult> GetById(ulong id)
+    public async Task<IActionResult> GetById(long id)
     {
         try
         {
@@ -40,7 +40,7 @@ public class AdminBookingController : ControllerBase
     }
 
     [HttpPatch("update-status/{id}")]
-    public async Task<IActionResult> UpdateStatus(ulong id, [FromBody] UpdateBookingStatusRequestDto request)
+    public async Task<IActionResult> UpdateStatus(long id, [FromBody] UpdateBookingStatusRequestDto request)
     {
         if (!ModelState.IsValid)
         {
@@ -67,9 +67,9 @@ public class AdminBookingController : ControllerBase
         }
     }
 
-    private bool TryGetCurrentUserId(out ulong userId)
+    private bool TryGetCurrentUserId(out long userId)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return ulong.TryParse(userIdClaim, out userId);
+        return long.TryParse(userIdClaim, out userId);
     }
 }

@@ -6,7 +6,7 @@ namespace BLL.DTOs.Booking;
 public class CreateBookingRequestDto
 {
     [Required]
-    public ulong LichKhoiHanhId { get; set; }
+    public long LichKhoiHanhId { get; set; }
 
     [MaxLength(200)]
     public string? HoTenLienHe { get; set; }
@@ -22,14 +22,14 @@ public class CreateBookingRequestDto
     public string? DiaChiLienHe { get; set; }
 
     [Required]
-    [Range(1, ushort.MaxValue)]
-    public ushort SoNguoiLon { get; set; }
+    [Range(1, int.MaxValue)]
+    public int SoNguoiLon { get; set; }
 
-    [Range(0, ushort.MaxValue)]
-    public ushort SoTreEm { get; set; }
+    [Range(0, int.MaxValue)]
+    public int SoTreEm { get; set; }
 
-    [Range(0, ushort.MaxValue)]
-    public ushort SoEmBe { get; set; }
+    [Range(0, int.MaxValue)]
+    public int SoEmBe { get; set; }
 
     public PhuongThucThanhToan? PhuongThucThanhToanDuKien { get; set; }
 

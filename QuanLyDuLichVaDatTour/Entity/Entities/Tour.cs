@@ -4,19 +4,19 @@ namespace Entity.Entities;
 
 public class Tour
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     public string MaTour { get; set; } = string.Empty;
 
     public string TenTour { get; set; } = string.Empty;
 
-    public ulong LoaiTourId { get; set; }
+    public long LoaiTourId { get; set; }
 
-    public ulong DiemXuatPhatId { get; set; }
+    public long DiemXuatPhatId { get; set; }
 
-    public byte SoNgay { get; set; }
+    public int SoNgay { get; set; }
 
-    public byte SoDem { get; set; }
+    public int SoDem { get; set; }
 
     public string? PhuongTien { get; set; }
 

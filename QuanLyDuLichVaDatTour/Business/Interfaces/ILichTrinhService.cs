@@ -6,15 +6,15 @@ public interface ILichTrinhService
 {
     Task<List<LichTrinhAdminResponseDto>> GetAllAsync();
 
-    Task<LichTrinhAdminResponseDto> GetByIdAsync(ulong id);
+    Task<LichTrinhAdminResponseDto> GetByIdAsync(long id);
 
-    Task<List<LichTrinhAdminResponseDto>> GetByTourIdAsync(ulong tourId);
+    Task<List<LichTrinhAdminResponseDto>> GetByTourIdAsync(long tourId);
 
-    Task<List<LichTrinhResponseDto>> GetVisibleByTourIdAsync(ulong tourId);
+    Task<List<LichTrinhResponseDto>> GetVisibleByTourIdAsync(long tourId);
 
     Task<LichTrinhAdminResponseDto> CreateAsync(CreateLichTrinhRequestDto request);
 
-    Task<LichTrinhAdminResponseDto> UpdateAsync(ulong id, UpdateLichTrinhRequestDto request);
+    Task<LichTrinhAdminResponseDto> UpdateAsync(long id, UpdateLichTrinhRequestDto request);
 
-    Task DeleteAsync(ulong id);
+    Task DeleteAsync(long id);
 }

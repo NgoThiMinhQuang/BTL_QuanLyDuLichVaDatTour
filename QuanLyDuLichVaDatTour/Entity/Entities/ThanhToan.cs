@@ -4,9 +4,9 @@ namespace Entity.Entities;
 
 public class ThanhToan
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
-    public ulong BookingId { get; set; }
+    public long BookingId { get; set; }
 
     public LoaiGiaoDichThanhToan LoaiGiaoDich { get; set; }
 
@@ -30,7 +30,7 @@ public class ThanhToan
 
     public TrangThaiGiaoDichThanhToan TrangThai { get; set; }
 
-    public ulong? NguoiXacNhanId { get; set; }
+    public long? NguoiXacNhanId { get; set; }
 
     public DateTime ThoiGianTao { get; set; }
 

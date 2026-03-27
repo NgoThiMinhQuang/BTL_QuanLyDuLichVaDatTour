@@ -19,7 +19,7 @@ public class BookingRepository : IBookingRepository
         await _dbContext.Bookings.AddAsync(booking);
     }
 
-    public async Task<Booking?> GetByIdAsync(ulong id)
+    public async Task<Booking?> GetByIdAsync(long id)
     {
         return await _dbContext.Bookings
             .AsNoTracking()
@@ -30,7 +30,7 @@ public class BookingRepository : IBookingRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<Booking?> GetTrackedByIdAsync(ulong id)
+    public async Task<Booking?> GetTrackedByIdAsync(long id)
     {
         return await _dbContext.Bookings
             .Include(x => x.LichKhoiHanh)
@@ -47,7 +47,7 @@ public class BookingRepository : IBookingRepository
             .FirstOrDefaultAsync(x => x.MaBooking == maBooking);
     }
 
-    public async Task<List<Booking>> GetByNguoiDungIdAsync(ulong nguoiDungId)
+    public async Task<List<Booking>> GetByNguoiDungIdAsync(long nguoiDungId)
     {
         return await _dbContext.Bookings
             .AsNoTracking()

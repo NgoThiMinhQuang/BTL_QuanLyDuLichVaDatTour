@@ -2,9 +2,9 @@ namespace BLL.DTOs.Payment;
 
 public class PaymentResponseDto
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
-    public ulong BookingId { get; set; }
+    public long BookingId { get; set; }
 
     public string MaBooking { get; set; } = string.Empty;
 
@@ -30,7 +30,7 @@ public class PaymentResponseDto
 
     public string TrangThai { get; set; } = string.Empty;
 
-    public ulong? NguoiXacNhanId { get; set; }
+    public long? NguoiXacNhanId { get; set; }
 
     public string? HoTenNguoiXacNhan { get; set; }
 

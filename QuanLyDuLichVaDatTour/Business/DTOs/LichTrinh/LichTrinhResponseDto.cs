@@ -2,13 +2,13 @@ namespace BLL.DTOs.LichTrinh;
 
 public class LichTrinhResponseDto
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
-    public ulong TourId { get; set; }
+    public long TourId { get; set; }
 
-    public byte NgayThu { get; set; }
+    public int NgayThu { get; set; }
 
-    public ushort ThuTuTrongNgay { get; set; }
+    public int ThuTuTrongNgay { get; set; }
 
     public TimeSpan? GioBatDau { get; set; }
 
@@ -18,7 +18,7 @@ public class LichTrinhResponseDto
 
     public string? NoiDung { get; set; }
 
-    public ulong? DiaDiemId { get; set; }
+    public long? DiaDiemId { get; set; }
 
     public string? TenDiaDiem { get; set; }
 }

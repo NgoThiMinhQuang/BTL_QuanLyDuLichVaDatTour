@@ -143,9 +143,9 @@ public class AuthController : ControllerBase
         }
     }
 
-    private bool TryGetCurrentUserId(out ulong userId)
+    private bool TryGetCurrentUserId(out long userId)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return ulong.TryParse(userIdClaim, out userId);
+        return long.TryParse(userIdClaim, out userId);
     }
 }

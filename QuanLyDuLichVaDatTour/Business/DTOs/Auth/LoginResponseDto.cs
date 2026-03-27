@@ -8,7 +8,7 @@ public class LoginResponseDto
 
     public int ExpiresIn { get; set; }
 
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     public string Email { get; set; } = string.Empty;
 

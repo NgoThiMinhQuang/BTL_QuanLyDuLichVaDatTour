@@ -14,7 +14,7 @@ public class BangGiaLichKhoiHanhRepository : IBangGiaLichKhoiHanhRepository
         _dbContext = dbContext;
     }
 
-    public async Task<Dictionary<LoaiKhach, decimal>> GetBangGiaAsync(ulong lichKhoiHanhId, LoaiGiaApDung loaiGia)
+    public async Task<Dictionary<LoaiKhach, decimal>> GetBangGiaAsync(long lichKhoiHanhId, LoaiGiaApDung loaiGia)
     {
         return await _dbContext.BangGiaLichKhoiHanhs
             .AsNoTracking()

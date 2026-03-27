@@ -2,9 +2,9 @@ namespace BLL.DTOs.LichKhoiHanh;
 
 public class LichKhoiHanhResponseDto
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
-    public ulong TourId { get; set; }
+    public long TourId { get; set; }
 
     public string MaTour { get; set; } = string.Empty;
 
@@ -18,7 +18,7 @@ public class LichKhoiHanhResponseDto
 
     public string? NoiTapTrung { get; set; }
 
-    public ushort SoChoToiDa { get; set; }
+    public int SoChoToiDa { get; set; }
 
     public string TrangThai { get; set; } = string.Empty;
 }

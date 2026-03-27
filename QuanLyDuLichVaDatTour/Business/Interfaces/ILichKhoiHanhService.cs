@@ -6,15 +6,15 @@ public interface ILichKhoiHanhService
 {
     Task<List<LichKhoiHanhAdminResponseDto>> GetAllAsync();
 
-    Task<LichKhoiHanhAdminResponseDto> GetByIdAsync(ulong id);
+    Task<LichKhoiHanhAdminResponseDto> GetByIdAsync(long id);
 
-    Task<List<LichKhoiHanhAdminResponseDto>> GetByTourIdAsync(ulong tourId);
+    Task<List<LichKhoiHanhAdminResponseDto>> GetByTourIdAsync(long tourId);
 
-    Task<List<LichKhoiHanhResponseDto>> GetVisibleByTourIdAsync(ulong tourId);
+    Task<List<LichKhoiHanhResponseDto>> GetVisibleByTourIdAsync(long tourId);
 
     Task<LichKhoiHanhAdminResponseDto> CreateAsync(CreateLichKhoiHanhRequestDto request);
 
-    Task<LichKhoiHanhAdminResponseDto> UpdateAsync(ulong id, UpdateLichKhoiHanhRequestDto request);
+    Task<LichKhoiHanhAdminResponseDto> UpdateAsync(long id, UpdateLichKhoiHanhRequestDto request);
 
-    Task UpdateStatusAsync(ulong id, UpdateLichKhoiHanhStatusRequestDto request);
+    Task UpdateStatusAsync(long id, UpdateLichKhoiHanhStatusRequestDto request);
 }

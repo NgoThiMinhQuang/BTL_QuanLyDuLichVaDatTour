@@ -6,7 +6,7 @@ namespace BLL.DTOs.Payment;
 public class CreatePaymentRequestDto
 {
     [Required]
-    public ulong BookingId { get; set; }
+    public long BookingId { get; set; }
 
     [Required]
     public LoaiGiaoDichThanhToan LoaiGiaoDich { get; set; }

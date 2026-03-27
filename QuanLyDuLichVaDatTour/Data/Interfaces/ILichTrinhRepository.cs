@@ -6,15 +6,15 @@ public interface ILichTrinhRepository
 {
     Task<List<LichTrinh>> GetAllAsync();
 
-    Task<LichTrinh?> GetByIdAsync(ulong id);
+    Task<LichTrinh?> GetByIdAsync(long id);
 
-    Task<LichTrinh?> GetTrackedByIdAsync(ulong id);
+    Task<LichTrinh?> GetTrackedByIdAsync(long id);
 
-    Task<List<LichTrinh>> GetByTourIdAsync(ulong tourId);
+    Task<List<LichTrinh>> GetByTourIdAsync(long tourId);
 
-    Task<List<LichTrinh>> GetVisibleByTourIdAsync(ulong tourId);
+    Task<List<LichTrinh>> GetVisibleByTourIdAsync(long tourId);
 
-    Task<LichTrinh?> GetByTourDayOrderAsync(ulong tourId, byte ngayThu, ushort thuTuTrongNgay);
+    Task<LichTrinh?> GetByTourDayOrderAsync(long tourId, int ngayThu, int thuTuTrongNgay);
 
     Task AddAsync(LichTrinh lichTrinh);
 

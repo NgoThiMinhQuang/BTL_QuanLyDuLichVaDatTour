@@ -2,7 +2,7 @@ namespace BLL.DTOs.DiaDiem;
 
 public class DiaDiemResponseDto
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     public string TenDiaDiem { get; set; } = string.Empty;
 

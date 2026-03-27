@@ -27,14 +27,14 @@ public class NguoiDungRepository : INguoiDungRepository
             .FirstOrDefaultAsync(x => x.Email == email);
     }
 
-    public async Task<NguoiDung?> GetByIdAsync(ulong id)
+    public async Task<NguoiDung?> GetByIdAsync(long id)
     {
         return await _dbContext.NguoiDungs
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<NguoiDung?> GetTrackedByIdAsync(ulong id)
+    public async Task<NguoiDung?> GetTrackedByIdAsync(long id)
     {
         return await _dbContext.NguoiDungs
             .FirstOrDefaultAsync(x => x.Id == id);

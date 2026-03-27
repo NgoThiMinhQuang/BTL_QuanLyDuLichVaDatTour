@@ -25,7 +25,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         return lichKhoiHanhs.Select(MapAdminResponse).ToList();
     }
 
-    public async Task<LichKhoiHanhAdminResponseDto> GetByIdAsync(ulong id)
+    public async Task<LichKhoiHanhAdminResponseDto> GetByIdAsync(long id)
     {
         var lichKhoiHanh = await _lichKhoiHanhRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Lịch khởi hành không tồn tại.");
@@ -33,7 +33,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         return MapAdminResponse(lichKhoiHanh);
     }
 
-    public async Task<List<LichKhoiHanhAdminResponseDto>> GetByTourIdAsync(ulong tourId)
+    public async Task<List<LichKhoiHanhAdminResponseDto>> GetByTourIdAsync(long tourId)
     {
         await EnsureTourExistsAsync(tourId);
 
@@ -41,7 +41,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         return lichKhoiHanhs.Select(MapAdminResponse).ToList();
     }
 
-    public async Task<List<LichKhoiHanhResponseDto>> GetVisibleByTourIdAsync(ulong tourId)
+    public async Task<List<LichKhoiHanhResponseDto>> GetVisibleByTourIdAsync(long tourId)
     {
         var tour = await _tourRepository.GetVisibleByIdAsync(tourId)
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
@@ -83,7 +83,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         return MapAdminResponse(lichKhoiHanh);
     }
 
-    public async Task<LichKhoiHanhAdminResponseDto> UpdateAsync(ulong id, UpdateLichKhoiHanhRequestDto request)
+    public async Task<LichKhoiHanhAdminResponseDto> UpdateAsync(long id, UpdateLichKhoiHanhRequestDto request)
     {
         var lichKhoiHanh = await _lichKhoiHanhRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Lịch khởi hành không tồn tại.");
@@ -113,7 +113,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         return MapAdminResponse(lichKhoiHanh);
     }
 
-    public async Task UpdateStatusAsync(ulong id, UpdateLichKhoiHanhStatusRequestDto request)
+    public async Task UpdateStatusAsync(long id, UpdateLichKhoiHanhStatusRequestDto request)
     {
         var lichKhoiHanh = await _lichKhoiHanhRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Lịch khởi hành không tồn tại.");
@@ -124,13 +124,13 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         await _lichKhoiHanhRepository.SaveChangesAsync();
     }
 
-    private async Task<Tour> EnsureTourExistsAsync(ulong tourId)
+    private async Task<Tour> EnsureTourExistsAsync(long tourId)
     {
         return await _tourRepository.GetByIdAsync(tourId)
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
     }
 
-    private async Task EnsureMaDotTourIsUniqueAsync(string maDotTour, ulong? currentId = null)
+    private async Task EnsureMaDotTourIsUniqueAsync(string maDotTour, long? currentId = null)
     {
         var existing = await _lichKhoiHanhRepository.GetByMaDotTourAsync(maDotTour);
         if (existing is not null && existing.Id != currentId)
@@ -147,7 +147,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         }
     }
 
-    private static void ValidateSoChoToiDa(ushort soChoToiDa)
+    private static void ValidateSoChoToiDa(int soChoToiDa)
     {
         if (soChoToiDa < 1)
         {

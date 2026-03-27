@@ -21,7 +21,7 @@ public class DiaDiemService : IDiaDiemService
         return diaDiems.Select(MapPublicResponse).ToList();
     }
 
-    public async Task<DiaDiemResponseDto> GetVisibleByIdAsync(ulong id)
+    public async Task<DiaDiemResponseDto> GetVisibleByIdAsync(long id)
     {
         var diaDiem = await _diaDiemRepository.GetVisibleByIdAsync(id)
             ?? throw new KeyNotFoundException("Địa điểm không tồn tại.");
@@ -35,7 +35,7 @@ public class DiaDiemService : IDiaDiemService
         return diaDiems.Select(MapAdminResponse).ToList();
     }
 
-    public async Task<DiaDiemAdminResponseDto> GetByIdAsync(ulong id)
+    public async Task<DiaDiemAdminResponseDto> GetByIdAsync(long id)
     {
         var diaDiem = await _diaDiemRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Địa điểm không tồn tại.");
@@ -69,7 +69,7 @@ public class DiaDiemService : IDiaDiemService
         return MapAdminResponse(diaDiem);
     }
 
-    public async Task<DiaDiemAdminResponseDto> UpdateAsync(ulong id, UpdateDiaDiemRequestDto request)
+    public async Task<DiaDiemAdminResponseDto> UpdateAsync(long id, UpdateDiaDiemRequestDto request)
     {
         var diaDiem = await _diaDiemRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Địa điểm không tồn tại.");
@@ -92,7 +92,7 @@ public class DiaDiemService : IDiaDiemService
         return MapAdminResponse(diaDiem);
     }
 
-    public async Task UpdateStatusAsync(ulong id, UpdateDiaDiemStatusRequestDto request)
+    public async Task UpdateStatusAsync(long id, UpdateDiaDiemStatusRequestDto request)
     {
         var diaDiem = await _diaDiemRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Địa điểm không tồn tại.");
@@ -103,7 +103,7 @@ public class DiaDiemService : IDiaDiemService
         await _diaDiemRepository.SaveChangesAsync();
     }
 
-    private async Task EnsureDiaDiemIsUniqueAsync(string tenDiaDiem, string? tinhThanh, string quocGia, ulong? currentId = null)
+    private async Task EnsureDiaDiemIsUniqueAsync(string tenDiaDiem, string? tinhThanh, string quocGia, long? currentId = null)
     {
         var existingDiaDiem = await _diaDiemRepository.GetByTenTinhThanhQuocGiaAsync(tenDiaDiem, tinhThanh, quocGia);
         if (existingDiaDiem is not null && existingDiaDiem.Id != currentId)

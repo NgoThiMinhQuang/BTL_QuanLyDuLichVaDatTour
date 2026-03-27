@@ -6,13 +6,13 @@ public interface IBookingRepository
 {
     Task AddAsync(Booking booking);
 
-    Task<Booking?> GetByIdAsync(ulong id);
+    Task<Booking?> GetByIdAsync(long id);
 
-    Task<Booking?> GetTrackedByIdAsync(ulong id);
+    Task<Booking?> GetTrackedByIdAsync(long id);
 
     Task<Booking?> GetByMaBookingAsync(string maBooking);
 
-    Task<List<Booking>> GetByNguoiDungIdAsync(ulong nguoiDungId);
+    Task<List<Booking>> GetByNguoiDungIdAsync(long nguoiDungId);
 
     Task<List<Booking>> GetAllAsync();
 

@@ -5,5 +5,5 @@ namespace DAL.Interfaces;
 
 public interface IBangGiaLichKhoiHanhRepository
 {
-    Task<Dictionary<LoaiKhach, decimal>> GetBangGiaAsync(ulong lichKhoiHanhId, LoaiGiaApDung loaiGia);
+    Task<Dictionary<LoaiKhach, decimal>> GetBangGiaAsync(long lichKhoiHanhId, LoaiGiaApDung loaiGia);
 }

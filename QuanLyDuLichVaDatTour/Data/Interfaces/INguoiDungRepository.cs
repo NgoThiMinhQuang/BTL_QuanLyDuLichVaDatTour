@@ -8,9 +8,9 @@ public interface INguoiDungRepository
 
     Task<NguoiDung?> GetTrackedByEmailAsync(string email);
 
-    Task<NguoiDung?> GetByIdAsync(ulong id);
+    Task<NguoiDung?> GetByIdAsync(long id);
 
-    Task<NguoiDung?> GetTrackedByIdAsync(ulong id);
+    Task<NguoiDung?> GetTrackedByIdAsync(long id);
 
     Task AddAsync(NguoiDung nguoiDung);
 

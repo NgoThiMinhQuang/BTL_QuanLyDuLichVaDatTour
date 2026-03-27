@@ -4,15 +4,15 @@ namespace BLL.Interfaces;
 
 public interface IPaymentService
 {
-    Task<PaymentResponseDto> CreateAsync(ulong currentUserId, CreatePaymentRequestDto request);
+    Task<PaymentResponseDto> CreateAsync(long currentUserId, CreatePaymentRequestDto request);
 
-    Task<List<PaymentResponseDto>> GetByBookingIdAsync(ulong currentUserId, ulong bookingId);
+    Task<List<PaymentResponseDto>> GetByBookingIdAsync(long currentUserId, long bookingId);
 
-    Task<PaymentResponseDto> GetByIdAsync(ulong currentUserId, ulong id);
+    Task<PaymentResponseDto> GetByIdAsync(long currentUserId, long id);
 
     Task<List<PaymentResponseDto>> GetAllAsync();
 
-    Task<PaymentResponseDto> GetAdminByIdAsync(ulong id);
+    Task<PaymentResponseDto> GetAdminByIdAsync(long id);
 
-    Task UpdateStatusAsync(ulong adminUserId, ulong id, UpdatePaymentStatusRequestDto request);
+    Task UpdateStatusAsync(long adminUserId, long id, UpdatePaymentStatusRequestDto request);
 }

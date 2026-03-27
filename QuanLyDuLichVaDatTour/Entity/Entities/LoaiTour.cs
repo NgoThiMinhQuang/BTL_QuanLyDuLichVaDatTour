@@ -4,7 +4,7 @@ namespace Entity.Entities;
 
 public class LoaiTour
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     public string Ten { get; set; } = string.Empty;
 

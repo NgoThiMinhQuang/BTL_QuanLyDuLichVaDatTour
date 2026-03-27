@@ -47,7 +47,7 @@ public class PaymentController : ControllerBase
     }
 
     [HttpGet("booking/{bookingId}")]
-    public async Task<IActionResult> GetByBookingId(ulong bookingId)
+    public async Task<IActionResult> GetByBookingId(long bookingId)
     {
         if (!TryGetCurrentUserId(out var userId))
         {
@@ -66,7 +66,7 @@ public class PaymentController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(ulong id)
+    public async Task<IActionResult> GetById(long id)
     {
         if (!TryGetCurrentUserId(out var userId))
         {
@@ -84,9 +84,9 @@ public class PaymentController : ControllerBase
         }
     }
 
-    private bool TryGetCurrentUserId(out ulong userId)
+    private bool TryGetCurrentUserId(out long userId)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return ulong.TryParse(userIdClaim, out userId);
+        return long.TryParse(userIdClaim, out userId);
     }
 }

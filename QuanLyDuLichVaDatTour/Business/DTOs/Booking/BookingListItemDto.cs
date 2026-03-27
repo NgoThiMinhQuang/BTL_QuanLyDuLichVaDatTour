@@ -2,7 +2,7 @@ namespace BLL.DTOs.Booking;
 
 public class BookingListItemDto
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     public string MaBooking { get; set; } = string.Empty;
 
@@ -12,7 +12,7 @@ public class BookingListItemDto
 
     public DateTime NgayKhoiHanh { get; set; }
 
-    public ushort TongHanhKhach { get; set; }
+    public int TongHanhKhach { get; set; }
 
     public decimal TongTien { get; set; }
 

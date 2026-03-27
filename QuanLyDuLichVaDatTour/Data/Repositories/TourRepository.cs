@@ -26,7 +26,7 @@ public class TourRepository : ITourRepository
             .ToListAsync();
     }
 
-    public async Task<List<Tour>> SearchVisibleAsync(string? keyword, ulong? diemXuatPhatId, List<ulong>? loaiTourIds, List<string>? phuongTiens, decimal? minPrice, decimal? maxPrice, byte? minSoNgay, byte? maxSoNgay)
+    public async Task<List<Tour>> SearchVisibleAsync(string? keyword, long? diemXuatPhatId, List<long>? loaiTourIds, List<string>? phuongTiens, decimal? minPrice, decimal? maxPrice, int? minSoNgay, int? maxSoNgay)
     {
         var query = _dbContext.Tours
             .AsNoTracking()
@@ -79,7 +79,7 @@ public class TourRepository : ITourRepository
             .ToListAsync();
     }
 
-    public async Task<Tour?> GetVisibleByIdAsync(ulong id)
+    public async Task<Tour?> GetVisibleByIdAsync(long id)
     {
         return await _dbContext.Tours
             .AsNoTracking()
@@ -98,7 +98,7 @@ public class TourRepository : ITourRepository
             .ToListAsync();
     }
 
-    public async Task<Tour?> GetByIdAsync(ulong id)
+    public async Task<Tour?> GetByIdAsync(long id)
     {
         return await _dbContext.Tours
             .AsNoTracking()
@@ -107,7 +107,7 @@ public class TourRepository : ITourRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<Tour?> GetTrackedByIdAsync(ulong id)
+    public async Task<Tour?> GetTrackedByIdAsync(long id)
     {
         return await _dbContext.Tours
             .Include(x => x.LoaiTour)
