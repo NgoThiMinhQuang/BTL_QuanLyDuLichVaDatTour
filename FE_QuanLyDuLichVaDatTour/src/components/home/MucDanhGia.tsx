@@ -1,6 +1,6 @@
 import { Card, Col, Rate, Row, Space, Typography } from 'antd'
-import { reviewItems } from '../../shared/homeMocks'
-import { TieuDeMuc } from '../common/TieuDeMuc'
+import { reviewItems } from '../../libs/types/homeMocks'
+import { TieuDeMuc } from '../../common/components/TieuDeMuc'
 
 const { Paragraph, Text, Title } = Typography
 

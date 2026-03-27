@@ -2,6 +2,7 @@ import { Alert, Button, Card, Form, Input, Space, Typography } from 'antd'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { PATHS } from '../paths'
+import './Home/Home.css'
 import { register } from '../services/auth/register'
 
 const { Paragraph, Title, Text } = Typography

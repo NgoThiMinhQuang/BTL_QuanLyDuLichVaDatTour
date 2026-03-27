@@ -1,13 +1,13 @@
 import { Layout } from 'antd'
 import { Route, Routes, useLocation } from 'react-router'
-import { HeaderChung } from './shared/layout/HeaderChung'
+import { HeaderChung } from './common/layout/HeaderChung'
 import { PATHS } from './paths'
 import About from './pages/About'
-import Home from './pages/Home'
+import Home from './pages/Home/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import Tour from './pages/Tour'
-import LichKhoiHanh from './pages/LichKhoiHanh'
+import Tour from './pages/Tour/Tour'
+import LichKhoiHanh from './pages/LichKhoiHanh/LichKhoiHanh'
 
 const { Content } = Layout
 

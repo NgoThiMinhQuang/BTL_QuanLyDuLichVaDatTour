@@ -1,6 +1,6 @@
 import { Alert, Button, Card, Col, Empty, Row, Skeleton, Space, Tag, Typography } from 'antd'
-import { useLoaiTour } from '../../services/home/useLoaiTour'
-import { TieuDeMuc } from '../common/TieuDeMuc'
+import { useLoaiTour } from '../../services/tour/useLoaiTour'
+import { TieuDeMuc } from '../../common/components/TieuDeMuc'
 
 const { Paragraph, Title } = Typography
 

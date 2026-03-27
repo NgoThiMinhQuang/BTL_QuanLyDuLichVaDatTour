@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../constant/api'
-import type { TourCategory } from '../../shared/home'
+import type { TourCategory } from '../../libs/types/tour'
 
 interface RawTourCategory {
   id: number

@@ -3,7 +3,7 @@ import { layLoaiTour } from './layLoaiTour'
 
 export function useLoaiTour() {
   return useQuery({
-    queryKey: ['home', 'tour-categories'],
+    queryKey: ['tour', 'tour-categories'],
     queryFn: layLoaiTour,
   })
 }

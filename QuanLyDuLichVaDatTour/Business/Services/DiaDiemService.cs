@@ -15,6 +15,20 @@ public class DiaDiemService : IDiaDiemService
         _diaDiemRepository = diaDiemRepository;
     }
 
+    public async Task<List<DiaDiemResponseDto>> GetVisibleAsync()
+    {
+        var diaDiems = await _diaDiemRepository.GetVisibleAsync();
+        return diaDiems.Select(MapPublicResponse).ToList();
+    }
+
+    public async Task<DiaDiemResponseDto> GetVisibleByIdAsync(ulong id)
+    {
+        var diaDiem = await _diaDiemRepository.GetVisibleByIdAsync(id)
+            ?? throw new KeyNotFoundException("Địa điểm không tồn tại.");
+
+        return MapPublicResponse(diaDiem);
+    }
+
     public async Task<List<DiaDiemAdminResponseDto>> GetAllAsync()
     {
         var diaDiems = await _diaDiemRepository.GetAllAsync();
@@ -127,6 +141,19 @@ public class DiaDiemService : IDiaDiemService
         }
 
         return country.Trim();
+    }
+
+    private static DiaDiemResponseDto MapPublicResponse(DiaDiem diaDiem)
+    {
+        return new DiaDiemResponseDto
+        {
+            Id = diaDiem.Id,
+            TenDiaDiem = diaDiem.TenDiaDiem,
+            TinhThanh = diaDiem.TinhThanh,
+            QuocGia = diaDiem.QuocGia,
+            MoTa = diaDiem.MoTa,
+            TrangThai = diaDiem.TrangThai.ToString()
+        };
     }
 
     private static DiaDiemAdminResponseDto MapAdminResponse(DiaDiem diaDiem)

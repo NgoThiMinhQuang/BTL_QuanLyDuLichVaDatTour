@@ -1,5 +1,5 @@
 import { Button, Checkbox, DatePicker, Input, Select, Space, Typography } from 'antd'
-import type { TourCategory } from '../../shared/home'
+import type { TourCategory } from '../../libs/types/tour'
 
 const { Title } = Typography
 

@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../constant/api'
-import type { DepartureItem, FeaturedTourApiItem } from '../../shared/home'
+import type { DepartureItem, FeaturedTourApiItem } from '../../libs/types/tour'
 
 interface RawDeparture {
   id: number

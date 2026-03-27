@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import 'antd/dist/reset.css'
 import './index.css'
 import App from './App'
-import { AppProvider } from './shared/providers/AppProvider'
+import { AppProvider } from './libs/providers/AppProvider'
 
 const rootElement = document.getElementById('root')
 

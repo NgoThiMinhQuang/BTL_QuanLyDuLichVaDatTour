@@ -1,8 +1,8 @@
 import { Button, Card, Typography } from 'antd'
 import bannerImage from '../../assets/Banner.jpg'
-import { formatNgay } from '../../utils/formatNgay'
-import { formatTien } from '../../utils/formatTien'
-import type { LichKhoiHanhCardItem } from '../../services/home/layTatCaLichKhoiHanh'
+import { formatNgay } from '../../libs/helpers/formatNgay'
+import { formatTien } from '../../libs/helpers/formatTien'
+import type { LichKhoiHanhCardItem } from '../../services/lich-khoi-hanh/layTatCaLichKhoiHanh'
 
 const { Paragraph, Text, Title } = Typography
 

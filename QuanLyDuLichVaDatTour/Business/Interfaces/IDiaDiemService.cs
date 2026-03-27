@@ -4,6 +4,10 @@ namespace BLL.Interfaces;
 
 public interface IDiaDiemService
 {
+    Task<List<DiaDiemResponseDto>> GetVisibleAsync();
+
+    Task<DiaDiemResponseDto> GetVisibleByIdAsync(ulong id);
+
     Task<List<DiaDiemAdminResponseDto>> GetAllAsync();
 
     Task<DiaDiemAdminResponseDto> GetByIdAsync(ulong id);

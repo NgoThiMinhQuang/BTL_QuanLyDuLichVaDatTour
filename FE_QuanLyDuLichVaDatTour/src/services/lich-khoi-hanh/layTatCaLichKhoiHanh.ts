@@ -1,6 +1,6 @@
-import { layTourNoiBat } from './layTourNoiBat'
+import { layTourNoiBat } from '../tour/layTourNoiBat'
 import { API_BASE_URL } from '../../constant/api'
-import type { DepartureItem, FeaturedTourApiItem } from '../../shared/home'
+import type { DepartureItem, FeaturedTourApiItem } from '../../libs/types/tour'
 
 interface RawDeparture {
   id: number

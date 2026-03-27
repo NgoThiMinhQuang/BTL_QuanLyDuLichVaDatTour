@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../constant/api'
-import type { FeaturedTourApiItem } from '../../shared/home'
+import type { FeaturedTourApiItem } from '../../libs/types/tour'
 
 interface RawFeaturedTour {
   id: number

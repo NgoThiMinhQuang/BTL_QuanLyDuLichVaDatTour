@@ -1,6 +1,7 @@
 using DAL.DbContexts;
 using DAL.Interfaces;
 using Entity.Entities;
+using Entity.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories;
@@ -12,6 +13,24 @@ public class DiaDiemRepository : IDiaDiemRepository
     public DiaDiemRepository(AppDbContext dbContext)
     {
         _dbContext = dbContext;
+    }
+
+    public async Task<List<DiaDiem>> GetVisibleAsync()
+    {
+        return await _dbContext.DiaDiems
+            .AsNoTracking()
+            .Where(x => x.TrangThai == TrangThaiDiaDiem.hoat_dong)
+            .OrderBy(x => x.QuocGia)
+            .ThenBy(x => x.TinhThanh)
+            .ThenBy(x => x.TenDiaDiem)
+            .ToListAsync();
+    }
+
+    public async Task<DiaDiem?> GetVisibleByIdAsync(ulong id)
+    {
+        return await _dbContext.DiaDiems
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id && x.TrangThai == TrangThaiDiaDiem.hoat_dong);
     }
 
     public async Task<List<DiaDiem>> GetAllAsync()

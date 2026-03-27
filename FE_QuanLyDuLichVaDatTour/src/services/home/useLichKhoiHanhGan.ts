@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { FeaturedTourApiItem } from '../../shared/home'
+import type { FeaturedTourApiItem } from '../../libs/types/tour'
 import { layLichKhoiHanhGan } from './layLichKhoiHanhGan'
 
 export function useLichKhoiHanhGan(tours: FeaturedTourApiItem[]) {

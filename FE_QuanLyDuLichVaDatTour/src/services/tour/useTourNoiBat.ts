@@ -5,7 +5,7 @@ export function useTourNoiBat(limit?: number) {
   const resolvedLimit = limit === undefined ? undefined : limit
 
   return useQuery({
-    queryKey: ['home', 'featured-tours', resolvedLimit ?? 'all'],
+    queryKey: ['tour', 'featured-tours', resolvedLimit ?? 'all'],
     queryFn: () => layTourNoiBat(resolvedLimit),
   })
 }

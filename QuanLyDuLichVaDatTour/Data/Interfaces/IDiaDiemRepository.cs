@@ -4,6 +4,10 @@ namespace DAL.Interfaces;
 
 public interface IDiaDiemRepository
 {
+    Task<List<DiaDiem>> GetVisibleAsync();
+
+    Task<DiaDiem?> GetVisibleByIdAsync(ulong id);
+
     Task<List<DiaDiem>> GetAllAsync();
 
     Task<DiaDiem?> GetByIdAsync(ulong id);

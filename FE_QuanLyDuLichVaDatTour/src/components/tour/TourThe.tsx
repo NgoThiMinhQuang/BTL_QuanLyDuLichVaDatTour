@@ -1,7 +1,7 @@
 import { Button, Card, Rate, Typography } from 'antd'
 import bannerImage from '../../assets/Banner.jpg'
-import type { FeaturedTourApiItem } from '../../shared/home'
-import { formatTien } from '../../utils/formatTien'
+import type { FeaturedTourApiItem } from '../../libs/types/tour'
+import { formatTien } from '../../libs/helpers/formatTien'
 
 const { Paragraph, Text, Title } = Typography
 

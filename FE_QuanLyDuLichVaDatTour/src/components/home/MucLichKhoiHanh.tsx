@@ -1,8 +1,8 @@
 import { Alert, Button, Card, Col, Empty, Row, Skeleton, Space, Tag, Typography } from 'antd'
-import type { FeaturedTourApiItem } from '../../shared/home'
+import type { FeaturedTourApiItem } from '../../libs/types/tour'
 import { useLichKhoiHanhGan } from '../../services/home/useLichKhoiHanhGan'
-import { TieuDeMuc } from '../common/TieuDeMuc'
-import { formatNgay } from '../../utils/formatNgay'
+import { TieuDeMuc } from '../../common/components/TieuDeMuc'
+import { formatNgay } from '../../libs/helpers/formatNgay'
 
 const { Paragraph, Text, Title } = Typography
 
