@@ -33,5 +33,10 @@ public class CreateBookingRequestDto
 
     public PhuongThucThanhToan? PhuongThucThanhToanDuKien { get; set; }
 
+    public long? VoucherId { get; set; }
+
+    [MaxLength(50)]
+    public string? MaVoucher { get; set; }
+
     public string? GhiChu { get; set; }
 }

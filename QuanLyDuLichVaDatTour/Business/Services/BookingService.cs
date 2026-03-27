@@ -13,17 +13,20 @@ public class BookingService : IBookingService
     private readonly ILichKhoiHanhRepository _lichKhoiHanhRepository;
     private readonly IBangGiaLichKhoiHanhRepository _bangGiaLichKhoiHanhRepository;
     private readonly INguoiDungRepository _nguoiDungRepository;
+    private readonly IVoucherRepository _voucherRepository;
 
     public BookingService(
         IBookingRepository bookingRepository,
         ILichKhoiHanhRepository lichKhoiHanhRepository,
         IBangGiaLichKhoiHanhRepository bangGiaLichKhoiHanhRepository,
-        INguoiDungRepository nguoiDungRepository)
+        INguoiDungRepository nguoiDungRepository,
+        IVoucherRepository voucherRepository)
     {
         _bookingRepository = bookingRepository;
         _lichKhoiHanhRepository = lichKhoiHanhRepository;
         _bangGiaLichKhoiHanhRepository = bangGiaLichKhoiHanhRepository;
         _nguoiDungRepository = nguoiDungRepository;
+        _voucherRepository = voucherRepository;
     }
 
     public async Task<BookingResponseDto> CreateAsync(long currentUserId, CreateBookingRequestDto request)
@@ -49,6 +52,8 @@ public class BookingService : IBookingService
         var tamTinh = request.SoNguoiLon * donGiaNguoiLon
             + request.SoTreEm * donGiaTreEm
             + request.SoEmBe * donGiaEmBe;
+        var voucher = await ResolveVoucherAsync(request.VoucherId, request.MaVoucher, lichKhoiHanh.TourId, tamTinh);
+        var giamGia = voucher is null ? 0m : CalculateDiscount(voucher, tamTinh);
 
         var now = DateTime.UtcNow;
         var booking = new Booking
@@ -56,6 +61,7 @@ public class BookingService : IBookingService
             MaBooking = maBooking,
             LichKhoiHanhId = lichKhoiHanh.Id,
             KhachHangId = nguoiDung.Id,
+            VoucherId = voucher?.Id,
             HoTenLienHe = hoTenLienHe,
             EmailLienHe = emailLienHe,
             SoDienThoaiLienHe = soDienThoaiLienHe,
@@ -69,8 +75,8 @@ public class BookingService : IBookingService
             DonGiaTreEm = donGiaTreEm,
             DonGiaEmBe = donGiaEmBe,
             TamTinh = tamTinh,
-            GiamGia = 0m,
-            TongTien = tamTinh,
+            GiamGia = giamGia,
+            TongTien = tamTinh - giamGia,
             SoTienDaThanhToan = 0m,
             TienCocYeuCau = 0m,
             PhuongThucThanhToanDuKien = request.PhuongThucThanhToanDuKien,
@@ -81,8 +87,15 @@ public class BookingService : IBookingService
             CreatedAt = now,
             UpdatedAt = now,
             LichKhoiHanh = lichKhoiHanh,
-            KhachHang = nguoiDung
+            KhachHang = nguoiDung,
+            Voucher = voucher
         };
+
+        if (voucher is not null)
+        {
+            voucher.SoLuongDaDung += 1;
+            voucher.UpdatedAt = now;
+        }
 
         await _bookingRepository.AddAsync(booking);
         await _bookingRepository.SaveChangesAsync();
@@ -207,6 +220,85 @@ public class BookingService : IBookingService
         return donGia;
     }
 
+    private async Task<Voucher?> ResolveVoucherAsync(long? voucherId, string? maVoucher, long tourId, decimal tamTinh)
+    {
+        if (voucherId.HasValue && !string.IsNullOrWhiteSpace(maVoucher))
+        {
+            throw new InvalidOperationException("Chỉ được truyền VoucherId hoặc MaVoucher.");
+        }
+
+        Voucher? voucher = null;
+
+        if (voucherId.HasValue)
+        {
+            voucher = await _voucherRepository.GetTrackedByIdAsync(voucherId.Value)
+                ?? throw new KeyNotFoundException("Voucher không tồn tại.");
+        }
+        else if (!string.IsNullOrWhiteSpace(maVoucher))
+        {
+            voucher = await _voucherRepository.GetByMaVoucherAsync(maVoucher.Trim());
+            if (voucher is null)
+            {
+                throw new KeyNotFoundException("Voucher không tồn tại.");
+            }
+
+            voucher = await _voucherRepository.GetTrackedByIdAsync(voucher.Id)
+                ?? throw new KeyNotFoundException("Voucher không tồn tại.");
+        }
+
+        if (voucher is null)
+        {
+            return null;
+        }
+
+        ValidateVoucherForBooking(voucher, tourId, tamTinh);
+        return voucher;
+    }
+
+    private static void ValidateVoucherForBooking(Voucher voucher, long tourId, decimal tamTinh)
+    {
+        var now = DateTime.UtcNow;
+
+        if (voucher.TrangThai != TrangThaiVoucher.hoat_dong)
+        {
+            throw new InvalidOperationException("Voucher hiện không hoạt động.");
+        }
+
+        if (voucher.NgayBatDau > now || voucher.NgayKetThuc < now)
+        {
+            throw new InvalidOperationException("Voucher hiện không nằm trong thời gian áp dụng.");
+        }
+
+        if (voucher.SoLuongDaDung >= voucher.SoLuongToiDa)
+        {
+            throw new InvalidOperationException("Voucher đã hết lượt sử dụng.");
+        }
+
+        if (voucher.TourId.HasValue && voucher.TourId.Value != tourId)
+        {
+            throw new InvalidOperationException("Voucher không áp dụng cho tour này.");
+        }
+
+        if (tamTinh < voucher.DonHangToiThieu)
+        {
+            throw new InvalidOperationException("Booking chưa đạt giá trị tối thiểu để áp dụng voucher.");
+        }
+    }
+
+    private static decimal CalculateDiscount(Voucher voucher, decimal tamTinh)
+    {
+        var giamGia = voucher.KieuGiam == KieuGiamVoucher.phan_tram
+            ? tamTinh * voucher.GiaTriGiam / 100m
+            : voucher.GiaTriGiam;
+
+        if (voucher.GiamToiDa.HasValue && giamGia > voucher.GiamToiDa.Value)
+        {
+            giamGia = voucher.GiamToiDa.Value;
+        }
+
+        return giamGia > tamTinh ? tamTinh : giamGia;
+    }
+
     private async Task<string> GenerateUniqueMaBookingAsync()
     {
         for (var i = 0; i < 10; i++)
@@ -293,6 +385,9 @@ public class BookingService : IBookingService
             DonGiaEmBe = booking.DonGiaEmBe,
             TamTinh = booking.TamTinh,
             GiamGia = booking.GiamGia,
+            VoucherId = booking.VoucherId,
+            MaVoucher = booking.Voucher?.MaVoucher,
+            TenVoucher = booking.Voucher?.TenVoucher,
             TongTien = booking.TongTien,
             SoTienDaThanhToan = booking.SoTienDaThanhToan,
             TienCocYeuCau = booking.TienCocYeuCau,

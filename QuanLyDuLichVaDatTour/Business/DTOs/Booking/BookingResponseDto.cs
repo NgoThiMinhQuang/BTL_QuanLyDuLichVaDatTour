@@ -50,6 +50,12 @@ public class BookingResponseDto
 
     public decimal GiamGia { get; set; }
 
+    public long? VoucherId { get; set; }
+
+    public string? MaVoucher { get; set; }
+
+    public string? TenVoucher { get; set; }
+
     public decimal TongTien { get; set; }
 
     public decimal SoTienDaThanhToan { get; set; }
