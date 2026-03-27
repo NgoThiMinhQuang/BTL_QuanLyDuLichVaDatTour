@@ -273,7 +273,41 @@ public class TourService : ITourService
             MoTaNgan = tour.MoTaNgan,
             GiaTuThamKhao = tour.GiaTuThamKhao,
             IsNoiBat = tour.IsNoiBat,
+            DiemDens = tour.TourDiemDens
+                .OrderBy(x => x.ThuTu)
+                .Select(MapTourDiemDenResponse)
+                .ToList(),
+            AnhTours = tour.AnhTours
+                .OrderBy(x => x.ThuTu)
+                .Select(MapAnhTourResponse)
+                .ToList(),
             TrangThai = tour.TrangThai.ToString()
+        };
+    }
+
+    private static AnhTourResponseDto MapAnhTourResponse(AnhTour anhTour)
+    {
+        return new AnhTourResponseDto
+        {
+            Id = anhTour.Id,
+            LinkAnh = anhTour.LinkAnh,
+            MoTa = anhTour.MoTa,
+            IsAvatar = anhTour.IsAvatar,
+            ThuTu = anhTour.ThuTu
+        };
+    }
+
+    private static TourDiemDenResponseDto MapTourDiemDenResponse(TourDiemDen tourDiemDen)
+    {
+        return new TourDiemDenResponseDto
+        {
+            Id = tourDiemDen.Id,
+            DiaDiemId = tourDiemDen.DiaDiemId,
+            TenDiaDiem = tourDiemDen.DiaDiem?.TenDiaDiem ?? string.Empty,
+            TinhThanh = tourDiemDen.DiaDiem?.TinhThanh,
+            QuocGia = tourDiemDen.DiaDiem?.QuocGia ?? string.Empty,
+            ThuTu = tourDiemDen.ThuTu,
+            GhiChu = tourDiemDen.GhiChu
         };
     }
 
@@ -296,6 +330,14 @@ public class TourService : ITourService
             MoTaChiTiet = tour.MoTaChiTiet,
             DieuKienTour = tour.DieuKienTour,
             IsNoiBat = tour.IsNoiBat,
+            DiemDens = tour.TourDiemDens
+                .OrderBy(x => x.ThuTu)
+                .Select(MapTourDiemDenResponse)
+                .ToList(),
+            AnhTours = tour.AnhTours
+                .OrderBy(x => x.ThuTu)
+                .Select(MapAnhTourResponse)
+                .ToList(),
             TrangThai = tour.TrangThai.ToString(),
             CreatedAt = tour.CreatedAt,
             UpdatedAt = tour.UpdatedAt

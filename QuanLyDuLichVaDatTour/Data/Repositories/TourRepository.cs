@@ -85,6 +85,9 @@ public class TourRepository : ITourRepository
             .AsNoTracking()
             .Include(x => x.LoaiTour)
             .Include(x => x.DiemXuatPhat)
+            .Include(x => x.TourDiemDens.OrderBy(td => td.ThuTu))
+                .ThenInclude(x => x.DiaDiem)
+            .Include(x => x.AnhTours.OrderBy(at => at.ThuTu))
             .FirstOrDefaultAsync(x => x.Id == id && x.TrangThai == TrangThaiTour.dang_mo_ban);
     }
 
@@ -104,6 +107,9 @@ public class TourRepository : ITourRepository
             .AsNoTracking()
             .Include(x => x.LoaiTour)
             .Include(x => x.DiemXuatPhat)
+            .Include(x => x.TourDiemDens.OrderBy(td => td.ThuTu))
+                .ThenInclude(x => x.DiaDiem)
+            .Include(x => x.AnhTours.OrderBy(at => at.ThuTu))
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -112,6 +118,9 @@ public class TourRepository : ITourRepository
         return await _dbContext.Tours
             .Include(x => x.LoaiTour)
             .Include(x => x.DiemXuatPhat)
+            .Include(x => x.TourDiemDens.OrderBy(td => td.ThuTu))
+                .ThenInclude(x => x.DiaDiem)
+            .Include(x => x.AnhTours.OrderBy(at => at.ThuTu))
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 

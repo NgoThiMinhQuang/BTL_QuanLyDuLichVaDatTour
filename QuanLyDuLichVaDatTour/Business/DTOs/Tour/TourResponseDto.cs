@@ -28,5 +28,9 @@ public class TourResponseDto
 
     public bool IsNoiBat { get; set; }
 
+    public List<TourDiemDenResponseDto> DiemDens { get; set; } = new();
+
+    public List<AnhTourResponseDto> AnhTours { get; set; } = new();
+
     public string TrangThai { get; set; } = string.Empty;
 }
