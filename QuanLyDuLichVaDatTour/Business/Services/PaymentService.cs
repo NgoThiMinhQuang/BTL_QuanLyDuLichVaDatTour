@@ -124,7 +124,7 @@ public class PaymentService : IPaymentService
 
     public async Task UpdateStatusAsync(long adminUserId, long id, UpdatePaymentStatusRequestDto request)
     {
-        await _nguoiDungRepository.GetByIdAsync(adminUserId)
+        _ = await _nguoiDungRepository.GetByIdAsync(adminUserId)
             ?? throw new KeyNotFoundException("Người dùng không tồn tại.");
 
         var payment = await _paymentRepository.GetTrackedByIdAsync(id)

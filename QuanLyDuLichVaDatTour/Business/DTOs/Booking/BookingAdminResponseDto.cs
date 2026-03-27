@@ -8,7 +8,4 @@ public class BookingAdminResponseDto : BookingResponseDto
 
     public string EmailNguoiDat { get; set; } = string.Empty;
 
-    public long? NguoiXacNhanId { get; set; }
-
-    public DateTime? ThoiGianXacNhan { get; set; }
 }

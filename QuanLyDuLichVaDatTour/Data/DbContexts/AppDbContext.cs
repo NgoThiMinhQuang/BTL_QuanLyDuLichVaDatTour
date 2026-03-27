@@ -98,7 +98,7 @@ public class AppDbContext : DbContext
                 .IsUnique();
 
             entity.HasIndex(x => new { x.VaiTro, x.TrangThai })
-                .HasDatabaseName("IdxNguoiDungVaiTroTrangThai");
+                .HasDatabaseName("IdxNguoiDung_VaiTro_TrangThai");
         });
 
         modelBuilder.Entity<LoaiTour>(entity =>
@@ -191,7 +191,7 @@ public class AppDbContext : DbContext
                 .ValueGeneratedOnAdd();
 
             entity.HasIndex(x => new { x.TinhThanh, x.QuocGia })
-                .HasDatabaseName("IdxDiaDiemTinhThanhQuocGia");
+                .HasDatabaseName("IdxDiaDiem_TinhThanh_QuocGia");
         });
 
         modelBuilder.Entity<Tour>(entity =>

@@ -30,13 +30,7 @@ public class PaymentResponseDto
 
     public string TrangThai { get; set; } = string.Empty;
 
-    public long? NguoiXacNhanId { get; set; }
-
-    public string? HoTenNguoiXacNhan { get; set; }
-
     public DateTime ThoiGianTao { get; set; }
-
-    public DateTime? ThoiGianXacNhan { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 }
