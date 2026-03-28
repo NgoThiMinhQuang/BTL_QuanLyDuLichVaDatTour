@@ -1,20 +1,28 @@
 import { API_BASE_URL } from '../../constant/api'
 import type { FeaturedTourApiItem, SearchTourParams } from '../../libs/types/tour'
 
+interface RawAnhTour {
+  id: number
+  linkAnh: string
+  moTa?: string | null
+  isAvatar: boolean
+  thuTu: number
+}
+
 interface RawFeaturedTour {
   id: number
   maTour: string
   tenTour: string
   loaiTourId: number
   tenLoaiTour: string
-  diaDiemKhoiHanhId: number
-  tenDiaDiemKhoiHanh: string
+  diemXuatPhatId: number
+  tenDiemXuatPhat: string
   soNgay: number
   soDem: number
   phuongTien?: string | null
   moTaNgan?: string | null
-  giaNguoiLonMacDinh?: number | null
-  giaTreEmMacDinh?: number | null
+  giaTuThamKhao?: number | null
+  anhTours?: RawAnhTour[] | null
   trangThai: string
 }
 
@@ -25,14 +33,21 @@ function mapTour(item: RawFeaturedTour): FeaturedTourApiItem {
     tenTour: item.tenTour,
     loaiTourId: item.loaiTourId,
     tenLoaiTour: item.tenLoaiTour,
-    diemXuatPhatId: item.diaDiemKhoiHanhId,
-    tenDiaDiemKhoiHanh: item.tenDiaDiemKhoiHanh,
+    diemXuatPhatId: item.diemXuatPhatId,
+    tenDiaDiemKhoiHanh: item.tenDiemXuatPhat,
     soNgay: item.soNgay,
     soDem: item.soDem,
     phuongTien: item.phuongTien ?? null,
     moTaNgan: item.moTaNgan ?? null,
-    giaNguoiLonMacDinh: item.giaNguoiLonMacDinh ?? null,
-    giaTreEmMacDinh: item.giaTreEmMacDinh ?? null,
+    giaNguoiLonMacDinh: item.giaTuThamKhao ?? null,
+    giaTreEmMacDinh: null,
+    anhTours: (item.anhTours ?? []).map((anh) => ({
+      id: anh.id,
+      linkAnh: anh.linkAnh,
+      moTa: anh.moTa ?? null,
+      isAvatar: anh.isAvatar,
+      thuTu: anh.thuTu,
+    })),
     trangThai: item.trangThai,
   }
 }

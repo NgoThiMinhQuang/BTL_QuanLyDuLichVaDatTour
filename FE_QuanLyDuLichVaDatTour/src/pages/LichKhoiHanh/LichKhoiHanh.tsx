@@ -3,7 +3,7 @@ import { Alert, Empty, Skeleton, Space, Typography } from 'antd'
 import bannerImage from '../../assets/Banner.jpg'
 import { LichKhoiHanhBoLoc } from '../../components/lich-khoi-hanh/LichKhoiHanhBoLoc'
 import { LichKhoiHanhThe } from '../../components/lich-khoi-hanh/LichKhoiHanhThe'
-import { TourPhanTrang } from '../../common/components/TourPhanTrang'
+import { TourPhanTrang } from '../../components/common/TourPhanTrang'
 import { SCHEDULE_PAGE_SIZE } from '../../constant/schedule'
 import { useLichKhoiHanhPage } from './useLichKhoiHanhPage'
 

@@ -1,4 +1,3 @@
-import './Home/Home.css'
 import { Card, Space, Typography } from 'antd'
 
 const { Paragraph, Title } = Typography

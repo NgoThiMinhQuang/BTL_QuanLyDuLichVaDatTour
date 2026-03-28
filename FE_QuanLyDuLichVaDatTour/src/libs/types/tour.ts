@@ -5,6 +5,14 @@ export interface TourCategory {
   trangThai: string
 }
 
+export interface AnhTourItem {
+  id: number
+  linkAnh: string
+  moTa: string | null
+  isAvatar: boolean
+  thuTu: number
+}
+
 export interface FeaturedTourApiItem {
   id: number
   maTour: string
@@ -19,6 +27,7 @@ export interface FeaturedTourApiItem {
   moTaNgan: string | null
   giaNguoiLonMacDinh: number | null
   giaTreEmMacDinh: number | null
+  anhTours: AnhTourItem[]
   trangThai: string
 }
 

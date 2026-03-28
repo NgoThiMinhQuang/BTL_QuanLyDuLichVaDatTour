@@ -19,7 +19,17 @@ const tourGradients = [
 ]
 
 export function TourThe({ tour, imageIndex, viewMode }: TourTheProps) {
-  const backgroundImage = `${tourGradients[imageIndex % tourGradients.length]}, url(${bannerImage})`
+  const coverImage = [...tour.anhTours]
+    .sort((a, b) => Number(b.isAvatar) - Number(a.isAvatar) || a.thuTu - b.thuTu)
+    .at(0)?.linkAnh
+
+  const normalizedCoverImage = coverImage
+    ? (coverImage.startsWith('http://') || coverImage.startsWith('https://')
+        ? coverImage
+        : `http://localhost:5171${coverImage}`)
+    : bannerImage
+
+  const backgroundImage = `${tourGradients[imageIndex % tourGradients.length]}, url(${normalizedCoverImage})`
   const rating = 4.5 + ((tour.id % 5) * 0.1)
   const reviewCount = 120 + tour.id * 11
   const originalPrice = tour.giaNguoiLonMacDinh ? Math.round(tour.giaNguoiLonMacDinh * 1.18) : null

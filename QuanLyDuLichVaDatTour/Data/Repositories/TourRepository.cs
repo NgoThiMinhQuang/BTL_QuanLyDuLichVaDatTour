@@ -21,6 +21,9 @@ public class TourRepository : ITourRepository
             .AsNoTracking()
             .Include(x => x.LoaiTour)
             .Include(x => x.DiemXuatPhat)
+            .Include(x => x.TourDiemDens.OrderBy(td => td.ThuTu))
+                .ThenInclude(x => x.DiaDiem)
+            .Include(x => x.AnhTours.OrderBy(at => at.ThuTu))
             .Where(x => x.TrangThai == TrangThaiTour.dang_mo_ban)
             .OrderBy(x => x.TenTour)
             .ToListAsync();
@@ -32,6 +35,9 @@ public class TourRepository : ITourRepository
             .AsNoTracking()
             .Include(x => x.LoaiTour)
             .Include(x => x.DiemXuatPhat)
+            .Include(x => x.TourDiemDens.OrderBy(td => td.ThuTu))
+                .ThenInclude(x => x.DiaDiem)
+            .Include(x => x.AnhTours.OrderBy(at => at.ThuTu))
             .Where(x => x.TrangThai == TrangThaiTour.dang_mo_ban);
 
         if (!string.IsNullOrWhiteSpace(keyword))
@@ -97,6 +103,9 @@ public class TourRepository : ITourRepository
             .AsNoTracking()
             .Include(x => x.LoaiTour)
             .Include(x => x.DiemXuatPhat)
+            .Include(x => x.TourDiemDens.OrderBy(td => td.ThuTu))
+                .ThenInclude(x => x.DiaDiem)
+            .Include(x => x.AnhTours.OrderBy(at => at.ThuTu))
             .OrderBy(x => x.TenTour)
             .ToListAsync();
     }

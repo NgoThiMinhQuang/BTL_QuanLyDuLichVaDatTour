@@ -3,7 +3,7 @@ import { Alert, Col, Empty, Row, Skeleton, Typography } from 'antd'
 import { TourBoLoc } from '../../components/tour/TourBoLoc'
 import { TourThanhCongCu } from '../../components/tour/TourThanhCongCu'
 import { TourThe } from '../../components/tour/TourThe'
-import { TourPhanTrang } from '../../common/components/TourPhanTrang'
+import { TourPhanTrang } from '../../components/common/TourPhanTrang'
 import { TOUR_PAGE_SIZE } from '../../constant/tour'
 import { useTourPage } from './useTourPage'
 

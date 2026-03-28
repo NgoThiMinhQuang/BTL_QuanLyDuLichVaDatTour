@@ -1,6 +1,6 @@
 import { Alert, Button, Card, Col, Empty, Row, Skeleton, Space, Tag, Typography } from 'antd'
 import { useTourNoiBat } from '../../services/tour/useTourNoiBat'
-import { TieuDeMuc } from '../../common/components/TieuDeMuc'
+import { TieuDeMuc } from '../../components/common/TieuDeMuc'
 import { formatTien } from '../../libs/helpers/formatTien'
 
 const { Paragraph, Text, Title } = Typography
