@@ -95,7 +95,6 @@ export function useTourPage() {
   const [diemDen, setDiemDen] = useState('all')
   const [giaRange, setGiaRange] = useState('all')
   const [thoiGian, setThoiGian] = useState('all')
-  const [ngayKhoiHanh, setNgayKhoiHanh] = useState<string | null>(null)
   const [selectedLoaiTours, setSelectedLoaiTours] = useState<string[]>([])
   const [selectedPhuongTiens, setSelectedPhuongTiens] = useState<string[]>([])
   const [sortBy, setSortBy] = useState('price-asc')
@@ -126,7 +125,6 @@ export function useTourPage() {
     setDiemDen('all')
     setGiaRange('all')
     setThoiGian('all')
-    setNgayKhoiHanh(null)
     setSelectedLoaiTours([])
     setSelectedPhuongTiens([])
     setSortBy('price-asc')
@@ -148,7 +146,6 @@ export function useTourPage() {
     diemDen,
     giaRange,
     thoiGian,
-    ngayKhoiHanh,
     selectedLoaiTours,
     selectedPhuongTiens,
     sortBy,
@@ -158,7 +155,6 @@ export function useTourPage() {
     setDiemDen,
     setGiaRange,
     setThoiGian,
-    setNgayKhoiHanh,
     setSelectedLoaiTours,
     setSelectedPhuongTiens,
     setSortBy,

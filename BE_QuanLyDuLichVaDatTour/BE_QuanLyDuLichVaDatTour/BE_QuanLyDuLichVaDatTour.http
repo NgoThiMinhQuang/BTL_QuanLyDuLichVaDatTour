@@ -1,0 +1,6 @@
+@BE_QuanLyDuLichVaDatTour_HostAddress = http://localhost:5219
+
+GET {{BE_QuanLyDuLichVaDatTour_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

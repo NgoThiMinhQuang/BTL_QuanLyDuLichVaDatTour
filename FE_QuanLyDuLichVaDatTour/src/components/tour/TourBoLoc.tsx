@@ -1,4 +1,4 @@
-import { Button, Checkbox, DatePicker, Input, Select, Space, Typography } from 'antd'
+import { Button, Checkbox, Input, Select, Space, Typography } from 'antd'
 import type { TourCategory } from '../../libs/types/tour'
 
 const { Title } = Typography
@@ -8,7 +8,6 @@ interface TourBoLocProps {
   diemDen: string
   giaRange: string
   thoiGian: string
-  ngayKhoiHanh: string | null
   selectedLoaiTours: string[]
   selectedPhuongTiens: string[]
   categories: TourCategory[]
@@ -17,7 +16,6 @@ interface TourBoLocProps {
   onDiemDenChange: (value: string) => void
   onGiaRangeChange: (value: string) => void
   onThoiGianChange: (value: string) => void
-  onNgayKhoiHanhChange: (value: string | null) => void
   onLoaiToursChange: (value: string[]) => void
   onPhuongTiensChange: (value: string[]) => void
   onReset: () => void
@@ -39,7 +37,6 @@ export function TourBoLoc(props: TourBoLocProps) {
     onDiemDenChange,
     onGiaRangeChange,
     onThoiGianChange,
-    onNgayKhoiHanhChange,
     onLoaiToursChange,
     onPhuongTiensChange,
     onReset,
@@ -69,7 +66,7 @@ export function TourBoLoc(props: TourBoLocProps) {
         </div>
 
         <div className="tour-filter-group">
-          <label className="tour-filter-label">Điểm đến</label>
+          <label className="tour-filter-label">Điểm khởi hành</label>
           <Select
             size="large"
             value={diemDen}
@@ -146,16 +143,6 @@ export function TourBoLoc(props: TourBoLocProps) {
           </Checkbox.Group>
         </div>
 
-        <div className="tour-filter-group">
-          <label className="tour-filter-label">Ngày khởi hành</label>
-          <DatePicker
-            size="large"
-            format="DD/MM/YYYY"
-            placeholder="dd/mm/yyyy"
-            className="tour-filter-date"
-            onChange={(_, dateString) => onNgayKhoiHanhChange(typeof dateString === 'string' && dateString ? dateString : null)}
-          />
-        </div>
 
         <Button type="primary" size="large" className="tour-filter-apply-button">
           Áp dụng bộ lọc

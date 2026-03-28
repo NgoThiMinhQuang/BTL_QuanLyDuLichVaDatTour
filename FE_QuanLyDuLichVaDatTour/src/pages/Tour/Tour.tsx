@@ -24,7 +24,6 @@ export default function Tour() {
     diemDen,
     giaRange,
     thoiGian,
-    ngayKhoiHanh,
     selectedLoaiTours,
     selectedPhuongTiens,
     sortBy,
@@ -34,7 +33,6 @@ export default function Tour() {
     setDiemDen,
     setGiaRange,
     setThoiGian,
-    setNgayKhoiHanh,
     setSelectedLoaiTours,
     setSelectedPhuongTiens,
     setSortBy,
@@ -65,11 +63,6 @@ export default function Tour() {
 
   const handleThoiGianChange = (value: string) => {
     setThoiGian(value)
-    setPage(1)
-  }
-
-  const handleNgayKhoiHanhChange = (value: string | null) => {
-    setNgayKhoiHanh(value)
     setPage(1)
   }
 
@@ -108,7 +101,6 @@ export default function Tour() {
             diemDen={diemDen}
             giaRange={giaRange}
             thoiGian={thoiGian}
-            ngayKhoiHanh={ngayKhoiHanh}
             selectedLoaiTours={selectedLoaiTours}
             selectedPhuongTiens={selectedPhuongTiens}
             categories={categories}
@@ -117,7 +109,6 @@ export default function Tour() {
             onDiemDenChange={handleDiemDenChange}
             onGiaRangeChange={handleGiaRangeChange}
             onThoiGianChange={handleThoiGianChange}
-            onNgayKhoiHanhChange={handleNgayKhoiHanhChange}
             onLoaiToursChange={handleLoaiToursChange}
             onPhuongTiensChange={handlePhuongTiensChange}
             onReset={handleReset}

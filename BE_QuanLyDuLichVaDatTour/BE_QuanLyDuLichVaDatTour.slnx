@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ApiGateway/ApiGateway.csproj" />
+  <Project Path="BE_QuanLyDuLichVaDatTour/BE_QuanLyDuLichVaDatTour.csproj" />
+  <Project Path="IdentityService/IdentityService.csproj" />
+</Solution>

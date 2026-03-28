@@ -1,5 +1,6 @@
-import { Button, Card, Rate, Typography } from 'antd'
+import { Button, Card, Typography } from 'antd'
 import bannerImage from '../../assets/Banner.jpg'
+import { resolveApiAssetUrl } from '../../constant/api'
 import type { FeaturedTourApiItem } from '../../libs/types/tour'
 import { formatTien } from '../../libs/helpers/formatTien'
 
@@ -23,22 +24,16 @@ export function TourThe({ tour, imageIndex, viewMode }: TourTheProps) {
     .sort((a, b) => Number(b.isAvatar) - Number(a.isAvatar) || a.thuTu - b.thuTu)
     .at(0)?.linkAnh
 
-  const normalizedCoverImage = coverImage
-    ? (coverImage.startsWith('http://') || coverImage.startsWith('https://')
-        ? coverImage
-        : `http://localhost:5171${coverImage}`)
-    : bannerImage
+  const normalizedCoverImage = resolveApiAssetUrl(coverImage) ?? bannerImage
 
   const backgroundImage = `${tourGradients[imageIndex % tourGradients.length]}, url(${normalizedCoverImage})`
-  const rating = 4.5 + ((tour.id % 5) * 0.1)
-  const reviewCount = 120 + tour.id * 11
-  const originalPrice = tour.giaNguoiLonMacDinh ? Math.round(tour.giaNguoiLonMacDinh * 1.18) : null
   const duration = `${tour.soNgay}N${tour.soDem}Đ`
+  const statusLabel = tour.trangThai?.trim() || 'Đang cập nhật'
 
   return (
     <Card className={`tour-card ${viewMode === 'list' ? 'tour-card-list' : ''}`} variant="borderless">
       <div className="tour-card-cover" style={{ backgroundImage }}>
-        <span className="tour-card-status">Đang mở bán</span>
+        <span className="tour-card-status">{statusLabel}</span>
         <button type="button" className="tour-card-favorite" aria-label="Yêu thích tour">
           ♡
         </button>
@@ -53,10 +48,7 @@ export function TourThe({ tour, imageIndex, viewMode }: TourTheProps) {
         <div className="tour-card-meta-list">
           <Text className="tour-card-meta">📍 Từ {tour.tenDiaDiemKhoiHanh}</Text>
           <Text className="tour-card-meta">📅 {duration} • {tour.phuongTien ?? 'Đang cập nhật'}</Text>
-          <Text className="tour-card-meta tour-card-rating">
-            <Rate disabled allowHalf value={rating} className="tour-card-stars" />
-            <span>{rating.toFixed(1)} ({reviewCount} đánh giá)</span>
-          </Text>
+          <Text className="tour-card-meta">🏷️ {tour.tenLoaiTour}</Text>
         </div>
 
         <Paragraph className="tour-card-description">
@@ -70,9 +62,8 @@ export function TourThe({ tour, imageIndex, viewMode }: TourTheProps) {
               <Title level={2} className="tour-card-price-current">
                 {formatTien(tour.giaNguoiLonMacDinh)}
               </Title>
-              {originalPrice ? <Text delete className="tour-card-price-old">{formatTien(originalPrice)}</Text> : null}
             </div>
-            <Text className="tour-card-price-note">Ngày thường/người</Text>
+            <Text className="tour-card-price-note">Giá tham khảo/người</Text>
           </div>
 
           <Button type="primary" className="tour-card-button">
