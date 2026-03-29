@@ -1,6 +1,0 @@
-<Solution>
-  <Project Path="API/API.csproj" />
-  <Project Path="Business/BLL.csproj" />
-  <Project Path="Data/DAL.csproj" />
-  <Project Path="Entity/Entity.csproj" Id="19ee142c-cec7-43f0-850e-279f84eb97ee" />
-</Solution>

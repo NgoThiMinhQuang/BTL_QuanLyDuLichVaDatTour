@@ -1,7 +1,7 @@
 const envApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
 const envAssetBaseUrl = import.meta.env.VITE_ASSET_BASE_URL?.trim()
 
-export const API_BASE_URL = envApiBaseUrl && envApiBaseUrl.length > 0 ? envApiBaseUrl : '/api'
+export const API_BASE_URL = envApiBaseUrl && envApiBaseUrl.length > 0 ? envApiBaseUrl : '/gateway'
 export const ASSET_BASE_URL = envAssetBaseUrl && envAssetBaseUrl.length > 0 ? envAssetBaseUrl.replace(/\/$/, '') : ''
 
 export function resolveApiAssetUrl(path?: string | null) {
