@@ -10,6 +10,10 @@ public interface ITourService
 
     Task<TourResponseDto> GetVisibleByIdAsync(long id);
 
+    Task<List<AnhTourResponseDto>> GetVisibleImagesByTourIdAsync(long id);
+
+    Task<AnhTourResponseDto?> GetVisibleThumbnailByTourIdAsync(long id);
+
     Task<List<TourAdminResponseDto>> GetAllAsync();
 
     Task<TourAdminResponseDto> GetByIdAsync(long id);

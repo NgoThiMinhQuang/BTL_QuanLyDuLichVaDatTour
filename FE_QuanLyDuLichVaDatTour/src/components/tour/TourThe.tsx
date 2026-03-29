@@ -85,22 +85,26 @@ export function TourThe({
       </div>
 
       <div className="tour-card-body">
-        <Title level={3} className="tour-card-title">
-          {tour.tenTour}
-        </Title>
+        <div className="tour-card-main">
+          <Title level={3} className="tour-card-title">
+            {tour.tenTour}
+          </Title>
 
-        <div className="tour-card-meta-list">
-          <Text className="tour-card-meta">📍 Từ {tour.tenDiaDiemKhoiHanh}</Text>
-          <Text className="tour-card-meta">📅 {duration} • {tour.phuongTien ?? 'Đang cập nhật'}</Text>
-          <Text className="tour-card-meta">🏷️ {tour.tenLoaiTour}</Text>
+          <div className="tour-card-meta-list">
+            <Text className="tour-card-meta">📍 Từ {tour.tenDiaDiemKhoiHanh}</Text>
+            <Text className="tour-card-meta">📅 {duration} • {tour.phuongTien ?? 'Đang cập nhật'}</Text>
+            <Text className="tour-card-meta">🏷️ {tour.tenLoaiTour}</Text>
+          </div>
+
+          <div className="tour-card-description-wrap">
+            <Paragraph className="tour-card-description">
+              {tour.moTaNgan ?? 'Hành trình du lịch hấp dẫn với lịch trình rõ ràng, phù hợp cho kỳ nghỉ sắp tới của bạn.'}
+            </Paragraph>
+          </div>
         </div>
 
-        <Paragraph className="tour-card-description">
-          {tour.moTaNgan ?? 'Hành trình du lịch hấp dẫn với lịch trình rõ ràng, phù hợp cho kỳ nghỉ sắp tới của bạn.'}
-        </Paragraph>
-
         <div className="tour-card-footer">
-          <div>
+          <div className="tour-card-price-block">
             <Text className="tour-card-price-label">Giá từ</Text>
             <div className="tour-card-price-row">
               <Title level={2} className="tour-card-price-current">

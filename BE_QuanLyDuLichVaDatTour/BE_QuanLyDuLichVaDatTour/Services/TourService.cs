@@ -56,6 +56,32 @@ public class TourService : ITourService
         return MapPublicResponse(tour);
     }
 
+    public async Task<List<AnhTourResponseDto>> GetVisibleImagesByTourIdAsync(long id)
+    {
+        var tour = await _tourRepository.GetVisibleByIdAsync(id)
+            ?? throw new KeyNotFoundException("Tour không tồn tại.");
+
+        return tour.AnhTours
+            .OrderBy(x => x.ThuTu)
+            .Select(MapAnhTourResponse)
+            .ToList();
+    }
+
+    public async Task<AnhTourResponseDto?> GetVisibleThumbnailByTourIdAsync(long id)
+    {
+        var tour = await _tourRepository.GetVisibleByIdAsync(id)
+            ?? throw new KeyNotFoundException("Tour không tồn tại.");
+
+        var orderedImages = tour.AnhTours
+            .OrderBy(x => x.ThuTu)
+            .ToList();
+
+        var thumbnail = orderedImages.FirstOrDefault(x => x.IsAvatar)
+            ?? orderedImages.FirstOrDefault();
+
+        return thumbnail is null ? null : MapAnhTourResponse(thumbnail);
+    }
+
     public async Task<List<TourAdminResponseDto>> GetAllAsync()
     {
         var tours = await _tourRepository.GetAllAsync();

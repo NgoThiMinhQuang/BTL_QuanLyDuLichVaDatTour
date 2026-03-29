@@ -49,4 +49,32 @@ public class TourController : ControllerBase
             return NotFound(new { message = ex.Message });
         }
     }
+
+    [HttpGet("{id}/images")]
+    public async Task<IActionResult> GetImages(long id)
+    {
+        try
+        {
+            var response = await _tourService.GetVisibleImagesByTourIdAsync(id);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("{id}/thumbnail")]
+    public async Task<IActionResult> GetThumbnail(long id)
+    {
+        try
+        {
+            var response = await _tourService.GetVisibleThumbnailByTourIdAsync(id);
+            return response is null ? NoContent() : Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
 }

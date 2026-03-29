@@ -290,8 +290,332 @@
   padding: 24px;
 }
 
+.featured-tour-grid .tour-card-featured {
+  height: 100%;
+  min-height: 760px;
+}
+
+.featured-tour-grid .tour-card-featured .ant-card-body,
+.featured-tour-grid .tour-card-featured .tour-card-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 760px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-cover {
+  height: 300px;
+  flex: 0 0 300px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding-bottom: 8px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-title.ant-typography {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 82px;
+  margin-bottom: 16px !important;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 122px;
+  margin-bottom: 16px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta {
+  min-height: 28px;
+  line-height: 1.6;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description-wrap {
+  min-height: 84px;
+  margin-bottom: 16px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 60px;
+  margin: 0 !important;
+  line-height: 1.7;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 140px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid rgba(148, 163, 184, 0.28);
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-block {
+  flex: 1 1 auto;
+  min-height: 96px;
+  padding-right: 12px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-row {
+  display: flex;
+  align-items: flex-end;
+  min-height: 52px;
+  margin-bottom: 2px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
+  margin: 0 !important;
+  font-size: 34px !important;
+  line-height: 1.08 !important;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-label,
+.featured-tour-grid .tour-card-featured .tour-card-price-note {
+  display: block;
+  color: #64748b;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-note {
+  min-height: 34px;
+  margin-top: 2px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  flex: 0 0 292px;
+  width: 292px;
+  min-width: 292px;
+  height: 58px;
+  margin-left: auto;
+  border-radius: 18px;
+  white-space: nowrap;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button a:hover {
+  color: inherit;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-status {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-favorite {
+  background: rgba(255, 255, 255, 0.98);
+  pointer-events: none;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-code {
+  min-width: 128px;
+}
+.featured-tour-grid .tour-card-featured .tour-card-price-label,
+.featured-tour-grid .tour-card-featured .tour-card-price-note {
+  color: #64748b;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  border-radius: 18px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
+  line-height: 1.08 !important;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-note {
+  white-space: normal;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer > :first-child {
+  min-width: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer > :last-child {
+  flex-shrink: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description-wrap {
+  display: flex;
+  align-items: flex-start;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description-wrap > * {
+  width: 100%;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button a {
+  white-space: nowrap;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-title.ant-typography {
+  margin-bottom: 16px !important;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta-list {
+  margin-bottom: 16px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description-wrap {
+  margin-bottom: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-main {
+  gap: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  padding-top: 18px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-block,
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  box-sizing: border-box;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button a:hover {
+  color: inherit;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-favorite {
+  pointer-events: none;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-status {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-code {
+  min-width: 128px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-favorite {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
+  margin: 0 !important;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-title.ant-typography {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-main {
+  flex: 1 1 auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  display: flex;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-block {
+  flex: 1 1 auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  white-space: nowrap;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
+  color: #64748b;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta {
+  line-height: 1.6;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-row {
+  display: flex;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-note {
+  display: block;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-label {
+  display: block;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  border-top: 1px solid rgba(148, 163, 184, 0.28);
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-main,
+.featured-tour-grid .tour-card-featured .tour-card-description-wrap,
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  width: 100%;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 .featured-tour-grid .tour-card-featured .tour-card-cover {
   height: 294px;
+  flex: 0 0 auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 28px 28px 24px;
+  gap: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-title.ant-typography {
@@ -304,8 +628,20 @@
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   min-height: 118px;
-  align-content: flex-start;
+  margin-bottom: 16px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta {
+  min-height: 26px;
+  line-height: 1.6;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description-wrap {
+  min-height: 72px;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
@@ -314,391 +650,79 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   min-height: 56px;
-  margin-bottom: 0 !important;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-wrap {
-  min-height: 72px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-content-spacer {
-  flex: 1 1 auto;
-  min-height: 20px;
+  margin: 0 !important;
+  line-height: 1.65;
+  color: #64748b;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   min-height: 132px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid rgba(148, 163, 184, 0.28);
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-price-block {
-  min-height: 98px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
-.featured-tour-grid .tour-card-featured .tour-card-button {
-  align-self: flex-end;
+.featured-tour-grid .tour-card-featured .tour-card-price-label,
+.featured-tour-grid .tour-card-featured .tour-card-price-note {
+  display: block;
+  color: #64748b;
 }
 
-.featured-tour-grid .tour-card-featured .tour-card-button span,
-.featured-tour-grid .tour-card-featured .tour-card-button a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.featured-tour-grid .tour-card-featured .tour-card-price-label {
+  margin-bottom: 4px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-row {
+  display: flex;
+  align-items: flex-end;
+  min-height: 52px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
+  margin: 0 !important;
+  font-size: 36px !important;
+  line-height: 1.1 !important;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-price-note {
   min-height: 33px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta {
-  min-height: 26px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-body {
-  flex: 1 1 auto;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-cover {
-  flex: 0 0 auto;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-footer {
-  margin-top: auto;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-row {
-  min-height: 72px;
-  display: flex;
-  align-items: flex-start;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta-list {
-  margin-bottom: 16px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-body {
-  gap: 0;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-main {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
-  line-height: 1.65;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta-list {
-  gap: 10px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-footer {
-  align-items: flex-end;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-row {
-  min-height: 52px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-label {
-  display: block;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-row + .tour-card-footer {
-  margin-top: auto;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
-  line-height: 1.1 !important;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-footer {
-  padding-top: 18px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-wrap,
-.featured-tour-grid .tour-card-featured .tour-card-main {
-  width: 100%;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-wrap {
-  display: flex;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-row {
-  width: 100%;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-block {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-button {
-  min-height: 56px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-button a {
-  width: 100%;
-  height: 100%;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-row {
-  margin-bottom: 16px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta-list {
-  flex: 0 0 auto;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-main {
-  min-height: 0;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-wrap {
-  flex: 0 0 auto;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-title.ant-typography + .tour-card-meta-list {
-  margin-top: 0;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-row {
-  overflow: hidden;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-note {
-  display: block;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-footer {
-  gap: 16px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-button {
-  flex: 0 0 290px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-block {
-  flex: 1 1 auto;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-row {
-  min-height: 76px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-wrap {
-  min-height: 76px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
-  min-height: 56px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta-list {
-  min-height: 120px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-main {
-  padding-bottom: 4px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-button {
   white-space: nowrap;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-button {
+  flex: 0 0 290px;
+  width: 290px;
   min-width: 290px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-block {
-  padding-right: 8px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-description-wrap {
-  align-items: flex-start;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
-  font-size: 36px !important;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-note {
-  display: block;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta {
-  line-height: 1.6;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-code {
-  min-width: 128px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-status {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta-list {
-  gap: 8px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-body {
-  padding: 28px 28px 24px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-footer {
-  align-items: center;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-button {
   height: 56px;
   border-radius: 18px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-favorite {
-  background: rgba(255, 255, 255, 0.98);
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-label {
-  display: block;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-note {
-  display: block;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta {
-  line-height: 1.6;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-code {
-  min-width: 128px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-status {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta-list {
-  gap: 8px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-body {
-  padding: 28px 28px 24px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-footer {
-  align-items: center;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-button {
-  height: 56px;
-  border-radius: 18px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-favorite {
-  background: rgba(255, 255, 255, 0.98);
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-label {
-  display: block;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-note {
-  display: block;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta {
-  line-height: 1.6;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-code {
-  min-width: 128px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
-  font-size: 36px !important;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-status {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta-list {
-  gap: 8px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-body {
-  padding: 28px 28px 24px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-footer {
-  align-items: center;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-button {
-  height: 56px;
-  border-radius: 18px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-favorite {
-  background: rgba(255, 255, 255, 0.98);
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-label {
-  display: block;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-button {
-  min-width: 144px;
+  white-space: nowrap;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-button a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
   color: inherit;
+  text-decoration: none;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-button a:hover {
   color: inherit;
 }
 
-.featured-tour-grid .tour-card-featured .tour-card-favorite {
-  pointer-events: none;
-}
-
-.featured-tour-grid .tour-card-featured {
-  height: 100%;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-footer {
-  margin-top: auto;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-note {
-  display: block;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-meta {
-  line-height: 1.6;
-}
-
 .featured-tour-grid .tour-card-featured .tour-card-code {
   min-width: 128px;
-}
-
-.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
-  font-size: 36px !important;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-status {
@@ -706,10 +730,229 @@
   color: #166534;
 }
 
-.featured-tour-grid .tour-card-featured .tour-card-meta-list {
-  gap: 8px;
+.featured-tour-grid .tour-card-featured .tour-card-favorite {
+  background: rgba(255, 255, 255, 0.98);
+  pointer-events: none;
 }
 
+.featured-tour-grid .tour-card-featured .tour-card-description-wrap,
+.featured-tour-grid .tour-card-featured .tour-card-main,
+.featured-tour-grid .tour-card-featured .tour-card-meta-list,
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography,
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  width: 100%;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-main,
+.featured-tour-grid .tour-card-featured .tour-card-price-block {
+  min-height: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  flex-shrink: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-block {
+  padding-right: 8px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta-list,
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography,
+.featured-tour-grid .tour-card-featured .tour-card-price-block {
+  overflow: hidden;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography,
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  box-sizing: border-box;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-body > * {
+  width: 100%;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer > * {
+  width: auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer > :first-child {
+  width: 100%;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer > :last-child {
+  width: 290px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
+  overflow-wrap: break-word;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta-list {
+  align-content: flex-start;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-note,
+.featured-tour-grid .tour-card-featured .tour-card-price-label {
+  text-align: left;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  justify-content: center;
+}
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  max-width: 290px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer > :first-child {
+  min-width: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer > :last-child {
+  max-width: 290px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
+  flex: 0 0 auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta-list {
+  flex: 0 0 auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-title.ant-typography {
+  flex: 0 0 auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  flex: 0 0 auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-body {
+  justify-content: flex-start;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
+  min-height: 60px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta-list {
+  min-height: 124px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  min-height: 136px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  align-self: center;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  justify-content: space-between;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  margin-left: auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-note {
+  min-height: 34px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-cover {
+  background-position: center;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
+  margin-bottom: 16px !important;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-body {
+  min-height: 100%;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  flex-shrink: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
+  flex-shrink: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  flex-shrink: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-body > * {
+  width: 100%;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer > * {
+  width: auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer > :first-child {
+  width: 100%;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer > :last-child {
+  width: 290px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-label,
+.featured-tour-grid .tour-card-featured .tour-card-price-note {
+  text-align: left;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button a {
+  font-weight: inherit;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
+  word-break: break-word;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-favorite {
+  border-radius: 999px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-code {
+  border-radius: 999px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-status {
+  border-radius: 999px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta-list {
+  overflow: hidden;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
+  overflow: hidden;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  overflow: hidden;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  overflow: hidden;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-row {
+  overflow: hidden;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
+  font-size: 36px !important;
+}
 .featured-tour-grid .tour-card-featured .tour-card-body {
   padding: 28px 28px 24px;
 }
