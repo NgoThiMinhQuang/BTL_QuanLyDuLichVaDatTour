@@ -12,13 +12,23 @@ import { MucGioiThieu } from '../../components/home/MucGioiThieu'
 import { useTourNoiBat } from '../../services/tour/useTourNoiBat'
 
 export default function Home() {
-  const { data: featuredTours = [] } = useTourNoiBat(6)
+  const {
+    data: featuredTours = [],
+    isLoading: isFeaturedToursLoading,
+    isError: isFeaturedToursError,
+    refetch: refetchFeaturedTours,
+  } = useTourNoiBat(6)
 
   return (
     <Space orientation="vertical" size={0} className="home-page">
       <MucBanner />
       <MucGioiThieu />
-      <MucTourNoiBat />
+      <MucTourNoiBat
+        tours={featuredTours}
+        isLoading={isFeaturedToursLoading}
+        isError={isFeaturedToursError}
+        onRetry={() => refetchFeaturedTours()}
+      />
       <MucLoaiTour />
       <MucLichKhoiHanh tours={featuredTours} />
       <MucUuDai />

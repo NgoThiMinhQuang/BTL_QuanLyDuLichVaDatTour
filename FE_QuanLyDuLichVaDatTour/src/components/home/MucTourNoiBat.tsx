@@ -1,25 +1,48 @@
-import { Alert, Button, Card, Col, Empty, Row, Skeleton, Space, Tag, Typography } from 'antd'
-import { useTourNoiBat } from '../../services/tour/useTourNoiBat'
+import { Alert, Button, Card, Col, Empty, Row, Skeleton } from 'antd'
+import { Link } from 'react-router'
 import { TieuDeMuc } from '../../components/common/TieuDeMuc'
-import { formatTien } from '../../libs/helpers/formatTien'
+import { PATHS } from '../../paths'
+import type { FeaturedTourApiItem } from '../../libs/types/tour'
+import { TourThe } from '../tour/TourThe'
 
-const { Paragraph, Text, Title } = Typography
+interface MucTourNoiBatProps {
+  tours: FeaturedTourApiItem[]
+  isLoading: boolean
+  isError: boolean
+  onRetry: () => void
+}
 
-export function MucTourNoiBat() {
-  const { data, error, isLoading, refetch } = useTourNoiBat(6)
+export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoiBatProps) {
+  const data = tours
+  const error = isError
+  const refetch = onRetry
 
-  return (
-    <Card id="tour-noi-bat" className="home-section">
+  const extra = (
+    <Link to={PATHS.tour} className="featured-tour-section-link">
+      Xem tất cả tour
+    </Link>
+  )
+
+  const skeletonItems = Array.from({ length: 3 })
+
+  const titleNode = (
+    <div className="featured-tour-section-header">
       <TieuDeMuc
-        title="Tour nổi bật cho kỳ nghỉ sắp tới"
+        title="Những tour du lịch được yêu thích nhất tháng này"
         description="Lựa chọn nhanh những hành trình đang mở bán để dễ so sánh điểm đến, thời lượng và mức giá phù hợp."
       />
+      {extra}
+    </div>
+  )
 
+
+  return (
+    <Card id="tour-noi-bat" className="home-section featured-tour-section" title={titleNode}>
       {isLoading ? (
-        <Row gutter={[16, 16]}>
-          {Array.from({ length: 3 }).map((_, index) => (
-            <Col xs={24} xl={8} key={index}>
-              <Card className="featured-tour-card">
+        <Row gutter={[20, 20]} className="featured-tour-grid">
+          {skeletonItems.map((_, index) => (
+            <Col xs={24} md={12} xl={8} key={index}>
+              <Card className="tour-card tour-card-skeleton" variant="borderless">
                 <Skeleton active paragraph={{ rows: 6 }} />
               </Card>
             </Col>
@@ -42,42 +65,17 @@ export function MucTourNoiBat() {
       ) : null}
 
       {!isLoading && !error && data && data.length > 0 ? (
-        <Row gutter={[16, 16]}>
-          {data.map((tour) => (
-            <Col xs={24} xl={8} key={tour.id}>
-              <Card className="featured-tour-card">
-                <div className="featured-tour-cover" />
-                <Space orientation="vertical" size={14} style={{ width: '100%', marginTop: 18 }}>
-                  <Space wrap>
-                    <Tag color="blue">{tour.tenLoaiTour}</Tag>
-                    <Tag color="gold">{tour.soNgay} ngày {tour.soDem} đêm</Tag>
-                  </Space>
-
-                  <Space orientation="vertical" size={4}>
-                    <Title level={4} style={{ marginBottom: 0 }}>
-                      {tour.tenTour}
-                    </Title>
-                    <Text className="featured-tour-meta">Khởi hành từ {tour.tenDiaDiemKhoiHanh}</Text>
-                  </Space>
-
-                  <Paragraph style={{ marginBottom: 0 }}>
-                    {tour.moTaNgan ?? 'Hành trình được thiết kế để dễ theo dõi lịch trình và lựa chọn lịch khởi hành phù hợp.'}
-                  </Paragraph>
-
-                  <Space orientation="vertical" size={4}>
-                    <Text className="featured-tour-meta">Phương tiện: {tour.phuongTien ?? 'Đang cập nhật'}</Text>
-                    <Text className="featured-tour-meta">Mã tour: {tour.maTour}</Text>
-                  </Space>
-
-                  <Title level={3} className="featured-tour-price" style={{ margin: 0 }}>
-                    Từ {formatTien(tour.giaNguoiLonMacDinh)}
-                  </Title>
-
-                  <Button type="primary" block href="#lich-khoi-hanh">
-                    Xem lịch khởi hành
-                  </Button>
-                </Space>
-              </Card>
+        <Row gutter={[20, 20]} className="featured-tour-grid">
+          {data.map((tour, index) => (
+            <Col xs={24} md={12} xl={8} key={tour.id}>
+              <TourThe
+                tour={tour}
+                imageIndex={index}
+                viewMode="grid"
+                ctaLabel="Xem tất cả tour"
+                ctaHref={PATHS.tour}
+                variant="featured"
+              />
             </Col>
           ))}
         </Row>

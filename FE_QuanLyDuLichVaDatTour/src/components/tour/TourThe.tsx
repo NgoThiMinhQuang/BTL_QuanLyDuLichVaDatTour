@@ -1,4 +1,5 @@
 import { Button, Card, Typography } from 'antd'
+import { Link } from 'react-router'
 import bannerImage from '../../assets/Banner.jpg'
 import { resolveApiAssetUrl } from '../../constant/api'
 import type { FeaturedTourApiItem } from '../../libs/types/tour'
@@ -10,6 +11,9 @@ interface TourTheProps {
   tour: FeaturedTourApiItem
   imageIndex: number
   viewMode: 'grid' | 'list'
+  ctaLabel?: string
+  ctaHref?: string
+  variant?: 'default' | 'featured'
 }
 
 const tourGradients = [
@@ -19,7 +23,14 @@ const tourGradients = [
   'linear-gradient(135deg, rgba(234, 88, 12, 0.26), rgba(234, 88, 12, 0.08))',
 ]
 
-export function TourThe({ tour, imageIndex, viewMode }: TourTheProps) {
+export function TourThe({
+  tour,
+  imageIndex,
+  viewMode,
+  ctaLabel = 'Xem tất cả tour',
+  ctaHref = '/tour',
+  variant = 'default',
+}: TourTheProps) {
   const coverImage = [...tour.anhTours]
     .sort((a, b) => Number(b.isAvatar) - Number(a.isAvatar) || a.thuTu - b.thuTu)
     .at(0)?.linkAnh
@@ -29,9 +40,16 @@ export function TourThe({ tour, imageIndex, viewMode }: TourTheProps) {
   const backgroundImage = `${tourGradients[imageIndex % tourGradients.length]}, url(${normalizedCoverImage})`
   const duration = `${tour.soNgay}N${tour.soDem}Đ`
   const statusLabel = tour.trangThai?.trim() || 'Đang cập nhật'
+  const cardClassName = [
+    'tour-card',
+    viewMode === 'list' ? 'tour-card-list' : '',
+    variant === 'featured' ? 'tour-card-featured' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
-    <Card className={`tour-card ${viewMode === 'list' ? 'tour-card-list' : ''}`} variant="borderless">
+    <Card className={cardClassName} variant="borderless">
       <div className="tour-card-cover" style={{ backgroundImage }}>
         <span className="tour-card-status">{statusLabel}</span>
         <button type="button" className="tour-card-favorite" aria-label="Yêu thích tour">
@@ -67,7 +85,7 @@ export function TourThe({ tour, imageIndex, viewMode }: TourTheProps) {
           </div>
 
           <Button type="primary" className="tour-card-button">
-            Xem chi tiết
+            <Link to={ctaHref}>{ctaLabel}</Link>
           </Button>
         </div>
       </div>
