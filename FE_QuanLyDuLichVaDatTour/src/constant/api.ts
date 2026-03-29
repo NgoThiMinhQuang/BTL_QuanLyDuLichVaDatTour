@@ -13,9 +13,15 @@ export function resolveApiAssetUrl(path?: string | null) {
     return path
   }
 
-  if (ASSET_BASE_URL) {
-    return `${ASSET_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+
+  if (normalizedPath.startsWith('/images/')) {
+    return normalizedPath
   }
 
-  return path
+  if (ASSET_BASE_URL) {
+    return `${ASSET_BASE_URL}${normalizedPath}`
+  }
+
+  return normalizedPath
 }
