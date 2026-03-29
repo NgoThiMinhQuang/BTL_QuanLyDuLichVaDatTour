@@ -7,6 +7,32 @@ import { formatTien } from '../../libs/helpers/formatTien'
 
 const { Paragraph, Text, Title } = Typography
 
+function formatTrangThai(trangThai?: string | null) {
+  if (!trangThai?.trim()) {
+    return 'Đang cập nhật'
+  }
+
+  const normalized = trangThai.trim().toLowerCase()
+
+  switch (normalized) {
+    case 'dang_mo_ban':
+      return 'Đang mở bán'
+    case 'nhap':
+      return 'Nháp'
+    case 'tam_ngung':
+      return 'Tạm ngừng'
+    case 'an':
+      return 'Ẩn'
+    case 'ngung_kinh_doanh':
+      return 'Ngừng kinh doanh'
+    default:
+      return normalized
+        .split('_')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+  }
+}
+
 interface TourTheProps {
   tour: FeaturedTourApiItem
   imageIndex: number
@@ -39,7 +65,7 @@ export function TourThe({
 
   const backgroundImage = `${tourGradients[imageIndex % tourGradients.length]}, url(${normalizedCoverImage})`
   const duration = `${tour.soNgay}N${tour.soDem}Đ`
-  const statusLabel = tour.trangThai?.trim() || 'Đang cập nhật'
+  const statusLabel = formatTrangThai(tour.trangThai)
   const cardClassName = [
     'tour-card',
     viewMode === 'list' ? 'tour-card-list' : '',
