@@ -27,4 +27,18 @@ public class LichKhoiHanhController : ControllerBase
             return NotFound(new { message = ex.Message });
         }
     }
+
+    [HttpGet("{lichKhoiHanhId}/bang-gia")]
+    public async Task<IActionResult> GetBangGia(long lichKhoiHanhId)
+    {
+        try
+        {
+            var response = await _lichKhoiHanhService.GetBangGiaAsync(lichKhoiHanhId);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
 }

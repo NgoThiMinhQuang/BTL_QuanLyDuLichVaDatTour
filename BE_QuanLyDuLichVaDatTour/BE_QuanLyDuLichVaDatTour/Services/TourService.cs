@@ -381,6 +381,8 @@ public class TourService : ITourService
             SoDem = tour.SoDem,
             PhuongTien = tour.PhuongTien,
             MoTaNgan = tour.MoTaNgan,
+            MoTaChiTiet = tour.MoTaChiTiet,
+            DieuKienTour = tour.DieuKienTour,
             GiaTuThamKhao = tour.GiaTuThamKhao,
             IsNoiBat = tour.IsNoiBat,
             DiemDens = tour.TourDiemDens

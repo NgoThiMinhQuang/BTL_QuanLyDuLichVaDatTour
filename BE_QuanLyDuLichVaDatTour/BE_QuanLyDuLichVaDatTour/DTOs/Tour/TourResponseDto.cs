@@ -24,6 +24,10 @@ public class TourResponseDto
 
     public string? MoTaNgan { get; set; }
 
+    public string? MoTaChiTiet { get; set; }
+
+    public string? DieuKienTour { get; set; }
+
     public decimal GiaTuThamKhao { get; set; }
 
     public bool IsNoiBat { get; set; }

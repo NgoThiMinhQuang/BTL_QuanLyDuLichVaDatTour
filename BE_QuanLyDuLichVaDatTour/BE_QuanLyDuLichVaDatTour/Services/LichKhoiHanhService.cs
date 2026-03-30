@@ -10,13 +10,16 @@ public class LichKhoiHanhService : ILichKhoiHanhService
 {
     private readonly ILichKhoiHanhRepository _lichKhoiHanhRepository;
     private readonly ITourRepository _tourRepository;
+    private readonly IBangGiaLichKhoiHanhRepository _bangGiaLichKhoiHanhRepository;
 
     public LichKhoiHanhService(
         ILichKhoiHanhRepository lichKhoiHanhRepository,
-        ITourRepository tourRepository)
+        ITourRepository tourRepository,
+        IBangGiaLichKhoiHanhRepository bangGiaLichKhoiHanhRepository)
     {
         _lichKhoiHanhRepository = lichKhoiHanhRepository;
         _tourRepository = tourRepository;
+        _bangGiaLichKhoiHanhRepository = bangGiaLichKhoiHanhRepository;
     }
 
     public async Task<List<LichKhoiHanhAdminResponseDto>> GetAllAsync()
@@ -48,6 +51,26 @@ public class LichKhoiHanhService : ILichKhoiHanhService
 
         var lichKhoiHanhs = await _lichKhoiHanhRepository.GetVisibleByTourIdAsync(tour.Id);
         return lichKhoiHanhs.Select(MapPublicResponse).ToList();
+    }
+
+    public async Task<BangGiaLichKhoiHanhResponseDto> GetBangGiaAsync(long lichKhoiHanhId)
+    {
+        var lichKhoiHanh = await _lichKhoiHanhRepository.GetByIdAsync(lichKhoiHanhId)
+            ?? throw new KeyNotFoundException("Lịch khởi hành không tồn tại.");
+
+        var bangGiaNgayThuong = await _bangGiaLichKhoiHanhRepository.GetBangGiaAsync(lichKhoiHanhId, LoaiGiaApDung.ngay_thuong);
+        var bangGiaCuoiTuan = await _bangGiaLichKhoiHanhRepository.GetBangGiaAsync(lichKhoiHanhId, LoaiGiaApDung.cuoi_tuan);
+
+        return new BangGiaLichKhoiHanhResponseDto
+        {
+            LichKhoiHanhId = lichKhoiHanh.Id,
+            GiaNguoiLonNgayThuong = bangGiaNgayThuong.GetValueOrDefault(LoaiKhach.nguoi_lon),
+            GiaTreEmNgayThuong = bangGiaNgayThuong.GetValueOrDefault(LoaiKhach.tre_em),
+            GiaEmBeNgayThuong = bangGiaNgayThuong.GetValueOrDefault(LoaiKhach.em_be),
+            GiaNguoiLonCuoiTuan = bangGiaCuoiTuan.GetValueOrDefault(LoaiKhach.nguoi_lon),
+            GiaTreEmCuoiTuan = bangGiaCuoiTuan.GetValueOrDefault(LoaiKhach.tre_em),
+            GiaEmBeCuoiTuan = bangGiaCuoiTuan.GetValueOrDefault(LoaiKhach.em_be),
+        };
     }
 
     public async Task<LichKhoiHanhAdminResponseDto> CreateAsync(CreateLichKhoiHanhRequestDto request)

@@ -12,6 +12,8 @@ public interface ILichKhoiHanhService
 
     Task<List<LichKhoiHanhResponseDto>> GetVisibleByTourIdAsync(long tourId);
 
+    Task<BangGiaLichKhoiHanhResponseDto> GetBangGiaAsync(long lichKhoiHanhId);
+
     Task<LichKhoiHanhAdminResponseDto> CreateAsync(CreateLichKhoiHanhRequestDto request);
 
     Task<LichKhoiHanhAdminResponseDto> UpdateAsync(long id, UpdateLichKhoiHanhRequestDto request);
