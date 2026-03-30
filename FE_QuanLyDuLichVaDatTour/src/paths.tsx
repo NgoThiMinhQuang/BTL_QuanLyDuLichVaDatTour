@@ -5,6 +5,7 @@ export const PATHS = {
   lichKhoiHanh: '/lich-khoi-hanh',
   tinTuc: '/tin-tuc',
   tinTucChiTiet: '/tin-tuc/:id',
+  lienHe: '/lien-he',
   login: '/login',
   register: '/register',
 } as const

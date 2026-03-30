@@ -10,6 +10,7 @@ import Tour from './pages/Tour/Tour'
 import LichKhoiHanh from './pages/LichKhoiHanh/LichKhoiHanh'
 import TinTuc from './pages/TinTuc/TinTuc'
 import TinTucChiTiet from './pages/TinTuc/TinTucChiTiet'
+import Contact from './pages/Contact/Contact'
 
 const { Content } = Layout
 
@@ -28,6 +29,7 @@ export default function AppRouter() {
           <Route path={PATHS.lichKhoiHanh} element={<LichKhoiHanh />} />
           <Route path={PATHS.tinTuc} element={<TinTuc />} />
           <Route path={PATHS.tinTucChiTiet} element={<TinTucChiTiet />} />
+          <Route path={PATHS.lienHe} element={<Contact />} />
           <Route path={PATHS.login} element={<Login />} />
           <Route path={PATHS.register} element={<Register />} />
         </Routes>

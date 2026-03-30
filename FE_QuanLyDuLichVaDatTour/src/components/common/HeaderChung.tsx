@@ -13,7 +13,7 @@ export function HeaderChung() {
     { key: PATHS.tour, label: <Link to={PATHS.tour}>Tour</Link> },
     { key: PATHS.lichKhoiHanh, label: <Link to={PATHS.lichKhoiHanh}>Lịch khởi hành</Link> },
     { key: PATHS.tinTuc, label: <Link to={PATHS.tinTuc}>Tin tức</Link> },
-    { key: '#tu-van-tour', label: <a href="#tu-van-tour">Liên hệ</a> },
+    { key: PATHS.lienHe, label: <Link to={PATHS.lienHe}>Liên hệ</Link> },
   ]
 
   const selectedKey = items.some((item) => item.key === location.pathname) ? location.pathname : PATHS.home
