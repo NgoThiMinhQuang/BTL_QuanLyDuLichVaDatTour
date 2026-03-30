@@ -5,7 +5,7 @@
 }
 
 .home-section {
-  width: min(1320px, calc(100% - 32px));
+  width: min(1180px, calc(100% - 380px));
   margin: 0 auto;
   border-radius: 28px;
   overflow: hidden;
@@ -70,7 +70,7 @@
 }
 
 .hero-search-section.home-section {
-  width: min(1720px, calc(100% - 96px));
+  width: min(1180px, calc(100% - 380px));
 }
 
 .hero-search-section .hero-search-card {
@@ -92,7 +92,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: min(1320px, calc(100% - 32px));
+  width: min(1180px, calc(100% - 380px));
   min-height: 640px;
   margin: 0 auto;
   padding: 96px 0 72px;
@@ -390,7 +390,7 @@
 }
 
 .about-us-section.home-section {
-  width: min(1260px, calc(100% - 40px));
+  width: min(1180px, calc(100% - 380px));
 }
 
 .about-us-section .ant-card-body {

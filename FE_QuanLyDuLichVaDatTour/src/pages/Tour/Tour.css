@@ -1,5 +1,5 @@
 .tour-page {
-  width: min(1720px, calc(100% - 40px));
+  width: min(1180px, calc(100% - 380px));
   margin: 0 auto;
   padding: 48px 0 56px;
 }
