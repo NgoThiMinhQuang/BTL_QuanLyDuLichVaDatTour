@@ -5,7 +5,7 @@ import { resolveApiAssetUrl } from '../../constant/api'
 import type { FeaturedTourApiItem } from '../../libs/types/tour'
 import { formatTien } from '../../libs/helpers/formatTien'
 
-const { Paragraph, Text, Title } = Typography
+const { Text, Title } = Typography
 
 function formatTrangThai(trangThai?: string | null) {
   if (!trangThai?.trim()) {
@@ -53,7 +53,7 @@ export function TourThe({
   tour,
   imageIndex,
   viewMode,
-  ctaLabel = 'Xem tất cả tour',
+  ctaLabel = 'Xem chi tiết',
   ctaHref = '/tour',
   variant = 'default',
 }: TourTheProps) {
@@ -96,11 +96,6 @@ export function TourThe({
             <Text className="tour-card-meta">🏷️ {tour.tenLoaiTour}</Text>
           </div>
 
-          <div className="tour-card-description-wrap">
-            <Paragraph className="tour-card-description">
-              {tour.moTaNgan ?? 'Hành trình du lịch hấp dẫn với lịch trình rõ ràng, phù hợp cho kỳ nghỉ sắp tới của bạn.'}
-            </Paragraph>
-          </div>
         </div>
 
         <div className="tour-card-footer">

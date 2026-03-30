@@ -2664,12 +2664,32 @@
 }
 
 .tour-card .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   padding: 0;
+}
+
+.tour-card {
+  height: 100%;
+}
+
+.tour-card-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tour-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .tour-card-cover {
   position: relative;
-  height: 220px;
+  height: 160px;
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -2677,58 +2697,58 @@
 
 .tour-card-status {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: 12px;
+  left: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: 999px;
   background: #dcfce7;
   color: #166534;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .tour-card-favorite {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 42px;
-  height: 42px;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
   border: none;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.96);
   color: #475569;
-  font-size: 20px;
+  font-size: 17px;
   cursor: pointer;
 }
 
 .tour-card-code {
   position: absolute;
-  left: 16px;
-  bottom: 16px;
+  left: 12px;
+  bottom: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 104px;
-  padding: 7px 14px;
+  min-width: 92px;
+  padding: 6px 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.96);
   color: #334155;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .tour-card-body {
-  padding: 16px 18px 16px;
+  padding: 12px 14px 12px;
 }
 
 .tour-card-title.ant-typography {
-  margin: 0 0 10px !important;
+  margin: 0 0 6px !important;
   color: #1e293b;
-  font-size: 18px !important;
-  line-height: 1.3 !important;
+  font-size: 15px !important;
+  line-height: 1.2 !important;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -2738,14 +2758,14 @@
 .tour-card-meta-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 10px;
+  gap: 2px;
+  margin-bottom: 6px;
 }
 
 .tour-card-meta {
   color: #475569;
-  font-size: 14px;
-  line-height: 1.45;
+  font-size: 11px;
+  line-height: 1.3;
 }
 
 .tour-card-rating {
@@ -2771,11 +2791,26 @@
 
 .tour-card-footer {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding-top: 12px;
+  padding-top: 8px;
   border-top: 1px solid rgba(148, 163, 184, 0.28);
+  flex-wrap: nowrap;
+}
+
+.tour-card-price-block {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.tour-card-price-block > * {
+  flex: 0 0 auto;
 }
 
 .tour-card-price-label,
@@ -2785,40 +2820,55 @@
 }
 
 .tour-card-price-label {
-  font-size: 12px;
+  font-size: 10px;
+  margin: 0;
 }
 
 .tour-card-price-row {
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
 .tour-card-price-current.ant-typography {
   margin: 0 !important;
   color: #2563eb;
-  font-size: 19px !important;
+  font-size: 16px !important;
   font-weight: 800;
-  line-height: 1.2 !important;
+  line-height: 1.15 !important;
 }
 
 .tour-card-price-old {
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .tour-card-price-note {
-  font-size: 12px;
-  line-height: 1.4;
+  font-size: 10px;
+  line-height: 1.3;
+  margin-left: 2px;
+  white-space: nowrap;
 }
 
 .tour-card-button {
-  min-width: 122px;
-  height: 44px;
-  border-radius: 14px;
-  font-size: 13px;
+  flex: 0 0 112px;
+  width: 112px;
+  min-width: 112px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 700;
-  white-space: normal;
+  white-space: nowrap;
+}
+
+.tour-card-button a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
 }
 
 .tour-card-list {
@@ -3704,14 +3754,14 @@
   }
 
   .tour-card-footer {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
   }
 
   .tour-card-button {
-    width: 100%;
-    min-width: 0;
-    height: 56px;
+    width: 112px;
+    min-width: 112px;
+    height: 36px;
   }
 
   .home-section .ant-card-body {

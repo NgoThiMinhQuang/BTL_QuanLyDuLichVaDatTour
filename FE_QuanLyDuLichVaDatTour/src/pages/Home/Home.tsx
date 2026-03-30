@@ -9,6 +9,7 @@ import { MucLoaiTour } from '../../components/home/MucLoaiTour'
 import { MucLichKhoiHanh } from '../../components/home/MucLichKhoiHanh'
 import { MucLyDoChon } from '../../components/home/MucLyDoChon'
 import { MucGioiThieu } from '../../components/home/MucGioiThieu'
+import { MucBanDo } from '../../components/home/MucBanDo'
 import { useTourNoiBat } from '../../services/tour/useTourNoiBat'
 
 export default function Home() {
@@ -30,6 +31,7 @@ export default function Home() {
         onRetry={() => refetchFeaturedTours()}
       />
       <MucLoaiTour />
+      <MucBanDo />
       <MucLichKhoiHanh tours={featuredTours} />
       <MucUuDai />
       <MucLyDoChon />

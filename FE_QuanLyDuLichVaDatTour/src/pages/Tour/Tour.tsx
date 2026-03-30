@@ -154,7 +154,7 @@ export default function Tour() {
                   <Col
                     xs={24}
                     md={viewMode === 'list' ? 24 : 12}
-                    xl={viewMode === 'list' ? 24 : 8}
+                    xl={viewMode === 'list' ? 24 : 12}
                     key={tour.id}
                     className={viewMode === 'list' ? 'tour-grid-col-list' : ''}
                   >
