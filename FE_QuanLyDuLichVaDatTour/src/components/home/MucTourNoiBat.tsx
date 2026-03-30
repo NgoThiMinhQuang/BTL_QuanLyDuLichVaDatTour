@@ -72,8 +72,8 @@ export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoi
                 tour={tour}
                 imageIndex={index}
                 viewMode="grid"
-                ctaLabel="Xem tất cả tour"
-                ctaHref={PATHS.tour}
+                ctaLabel="Xem chi tiết"
+                ctaHref={`/tour/${tour.id}`}
                 variant="featured"
               />
             </Col>

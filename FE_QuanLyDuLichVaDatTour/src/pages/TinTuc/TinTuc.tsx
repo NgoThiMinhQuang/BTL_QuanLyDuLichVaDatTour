@@ -1,5 +1,7 @@
 import './TinTuc.css'
 import { Input, Tag, Typography } from 'antd'
+import { Link } from 'react-router'
+import { getTinTucChiTietPath } from '../../paths'
 import bannerImage from '../../assets/Banner.jpg'
 import { TourPhanTrang } from '../../components/common/TourPhanTrang'
 import { resolveApiAssetUrl } from '../../constant/api'
@@ -123,9 +125,9 @@ export default function TinTuc() {
               <Text className="news-meta-item">📅 {formatDisplayDate(featuredItem.ngayDang)}</Text>
             </div>
 
-            <button type="button" className="news-link-button">
+            <Link to={getTinTucChiTietPath(featuredItem.id)} className="news-link-button">
               Đọc thêm →
-            </button>
+            </Link>
           </div>
         </article>
 
@@ -148,9 +150,9 @@ export default function TinTuc() {
                   <Text className="news-meta-item">📅 {formatDisplayDate(item.ngayDang)}</Text>
                 </div>
 
-                <button type="button" className="news-outline-button">
+                <Link to={getTinTucChiTietPath(item.id)} className="news-outline-button">
                   Đọc thêm
-                </button>
+                </Link>
               </div>
             </article>
           ))}
