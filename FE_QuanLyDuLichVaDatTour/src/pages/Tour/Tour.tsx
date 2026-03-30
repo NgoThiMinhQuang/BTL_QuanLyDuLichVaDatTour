@@ -149,9 +149,15 @@ export default function Tour() {
 
           {shouldShowResults ? (
             <>
-              <Row gutter={[24, 24]} className={`tour-grid ${viewMode === 'list' ? 'tour-grid-list' : ''}`}>
+              <Row gutter={[20, 20]} className={`tour-grid ${viewMode === 'list' ? 'tour-grid-list' : ''}`}>
                 {paginatedTours.map((tour, index) => (
-                  <Col xs={24} md={viewMode === 'list' ? 24 : 12} key={tour.id} className={viewMode === 'list' ? 'tour-grid-col-list' : ''}>
+                  <Col
+                    xs={24}
+                    md={viewMode === 'list' ? 24 : 12}
+                    xl={viewMode === 'list' ? 24 : 8}
+                    key={tour.id}
+                    className={viewMode === 'list' ? 'tour-grid-col-list' : ''}
+                  >
                     <TourThe tour={tour} imageIndex={index} viewMode={viewMode} />
                   </Col>
                 ))}

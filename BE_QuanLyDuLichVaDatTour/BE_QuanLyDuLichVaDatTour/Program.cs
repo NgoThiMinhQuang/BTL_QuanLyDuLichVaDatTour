@@ -92,6 +92,17 @@ builder.Services.AddScoped<ITinTucService, TinTucService>();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.ExecuteSqlRawAsync("""
+        IF COL_LENGTH('TinTuc', 'DanhMuc') IS NULL
+        BEGIN
+            ALTER TABLE TinTuc ADD DanhMuc NVARCHAR(100) NULL;
+        END
+        """);
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
