@@ -185,12 +185,12 @@
 }
 
 .auth-shell {
-  width: min(1720px, 100%);
+  width: min(1180px, calc(100% - 380px));
   margin: 0 auto;
 }
 
 .auth-shell-register {
-  width: min(1640px, 100%);
+  width: min(1180px, calc(100% - 380px));
 }
 
 .auth-topbar {

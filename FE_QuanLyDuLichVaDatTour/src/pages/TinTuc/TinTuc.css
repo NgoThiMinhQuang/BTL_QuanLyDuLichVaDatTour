@@ -7,7 +7,7 @@
 }
 
 .news-hero-inner {
-  width: min(1680px, calc(100% - 48px));
+  width: min(1180px, calc(100% - 380px));
   margin: 0 auto;
   padding: 88px 0 108px;
 }
@@ -30,7 +30,7 @@
 }
 
 .news-page-container {
-  width: min(1680px, calc(100% - 48px));
+  width: min(1180px, calc(100% - 380px));
   margin: -52px auto 0;
   display: flex;
   flex-direction: column;

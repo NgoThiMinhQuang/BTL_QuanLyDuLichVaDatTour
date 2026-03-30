@@ -35,6 +35,8 @@ public class AppDbContext : DbContext
 
     public DbSet<ThanhToan> ThanhToans => Set<ThanhToan>();
 
+    public DbSet<TinTuc> TinTucs => Set<TinTuc>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -897,6 +899,74 @@ public class AppDbContext : DbContext
                 .WithMany(x => x.HanhKhachs)
                 .HasForeignKey(x => x.BookingId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TinTuc>(entity =>
+        {
+            entity.ToTable("TinTuc");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("TinTucId")
+                .HasColumnType("bigint")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.TieuDe)
+                .HasColumnName("TieuDe")
+                .HasMaxLength(300)
+                .IsRequired();
+
+            entity.Property(x => x.Slug)
+                .HasColumnName("Slug")
+                .HasMaxLength(300)
+                .IsRequired();
+
+            entity.Property(x => x.TomTat)
+                .HasColumnName("TomTat")
+                .HasMaxLength(1000);
+
+            entity.Property(x => x.NoiDung)
+                .HasColumnName("NoiDung")
+                .HasColumnType("nvarchar(max)")
+                .IsRequired();
+
+            entity.Property(x => x.AnhDaiDien)
+                .HasColumnName("AnhDaiDien")
+                .HasMaxLength(500);
+
+            entity.Property(x => x.DanhMuc)
+                .HasColumnName("DanhMuc")
+                .HasMaxLength(100);
+
+            entity.Property(x => x.NgayDang)
+                .HasColumnName("NgayDang")
+                .HasColumnType("datetime2")
+                .IsRequired();
+
+            entity.Property(x => x.TrangThai)
+                .HasColumnName("TrangThai")
+                .HasConversion<string>()
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("CreatedAt")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UpdatedAt)
+                .HasColumnName("UpdatedAt")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.HasIndex(x => x.Slug)
+                .IsUnique();
+
+            entity.HasIndex(x => new { x.TrangThai, x.NgayDang })
+                .HasDatabaseName("IdxTinTucTrangThaiNgayDang");
         });
 
         modelBuilder.Entity<ThanhToan>(entity =>

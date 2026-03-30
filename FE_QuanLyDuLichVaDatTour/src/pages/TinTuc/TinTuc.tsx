@@ -1,104 +1,48 @@
 import './TinTuc.css'
 import { Input, Tag, Typography } from 'antd'
-import { useMemo, useState } from 'react'
-import { TourPhanTrang } from '../../components/common/TourPhanTrang'
 import bannerImage from '../../assets/Banner.jpg'
+import { TourPhanTrang } from '../../components/common/TourPhanTrang'
+import { resolveApiAssetUrl } from '../../constant/api'
+import { TIN_TUC_PAGE_SIZE, useTinTucPage } from '../../services/tin-tuc/useTinTucPage'
 
 const { Paragraph, Text, Title } = Typography
 
-const NEWS_PAGE_SIZE = 6
-const categoryOptions = ['Tất cả', 'Cẩm nang du lịch', 'Điểm đến', 'Văn hóa', 'Ẩm thực', 'Sự kiện'] as const
+function formatDisplayDate(value: string) {
+  const parsedDate = new Date(value)
 
-const newsItems = [
-  {
-    id: 1,
-    category: 'Điểm đến',
-    title: 'Top 10 điểm đến hấp dẫn nhất Việt Nam năm 2026',
-    excerpt: 'Khám phá những địa điểm du lịch tuyệt vời nhất Việt Nam với vẻ đẹp thiên nhiên hoang sơ và văn hóa đặc sắc.',
-    author: 'Nguyễn Văn A',
-    date: '20/3/2026',
-    featured: true,
-  },
-  {
-    id: 2,
-    category: 'Cẩm nang du lịch',
-    title: 'Mẹo săn vé máy bay giá tốt cho mùa hè',
-    excerpt: 'Những mẹo nhỏ giúp bạn tiết kiệm chi phí khi đặt tour du lịch mà vẫn đảm bảo chất lượng trải nghiệm.',
-    author: 'Trần Thị B',
-    date: '18/3/2026',
-    featured: false,
-  },
-  {
-    id: 3,
-    category: 'Ẩm thực',
-    title: 'Hành trình khám phá ẩm thực đường phố Sài Gòn',
-    excerpt: 'Khám phá những món ăn đường phố đặc sắc và hấp dẫn tại Sài Gòn dành cho tín đồ ẩm thực.',
-    author: 'Lê Văn C',
-    date: '15/3/2026',
-    featured: false,
-  },
-  {
-    id: 4,
-    category: 'Sự kiện',
-    title: 'Lễ hội hoa anh đào Đà Lạt năm nay có gì đặc biệt?',
-    excerpt: 'Thông tin chi tiết về lễ hội hoa anh đào năm nay tại thành phố Đà Lạt cùng các hoạt động nổi bật.',
-    author: 'Phạm Thị D',
-    date: '12/3/2026',
-    featured: false,
-  },
-  {
-    id: 5,
-    category: 'Cẩm nang du lịch',
-    title: 'Bí quyết chụp ảnh du lịch đẹp như chuyên nghiệp',
-    excerpt: 'Những mẹo nhỏ giúp bạn có những bức ảnh du lịch đẹp mắt và ấn tượng trong mọi hành trình.',
-    author: 'Hoàng Văn E',
-    date: '10/3/2026',
-    featured: false,
-  },
-  {
-    id: 6,
-    category: 'Văn hóa',
-    title: 'Văn hóa làng nghề truyền thống Việt Nam',
-    excerpt: 'Tìm hiểu về nét đẹp văn hóa và nghề thủ công truyền thống của người Việt qua các làng nghề nổi tiếng.',
-    author: 'Ngô Thị F',
-    date: '8/3/2026',
-    featured: false,
-  },
-  {
-    id: 7,
-    category: 'Điểm đến',
-    title: 'Khám phá mùa nước nổi miền Tây',
-    excerpt: 'Trải nghiệm vẻ đẹp sông nước và những hoạt động thú vị khi du lịch miền Tây vào mùa nước nổi.',
-    author: 'Bùi Văn G',
-    date: '5/3/2026',
-    featured: false,
-  },
-]
+  if (Number.isNaN(parsedDate.getTime())) {
+    return value
+  }
+
+  return parsedDate.toLocaleDateString('vi-VN')
+}
+
+function getSummary(summary: string | null, content: string) {
+  if (summary?.trim()) {
+    return summary
+  }
+
+  return `${content.replace(/<[^>]+>/g, '').slice(0, 160).trim()}...`
+}
 
 export default function TinTuc() {
-  const [keyword, setKeyword] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<(typeof categoryOptions)[number]>('Tất cả')
-  const [page, setPage] = useState(1)
+  const {
+    data,
+    isLoading,
+    isError,
+    keyword,
+    selectedCategory,
+    page,
+    categoryOptions,
+    featuredItem,
+    regularItems,
+    paginatedItems,
+    setKeyword,
+    setSelectedCategory,
+    setPage,
+  } = useTinTucPage()
 
-  const filteredItems = useMemo(() => {
-    const normalizedKeyword = keyword.trim().toLowerCase()
-
-    return newsItems.filter((item) => {
-      const matchesCategory = selectedCategory === 'Tất cả' || item.category === selectedCategory
-      const matchesKeyword =
-        normalizedKeyword.length === 0 ||
-        item.title.toLowerCase().includes(normalizedKeyword) ||
-        item.excerpt.toLowerCase().includes(normalizedKeyword)
-
-      return matchesCategory && matchesKeyword
-    })
-  }, [keyword, selectedCategory])
-
-  const featuredItem = filteredItems.find((item) => item.featured) ?? filteredItems[0]
-  const regularItems = filteredItems.filter((item) => item.id !== featuredItem?.id)
-  const paginatedItems = regularItems.slice((page - 1) * NEWS_PAGE_SIZE, page * NEWS_PAGE_SIZE)
-
-  const handleCategoryChange = (category: (typeof categoryOptions)[number]) => {
+  const handleCategoryChange = (category: string) => {
     setSelectedCategory(category)
     setPage(1)
   }
@@ -106,6 +50,24 @@ export default function TinTuc() {
   const handleKeywordChange = (value: string) => {
     setKeyword(value)
     setPage(1)
+  }
+
+  const getImageUrl = (path?: string | null) => resolveApiAssetUrl(path) ?? bannerImage
+
+  if (isLoading) {
+    return <div className="news-page news-page-state">Đang tải tin tức...</div>
+  }
+
+  if (isError) {
+    return <div className="news-page news-page-state">Không thể tải danh sách tin tức.</div>
+  }
+
+  if (!data || data.length === 0) {
+    return <div className="news-page news-page-state">Chưa có tin tức để hiển thị.</div>
+  }
+
+  if (!featuredItem) {
+    return <div className="news-page news-page-state">Không tìm thấy tin tức phù hợp.</div>
   }
 
   return (
@@ -145,47 +107,45 @@ export default function TinTuc() {
           </div>
         </section>
 
-        {featuredItem ? (
-          <article className="news-featured-card">
-            <div className="news-featured-image-wrap">
-              <img src={bannerImage} alt={featuredItem.title} className="news-featured-image" />
-              <Tag className="news-featured-badge">Nổi bật</Tag>
+        <article className="news-featured-card">
+          <div className="news-featured-image-wrap">
+            <img src={getImageUrl(featuredItem.anhDaiDien)} alt={featuredItem.tieuDe} className="news-featured-image" />
+            <Tag className="news-featured-badge">Nổi bật</Tag>
+          </div>
+
+          <div className="news-featured-content">
+            <Text className="news-featured-category">🏷 {featuredItem.danhMuc ?? 'Tin tức'}</Text>
+            <Title className="news-featured-title">{featuredItem.tieuDe}</Title>
+            <Paragraph className="news-featured-excerpt">{getSummary(featuredItem.tomTat, featuredItem.noiDung)}</Paragraph>
+
+            <div className="news-meta-row">
+              <Text className="news-meta-item">👤 TravelViet</Text>
+              <Text className="news-meta-item">📅 {formatDisplayDate(featuredItem.ngayDang)}</Text>
             </div>
 
-            <div className="news-featured-content">
-              <Text className="news-featured-category">🏷 {featuredItem.category}</Text>
-              <Title className="news-featured-title">{featuredItem.title}</Title>
-              <Paragraph className="news-featured-excerpt">{featuredItem.excerpt}</Paragraph>
-
-              <div className="news-meta-row">
-                <Text className="news-meta-item">👤 {featuredItem.author}</Text>
-                <Text className="news-meta-item">📅 {featuredItem.date}</Text>
-              </div>
-
-              <button type="button" className="news-link-button">
-                Đọc thêm →
-              </button>
-            </div>
-          </article>
-        ) : null}
+            <button type="button" className="news-link-button">
+              Đọc thêm →
+            </button>
+          </div>
+        </article>
 
         <section className="news-grid">
           {paginatedItems.map((item) => (
             <article key={item.id} className="news-card">
               <div className="news-card-image-wrap">
-                <img src={bannerImage} alt={item.title} className="news-card-image" />
-                <Tag className="news-card-category">{item.category}</Tag>
+                <img src={getImageUrl(item.anhDaiDien)} alt={item.tieuDe} className="news-card-image" />
+                <Tag className="news-card-category">{item.danhMuc ?? 'Tin tức'}</Tag>
               </div>
 
               <div className="news-card-body">
                 <Title level={3} className="news-card-title">
-                  {item.title}
+                  {item.tieuDe}
                 </Title>
-                <Paragraph className="news-card-excerpt">{item.excerpt}</Paragraph>
+                <Paragraph className="news-card-excerpt">{getSummary(item.tomTat, item.noiDung)}</Paragraph>
 
                 <div className="news-meta-row news-meta-row-compact">
-                  <Text className="news-meta-item">👤 {item.author}</Text>
-                  <Text className="news-meta-item">📅 {item.date}</Text>
+                  <Text className="news-meta-item">👤 TravelViet</Text>
+                  <Text className="news-meta-item">📅 {formatDisplayDate(item.ngayDang)}</Text>
                 </div>
 
                 <button type="button" className="news-outline-button">
@@ -196,8 +156,8 @@ export default function TinTuc() {
           ))}
         </section>
 
-        {regularItems.length > NEWS_PAGE_SIZE ? (
-          <TourPhanTrang current={page} pageSize={NEWS_PAGE_SIZE} total={regularItems.length} onChange={setPage} />
+        {regularItems.length > TIN_TUC_PAGE_SIZE ? (
+          <TourPhanTrang current={page} pageSize={TIN_TUC_PAGE_SIZE} total={regularItems.length} onChange={setPage} />
         ) : null}
       </div>
     </div>

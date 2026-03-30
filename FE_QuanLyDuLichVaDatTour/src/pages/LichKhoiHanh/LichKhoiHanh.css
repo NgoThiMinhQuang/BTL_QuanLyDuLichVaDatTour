@@ -21,7 +21,7 @@
 .schedule-hero-content {
   position: relative;
   z-index: 1;
-  width: min(1320px, calc(100% - 40px));
+  width: min(1180px, calc(100% - 380px));
   margin: 0 auto;
   padding: 120px 0 80px;
 }
@@ -40,7 +40,7 @@
 }
 
 .schedule-page-container {
-  width: min(1320px, calc(100% - 40px));
+  width: min(1180px, calc(100% - 380px));
   margin: -64px auto 0;
   padding-bottom: 56px;
 }
@@ -255,87 +255,5 @@
 
   .schedule-card-title.ant-typography {
     font-size: 28px !important;
-  }
-}
-
-@media (max-width: 992px) {
-  .schedule-page-container {
-    width: min(100%, calc(100% - 32px));
-    margin-top: -44px;
-  }
-
-  .schedule-filter-card {
-    padding: 28px 24px;
-  }
-
-  .schedule-filter-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .schedule-card .ant-card-body {
-    grid-template-columns: 1fr;
-  }
-
-  .schedule-card-media {
-    min-height: 260px;
-  }
-
-  .schedule-card-side {
-    border-left: none;
-    border-top: 1px solid rgba(148, 163, 184, 0.22);
-  }
-}
-
-@media (max-width: 768px) {
-  .schedule-hero-content {
-    width: min(100%, calc(100% - 24px));
-    padding: 96px 0 56px;
-  }
-
-  .schedule-hero-title.ant-typography {
-    font-size: 40px !important;
-  }
-
-  .schedule-hero-description.ant-typography {
-    font-size: 16px;
-  }
-
-  .schedule-page-container {
-    width: min(100%, calc(100% - 24px));
-    padding-bottom: 40px;
-  }
-
-  .schedule-filter-card {
-    gap: 22px;
-    padding: 22px 18px;
-  }
-
-  .schedule-search-input.ant-input {
-    height: 72px;
-    padding-inline: 18px;
-    border-radius: 20px;
-    font-size: 18px;
-  }
-
-  .schedule-filter-select.ant-select,
-  .schedule-filter-select.ant-select .ant-select-selector,
-  .schedule-card-secondary-button.ant-btn,
-  .schedule-card-primary-button.ant-btn {
-    height: 56px;
-  }
-
-  .schedule-card-content,
-  .schedule-card-side,
-  .schedule-card-skeleton {
-    padding: 22px 18px;
-  }
-
-  .schedule-card-title.ant-typography {
-    font-size: 20px !important;
-  }
-
-  .schedule-card-price.ant-typography {
-    font-size: 34px !important;
   }
 }
