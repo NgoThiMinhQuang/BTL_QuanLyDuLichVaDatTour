@@ -1,9 +1,9 @@
-import { Button, Layout, Menu, Space, Typography } from 'antd'
+import { Button, Layout, Menu, Space } from 'antd'
 import { Link, useLocation } from 'react-router'
+import logoImage from '../../assets/image.png'
 import { PATHS } from '../../paths'
 
 const { Header } = Layout
-const { Text, Title } = Typography
 
 export function HeaderChung() {
   const location = useLocation()
@@ -22,13 +22,7 @@ export function HeaderChung() {
     <Header className="app-header">
       <div className="app-header-inner">
         <Link to={PATHS.home} className="app-brand">
-          <span className="app-brand-mark">✈</span>
-          <div className="app-brand-text">
-            <Title level={2} className="app-brand-title">
-              Du Lịch Việt
-            </Title>
-            <Text className="app-brand-subtitle">Khám phá đất nước</Text>
-          </div>
+          <img src={logoImage} alt="TravelViet" className="app-brand-logo" />
         </Link>
 
         <Menu mode="horizontal" selectedKeys={[selectedKey]} items={items} className="app-menu" />

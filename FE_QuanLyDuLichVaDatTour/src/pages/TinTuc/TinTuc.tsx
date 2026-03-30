@@ -126,6 +126,7 @@ export default function TinTuc() {
             onChange={(event) => handleKeywordChange(event.target.value)}
             placeholder="Tìm kiếm bài viết..."
             allowClear
+            enterButton={false}
             size="large"
             className="news-search-input"
           />
