@@ -28,6 +28,7 @@ export function LichKhoiHanhBoLoc({
         className="schedule-search-input"
         value={keyword}
         onChange={(event) => onKeywordChange(event.target.value)}
+        prefix={<span className="schedule-search-icon">⌕</span>}
       />
 
       <div className="schedule-filter-grid">
