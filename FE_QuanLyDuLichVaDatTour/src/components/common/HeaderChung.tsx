@@ -12,7 +12,7 @@ export function HeaderChung() {
     { key: PATHS.home, label: <Link to={PATHS.home}>Trang chủ</Link> },
     { key: PATHS.tour, label: <Link to={PATHS.tour}>Tour</Link> },
     { key: PATHS.lichKhoiHanh, label: <Link to={PATHS.lichKhoiHanh}>Lịch khởi hành</Link> },
-    { key: '#uu-dai', label: <a href="#uu-dai">Tin tức</a> },
+    { key: PATHS.tinTuc, label: <Link to={PATHS.tinTuc}>Tin tức</Link> },
     { key: '#tu-van-tour', label: <a href="#tu-van-tour">Liên hệ</a> },
   ]
 

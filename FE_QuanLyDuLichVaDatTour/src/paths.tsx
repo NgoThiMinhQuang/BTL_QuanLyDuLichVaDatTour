@@ -3,6 +3,7 @@ export const PATHS = {
   about: '/about',
   tour: '/tour',
   lichKhoiHanh: '/lich-khoi-hanh',
+  tinTuc: '/tin-tuc',
   login: '/login',
   register: '/register',
 } as const

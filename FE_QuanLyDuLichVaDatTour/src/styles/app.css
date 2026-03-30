@@ -13,9 +13,10 @@
   z-index: 50;
   height: auto;
   line-height: normal;
-  padding: 12px 24px;
+  margin: 0;
+  padding: 12px 0;
   background: rgba(255, 255, 255, 0.98);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.04);
   backdrop-filter: blur(10px);
 }
 
@@ -35,28 +36,34 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  width: 100%;
-  max-width: 1360px;
+  gap: 10px;
+  width: min(1360px, calc(100% - 180px));
   margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .app-brand {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
   flex: 0 0 auto;
   min-width: 0;
   line-height: 1;
+  box-sizing: border-box;
 }
 
 .app-brand-text {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  min-width: 0;
+  line-height: 1;
 }
 
-.app-brand .ant-typography {
+.app-brand .ant-typography,
+.app-brand-title.ant-typography,
+.app-brand-subtitle.ant-typography {
   white-space: nowrap;
 }
 
@@ -64,28 +71,29 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
   background: linear-gradient(135deg, #0ea5e9, #2563eb);
   color: #fff;
   font-size: 20px;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .app-brand-title.ant-typography {
   margin: 0 !important;
   color: #2563eb;
   font-weight: 800;
-  font-size: 20px !important;
-  line-height: 1 !important;
+  font-size: 18px !important;
+  line-height: 1.1 !important;
 }
 
 .app-brand-subtitle.ant-typography {
   margin: 0 !important;
   color: #64748b;
-  font-size: 12px;
-  line-height: 1;
+  font-size: 11px;
+  line-height: 1.1;
 }
 
 .app-menu {
@@ -95,28 +103,32 @@
   background: transparent;
   border-bottom: none;
   color: #0f172a;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .app-menu.ant-menu-horizontal > .ant-menu-item,
 .app-menu.ant-menu-horizontal > .ant-menu-overflow-item {
   color: #0f172a;
   font-weight: 600;
-  font-size: 16px;
-  padding-inline: 16px;
+  font-size: 15px;
+  padding-inline: 10px;
 }
 
 .app-menu.ant-menu-horizontal > .ant-menu-item-selected::after,
 .app-menu.ant-menu-horizontal > .ant-menu-overflow-item-selected::after {
-  border-bottom: 3px solid #2f80ed;
+  border-bottom: 2px solid #2f80ed;
 }
 
 .app-header-actions {
   flex: 0 0 auto;
   display: flex;
   flex-wrap: nowrap;
-  gap: 10px;
+  gap: 4px;
   align-items: center;
   justify-content: flex-end;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .app-header-actions .ant-space-item {
@@ -127,34 +139,39 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   border: none;
   background: transparent;
   color: #475569;
-  font-size: 22px;
+  font-size: 17px;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .app-header-link-button.ant-btn {
-  height: 42px;
-  padding-inline: 12px;
+  height: 36px;
+  padding-inline: 8px;
   color: #1e293b;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15px;
+  border-radius: 12px;
+  white-space: nowrap;
 }
 
 .app-header-button {
-  height: 44px;
-  padding-inline: 24px;
-  border-radius: 14px;
+  height: 32px;
+  padding-inline: 12px;
+  border-radius: 12px;
   border: none;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .app-header-button-primary {
   box-shadow: none;
+  min-width: 96px;
 }
 
 .auth-page {
@@ -497,6 +514,26 @@
   }
 }
 
+@media (max-width: 992px) {
+  .app-header-inner {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .app-menu {
+    order: 3;
+    width: 100%;
+  }
+
+  .app-header-actions {
+    order: 2;
+  }
+
+  .app-header-icon {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
   .auth-page {
     padding: 20px 12px 32px;
@@ -516,1649 +553,6 @@
   .auth-social-grid {
     grid-template-columns: 1fr;
   }
-
-  .auth-register-section {
-    padding: 24px 20px 8px;
-  }
-
-  .auth-form-meta {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 576px) {
-  .auth-panel-title.ant-typography,
-  .auth-form-title.ant-typography {
-    font-size: 34px !important;
-  }
-
-  .auth-panel-metric-value.ant-typography {
-    font-size: 42px !important;
-  }
-}
-
-.auth-kicker {
-  color: #2f80ed;
-  font-weight: 700;
-}
-
-.auth-title.ant-typography {
-  margin: 0 !important;
-}
-
-.auth-description.ant-typography {
-  margin: 0 !important;
-  color: #64748b;
-}
-
-.auth-switch a {
-  font-weight: 700;
-  color: #2f80ed;
-}
-
-.home-page {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
-
-.home-section {
-  width: min(1320px, calc(100% - 32px));
-  margin: 0 auto;
-  border-radius: 28px;
-  overflow: hidden;
-  border: none;
-  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.07);
-}
-
-.home-section .ant-card-body {
-  padding: 34px;
-}
-
-.section-header {
-  width: 100%;
-  margin-bottom: 24px;
-}
-
-.section-title.ant-typography {
-  margin: 0 !important;
-  color: #1e293b;
-  font-size: clamp(30px, 4vw, 40px) !important;
-  font-weight: 800;
-  text-align: center;
-}
-
-.section-description.ant-typography {
-  margin: 0 !important;
-  color: #64748b;
-  font-size: 17px;
-  line-height: 1.7;
-  text-align: center;
-}
-
-.hero-section {
-  position: relative;
-  width: 100%;
-  min-height: 640px;
-  border-radius: 0;
-  box-shadow: none;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-.hero-section .ant-card-body {
-  position: relative;
-  min-height: 640px;
-  padding: 0;
-}
-
-.hero-search-section {
-  margin-top: -8px;
-  background: transparent;
-  box-shadow: none;
-  overflow: visible;
-}
-
-.hero-search-section .ant-card-body {
-  padding: 0;
-}
-
-.hero-search-section.home-section {
-  width: min(1720px, calc(100% - 96px));
-}
-
-.hero-search-section {
-  display: flex;
-  justify-content: center;
-}
-
-.hero-search-section .ant-card-body {
-  width: 100%;
-}
-
-.hero-search-section .hero-search-card {
-  max-width: 1680px;
-  margin: 0 auto;
-}
-
-.hero-search-section .hero-search-card {
-  width: 100%;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(8, 15, 37, 0.18), rgba(8, 15, 37, 0.34));
-}
-
-.hero-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: min(1320px, calc(100% - 32px));
-  min-height: 640px;
-  margin: 0 auto;
-  padding: 96px 0 72px;
-  text-align: center;
-}
-
-.hero-intro {
-  width: min(980px, 100%);
-  align-items: center;
-}
-
-.hero-intro .ant-space-item {
-  width: 100%;
-}
-
-.hero-kicker {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: auto;
-  padding: 10px 20px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #2f80ed, #35d0c2);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  box-shadow: 0 12px 30px rgba(47, 128, 237, 0.28);
-}
-
-.hero-title.ant-typography {
-  margin: 0 !important;
-  color: #fff !important;
-  font-size: clamp(44px, 5vw, 78px);
-  line-height: 1.08;
-  font-weight: 800;
-  letter-spacing: -0.035em;
-}
-
-.hero-description.ant-typography {
-  max-width: 900px;
-  margin: 0 auto !important;
-  color: rgba(255, 255, 255, 0.9) !important;
-  font-size: 18px;
-  line-height: 1.65;
-}
-
-.hero-actions {
-  justify-content: center;
-}
-
-.hero-actions .ant-space-item {
-  width: auto;
-}
-
-.hero-primary-button,
-.hero-secondary-button {
-  height: 56px;
-  min-width: 230px;
-  padding-inline: 28px;
-  border-radius: 16px;
-  font-weight: 700;
-  font-size: 17px;
-}
-
-.hero-primary-button {
-  box-shadow: 0 18px 36px rgba(17, 171, 123, 0.28);
-}
-
-.hero-secondary-button {
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-}
-
-.hero-secondary-button:hover,
-.hero-secondary-button:focus {
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.68) !important;
-  background: rgba(255, 255, 255, 0.14) !important;
-}
-
-.hero-search-card {
-  width: 100%;
-  margin-top: 0;
-  border-radius: 30px;
-  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.12);
-}
-
-.hero-search-card .ant-card-body {
-  padding: 30px 40px;
-}
-
-.hero-search-stack {
-  width: 100%;
-}
-
-.hero-search-stack > .ant-space-item {
-  width: 100%;
-}
-
-.hero-search-title.ant-typography {
-  margin: 0 !important;
-  color: #1e293b;
-  font-size: clamp(26px, 2.4vw, 38px) !important;
-  font-weight: 800;
-  text-align: left;
-}
-
-.hero-search-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 0.9fr;
-  gap: 18px;
-  align-items: end;
-}
-
-.hero-search-field {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.hero-search-field label {
-  color: #22304a;
-  font-size: 15px;
-  font-weight: 700;
-  text-align: left;
-}
-
-.hero-search-input.ant-input,
-.hero-search-input.ant-select,
-.hero-search-date.ant-picker {
-  width: 100%;
-  height: 66px;
-  border-radius: 18px;
-  border: 1px solid #d8e0ee;
-  background: #fff;
-  box-shadow: none;
-}
-
-.hero-search-input.ant-input {
-  padding-inline: 20px;
-  font-size: 16px;
-}
-
-.hero-search-input.ant-select .ant-select-selector {
-  height: 66px !important;
-  padding: 0 20px !important;
-  border: none !important;
-  box-shadow: none !important;
-  border-radius: 18px !important;
-}
-
-.hero-search-input.ant-select .ant-select-selection-wrap,
-.hero-search-input.ant-select .ant-select-selection-search,
-.hero-search-input.ant-select .ant-select-selection-item,
-.hero-search-input.ant-select .ant-select-selection-placeholder {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-}
-
-.hero-search-date.ant-picker {
-  padding-inline: 20px;
-}
-
-.hero-search-date.ant-picker input {
-  font-size: 16px;
-}
-
-.hero-search-submit-wrap {
-  display: flex;
-}
-
-.hero-search-button {
-  width: 100%;
-  height: 66px;
-  border-radius: 18px;
-  font-size: 16px;
-  font-weight: 700;
-  box-shadow: none;
-}
-
-.category-card,
-.featured-tour-card,
-.benefit-card,
-.review-card,
-.departure-card {
-  height: 100%;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  border-radius: 22px;
-  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.category-card:hover,
-.featured-tour-card:hover,
-.benefit-card:hover,
-.review-card:hover,
-.departure-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.09);
-}
-
-.category-card .ant-tag,
-.featured-tour-card .ant-tag,
-.departure-card .ant-tag {
-  margin-inline-end: 0;
-  border-radius: 999px;
-  padding-inline: 10px;
-  font-weight: 600;
-}
-
-.featured-tour-cover {
-  position: relative;
-  height: 220px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #0ea5e9, #2563eb 55%, #38bdf8);
-}
-
-.featured-tour-cover::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.28), transparent 45%);
-}
-
-.featured-tour-meta,
-.departure-meta {
-  color: #64748b;
-}
-
-.featured-tour-price.ant-typography {
-  color: #2563eb;
-  font-weight: 800;
-}
-
-.tour-page {
-  width: min(1720px, calc(100% - 40px));
-  margin: 0 auto;
-  padding: 48px 0 56px;
-}
-
-.tour-page-header {
-  margin-bottom: 28px;
-}
-
-.tour-page-title.ant-typography {
-  margin: 0 0 10px !important;
-  color: #1e293b;
-  font-size: clamp(38px, 4vw, 58px) !important;
-  font-weight: 800;
-}
-
-.tour-results-count.ant-typography {
-  margin: 0 !important;
-  color: #64748b;
-  font-size: 18px;
-}
-
-.tour-layout {
-  display: grid;
-  grid-template-columns: 360px minmax(0, 1fr);
-  gap: 28px;
-  align-items: start;
-}
-
-.tour-sidebar {
-  position: sticky;
-  top: 110px;
-}
-
-.tour-filter-card,
-.tour-toolbar,
-.tour-card,
-.tour-card-skeleton {
-  border-radius: 28px;
-  background: #ffffff;
-  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08);
-}
-
-.tour-filter-card {
-  padding: 28px;
-}
-
-.tour-filter-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 26px;
-}
-
-.tour-filter-title.ant-typography {
-  margin: 0 !important;
-  color: #1e293b;
-}
-
-.tour-filter-reset {
-  border: none;
-  background: transparent;
-  color: #2563eb;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.tour-filter-sections {
-  width: 100%;
-}
-
-.tour-filter-sections > .ant-space-item {
-  width: 100%;
-}
-
-.tour-filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.tour-filter-label {
-  color: #334155;
-  font-size: 17px;
-  font-weight: 700;
-}
-
-.tour-filter-input.ant-input,
-.tour-filter-select.ant-select,
-.tour-filter-date.ant-picker {
-  width: 100%;
-  height: 64px;
-  border-radius: 20px;
-}
-
-.tour-filter-select.ant-select .ant-select-selector {
-  height: 64px !important;
-  padding: 0 18px !important;
-  border-radius: 20px !important;
-}
-
-.tour-filter-select.ant-select .ant-select-selection-wrap,
-.tour-filter-select.ant-select .ant-select-selection-item,
-.tour-filter-select.ant-select .ant-select-selection-placeholder {
-  display: flex;
-  align-items: center;
-}
-
-.tour-filter-input.ant-input,
-.tour-filter-date.ant-picker {
-  padding-inline: 18px;
-}
-
-.tour-filter-checkbox-group .ant-checkbox-wrapper {
-  color: #334155;
-  font-size: 16px;
-}
-
-.tour-filter-apply-button {
-  width: 100%;
-  height: 62px;
-  border-radius: 20px;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.tour-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.tour-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 28px;
-}
-
-.tour-toolbar-sort {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.tour-toolbar-sort .ant-typography {
-  color: #475569;
-  font-size: 16px;
-}
-
-.tour-toolbar-select {
-  min-width: 240px;
-}
-
-.tour-toolbar-select.ant-select .ant-select-selector {
-  height: 54px !important;
-  padding: 0 18px !important;
-  border-radius: 18px !important;
-}
-
-.tour-toolbar-select.ant-select .ant-select-selection-wrap,
-.tour-toolbar-select.ant-select .ant-select-selection-item,
-.tour-toolbar-select.ant-select .ant-select-selection-placeholder {
-  display: flex;
-  align-items: center;
-}
-
-.tour-toolbar-view {
-  background: #eef4ff;
-  border-radius: 20px;
-  padding: 6px;
-}
-
-.tour-toolbar-view .ant-segmented-item-label {
-  min-width: 48px;
-  font-size: 22px;
-}
-
-.tour-grid-list {
-  row-gap: 20px;
-}
-
-.tour-card {
-  overflow: hidden;
-}
-
-.tour-card .ant-card-body {
-  padding: 0;
-}
-
-.tour-card-cover {
-  position: relative;
-  height: 280px;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-.tour-card-status {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 18px;
-  border-radius: 999px;
-  background: #dcfce7;
-  color: #166534;
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.tour-card-favorite {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 54px;
-  height: 54px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.96);
-  color: #475569;
-  font-size: 26px;
-  cursor: pointer;
-}
-
-.tour-card-code {
-  position: absolute;
-  left: 20px;
-  bottom: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 130px;
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.96);
-  color: #334155;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.tour-card-body {
-  padding: 26px 28px 24px;
-}
-
-.tour-card-title.ant-typography {
-  margin: 0 0 18px !important;
-  color: #1e293b;
-  font-size: 26px !important;
-  line-height: 1.45 !important;
-}
-
-.tour-card-meta-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-
-.tour-card-meta {
-  color: #475569;
-  font-size: 16px;
-}
-
-.tour-card-rating {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.tour-card-stars {
-  font-size: 16px;
-}
-
-.tour-card-description.ant-typography {
-  margin-bottom: 20px !important;
-  color: #64748b;
-  line-height: 1.75;
-}
-
-.tour-card-footer {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 18px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(148, 163, 184, 0.28);
-}
-
-.tour-card-price-label,
-.tour-card-price-note,
-.tour-card-price-old {
-  color: #64748b;
-}
-
-.tour-card-price-row {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.tour-card-price-current.ant-typography {
-  margin: 0 !important;
-  color: #2563eb;
-  font-size: 28px !important;
-  font-weight: 800;
-}
-
-.tour-card-price-old {
-  font-size: 16px;
-}
-
-.tour-card-price-note {
-  font-size: 15px;
-}
-
-.tour-card-button {
-  min-width: 150px;
-  height: 64px;
-  border-radius: 22px;
-  font-size: 18px;
-  font-weight: 700;
-  white-space: normal;
-}
-
-.tour-card-list {
-  display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
-}
-
-.tour-card-list .tour-card-cover {
-  height: 100%;
-  min-height: 100%;
-}
-
-.tour-card-list .tour-card-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.tour-card-skeleton {
-  padding: 24px;
-}
-
-.tour-alert-retry {
-  border: none;
-  background: transparent;
-  color: #2563eb;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.tour-pagination {
-  display: flex;
-  justify-content: center;
-  padding-top: 10px;
-}
-
-.tour-pagination .ant-pagination {
-  gap: 12px;
-}
-
-.tour-pagination .ant-pagination-item,
-.tour-pagination .ant-pagination-prev,
-.tour-pagination .ant-pagination-next,
-.tour-pagination .ant-pagination-jump-next,
-.tour-pagination .ant-pagination-jump-prev {
-  min-width: 56px;
-  height: 56px;
-  line-height: 54px;
-  border-radius: 18px;
-}
-
-.tour-pagination .ant-pagination-item-active {
-  background: #2563eb;
-  border-color: #2563eb;
-}
-
-.tour-pagination .ant-pagination-item-active a {
-  color: #fff;
-}
-
-.about-us-section {
-  background: #ffffff;
-}
-
-.about-us-content {
-  width: 100%;
-}
-
-.about-us-content > .ant-space-item {
-  width: 100%;
-}
-
-.about-us-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  padding: 8px 18px;
-  border-radius: 999px;
-  background: #2f6fed;
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.about-us-title.ant-typography {
-  margin: 0 !important;
-  color: #1e293b;
-  font-size: clamp(32px, 3.8vw, 56px) !important;
-  line-height: 1.1 !important;
-  font-weight: 800;
-}
-
-.about-us-description.ant-typography {
-  margin: 0 !important;
-  color: #64748b;
-  font-size: 16px;
-  line-height: 1.75;
-}
-
-.about-us-content .ant-space {
-  gap: 14px !important;
-}
-
-.about-us-content {
-  gap: 18px !important;
-}
-
-.about-us-content > .ant-space-item:last-child {
-  width: auto;
-}
-
-.about-us-content > .ant-space-item:last-child .ant-btn {
-  margin-top: 4px;
-}
-
-.about-us-section .ant-row {
-  align-items: center;
-}
-
-.about-us-section.home-section {
-  width: min(1260px, calc(100% - 40px));
-}
-
-.about-us-section .ant-card-body {
-  padding: 26px 30px;
-}
-
-.about-us-features-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px 16px;
-}
-
-.about-us-feature-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 18px;
-  border-radius: 16px;
-  background: #f8fafc;
-  color: #1e293b;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.about-us-feature-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  background: #10b981;
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 800;
-  flex: 0 0 auto;
-}
-
-.about-us-button {
-  width: fit-content;
-  height: 52px;
-  padding-inline: 24px;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.about-us-visual {
-  position: relative;
-  padding-right: 18px;
-  padding-bottom: 56px;
-}
-
-.about-us-image {
-  display: block;
-  width: 100%;
-  min-height: 420px;
-  object-fit: cover;
-  border-radius: 24px;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.10);
-}
-
-.about-us-award-card {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 220px;
-  border-radius: 20px;
-  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.12);
-}
-
-.about-us-award-card .ant-card-body {
-  padding: 22px 18px;
-  text-align: center;
-}
-
-.about-us-award-icon {
-  font-size: 42px;
-  line-height: 1;
-  margin-bottom: 12px;
-}
-
-.about-us-award-title.ant-typography {
-  margin: 0 0 8px !important;
-  color: #1e293b;
-}
-
-.about-us-award-description.ant-typography {
-  margin: 0 !important;
-  color: #64748b;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.about-us-description strong {
-  color: #1e293b;
-}
-
-.about-us-features-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px 22px;
-}
-
-.about-us-feature-item {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 22px 24px;
-  border-radius: 20px;
-  background: #f8fafc;
-  color: #1e293b;
-  font-size: 17px;
-  font-weight: 600;
-}
-
-.about-us-feature-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  background: #10b981;
-  color: #ffffff;
-  font-size: 24px;
-  font-weight: 800;
-  flex: 0 0 auto;
-}
-
-.about-us-button {
-  width: fit-content;
-  height: 64px;
-  padding-inline: 32px;
-  border-radius: 18px;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.about-us-visual {
-  position: relative;
-  padding-right: 24px;
-  padding-bottom: 84px;
-}
-
-.about-us-image {
-  display: block;
-  width: 100%;
-  min-height: 570px;
-  object-fit: cover;
-  border-radius: 32px;
-  box-shadow: 0 20px 52px rgba(15, 23, 42, 0.10);
-}
-
-.about-us-award-card {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 290px;
-  border-radius: 26px;
-  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.14);
-}
-
-.about-us-award-card .ant-card-body {
-  padding: 28px 24px;
-  text-align: center;
-}
-
-.about-us-award-icon {
-  font-size: 56px;
-  line-height: 1;
-  margin-bottom: 18px;
-}
-
-.about-us-award-title.ant-typography {
-  margin: 0 0 10px !important;
-  color: #1e293b;
-}
-
-.about-us-award-description.ant-typography {
-  margin: 0 !important;
-  color: #64748b;
-  font-size: 16px;
-  line-height: 1.7;
-}
-
-.departures-section {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-}
-
-.schedule-page {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.schedule-hero {
-  position: relative;
-  min-height: 420px;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-.schedule-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(37, 99, 235, 0.88), rgba(6, 182, 212, 0.82));
-}
-
-.schedule-hero-content {
-  position: relative;
-  z-index: 1;
-  width: min(1320px, calc(100% - 40px));
-  margin: 0 auto;
-  padding: 120px 0 80px;
-}
-
-.schedule-hero-title.ant-typography {
-  margin: 0 0 16px !important;
-  color: #fff !important;
-  font-size: clamp(44px, 5vw, 80px) !important;
-  font-weight: 800;
-}
-
-.schedule-hero-description.ant-typography {
-  margin: 0 !important;
-  color: rgba(255, 255, 255, 0.92) !important;
-  font-size: 18px;
-}
-
-.schedule-page-container {
-  width: min(1320px, calc(100% - 40px));
-  margin: -64px auto 0;
-  padding-bottom: 56px;
-}
-
-.schedule-filter-card {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  padding: 40px;
-  border-radius: 30px;
-  background: #fff;
-  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.12);
-}
-
-.schedule-search-input.ant-input {
-  height: 92px;
-  padding-inline: 26px;
-  border-radius: 26px;
-  font-size: 22px;
-}
-
-.schedule-filter-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 28px;
-}
-
-.schedule-filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.schedule-filter-label {
-  color: #334155;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.schedule-filter-select.ant-select {
-  width: 100%;
-  height: 72px;
-}
-
-.schedule-filter-select.ant-select .ant-select-selector {
-  height: 72px !important;
-  padding: 0 20px !important;
-  border-radius: 20px !important;
-}
-
-.schedule-filter-select.ant-select .ant-select-selection-wrap,
-.schedule-filter-select.ant-select .ant-select-selection-item,
-.schedule-filter-select.ant-select .ant-select-selection-placeholder {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-}
-
-.schedule-results {
-  padding-top: 36px;
-}
-
-.schedule-results-stack {
-  width: 100%;
-}
-
-.schedule-results-stack > .ant-space-item {
-  width: 100%;
-}
-
-.schedule-card,
-.schedule-card-skeleton {
-  border-radius: 30px;
-  background: #fff;
-  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.1);
-}
-
-.schedule-card {
-  overflow: hidden;
-}
-
-.schedule-card .ant-card-body {
-  display: grid;
-  grid-template-columns: 420px minmax(0, 1fr) 340px;
-  padding: 0;
-}
-
-.schedule-card-media {
-  position: relative;
-  min-height: 320px;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-.schedule-card-seat-badge {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 18px;
-  border-radius: 999px;
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.schedule-card-seat-badge.success {
-  background: #dcfce7;
-  color: #15803d;
-}
-
-.schedule-card-seat-badge.warning {
-  background: #fef3c7;
-  color: #b45309;
-}
-
-.schedule-card-content {
-  padding: 40px 34px;
-}
-
-.schedule-card-region {
-  display: inline-flex;
-  margin-bottom: 12px;
-  color: #64748b;
-  font-size: 17px;
-}
-
-.schedule-card-title.ant-typography {
-  margin: 0 0 22px !important;
-  color: #0f172a;
-  font-size: clamp(28px, 2.5vw, 40px) !important;
-  line-height: 1.35 !important;
-  font-weight: 800;
-}
-
-.schedule-card-meta-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-bottom: 24px;
-}
-
-.schedule-card-meta {
-  color: #475569;
-  font-size: 17px;
-}
-
-.schedule-card-description.ant-typography {
-  margin: 0 !important;
-  color: #64748b;
-  font-size: 16px;
-  line-height: 1.7;
-}
-
-.schedule-card-side {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 14px;
-  padding: 40px 30px;
-  border-left: 1px solid rgba(148, 163, 184, 0.22);
-}
-
-.schedule-card-price-label,
-.schedule-card-price-note,
-.schedule-card-price-child {
-  color: #64748b;
-}
-
-.schedule-card-price.ant-typography {
-  margin: 0 !important;
-  color: #2563eb;
-  font-size: clamp(34px, 3vw, 54px) !important;
-  font-weight: 800;
-}
-
-.schedule-card-price-note,
-.schedule-card-price-child {
-  font-size: 16px;
-}
-
-.schedule-card-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 12px;
-}
-
-.schedule-card-secondary-button.ant-btn,
-.schedule-card-primary-button.ant-btn {
-  height: 64px;
-  border-radius: 22px;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.schedule-card-secondary-button.ant-btn {
-  border-color: #2563eb;
-  color: #2563eb;
-}
-
-.schedule-card-skeleton {
-  padding: 30px;
-}
-
-.promo-section {
-  background: linear-gradient(135deg, #e9f3ff 0%, #f6fbff 100%);
-}
-
-.promo-code {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
-  font-weight: 700;
-}
-
-.benefit-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
-  font-size: 24px;
-}
-
-.cta-section {
-  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
-}
-
-.cta-section .ant-card-body {
-  padding: 40px 44px;
-}
-
-.cta-title.ant-typography,
-.cta-description.ant-typography {
-  color: #fff !important;
-}
-
-.cta-title.ant-typography {
-  margin: 0 !important;
-}
-
-.cta-description.ant-typography {
-  max-width: 900px;
-  color: rgba(255, 255, 255, 0.84) !important;
-}
-
-@media (max-width: 1200px) {
-  .schedule-card .ant-card-body {
-    grid-template-columns: 320px minmax(0, 1fr) 280px;
-  }
-
-  .schedule-card-title.ant-typography {
-    font-size: 28px !important;
-  }
-
-  .tour-page {
-    width: min(100%, calc(100% - 32px));
-  }
-
-  .tour-layout {
-    grid-template-columns: 300px minmax(0, 1fr);
-    gap: 22px;
-  }
-
-  .tour-card-list {
-    grid-template-columns: 260px minmax(0, 1fr);
-  }
-
-  .tour-card-title.ant-typography {
-    font-size: 22px !important;
-  }
-
-  .app-header-inner {
-    gap: 14px;
-  }
-
-  .app-menu.ant-menu-horizontal > .ant-menu-item,
-  .app-menu.ant-menu-horizontal > .ant-menu-overflow-item {
-    padding-inline: 10px;
-    font-size: 15px;
-  }
-
-  .app-header-button {
-    padding-inline: 18px;
-  }
-
-  .hero-search-section.home-section {
-    width: min(100%, calc(100vw - 32px));
-  }
-
-  .hero-search-card .ant-card-body {
-    padding: 26px 24px;
-  }
-
-  .hero-search-grid {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-
-  .hero-search-submit-wrap {
-    grid-column: span 3;
-  }
-}
-
-@media (max-width: 992px) {
-  .schedule-page-container {
-    width: min(100%, calc(100% - 32px));
-    margin-top: -44px;
-  }
-
-  .schedule-filter-card {
-    padding: 28px 24px;
-  }
-
-  .schedule-filter-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .schedule-card .ant-card-body {
-    grid-template-columns: 1fr;
-  }
-
-  .schedule-card-media {
-    min-height: 260px;
-  }
-
-  .schedule-card-side {
-    border-left: none;
-    border-top: 1px solid rgba(148, 163, 184, 0.22);
-  }
-
-  .tour-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .tour-sidebar {
-    position: static;
-  }
-
-  .tour-toolbar {
-    flex-wrap: wrap;
-    padding: 18px 20px;
-  }
-
-  .tour-toolbar-sort {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .tour-toolbar-select {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .tour-card-list {
-    grid-template-columns: 1fr;
-  }
-
-  .tour-card-list .tour-card-cover {
-    min-height: 280px;
-  }
-
-  .app-header-inner {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .app-menu {
-    order: 3;
-    width: 100%;
-  }
-
-  .app-header-actions {
-    order: 2;
-  }
-
-  .app-header-icon {
-    display: none;
-  }
-
-  .hero-section,
-  .hero-section .ant-card-body,
-  .hero-content {
-    min-height: auto;
-  }
-
-  .hero-content {
-    padding: 96px 0 48px;
-  }
-
-  .hero-search-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-  }
-
-  .hero-search-submit-wrap {
-    grid-column: span 2;
-  }
-}
-
-@media (max-width: 768px) {
-  .schedule-hero-content {
-    width: min(100%, calc(100% - 24px));
-    padding: 96px 0 56px;
-  }
-
-  .schedule-hero-title.ant-typography {
-    font-size: 40px !important;
-  }
-
-  .schedule-hero-description.ant-typography {
-    font-size: 16px;
-  }
-
-  .schedule-page-container {
-    width: min(100%, calc(100% - 24px));
-    padding-bottom: 40px;
-  }
-
-  .schedule-filter-card {
-    gap: 22px;
-    padding: 22px 18px;
-  }
-
-  .schedule-search-input.ant-input {
-    height: 72px;
-    padding-inline: 18px;
-    border-radius: 20px;
-    font-size: 18px;
-  }
-
-  .schedule-filter-select.ant-select,
-  .schedule-filter-select.ant-select .ant-select-selector,
-  .schedule-card-secondary-button.ant-btn,
-  .schedule-card-primary-button.ant-btn {
-    height: 56px;
-  }
-
-  .schedule-card-content,
-  .schedule-card-side,
-  .schedule-card-skeleton {
-    padding: 22px 18px;
-  }
-
-  .schedule-card-title.ant-typography {
-    font-size: 20px !important;
-  }
-
-  .schedule-card-price.ant-typography {
-    font-size: 34px !important;
-  }
-
-  .tour-page {
-    width: min(100%, calc(100% - 24px));
-    padding: 32px 0 40px;
-  }
-
-  .tour-page-title.ant-typography {
-    font-size: 34px !important;
-  }
-
-  .tour-results-count.ant-typography {
-    font-size: 16px;
-  }
-
-  .tour-filter-card {
-    padding: 22px 18px;
-  }
-
-  .tour-card-body {
-    padding: 20px 18px;
-  }
-
-  .tour-card-cover {
-    height: 220px;
-  }
-
-  .tour-card-title.ant-typography {
-    font-size: 18px !important;
-  }
-
-  .tour-card-footer {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .tour-card-button {
-    width: 100%;
-    min-width: 0;
-    height: 56px;
-  }
-
-  .home-section .ant-card-body {
-    padding: 24px;
-  }
-
-  .about-us-features-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .about-us-visual {
-    padding-right: 0;
-    padding-bottom: 0;
-  }
-
-  .about-us-image {
-    min-height: 300px;
-    border-radius: 20px;
-  }
-
-  .about-us-award-card {
-    position: static;
-    width: 100%;
-    margin-top: 14px;
-  }
-
-  .about-us-button {
-    width: 100%;
-  }
-
-  .hero-content {
-    width: min(100%, calc(100% - 24px));
-    gap: 18px;
-    padding: 92px 0 24px;
-  }
-
-  .hero-title.ant-typography {
-    font-size: clamp(34px, 10vw, 56px);
-  }
-
-  .hero-description.ant-typography {
-    font-size: 15px;
-    line-height: 1.6;
-  }
-
-  .hero-primary-button,
-  .hero-secondary-button {
-    min-width: 190px;
-  }
-
-  .hero-search-card {
-    border-radius: 26px;
-  }
-
-  .hero-search-card .ant-card-body {
-    padding: 20px 16px;
-  }
-
-  .hero-search-title.ant-typography {
-    text-align: center;
-    font-size: 26px !important;
-  }
-
-  .hero-search-input.ant-input,
-  .hero-search-input.ant-select,
-  .hero-search-date.ant-picker,
-  .hero-search-input.ant-select .ant-select-selector,
-  .hero-search-button {
-    height: 60px;
-    border-radius: 16px;
-  }
-
-  .hero-search-input.ant-input,
-  .hero-search-date.ant-picker,
-  .hero-search-input.ant-select .ant-select-selector {
-    padding-inline: 18px !important;
-  }
 }
 
 @media (max-width: 576px) {
@@ -2166,39 +560,83 @@
     padding-inline: 12px;
   }
 
-  .app-header-actions,
-  .hero-actions {
+  .app-header-actions {
     width: 100%;
   }
 
-  .app-header-button,
-  .hero-primary-button,
-  .hero-secondary-button {
+  .app-header-button {
     width: 100%;
   }
+}
 
-  .about-us-title.ant-typography {
-    font-size: 30px !important;
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-block {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-label,
+.featured-tour-grid .tour-card-featured .tour-card-price-note,
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-row {
+  display: flex;
+  align-items: baseline;
+  min-height: auto;
+  flex-wrap: nowrap;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
+  margin: 0 !important;
+  font-size: 36px !important;
+  line-height: 1.1 !important;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  flex: 0 0 290px;
+  width: 290px;
+  min-width: 290px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 1200px) {
+  .featured-tour-grid .tour-card-featured .tour-card-footer {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .about-us-description.ant-typography {
-    font-size: 15px;
+  .featured-tour-grid .tour-card-featured .tour-card-button {
+    width: 100%;
+    min-width: 0;
+    flex: 0 0 auto;
   }
 
-  .about-us-feature-item {
-    padding: 16px 14px;
-    font-size: 15px;
-  }
-
-  .hero-search-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-search-submit-wrap {
-    grid-column: span 1;
-  }
-
-  .cta-section .ant-card-body {
-    padding-inline: 20px;
+  .featured-tour-grid .tour-card-featured .tour-card-price-label,
+  .featured-tour-grid .tour-card-featured .tour-card-price-note {
+    white-space: normal;
   }
 }
