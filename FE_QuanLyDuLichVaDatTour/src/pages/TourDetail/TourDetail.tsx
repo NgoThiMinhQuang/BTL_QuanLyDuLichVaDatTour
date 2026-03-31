@@ -29,7 +29,6 @@ export default function TourDetail() {
     heroImage,
     infoFacts,
     itineraryByDay,
-    sidebarBenefits,
   } = useTourChiTietPage(tourId, isValidId)
 
   if (!isValidId) {
@@ -77,7 +76,7 @@ export default function TourDetail() {
                 ) : (
                   <div className="tour-detail-hero-placeholder">Chưa có ảnh tour</div>
                 )}
-                <Tag className="tour-detail-status-tag">Đang mở bán</Tag>
+                <Tag className="tour-detail-status-tag">{detail.trangThai}</Tag>
               </div>
 
               {gallery.length > 1 ? (
@@ -92,11 +91,6 @@ export default function TourDetail() {
             <Card className="tour-detail-summary-card" variant="borderless">
               <Text className="tour-detail-code">{detail.maTour}</Text>
               <Title className="tour-detail-title">{detail.tenTour}</Title>
-
-              <div className="tour-detail-rating-row">
-                <Text>⭐ 4.8 (156 đánh giá)</Text>
-                <Text>💬 89 bình luận</Text>
-              </div>
 
               <div className="tour-detail-facts-grid">
                 {infoFacts.map((fact) => (
@@ -119,9 +113,13 @@ export default function TourDetail() {
                     label: 'Tổng quan',
                     children: (
                       <div className="tour-detail-section-content">
-                        <Paragraph className="tour-detail-overview-text">
-                          {detail.moTaChiTiet ?? detail.moTaNgan ?? 'Thông tin tour đang được cập nhật.'}
-                        </Paragraph>
+                        {detail.moTaChiTiet ?? detail.moTaNgan ? (
+                          <Paragraph className="tour-detail-overview-text">
+                            {detail.moTaChiTiet ?? detail.moTaNgan}
+                          </Paragraph>
+                        ) : (
+                          <Empty description="Chưa có thông tin" />
+                        )}
                         {detail.diemDens.length > 0 ? (
                           <div className="tour-detail-destination-list">
                             {detail.diemDens
@@ -164,9 +162,11 @@ export default function TourDetail() {
                                     <Title level={4} className="tour-detail-timeline-title">
                                       {item.tieuDe ?? 'Hoạt động'}
                                     </Title>
-                                    <Paragraph className="tour-detail-timeline-text">
-                                      {item.noiDung ?? 'Đang cập nhật nội dung hoạt động.'}
-                                    </Paragraph>
+                                    {item.noiDung ? (
+                                      <Paragraph className="tour-detail-timeline-text">
+                                        {item.noiDung}
+                                      </Paragraph>
+                                    ) : null}
                                     {item.tenDiaDiem ? <Text className="tour-detail-timeline-location">📍 {item.tenDiaDiem}</Text> : null}
                                   </div>
                                 </div>
@@ -191,7 +191,7 @@ export default function TourDetail() {
                             <div className="tour-detail-departure-left">
                               <div className="tour-detail-departure-top-row">
                                 <Tag className="tour-detail-departure-code">{item.maDotTour}</Tag>
-                                <Tag className="tour-detail-departure-status">Đang mở bán</Tag>
+                                <Tag className="tour-detail-departure-status">{item.trangThai}</Tag>
                               </div>
                               <div className="tour-detail-departure-grid">
                                 <div>
@@ -249,9 +249,13 @@ export default function TourDetail() {
                     label: 'Điều kiện tour',
                     children: (
                       <div className="tour-detail-section-content">
-                        <Paragraph className="tour-detail-overview-text">
-                          {detail.dieuKienTour ?? 'Điều kiện tour đang được cập nhật.'}
-                        </Paragraph>
+                        {detail.dieuKienTour ? (
+                          <Paragraph className="tour-detail-overview-text">
+                            {detail.dieuKienTour}
+                          </Paragraph>
+                        ) : (
+                          <Empty description="Chưa có thông tin" />
+                        )}
                       </div>
                     ),
                   },
@@ -285,11 +289,6 @@ export default function TourDetail() {
                 <Button className="tour-detail-secondary-button">Liên hệ tư vấn</Button>
               </div>
 
-              <div className="tour-detail-benefit-list">
-                {sidebarBenefits.map((item) => (
-                  <div key={item.id} className="tour-detail-benefit-item">✓ {item.label}</div>
-                ))}
-              </div>
             </Card>
           </div>
         </div>

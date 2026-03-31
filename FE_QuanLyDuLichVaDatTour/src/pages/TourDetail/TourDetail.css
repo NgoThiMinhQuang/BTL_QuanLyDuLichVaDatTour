@@ -21,8 +21,8 @@
 
 .tour-detail-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 28px;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
   align-items: start;
 }
 
@@ -385,46 +385,50 @@
 .tour-detail-sidebar-card .ant-card-body {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 18px;
+  padding: 22px;
 }
 
 .tour-detail-sidebar-price-label {
   color: #64748b;
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .tour-detail-sidebar-price.ant-typography {
   margin: 0 !important;
   color: #2563eb !important;
   text-align: center;
-  font-size: 56px !important;
+  font-size: 44px !important;
+  line-height: 1.15 !important;
   font-weight: 800;
 }
 
 .tour-detail-sidebar-price-note {
   color: #64748b;
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .tour-detail-sidebar-section {
-  padding-top: 24px;
+  padding-top: 18px;
   border-top: 1px solid rgba(148, 163, 184, 0.24);
 }
 
 .tour-detail-sidebar-section .ant-typography {
   margin-top: 0 !important;
+  margin-bottom: 12px !important;
+  font-size: 16px !important;
 }
 
 .tour-detail-sidebar-select.ant-select,
 .tour-detail-sidebar-select.ant-select .ant-select-selector {
-  height: 64px !important;
-  border-radius: 18px !important;
+  height: 52px !important;
+  border-radius: 14px !important;
 }
 
 .tour-detail-sidebar-select.ant-select .ant-select-selector {
-  padding: 0 18px !important;
+  padding: 0 14px !important;
 }
 
 .tour-detail-sidebar-select.ant-select .ant-select-selection-wrap,
@@ -432,20 +436,20 @@
 .tour-detail-sidebar-select.ant-select .ant-select-selection-placeholder {
   display: flex;
   align-items: center;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .tour-detail-sidebar-actions {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .tour-detail-primary-button.ant-btn,
 .tour-detail-secondary-button.ant-btn {
-  height: 64px;
-  border-radius: 18px;
-  font-size: 18px;
+  height: 52px;
+  border-radius: 14px;
+  font-size: 16px;
   font-weight: 700;
 }
 

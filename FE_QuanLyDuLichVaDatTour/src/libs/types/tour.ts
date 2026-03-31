@@ -94,11 +94,6 @@ export interface TourInfoFact {
   value: string
 }
 
-export interface TourSidebarBenefit {
-  id: string
-  label: string
-}
-
 export interface TourGalleryItem {
   id: number
   imageUrl: string

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { resolveApiAssetUrl } from '../../constant/api'
-import type { DepartureItem, TourGalleryItem, TourInfoFact, TourSidebarBenefit } from '../../libs/types/tour'
+import type { DepartureItem, TourGalleryItem, TourInfoFact } from '../../libs/types/tour'
 import { layBangGiaLichKhoiHanh, layLichKhoiHanhTour, layLichTrinhTour, layTourChiTiet } from './layTourChiTiet'
 
 export function useTourChiTietPage(tourId: number, isValidId: boolean) {
@@ -88,12 +88,6 @@ export function useTourChiTietPage(tourId: number, isValidId: boolean) {
       }))
   }, [itineraryQuery.data])
 
-  const sidebarBenefits = useMemo<TourSidebarBenefit[]>(() => [
-    { id: 'confirm', label: 'Xác nhận ngay sau khi đặt' },
-    { id: 'cancel', label: 'Hủy miễn phí trước 7 ngày' },
-    { id: 'insurance', label: 'Bảo hiểm du lịch toàn diện' },
-  ], [])
-
   return {
     detailQuery,
     itineraryQuery,
@@ -105,6 +99,5 @@ export function useTourChiTietPage(tourId: number, isValidId: boolean) {
     heroImage,
     infoFacts,
     itineraryByDay,
-    sidebarBenefits,
   }
 }
