@@ -1,5 +1,6 @@
 import { Button, Card, Typography } from 'antd'
 import { Link } from 'react-router'
+import { getTourChiTietPath } from '../../paths'
 import bannerImage from '../../assets/Banner.jpg'
 import { resolveApiAssetUrl } from '../../constant/api'
 import type { FeaturedTourApiItem } from '../../libs/types/tour'
@@ -54,7 +55,7 @@ export function TourThe({
   imageIndex,
   viewMode,
   ctaLabel = 'Xem chi tiết',
-  ctaHref = '/tour',
+  ctaHref = getTourChiTietPath(tour.id),
   variant = 'default',
 }: TourTheProps) {
   const coverImage = [...tour.anhTours]

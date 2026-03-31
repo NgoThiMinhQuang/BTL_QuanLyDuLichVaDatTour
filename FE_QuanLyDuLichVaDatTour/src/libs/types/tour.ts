@@ -31,6 +31,96 @@ export interface FeaturedTourApiItem {
   trangThai: string
 }
 
+export interface TourDestinationItem {
+  id: number
+  diaDiemId: number
+  tenDiaDiem: string
+  tinhThanh: string | null
+  quocGia: string
+  thuTu: number
+  ghiChu: string | null
+}
+
+export interface TourDetailApiItem extends FeaturedTourApiItem {
+  moTaChiTiet: string | null
+  dieuKienTour: string | null
+  diemDens: TourDestinationItem[]
+}
+
+export interface TourItineraryItem {
+  id: number
+  tourId: number
+  ngayThu: number
+  thuTuTrongNgay: number
+  gioBatDau: string | null
+  gioKetThuc: string | null
+  tieuDe: string | null
+  noiDung: string | null
+  diaDiemId: number | null
+  tenDiaDiem: string | null
+}
+
+export interface DeparturePricingItem {
+  lichKhoiHanhId: number
+  giaNguoiLonNgayThuong: number | null
+  giaTreEmNgayThuong: number | null
+  giaEmBeNgayThuong: number | null
+  giaNguoiLonCuoiTuan: number | null
+  giaTreEmCuoiTuan: number | null
+  giaEmBeCuoiTuan: number | null
+}
+
+export interface TourDetailSectionTab {
+  key: 'tong-quan' | 'lich-trinh' | 'lich-khoi-hanh' | 'gia-tour' | 'dieu-kien'
+  label: string
+}
+
+export interface TourReviewSummary {
+  average: number
+  total: number
+}
+
+export interface TourReviewDetail {
+  id: number
+  name: string
+  rating: number
+  comment: string
+  createdAt: string
+}
+
+export interface TourInfoFact {
+  key: string
+  label: string
+  value: string
+}
+
+export interface TourSidebarBenefit {
+  id: string
+  label: string
+}
+
+export interface TourGalleryItem {
+  id: number
+  imageUrl: string
+  alt: string
+  isAvatar: boolean
+}
+
+export interface TourScheduleOption {
+  id: number
+  label: string
+  ngayKhoiHanh: string
+  ngayKetThuc: string
+}
+
+export interface TourDetailPageState {
+  detail: TourDetailApiItem
+  itinerary: TourItineraryItem[]
+  departures: DepartureItem[]
+  selectedDeparture: DepartureItem | null
+  pricing: DeparturePricingItem | null
+}
+
 export interface DiaDiemItem {
   id: number
   tenDiaDiem: string

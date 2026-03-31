@@ -7,6 +7,7 @@ import Home from './pages/Home/Home'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
 import Tour from './pages/Tour/Tour'
+import TourChiTiet from './pages/TourDetail/TourDetail'
 import LichKhoiHanh from './pages/LichKhoiHanh/LichKhoiHanh'
 import TinTuc from './pages/TinTuc/TinTuc'
 import TinTucChiTiet from './pages/TinTuc/TinTucChiTiet'
@@ -26,6 +27,7 @@ export default function AppRouter() {
           <Route path={PATHS.home} element={<Home />} />
           <Route path={PATHS.about} element={<About />} />
           <Route path={PATHS.tour} element={<Tour />} />
+          <Route path={PATHS.tourChiTiet} element={<TourChiTiet />} />
           <Route path={PATHS.lichKhoiHanh} element={<LichKhoiHanh />} />
           <Route path={PATHS.tinTuc} element={<TinTuc />} />
           <Route path={PATHS.tinTucChiTiet} element={<TinTucChiTiet />} />
