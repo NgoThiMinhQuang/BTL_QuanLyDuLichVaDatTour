@@ -49,6 +49,7 @@ export function LichKhoiHanhBoLoc({
             size="large"
             value={diemDen}
             className="schedule-filter-select"
+            popupClassName="schedule-filter-select-dropdown"
             options={[{ value: 'all', label: 'Tất cả điểm đến' }, ...destinationOptions.map((item) => ({ value: item, label: item }))]}
             onChange={onDiemDenChange}
           />

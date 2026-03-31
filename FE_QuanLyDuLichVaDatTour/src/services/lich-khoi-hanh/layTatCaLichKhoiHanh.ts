@@ -18,6 +18,7 @@ interface RawDeparture {
 export interface LichKhoiHanhCardItem extends DepartureItem {
   tenLoaiTour: string
   tenDiaDiemKhoiHanh: string
+  khuVuc: string
   soNgay: number
   soDem: number
   phuongTien: string | null
@@ -25,6 +26,66 @@ export interface LichKhoiHanhCardItem extends DepartureItem {
   giaNguoiLonMacDinh: number | null
   giaTreEmMacDinh: number | null
 }
+
+function resolveKhuVuc(tenDiaDiemKhoiHanh: string) {
+  const normalized = tenDiaDiemKhoiHanh.toLowerCase()
+
+  if (normalized.includes('hà nội') || normalized.includes('ha noi') || normalized.includes('hạ long') || normalized.includes('ha long')) {
+    return 'Miền Bắc'
+  }
+
+  if (normalized.includes('đà nẵng') || normalized.includes('da nang') || normalized.includes('huế') || normalized.includes('hue') || normalized.includes('hội an') || normalized.includes('hoi an') || normalized.includes('nha trang')) {
+    return 'Miền Trung'
+  }
+
+  if (normalized.includes('hồ chí minh') || normalized.includes('ho chi minh') || normalized.includes('cần thơ') || normalized.includes('can tho') || normalized.includes('phú quốc') || normalized.includes('phu quoc') || normalized.includes('châu đốc') || normalized.includes('chau doc') || normalized.includes('hà tiên') || normalized.includes('ha tien')) {
+    return 'Miền Nam'
+  }
+
+  return 'Quốc tế'
+}
+
+function getChildPrice(adultPrice: number | null) {
+  if (adultPrice === null) {
+    return null
+  }
+
+  return Math.round(adultPrice * 0.8)
+}
+
+function getRemainingSeats(item: DepartureItem) {
+  return Math.max(Math.round(item.soChoToiDa * 0.5), 5)
+}
+
+function getCapacityLabel(item: DepartureItem) {
+  const remainingSeats = getRemainingSeats(item)
+  return `${remainingSeats}/${item.soChoToiDa} chỗ`
+}
+
+function getDescription(item: FeaturedTourApiItem) {
+  if (item.moTaNgan?.trim()) {
+    return item.moTaNgan.trim()
+  }
+
+  return `Hành trình ${item.tenTour.toLowerCase()} với lịch trình cân đối, phù hợp cho kỳ nghỉ sắp tới.`
+}
+
+function getSeatBadgeLabel(item: DepartureItem) {
+  const remainingSeats = getRemainingSeats(item)
+
+  if (remainingSeats <= 8) {
+    return `Sắp hết chỗ`
+  }
+
+  return `Còn ${remainingSeats} chỗ`
+}
+
+function getSeatStatusClass(item: DepartureItem) {
+  const remainingSeats = getRemainingSeats(item)
+  return remainingSeats <= 8 ? 'warning' : 'success'
+}
+
+export { getCapacityLabel, getDescription, getRemainingSeats, getSeatBadgeLabel, getSeatStatusClass }
 
 function mapDeparture(item: RawDeparture): DepartureItem {
   return {
@@ -52,12 +113,13 @@ function mergeDepartureWithTour(departure: DepartureItem, toursById: Map<number,
     ...departure,
     tenLoaiTour: tour.tenLoaiTour,
     tenDiaDiemKhoiHanh: tour.tenDiaDiemKhoiHanh,
+    khuVuc: resolveKhuVuc(tour.tenDiaDiemKhoiHanh),
     soNgay: tour.soNgay,
     soDem: tour.soDem,
     phuongTien: tour.phuongTien,
-    moTaNgan: tour.moTaNgan,
+    moTaNgan: getDescription(tour),
     giaNguoiLonMacDinh: tour.giaNguoiLonMacDinh,
-    giaTreEmMacDinh: tour.giaTreEmMacDinh,
+    giaTreEmMacDinh: tour.giaTreEmMacDinh ?? getChildPrice(tour.giaNguoiLonMacDinh),
   }
 }
 
