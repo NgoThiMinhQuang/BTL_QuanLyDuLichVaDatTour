@@ -1,0 +1,22 @@
+.promo-section {
+  background: linear-gradient(135deg, #e9f3ff 0%, #f6fbff 100%);
+}
+
+.promo-code {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.promo-title.ant-typography {
+  margin: 0 !important;
+}
+
+.promo-description.ant-typography {
+  margin-bottom: 0 !important;
+}

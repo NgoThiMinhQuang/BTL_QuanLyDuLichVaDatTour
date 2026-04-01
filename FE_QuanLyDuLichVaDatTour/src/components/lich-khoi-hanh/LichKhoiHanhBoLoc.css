@@ -1,0 +1,152 @@
+.schedule-filter-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 34px 38px;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.1);
+}
+
+.schedule-search-input.ant-input-affix-wrapper {
+  height: 82px;
+  padding-inline: 26px;
+  border-radius: 22px;
+  font-size: 20px;
+}
+
+.schedule-search-input.ant-input-affix-wrapper .ant-input {
+  font-size: 20px;
+}
+
+.schedule-search-icon {
+  color: #94a3b8;
+  font-size: 26px;
+  margin-right: 10px;
+}
+
+.schedule-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.schedule-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schedule-filter-label {
+  color: #334155;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.schedule-filter-select.ant-select {
+  width: 100%;
+  height: 70px;
+}
+
+.schedule-filter-select.ant-select .ant-select-selector {
+  height: 70px !important;
+  padding: 0 20px !important;
+  border-radius: 18px !important;
+}
+
+.schedule-filter-select.ant-select .ant-select-selection-wrap,
+.schedule-filter-select.ant-select .ant-select-selection-item,
+.schedule-filter-select.ant-select .ant-select-selection-placeholder {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.schedule-filter-select.ant-select .ant-select-arrow {
+  font-size: 18px;
+}
+
+.schedule-filter-select.ant-select-focused .ant-select-selector,
+.schedule-filter-select.ant-select-open .ant-select-selector {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+}
+
+.schedule-filter-select-dropdown {
+  border-radius: 18px;
+  overflow: hidden;
+  min-width: 100%;
+  z-index: 20;
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+  background-clip: padding-box;
+}
+
+.schedule-filter-select-dropdown .ant-select-item {
+  min-height: 52px;
+  padding: 14px 18px;
+  font-size: 16px;
+}
+
+.schedule-filter-select-dropdown .ant-select-item-option {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  transition: background 0.2s ease;
+}
+
+.schedule-filter-select-dropdown .ant-select-item-option:last-child {
+  border-bottom: none;
+}
+
+.schedule-filter-select-dropdown .ant-select-item-option-content {
+  display: block;
+  width: 100%;
+  color: #1e293b;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+.schedule-filter-select-dropdown .ant-select-item-option-active {
+  background: #eff6ff !important;
+}
+
+.schedule-filter-select-dropdown .ant-select-item-option-selected {
+  background: #dbeafe !important;
+  font-weight: 600;
+}
+
+.schedule-filter-select-dropdown .ant-select-item-option-active.ant-select-item-option-selected {
+  background: #bfdbfe !important;
+}
+
+.schedule-filter-select-dropdown .ant-select-item-option-selected .ant-select-item-option-content,
+.schedule-filter-select-dropdown .ant-select-item-option-active .ant-select-item-option-content {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.schedule-filter-select-dropdown .ant-select-item-option-state {
+  display: none;
+}
+
+.schedule-filter-select-dropdown .rc-virtual-list-holder-inner {
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .schedule-filter-card {
+    padding: 24px 18px;
+  }
+
+  .schedule-search-input.ant-input-affix-wrapper {
+    height: 70px;
+    font-size: 18px;
+  }
+
+  .schedule-filter-grid {
+    grid-template-columns: 1fr;
+  }
+}

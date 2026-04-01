@@ -1,0 +1,66 @@
+.tour-toolbar {
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 28px;
+}
+
+.tour-toolbar-sort {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tour-toolbar-sort .ant-typography {
+  color: #475569;
+  font-size: 16px;
+}
+
+.tour-toolbar-select {
+  min-width: 240px;
+}
+
+.tour-toolbar-select.ant-select .ant-select-selector {
+  height: 54px !important;
+  padding: 0 18px !important;
+  border-radius: 18px !important;
+}
+
+.tour-toolbar-select.ant-select .ant-select-selection-wrap,
+.tour-toolbar-select.ant-select .ant-select-selection-item,
+.tour-toolbar-select.ant-select .ant-select-selection-placeholder {
+  display: flex;
+  align-items: center;
+}
+
+.tour-toolbar-view {
+  background: #eef4ff;
+  border-radius: 20px;
+  padding: 6px;
+}
+
+.tour-toolbar-view .ant-segmented-item-label {
+  min-width: 48px;
+  font-size: 22px;
+}
+
+@media (max-width: 992px) {
+  .tour-toolbar {
+    flex-wrap: wrap;
+    padding: 18px 20px;
+  }
+
+  .tour-toolbar-sort {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .tour-toolbar-select {
+    width: 100%;
+    min-width: 0;
+  }
+}

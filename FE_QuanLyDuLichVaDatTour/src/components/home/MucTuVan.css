@@ -1,0 +1,26 @@
+.cta-section {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+}
+
+.cta-section .ant-card-body {
+  padding: 40px 44px;
+}
+
+.cta-section-stack {
+  width: 100%;
+}
+
+.cta-title.ant-typography,
+.cta-description.ant-typography {
+  color: #fff !important;
+}
+
+.cta-title.ant-typography {
+  margin: 0 !important;
+}
+
+.cta-description.ant-typography {
+  margin-bottom: 0 !important;
+  max-width: 900px;
+  color: rgba(255, 255, 255, 0.84) !important;
+}

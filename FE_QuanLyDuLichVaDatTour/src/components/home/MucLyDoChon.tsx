@@ -1,3 +1,4 @@
+import './MucLyDoChon.css'
 import { Card, Col, Row, Space, Typography } from 'antd'
 import { benefitItems } from '../../libs/types/homeMocks'
 import { TieuDeMuc } from '../../components/common/TieuDeMuc'
@@ -16,12 +17,12 @@ export function MucLyDoChon() {
         {benefitItems.map((item) => (
           <Col xs={24} md={12} key={item.id}>
             <Card className="benefit-card">
-              <Space orientation="vertical" size={12}>
+              <Space orientation="vertical" size={12} className="benefit-card-stack">
                 <span className="benefit-icon">{item.icon}</span>
-                <Title level={4} style={{ margin: 0 }}>
+                <Title level={4} className="benefit-card-title">
                   {item.title}
                 </Title>
-                <Paragraph style={{ marginBottom: 0 }}>{item.description}</Paragraph>
+                <Paragraph className="benefit-card-description">{item.description}</Paragraph>
               </Space>
             </Card>
           </Col>

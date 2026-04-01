@@ -1,3 +1,4 @@
+import './MucGioiThieu.css'
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
 import aboutImage from '../../assets\/Banner.jpg'
 

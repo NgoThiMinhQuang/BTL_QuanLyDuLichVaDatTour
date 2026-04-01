@@ -1,3 +1,4 @@
+import './MucLichKhoiHanh.css'
 import { Alert, Button, Card, Col, Empty, Row, Skeleton, Space, Tag, Typography } from 'antd'
 import type { FeaturedTourApiItem } from '../../libs/types/tour'
 import { useLichKhoiHanhGan } from '../../services/home/useLichKhoiHanhGan'
@@ -51,20 +52,20 @@ export function MucLichKhoiHanh({ tours }: MucLichKhoiHanhProps) {
           {data.map((item) => (
             <Col xs={24} md={12} xl={6} key={item.id}>
               <Card className="departure-card">
-                <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+                <Space orientation="vertical" size={12} className="departure-card-stack">
                   <Space wrap>
                     <Tag color="blue">{formatNgay(item.ngayKhoiHanh)}</Tag>
                     <Tag color="cyan">{item.maDotTour}</Tag>
                   </Space>
 
                   <Space orientation="vertical" size={4}>
-                    <Title level={4} style={{ margin: 0 }}>
+                    <Title level={4} className="departure-card-title">
                       {item.tenTour}
                     </Title>
                     <Text className="departure-meta">Mã tour: {item.maTour}</Text>
                   </Space>
 
-                  <Paragraph style={{ marginBottom: 0 }}>
+                  <Paragraph className="departure-card-period">
                     Từ {formatNgay(item.ngayKhoiHanh)} đến {formatNgay(item.ngayKetThuc)}
                   </Paragraph>
 

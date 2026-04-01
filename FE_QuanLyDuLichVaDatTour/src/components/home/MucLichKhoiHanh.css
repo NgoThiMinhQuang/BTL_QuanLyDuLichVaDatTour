@@ -1,0 +1,19 @@
+.departures-section {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.departure-card-stack {
+  width: 100%;
+}
+
+.departure-card-title.ant-typography {
+  margin: 0 !important;
+}
+
+.departure-card-period.ant-typography {
+  margin-bottom: 0 !important;
+}
+
+.departure-meta {
+  color: #64748b;
+}

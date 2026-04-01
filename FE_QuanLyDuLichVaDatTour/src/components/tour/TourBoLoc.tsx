@@ -1,3 +1,4 @@
+import './TourBoLoc.css'
 import { Button, Checkbox, Input, Select, Space, Typography } from 'antd'
 import type { TourCategory } from '../../libs/types/tour'
 

@@ -1,3 +1,4 @@
+import './LichKhoiHanhThe.css'
 import { Button, Card, Typography } from 'antd'
 import bannerImage from '../../assets/Banner.jpg'
 import { Link } from 'react-router'

@@ -1,23 +1,20 @@
+import './MucBanner.css'
 import { Button, Card, DatePicker, Input, Select, Space, Typography } from 'antd'
 import bannerImage from '../../assets/Banner.jpg'
-
-const heroBackgroundStyle = {
-  backgroundImage: `linear-gradient(180deg, rgba(8, 15, 37, 0.12), rgba(8, 15, 37, 0.36)), url(${bannerImage})`,
-}
 
 const { Paragraph, Title } = Typography
 
 export function MucBanner() {
   return (
     <>
-      <Card className="home-section hero-section" variant="borderless" style={heroBackgroundStyle}>
+      <Card className="home-section hero-section" variant="borderless" style={{ backgroundImage: `linear-gradient(180deg, rgba(8, 15, 37, 0.12), rgba(8, 15, 37, 0.36)), url(${bannerImage})` }}>
         <div className="hero-overlay" />
         <div className="hero-content">
           <Space orientation="vertical" size={22} className="hero-intro">
             <span className="hero-kicker">Khám phá Việt Nam</span>
 
             <Space orientation="vertical" size={14}>
-              <Title level={1} className="hero-title" style={{ margin: 0 }}>
+              <Title level={1} className="hero-title">
                 Khám phá vẻ đẹp Việt Nam
               </Title>
               <Paragraph className="hero-description">

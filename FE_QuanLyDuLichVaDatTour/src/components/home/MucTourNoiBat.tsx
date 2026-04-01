@@ -1,3 +1,4 @@
+import './MucTourNoiBat.css'
 import { Alert, Button, Card, Col, Empty, Row, Skeleton } from 'antd'
 import { Link } from 'react-router'
 import { TieuDeMuc } from '../../components/common/TieuDeMuc'

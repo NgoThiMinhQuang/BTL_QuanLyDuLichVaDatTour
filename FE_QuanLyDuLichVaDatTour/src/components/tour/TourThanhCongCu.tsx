@@ -1,3 +1,4 @@
+import './TourThanhCongCu.css'
 import { Segmented, Select, Typography } from 'antd'
 
 const { Text } = Typography

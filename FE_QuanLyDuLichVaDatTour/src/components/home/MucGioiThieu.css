@@ -1,0 +1,152 @@
+.about-us-section {
+  background: #ffffff;
+}
+
+.about-us-content {
+  width: 100%;
+  gap: 18px !important;
+}
+
+.about-us-content > .ant-space-item {
+  width: 100%;
+}
+
+.about-us-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: #2f6fed;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.about-us-title.ant-typography {
+  margin: 0 !important;
+  color: #1e293b;
+  font-size: clamp(32px, 3.8vw, 56px) !important;
+  line-height: 1.1 !important;
+  font-weight: 800;
+}
+
+.about-us-description.ant-typography {
+  margin: 0 !important;
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.about-us-content .ant-space {
+  gap: 14px !important;
+}
+
+.about-us-content > .ant-space-item:last-child {
+  width: auto;
+}
+
+.about-us-content > .ant-space-item:last-child .ant-btn {
+  margin-top: 4px;
+}
+
+.about-us-section .ant-row {
+  align-items: center;
+}
+
+.about-us-section.home-section {
+  width: min(1180px, calc(100% - 380px));
+}
+
+.about-us-section .ant-card-body {
+  padding: 26px 30px;
+}
+
+.about-us-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 22px;
+}
+
+.about-us-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px;
+  border-radius: 20px;
+  background: #f8fafc;
+  color: #1e293b;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.about-us-feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.about-us-button {
+  width: fit-content;
+  height: 64px;
+  padding-inline: 32px;
+  border-radius: 18px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.about-us-visual {
+  position: relative;
+  padding-right: 24px;
+  padding-bottom: 84px;
+}
+
+.about-us-image {
+  display: block;
+  width: 100%;
+  min-height: 570px;
+  object-fit: cover;
+  border-radius: 32px;
+  box-shadow: 0 20px 52px rgba(15, 23, 42, 0.10);
+}
+
+.about-us-award-card {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 290px;
+  border-radius: 26px;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.14);
+}
+
+.about-us-award-card .ant-card-body {
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.about-us-award-icon {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 18px;
+}
+
+.about-us-award-title.ant-typography {
+  margin: 0 0 10px !important;
+  color: #1e293b;
+}
+
+.about-us-award-description.ant-typography {
+  margin: 0 !important;
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.7;
+}

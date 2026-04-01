@@ -1,0 +1,194 @@
+.featured-tour-section .ant-card-head {
+  border-bottom: none;
+  padding: 34px 34px 0;
+  min-height: auto;
+}
+
+.featured-tour-section .ant-card-head-title,
+.featured-tour-section .ant-card-head-wrapper {
+  overflow: visible;
+}
+
+.featured-tour-section .ant-card-body {
+  padding-top: 24px;
+}
+
+.featured-tour-section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.featured-tour-section-header .section-header {
+  margin-bottom: 0;
+}
+
+.featured-tour-section-header .section-title.ant-typography,
+.featured-tour-section-header .section-description.ant-typography {
+  text-align: left;
+}
+
+.featured-tour-section-link {
+  flex: 0 0 auto;
+  color: #2563eb;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.featured-tour-grid {
+  row-gap: 20px;
+}
+
+.featured-tour-grid .ant-col {
+  display: flex;
+}
+
+.featured-tour-grid .tour-card {
+  width: 100%;
+  height: 100%;
+}
+
+.featured-tour-grid .tour-card .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.featured-tour-grid .tour-card-skeleton {
+  min-height: 100%;
+}
+
+.featured-tour-grid .tour-card-skeleton .ant-card-body {
+  padding: 24px;
+}
+
+.featured-tour-grid .tour-card-featured,
+.featured-tour-grid .tour-card-featured .ant-card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-tour-grid .tour-card-featured {
+  min-height: auto;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-cover {
+  height: 220px;
+  flex: 0 0 220px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-body {
+  min-height: auto;
+  height: 100%;
+  padding: 20px 22px 18px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-title.ant-typography {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: auto;
+  line-height: 1.3 !important;
+  margin: 0 !important;
+  font-size: 18px !important;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: auto;
+  margin: 0;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-meta {
+  min-height: 0;
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-description-wrap,
+.featured-tour-grid .tour-card-featured .tour-card-description.ant-typography {
+  display: none;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-block {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-label,
+.featured-tour-grid .tour-card-featured .tour-card-price-note,
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-row {
+  display: flex;
+  align-items: baseline;
+  min-height: auto;
+  flex-wrap: nowrap;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
+  margin: 0 !important;
+  font-size: 36px !important;
+  line-height: 1.1 !important;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button {
+  flex: 0 0 290px;
+  width: 290px;
+  min-width: 290px;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 1200px) {
+  .featured-tour-grid .tour-card-featured .tour-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .featured-tour-grid .tour-card-featured .tour-card-button {
+    width: 100%;
+    min-width: 0;
+    flex: 0 0 auto;
+  }
+
+  .featured-tour-grid .tour-card-featured .tour-card-price-label,
+  .featured-tour-grid .tour-card-featured .tour-card-price-note {
+    white-space: normal;
+  }
+}

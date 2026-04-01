@@ -1,3 +1,4 @@
+import './TourThe.css'
 import { Button, Card, Typography } from 'antd'
 import { Link } from 'react-router'
 import { getTourChiTietPath } from '../../paths'

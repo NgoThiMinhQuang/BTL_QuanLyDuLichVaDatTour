@@ -1,3 +1,4 @@
+import './MucLoaiTour.css'
 import { Alert, Button, Card, Col, Empty, Row, Skeleton, Space, Tag, Typography } from 'antd'
 import { useLoaiTour } from '../../services/tour/useLoaiTour'
 import { TieuDeMuc } from '../../components/common/TieuDeMuc'
@@ -43,12 +44,12 @@ export function MucLoaiTour() {
           {data.map((item) => (
             <Col xs={24} md={12} xl={8} key={item.id}>
               <Card className="category-card">
-                <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+                <Space orientation="vertical" size={12} className="category-card-stack">
                   <Tag color="blue">{item.trangThai === 'hoat_dong' ? 'Đang mở' : item.trangThai}</Tag>
-                  <Title level={4} style={{ margin: 0 }}>
+                  <Title level={4} className="category-card-title">
                     {item.ten}
                   </Title>
-                  <Paragraph style={{ marginBottom: 0 }}>
+                  <Paragraph className="category-card-description">
                     {item.moTa || 'Danh mục phù hợp để khám phá thêm các tour đang mở bán và lựa chọn hành trình phù hợp.'}
                   </Paragraph>
                 </Space>

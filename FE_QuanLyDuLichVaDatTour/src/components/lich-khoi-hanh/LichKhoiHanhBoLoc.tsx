@@ -1,3 +1,4 @@
+import './LichKhoiHanhBoLoc.css'
 import { Input, Select } from 'antd'
 import { SCHEDULE_MONTH_OPTIONS } from '../../constant/schedule'
 
