@@ -19,7 +19,7 @@ public class TinTucRepository : ITinTucRepository
     {
         return await _dbContext.TinTucs
             .AsNoTracking()
-            .Where(x => x.TrangThai == TrangThaiTinTuc.hoat_dong)
+            .Where(x => x.TrangThai == TrangThaiTinTuc.hoat_dong || x.TrangThai == TrangThaiTinTuc.hien_thi)
             .OrderByDescending(x => x.NgayDang)
             .ThenByDescending(x => x.CreatedAt)
             .ToListAsync();
@@ -29,7 +29,7 @@ public class TinTucRepository : ITinTucRepository
     {
         return await _dbContext.TinTucs
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id && x.TrangThai == TrangThaiTinTuc.hoat_dong);
+            .FirstOrDefaultAsync(x => x.Id == id && (x.TrangThai == TrangThaiTinTuc.hoat_dong || x.TrangThai == TrangThaiTinTuc.hien_thi));
     }
 
     public async Task<List<TinTuc>> GetAllAsync()

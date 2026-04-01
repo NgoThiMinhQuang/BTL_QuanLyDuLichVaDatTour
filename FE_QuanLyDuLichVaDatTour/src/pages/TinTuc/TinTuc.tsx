@@ -1,4 +1,6 @@
-import './TinTuc.css'
+import './TinTucPage.css'
+import './TinTucFeatured.css'
+import './TinTucCard.css'
 import { Input, Tag, Typography } from 'antd'
 import { Link } from 'react-router'
 import { getTinTucChiTietPath } from '../../paths'
