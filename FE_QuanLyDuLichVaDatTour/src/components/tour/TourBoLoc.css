@@ -105,19 +105,217 @@
   font-size: 15px;
 }
 
-.tour-filter-apply-button {
-  height: 44px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
+.tour-filter-apply-button,
 .tour-filter-apply-button.ant-btn {
-  padding-inline: 16px;
+  width: 100%;
+  height: 40px !important;
+  min-height: 40px !important;
+  padding-inline: 14px !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
 }
 
 .tour-filter-apply-button.ant-btn span {
   line-height: 1;
+  font-size: 14px !important;
+}
+
+.tour-filter-apply-button.ant-btn.ant-btn-lg {
+  height: 40px !important;
+}
+
+.tour-filter-apply-button.ant-btn:hover,
+.tour-filter-apply-button.ant-btn:focus {
+  transform: none;
+}
+
+.tour-filter-sections .tour-filter-apply-button {
+  margin-top: 4px;
+}
+
+.tour-filter-apply-button.ant-btn > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tour-filter-apply-button.ant-btn {
+  box-shadow: none;
+}
+
+.tour-filter-apply-button.ant-btn {
+  white-space: nowrap;
+}
+
+.tour-filter-apply-button.ant-btn {
+  overflow: hidden;
+}
+
+.tour-filter-apply-button.ant-btn {
+  box-sizing: border-box;
+}
+
+.tour-filter-apply-button.ant-btn {
+  margin-bottom: 0;
+}
+
+.tour-filter-apply-button.ant-btn {
+  align-self: stretch;
+}
+
+.tour-filter-apply-button.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tour-filter-apply-button.ant-btn {
+  line-height: 1 !important;
+}
+
+.tour-filter-apply-button.ant-btn {
+  vertical-align: middle;
+}
+
+.tour-filter-apply-button.ant-btn {
+  min-width: 0;
+}
+
+.tour-filter-apply-button.ant-btn {
+  text-align: center;
+}
+
+.tour-filter-apply-button.ant-btn {
+  max-width: 100%;
+}
+
+.tour-filter-apply-button.ant-btn {
+  border-width: 1px;
+}
+
+.tour-filter-apply-button.ant-btn {
+  gap: 0;
+}
+
+.tour-filter-apply-button.ant-btn {
+  flex: 0 0 auto;
+}
+
+.tour-filter-apply-button.ant-btn {
+  letter-spacing: 0;
+}
+
+.tour-filter-apply-button.ant-btn {
+  min-inline-size: 0;
+}
+
+.tour-filter-apply-button.ant-btn {
+  block-size: 40px !important;
+}
+
+.tour-filter-apply-button.ant-btn {
+  inline-size: 100%;
+}
+
+.tour-filter-apply-button.ant-btn {
+  font-family: inherit;
+}
+
+.tour-filter-apply-button.ant-btn {
+  aspect-ratio: auto;
+}
+
+.tour-filter-apply-button.ant-btn {
+  min-block-size: 40px !important;
+}
+
+.tour-filter-apply-button.ant-btn {
+  max-block-size: 40px !important;
+}
+
+.tour-filter-apply-button.ant-btn {
+  padding-block: 0 !important;
+}
+
+.tour-filter-apply-button.ant-btn {
+  border-style: solid;
+}
+
+.tour-filter-apply-button.ant-btn {
+  text-wrap: nowrap;
+}
+
+.tour-filter-apply-button.ant-btn {
+  place-content: center;
+}
+
+.tour-filter-apply-button.ant-btn {
+  justify-items: center;
+}
+
+.tour-filter-apply-button.ant-btn {
+  justify-self: stretch;
+}
+
+.tour-filter-apply-button.ant-btn {
+  align-items: center;
+}
+
+.tour-filter-apply-button.ant-btn {
+  align-content: center;
+}
+
+.tour-filter-apply-button.ant-btn {
+  min-height: 40px;
+}
+
+.tour-filter-apply-button.ant-btn {
+  max-height: 40px;
+}
+
+.tour-filter-apply-button.ant-btn {
+  height: 40px;
+}
+
+.tour-filter-apply-button.ant-btn {
+  border-radius: 12px;
+}
+
+.tour-filter-apply-button.ant-btn {
+  font-size: 14px;
+}
+
+.tour-filter-apply-button.ant-btn {
+  padding-inline: 14px;
+}
+
+.tour-filter-apply-button.ant-btn {
+  font-weight: 600;
+}
+
+.tour-filter-apply-button.ant-btn {
+  width: 100%;
+}
+
+.tour-filter-apply-button.ant-btn span {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .tour-filter-apply-button,
+  .tour-filter-apply-button.ant-btn,
+  .tour-filter-apply-button.ant-btn.ant-btn-lg {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    border-radius: 10px !important;
+    font-size: 13px !important;
+  }
+
+  .tour-filter-apply-button.ant-btn span {
+    font-size: 13px !important;
+  }
 }
 
 .tour-filter-card {
@@ -153,9 +351,14 @@
     border-radius: 14px !important;
   }
 
-  .tour-filter-apply-button {
-    height: 48px;
-    border-radius: 14px;
+  .tour-filter-apply-button,
+  .tour-filter-apply-button.ant-btn,
+  .tour-filter-apply-button.ant-btn.ant-btn-lg {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    border-radius: 10px !important;
+    font-size: 13px !important;
   }
 }
 

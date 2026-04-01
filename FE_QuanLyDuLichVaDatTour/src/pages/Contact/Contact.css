@@ -1,61 +1,103 @@
 .contact-page {
-  padding-bottom: 72px;
+  width: 100%;
+  padding-bottom: 28px;
+  overflow-x: hidden;
 }
 
 .contact-hero {
   background: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.contact-hero-inner,
+.contact-page-container {
+  width: min(1080px, calc(100% - 96px));
+  max-width: 1080px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .contact-hero-inner {
-  width: min(1180px, calc(100% - 380px));
-  margin: 0 auto;
-  padding: 92px 0 72px;
+  padding: 44px 0 28px;
   text-align: center;
 }
 
 .contact-hero-title.ant-typography {
-  margin: 0 0 18px !important;
+  max-width: 900px;
+  margin: 0 auto 14px !important;
   color: #1e293b !important;
-  font-size: clamp(48px, 4vw, 72px) !important;
-  line-height: 1.08 !important;
+  font-size: clamp(28px, 2.6vw, 42px) !important;
+  line-height: 1.1 !important;
   font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .contact-hero-description.ant-typography {
-  margin: 0 !important;
+  max-width: 760px;
+  margin: 0 auto !important;
   color: #64748b;
-  font-size: 22px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 .contact-page-container {
-  width: min(1180px, calc(100% - 380px));
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 18px;
 }
 
 .contact-info-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.contact-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.82fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.contact-side-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .contact-info-card,
 .contact-form-card,
 .contact-hours-card,
 .contact-map-card {
-  border-radius: 30px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.08);
   background: #fff;
-  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.contact-info-card .ant-card-body,
+.contact-form-card .ant-card-body,
+.contact-hours-card .ant-card-body {
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.contact-map-card .ant-card-body {
+  padding: 0;
 }
 
 .contact-info-card .ant-card-body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 32px;
+  justify-content: center;
+  height: 100%;
+  padding: 20px 18px;
   text-align: center;
 }
 
@@ -63,11 +105,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 112px;
-  height: 112px;
+  flex: 0 0 auto;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 14px;
   border-radius: 999px;
-  margin-bottom: 28px;
-  font-size: 46px;
+  font-size: 28px;
+  line-height: 1;
+  box-sizing: border-box;
 }
 
 .contact-info-icon-blue {
@@ -86,52 +131,49 @@
 }
 
 .contact-info-title.ant-typography {
-  margin: 0 0 18px !important;
+  margin: 0 0 10px !important;
   color: #0f172a !important;
-  font-size: 26px !important;
+  font-size: 18px !important;
+  line-height: 1.2 !important;
   font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .contact-info-text.ant-typography {
   margin: 0 !important;
-  color: #475569;
-  font-size: 18px;
-  line-height: 1.7;
-}
-
-.contact-content-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
-  gap: 28px;
-  align-items: start;
-}
-
-.contact-form-card .ant-card-body,
-.contact-hours-card .ant-card-body,
-.contact-map-card .ant-card-body {
-  padding: 36px;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: break-word;
 }
 
 .contact-section-title.ant-typography {
-  margin: 0 0 28px !important;
+  margin: 0 0 16px !important;
   color: #0f172a !important;
-  font-size: 30px !important;
+  font-size: 20px !important;
+  line-height: 1.2 !important;
   font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .contact-form-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 10px;
+  align-items: start;
 }
 
 .contact-form .ant-form-item {
-  margin-bottom: 24px;
+  margin-bottom: 14px;
+}
+
+.contact-form .ant-form-item:last-child {
+  margin-bottom: 0;
 }
 
 .contact-form .ant-form-item-label > label {
   color: #334155;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -139,14 +181,30 @@
 .contact-select.ant-select,
 .contact-select.ant-select .ant-select-selector,
 .contact-textarea.ant-input {
-  border-radius: 20px !important;
+  border-radius: 14px !important;
+  box-sizing: border-box;
+}
+
+.contact-input.ant-input,
+.contact-select.ant-select .ant-select-selector,
+.contact-submit-button.ant-btn {
+  height: 48px !important;
+  min-height: 48px;
 }
 
 .contact-input.ant-input,
 .contact-select.ant-select .ant-select-selector {
-  height: 74px !important;
-  padding-inline: 24px !important;
-  font-size: 18px;
+  padding-inline: 16px !important;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.contact-input.ant-input::placeholder,
+.contact-textarea.ant-input::placeholder,
+.contact-select.ant-select .ant-select-selection-item,
+.contact-select.ant-select .ant-select-selection-placeholder,
+.contact-select.ant-select .ant-select-selection-wrap {
+  font-size: 14px;
 }
 
 .contact-select.ant-select .ant-select-selection-wrap,
@@ -154,70 +212,72 @@
 .contact-select.ant-select .ant-select-selection-placeholder {
   display: flex;
   align-items: center;
-  font-size: 18px;
+}
+
+.contact-select.ant-select .ant-select-arrow,
+.contact-submit-button.ant-btn .anticon {
+  font-size: 16px;
 }
 
 .contact-textarea.ant-input {
-  padding: 22px 24px !important;
-  font-size: 18px;
+  padding: 14px 16px !important;
+  font-size: 14px;
 }
 
 .contact-submit-button.ant-btn {
   width: 100%;
-  height: 74px;
-  border-radius: 20px;
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.contact-side-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
+  padding-inline: 18px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: none;
 }
 
 .contact-hours-list {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 14px;
+  margin: 0;
 }
 
 .contact-hours-item {
   display: flex;
   align-items: flex-start;
-  gap: 18px;
+  gap: 12px;
+}
+
+.contact-hours-item > div {
+  min-width: 0;
 }
 
 .contact-hours-icon {
   color: #2563eb;
-  font-size: 34px;
-  margin-top: 6px;
+  font-size: 20px;
+  line-height: 1;
+  margin-top: 4px;
 }
 
 .contact-hours-label {
-  color: #0f172a;
-  font-size: 18px;
-  font-weight: 800;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+  color: #1e293b;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 700;
+  word-break: break-word;
 }
 
 .contact-hours-time {
-  color: #475569;
-  font-size: 18px;
-}
-
-.contact-map-card {
-  overflow: hidden;
-}
-
-.contact-map-card .ant-card-body {
-  padding: 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
 }
 
 .contact-map-frame {
   display: block;
   width: 100%;
-  min-height: 470px;
+  height: 300px;
+  min-height: 280px;
   border: 0;
   background: #e5e7eb;
 }
@@ -228,10 +288,7 @@
     width: min(100%, calc(100% - 32px));
   }
 
-  .contact-info-grid {
-    grid-template-columns: 1fr;
-  }
-
+  .contact-info-grid,
   .contact-content-grid {
     grid-template-columns: 1fr;
   }
@@ -244,41 +301,36 @@
   }
 
   .contact-hero-inner {
-    padding: 70px 0 56px;
+    padding: 36px 0 22px;
+  }
+
+  .contact-hero-title.ant-typography {
+    font-size: clamp(24px, 7vw, 34px) !important;
   }
 
   .contact-hero-description.ant-typography {
-    font-size: 18px;
-  }
-
-  .contact-info-card .ant-card-body,
-  .contact-form-card .ant-card-body,
-  .contact-hours-card .ant-card-body {
-    padding: 24px 20px;
+    font-size: 14px;
   }
 
   .contact-form-row {
     grid-template-columns: 1fr;
   }
 
+  .contact-info-card .ant-card-body,
+  .contact-form-card .ant-card-body,
+  .contact-hours-card .ant-card-body {
+    padding: 18px 16px;
+  }
+
   .contact-input.ant-input,
-  .contact-select.ant-select .ant-select-selector {
-    height: 62px !important;
-    font-size: 16px;
-  }
-
-  .contact-textarea.ant-input,
-  .contact-select.ant-select .ant-select-selection-item,
-  .contact-select.ant-select .ant-select-selection-placeholder {
-    font-size: 16px;
-  }
-
+  .contact-select.ant-select .ant-select-selector,
   .contact-submit-button.ant-btn {
-    height: 62px;
-    font-size: 16px;
+    height: 44px !important;
+    min-height: 44px;
   }
 
   .contact-map-frame {
-    min-height: 320px;
+    height: 260px;
+    min-height: 260px;
   }
 }

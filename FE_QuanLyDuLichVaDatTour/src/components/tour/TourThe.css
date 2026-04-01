@@ -204,6 +204,7 @@
 .tour-card-list {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
+  align-items: stretch;
 }
 
 .tour-card-list .tour-card-cover {
@@ -215,6 +216,40 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-width: 0;
+  min-height: 100%;
+}
+
+.tour-card-list .tour-card-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tour-card-list .tour-card-meta-list {
+  margin-bottom: 16px;
+}
+
+.tour-card-list .tour-card-title.ant-typography {
+  min-height: auto;
+}
+
+.tour-card-list .tour-card-footer {
+  margin-top: auto;
+}
+
+.tour-card-list .tour-card-price-block {
+  min-width: 0;
+}
+
+.tour-card-list .tour-card-price-current.ant-typography {
+  white-space: nowrap;
+}
+
+.tour-card-list .tour-card-button {
+  flex: 0 0 148px;
+  width: 148px;
+  min-width: 148px;
+  height: 42px;
 }
 
 .tour-card-skeleton {
