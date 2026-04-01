@@ -74,14 +74,15 @@
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-cover {
-  height: 220px;
-  flex: 0 0 220px;
+  height: 210px;
+  flex: 0 0 210px;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-body {
   min-height: auto;
   height: 100%;
-  padding: 20px 22px 18px;
+  gap: 12px;
+  padding: 18px 20px;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-main {
@@ -89,6 +90,7 @@
   flex: 1 1 auto;
   flex-direction: column;
   gap: 10px;
+  min-height: 0;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-title.ant-typography {
@@ -96,24 +98,23 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  height: auto;
+  min-height: 2.6em;
   line-height: 1.3 !important;
   margin: 0 !important;
-  font-size: 18px !important;
+  font-size: 17px !important;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-meta-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  height: auto;
   margin: 0;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-meta {
   min-height: 0;
   line-height: 1.4;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-description-wrap,
@@ -123,48 +124,69 @@
 
 .featured-tour-grid .tour-card-featured .tour-card-footer {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgba(148, 163, 184, 0.28);
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-price-block {
-  flex: 1 1 auto;
-  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  gap: 2px;
+  overflow: hidden;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-price-label,
-.featured-tour-grid .tour-card-featured .tour-card-price-note,
-.featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
-  writing-mode: horizontal-tb;
-  text-orientation: mixed;
-  word-break: normal;
-  overflow-wrap: normal;
-  white-space: nowrap;
+.featured-tour-grid .tour-card-featured .tour-card-price-note {
+  color: #64748b;
+  font-size: 14px;
+  white-space: normal;
   text-align: left;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-price-row {
   display: flex;
   align-items: baseline;
-  min-height: auto;
-  flex-wrap: nowrap;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-price-current.ant-typography {
   margin: 0 !important;
-  font-size: 36px !important;
+  max-width: 100%;
+  color: #2563eb;
+  font-size: 28px !important;
+  font-weight: 800;
   line-height: 1.1 !important;
+  white-space: nowrap;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-button {
-  flex: 0 0 290px;
-  width: 290px;
-  min-width: 290px;
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  height: 44px;
+  border-radius: 14px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.featured-tour-grid .tour-card-featured .tour-card-button.ant-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .featured-tour-grid .tour-card-featured .tour-card-button a {
@@ -176,19 +198,20 @@
 }
 
 @media (max-width: 1200px) {
-  .featured-tour-grid .tour-card-featured .tour-card-footer {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .featured-tour-grid .tour-card-featured .tour-card-button {
-    width: 100%;
-    min-width: 0;
-    flex: 0 0 auto;
-  }
-
   .featured-tour-grid .tour-card-featured .tour-card-price-label,
   .featured-tour-grid .tour-card-featured .tour-card-price-note {
     white-space: normal;
+  }
+}
+
+@media (max-width: 768px) {
+  .featured-tour-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .featured-tour-grid .tour-card-featured .tour-card-cover {
+    height: 200px;
+    flex-basis: 200px;
   }
 }
