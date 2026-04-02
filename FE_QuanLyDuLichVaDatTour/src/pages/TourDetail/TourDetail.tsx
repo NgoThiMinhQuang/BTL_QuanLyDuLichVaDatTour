@@ -1,6 +1,6 @@
 import './TourDetail.css'
 import { Breadcrumb, Button, Card, Empty, Image, Select, Skeleton, Tabs, Tag, Typography } from 'antd'
-import { Link, useParams } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
 import { formatNgay } from '../../libs/helpers/formatNgay'
 import { formatTien } from '../../libs/helpers/formatTien'
 import { PATHS } from '../../paths'
@@ -14,6 +14,7 @@ function formatTime(value: string | null) {
 }
 
 export default function TourDetail() {
+  const navigate = useNavigate()
   const { id } = useParams()
   const tourId = Number(id)
   const isValidId = Number.isInteger(tourId) && tourId > 0
@@ -54,6 +55,22 @@ export default function TourDetail() {
     value: item.id,
     label: `${item.maDotTour} - ${formatNgay(item.ngayKhoiHanh)}`,
   }))
+
+  const handleBooking = () => {
+    if (!selectedDeparture) {
+      return
+    }
+
+    const bookingPath = `${PATHS.booking}?tourId=${tourId}&departureId=${selectedDeparture.id}`
+    const accessToken = localStorage.getItem('accessToken')
+
+    if (!accessToken) {
+      navigate(PATHS.login, { state: { from: bookingPath } })
+      return
+    }
+
+    navigate(bookingPath)
+  }
 
   return (
     <div className="tour-detail-page">
@@ -285,7 +302,7 @@ export default function TourDetail() {
               </div>
 
               <div className="tour-detail-sidebar-actions">
-                <Button type="primary" className="tour-detail-primary-button">Đặt tour ngay</Button>
+                <Button type="primary" className="tour-detail-primary-button" onClick={handleBooking} disabled={!selectedDeparture}>Đặt tour ngay</Button>
                 <Button className="tour-detail-secondary-button">Liên hệ tư vấn</Button>
               </div>
 

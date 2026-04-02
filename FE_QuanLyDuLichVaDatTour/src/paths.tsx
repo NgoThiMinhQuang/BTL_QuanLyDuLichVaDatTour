@@ -9,6 +9,7 @@ export const PATHS = {
   lienHe: '/lien-he',
   login: '/login',
   register: '/register',
+  booking: '/booking',
 } as const
 
 export function getTinTucChiTietPath(id: number | string) {
