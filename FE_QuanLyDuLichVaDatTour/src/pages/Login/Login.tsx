@@ -1,6 +1,6 @@
 import { Alert, Button, Checkbox, Divider, Form, Input, Space, Typography } from 'antd'
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 import { PATHS } from '../../paths'
 import { login } from '../../services/auth/login'
 
@@ -21,9 +21,14 @@ const loginHighlights = [
 export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const redirectPath = typeof location.state?.from === 'string' ? location.state.from : PATHS.home
+  const redirectParam = searchParams.get('redirect')
+  const redirectPath =
+    (typeof location.state?.from === 'string' && location.state.from) ||
+    (redirectParam && redirectParam.startsWith('/') ? redirectParam : null) ||
+    PATHS.home
 
   const handleSubmit = async (values: LoginFormValues) => {
     try {

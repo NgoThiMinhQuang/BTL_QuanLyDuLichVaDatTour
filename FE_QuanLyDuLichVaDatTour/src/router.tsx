@@ -22,7 +22,10 @@ function RequireAuth({ children }: { children: React.ReactElement }) {
   const accessToken = localStorage.getItem('accessToken')
 
   if (!accessToken) {
-    return <Navigate to={PATHS.login} replace state={{ from: `${location.pathname}${location.search}` }} />
+    const redirectPath = `${location.pathname}${location.search}`
+    const loginPath = `${PATHS.login}?redirect=${encodeURIComponent(redirectPath)}`
+
+    return <Navigate to={loginPath} replace state={{ from: redirectPath }} />
   }
 
   return children

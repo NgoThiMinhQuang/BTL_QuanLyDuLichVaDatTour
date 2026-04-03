@@ -65,7 +65,7 @@ export default function TourDetail() {
     const accessToken = localStorage.getItem('accessToken')
 
     if (!accessToken) {
-      navigate(PATHS.login, { state: { from: bookingPath } })
+      navigate(`${PATHS.login}?redirect=${encodeURIComponent(bookingPath)}`, { state: { from: bookingPath } })
       return
     }
 
