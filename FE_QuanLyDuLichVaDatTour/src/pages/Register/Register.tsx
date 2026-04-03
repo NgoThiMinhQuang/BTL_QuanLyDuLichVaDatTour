@@ -1,6 +1,6 @@
 import { Alert, Button, Checkbox, Col, DatePicker, Divider, Form, Input, Row, Select, Space, Typography } from 'antd'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import { PATHS } from '../../paths'
 import { register } from '../../services/auth/register'
 
@@ -29,9 +29,14 @@ const registerHighlights = [
 
 export default function Register() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const redirectParam = searchParams.get('redirect')
+  const loginPath = redirectParam && redirectParam.startsWith('/')
+    ? `${PATHS.login}?redirect=${encodeURIComponent(redirectParam)}`
+    : PATHS.login
 
   const handleSubmit = async (values: RegisterFormValues) => {
     try {
@@ -48,7 +53,7 @@ export default function Register() {
       })
 
       setSuccessMessage('Đăng ký thành công. Bạn có thể đăng nhập ngay bây giờ.')
-      setTimeout(() => navigate(PATHS.login), 800)
+      setTimeout(() => navigate(loginPath), 800)
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Đăng ký thất bại')
     } finally {

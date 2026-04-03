@@ -1,5 +1,5 @@
 import { Button, Layout, Menu, Space } from 'antd'
-import { Link, useLocation } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import logoImage from '../../assets/image.png'
 import { PATHS } from '../../paths'
 
@@ -7,6 +7,28 @@ const { Header } = Layout
 
 export function HeaderChung() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const currentPath = `${location.pathname}${location.search}`
+  const loginPath = currentPath === PATHS.home ? PATHS.login : `${PATHS.login}?redirect=${encodeURIComponent(currentPath)}`
+  const registerPath = currentPath === PATHS.home ? PATHS.register : `${PATHS.register}?redirect=${encodeURIComponent(currentPath)}`
+  const accessToken = localStorage.getItem('accessToken')
+  const currentUserRaw = localStorage.getItem('currentUser')
+
+  let currentUserName = ''
+
+  if (currentUserRaw) {
+    try {
+      currentUserName = (JSON.parse(currentUserRaw) as { hoTen?: string }).hoTen ?? ''
+    } catch {
+      currentUserName = ''
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('currentUser')
+    navigate(PATHS.home)
+  }
 
   const items = [
     { key: PATHS.home, label: <Link to={PATHS.home}>Trang chủ</Link> },
@@ -34,12 +56,23 @@ export function HeaderChung() {
           <button type="button" className="app-header-icon" aria-label="Thông báo">
             🔔
           </button>
-          <Button type="text" className="app-header-link-button" href={PATHS.login}>
-            Đăng nhập
-          </Button>
-          <Button type="primary" className="app-header-button app-header-button-primary" href={PATHS.register}>
-            Đăng ký
-          </Button>
+          {accessToken ? (
+            <>
+              <span className="app-header-user-name">{currentUserName || 'Tài khoản của tôi'}</span>
+              <Button type="primary" danger className="app-header-button app-header-button-primary" onClick={handleLogout}>
+                Đăng xuất
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button type="text" className="app-header-link-button" href={loginPath}>
+                Đăng nhập
+              </Button>
+              <Button type="primary" className="app-header-button app-header-button-primary" href={registerPath}>
+                Đăng ký
+              </Button>
+            </>
+          )}
         </Space>
       </div>
     </Header>

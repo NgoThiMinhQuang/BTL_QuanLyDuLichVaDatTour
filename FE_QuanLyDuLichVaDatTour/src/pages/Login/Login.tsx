@@ -172,7 +172,7 @@ export default function Login() {
               </div>
 
               <Paragraph className="auth-switch">
-                Chưa có tài khoản? <Link to={PATHS.register}>Đăng ký ngay</Link>
+                Chưa có tài khoản? <Link to={redirectPath === PATHS.home ? PATHS.register : `${PATHS.register}?redirect=${encodeURIComponent(redirectPath)}`}>Đăng ký ngay</Link>
               </Paragraph>
             </div>
           </section>
