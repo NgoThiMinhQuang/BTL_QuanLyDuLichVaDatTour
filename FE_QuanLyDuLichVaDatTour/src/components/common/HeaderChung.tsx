@@ -58,6 +58,12 @@ export function HeaderChung() {
           </button>
           {accessToken ? (
             <>
+              <Button type="text" className="app-header-link-button" href={PATHS.myBookings}>
+                Đơn đã đặt
+              </Button>
+              <Button type="text" className="app-header-link-button" href={PATHS.myReviews}>
+                Đánh giá của tôi
+              </Button>
               <span className="app-header-user-name">{currentUserName || 'Tài khoản của tôi'}</span>
               <Button type="primary" danger className="app-header-button app-header-button-primary" onClick={handleLogout}>
                 Đăng xuất

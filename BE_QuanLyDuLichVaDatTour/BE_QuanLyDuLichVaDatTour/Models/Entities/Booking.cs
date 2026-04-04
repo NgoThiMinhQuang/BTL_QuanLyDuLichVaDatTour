@@ -71,4 +71,6 @@ public class Booking
     public ICollection<HanhKhach> HanhKhachs { get; set; } = new List<HanhKhach>();
 
     public ICollection<ThanhToan> ThanhToans { get; set; } = new List<ThanhToan>();
+
+    public ICollection<DanhGia> DanhGias { get; set; } = new List<DanhGia>();
 }

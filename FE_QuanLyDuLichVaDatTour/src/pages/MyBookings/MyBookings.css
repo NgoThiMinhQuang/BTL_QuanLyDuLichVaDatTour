@@ -1,0 +1,120 @@
+.customer-page {
+  padding: 24px 0 72px;
+}
+
+.customer-page-container {
+  width: min(1440px, calc(100% - 200px));
+  margin: 0 auto;
+}
+
+.customer-page-header {
+  margin-bottom: 20px;
+}
+
+.customer-page-title.ant-typography {
+  margin: 0 !important;
+  color: #1e293b !important;
+  font-size: clamp(30px, 3vw, 52px) !important;
+  font-weight: 800 !important;
+}
+
+.customer-page-subtitle.ant-typography {
+  margin: 8px 0 0 !important;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.customer-page-stack {
+  width: 100%;
+}
+
+.customer-page-skeleton,
+.customer-booking-card {
+  width: 100%;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.customer-booking-card .ant-card-body {
+  padding: 22px 24px;
+}
+
+.customer-booking-card-stack {
+  width: 100%;
+}
+
+.customer-booking-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.customer-booking-card-title.ant-typography {
+  margin: 0 !important;
+}
+
+.customer-booking-card-code.ant-typography {
+  margin: 6px 0 0 !important;
+  color: #64748b;
+}
+
+.customer-booking-card-price {
+  text-align: right;
+}
+
+.customer-booking-card-price-label {
+  color: #64748b;
+}
+
+.customer-booking-card-price-value.ant-typography {
+  margin: 4px 0 0 !important;
+  color: #2563eb !important;
+}
+
+.customer-booking-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.customer-booking-meta-label {
+  display: block;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.customer-booking-meta-value {
+  display: block;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.customer-page-retry {
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  .customer-page-container {
+    width: min(100%, calc(100% - 32px));
+  }
+
+  .customer-booking-meta-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .customer-booking-card-header {
+    flex-direction: column;
+  }
+
+  .customer-booking-meta-grid {
+    grid-template-columns: 1fr;
+  }
+}

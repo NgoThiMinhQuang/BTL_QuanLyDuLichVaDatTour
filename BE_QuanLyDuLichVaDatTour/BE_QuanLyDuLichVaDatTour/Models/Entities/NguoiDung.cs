@@ -27,4 +27,6 @@ public class NguoiDung
     public DateTime UpdatedAt { get; set; }
 
     public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+
+    public ICollection<DanhGia> DanhGias { get; set; } = new List<DanhGia>();
 }

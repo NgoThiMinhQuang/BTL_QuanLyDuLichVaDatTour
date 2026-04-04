@@ -79,6 +79,7 @@ builder.Services.AddScoped<IBangGiaLichKhoiHanhRepository, BangGiaLichKhoiHanhRe
 builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<ITinTucRepository, TinTucRepository>();
 builder.Services.AddScoped<ILoaiTourService, LoaiTourService>();
 builder.Services.AddScoped<ITourService, TourService>();
@@ -88,6 +89,7 @@ builder.Services.AddScoped<ILichKhoiHanhService, LichKhoiHanhService>();
 builder.Services.AddScoped<IVoucherService, VoucherService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<ITinTucService, TinTucService>();
 
 var app = builder.Build();
@@ -99,6 +101,28 @@ using (var scope = app.Services.CreateScope())
         IF COL_LENGTH('TinTuc', 'DanhMuc') IS NULL
         BEGIN
             ALTER TABLE TinTuc ADD DanhMuc NVARCHAR(100) NULL;
+        END
+        """);
+
+    await dbContext.Database.ExecuteSqlRawAsync("""
+        IF OBJECT_ID('DanhGia', 'U') IS NULL
+        BEGIN
+            CREATE TABLE DanhGia (
+                DanhGiaId BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+                BookingId BIGINT NOT NULL,
+                TourId BIGINT NOT NULL,
+                KhachHangId BIGINT NOT NULL,
+                SoSao TINYINT NOT NULL,
+                NoiDung NVARCHAR(MAX) NOT NULL,
+                CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_DanhGia_CreatedAt DEFAULT SYSDATETIME(),
+                UpdatedAt DATETIME2 NOT NULL CONSTRAINT DF_DanhGia_UpdatedAt DEFAULT SYSDATETIME(),
+                CONSTRAINT FK_DanhGia_Booking FOREIGN KEY (BookingId) REFERENCES Booking(BookingId),
+                CONSTRAINT FK_DanhGia_Tour FOREIGN KEY (TourId) REFERENCES Tour(TourId),
+                CONSTRAINT FK_DanhGia_KhachHang FOREIGN KEY (KhachHangId) REFERENCES NguoiDung(NguoiDungId)
+            );
+
+            CREATE UNIQUE INDEX UX_DanhGia_BookingId ON DanhGia(BookingId);
+            CREATE INDEX IdxDanhGiaTourKhachHang ON DanhGia(TourId, KhachHangId);
         END
         """);
 }

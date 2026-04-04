@@ -5,8 +5,11 @@ import { HeaderChung } from './components/common/HeaderChung'
 import { PATHS } from './paths'
 import About from './pages/About/About'
 import Booking from './pages/Booking/Booking'
+import BookingDetail from './pages/BookingDetail/BookingDetail'
 import Home from './pages/Home/Home'
 import Login from './pages/Login/Login'
+import MyBookings from './pages/MyBookings/MyBookings'
+import MyReviews from './pages/MyReviews/MyReviews'
 import Register from './pages/Register/Register'
 import Tour from './pages/Tour/Tour'
 import TourChiTiet from './pages/TourDetail/TourDetail'
@@ -51,6 +54,9 @@ export default function AppRouter() {
           <Route path={PATHS.login} element={<Login />} />
           <Route path={PATHS.register} element={<Register />} />
           <Route path={PATHS.booking} element={<RequireAuth><Booking /></RequireAuth>} />
+          <Route path={PATHS.myBookings} element={<RequireAuth><MyBookings /></RequireAuth>} />
+          <Route path={PATHS.myBookingDetail} element={<RequireAuth><BookingDetail /></RequireAuth>} />
+          <Route path={PATHS.myReviews} element={<RequireAuth><MyReviews /></RequireAuth>} />
         </Routes>
       </Content>
     </Layout>

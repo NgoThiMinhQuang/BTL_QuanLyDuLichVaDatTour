@@ -74,6 +74,10 @@ public class BookingResponseDto
 
     public List<HanhKhachResponseDto> HanhKhachs { get; set; } = new();
 
+    public bool CoTheDanhGia { get; set; }
+
+    public bool DaDanhGia { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

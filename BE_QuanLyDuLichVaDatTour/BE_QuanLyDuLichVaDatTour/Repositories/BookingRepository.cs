@@ -28,6 +28,7 @@ public class BookingRepository : IBookingRepository
             .Include(x => x.KhachHang)
             .Include(x => x.Voucher)
             .Include(x => x.HanhKhachs)
+            .Include(x => x.DanhGias)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -39,6 +40,7 @@ public class BookingRepository : IBookingRepository
             .Include(x => x.KhachHang)
             .Include(x => x.Voucher)
             .Include(x => x.HanhKhachs)
+            .Include(x => x.DanhGias)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -57,6 +59,7 @@ public class BookingRepository : IBookingRepository
                 .ThenInclude(x => x!.Tour)
             .Include(x => x.Voucher)
             .Include(x => x.HanhKhachs)
+            .Include(x => x.DanhGias)
             .Where(x => x.KhachHangId == nguoiDungId)
             .OrderByDescending(x => x.NgayDat)
             .ToListAsync();
@@ -71,6 +74,7 @@ public class BookingRepository : IBookingRepository
             .Include(x => x.KhachHang)
             .Include(x => x.Voucher)
             .Include(x => x.HanhKhachs)
+            .Include(x => x.DanhGias)
             .OrderByDescending(x => x.NgayDat)
             .ToListAsync();
     }

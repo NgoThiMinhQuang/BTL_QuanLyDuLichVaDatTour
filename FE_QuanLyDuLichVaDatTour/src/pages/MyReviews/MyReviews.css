@@ -1,0 +1,18 @@
+@import '../MyBookings/MyBookings.css';
+
+.review-form-wrap {
+  width: 100%;
+}
+
+.review-form-stack {
+  width: 100%;
+}
+
+.review-form-title.ant-typography {
+  margin: 0 !important;
+}
+
+.review-form-subtitle.ant-typography {
+  margin: 4px 0 0 !important;
+  color: #64748b;
+}

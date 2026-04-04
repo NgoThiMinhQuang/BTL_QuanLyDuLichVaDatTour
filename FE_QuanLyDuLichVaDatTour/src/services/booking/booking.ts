@@ -27,6 +27,17 @@ export interface CreateBookingPayload {
   ghiChu?: string
 }
 
+export interface BookingPassenger {
+  id: number
+  hoTen: string
+  loaiKhach: string
+  ngaySinh: string | null
+  gioiTinh: string | null
+  soGiayTo: string | null
+  quocTich: string | null
+  ghiChu: string | null
+}
+
 export interface BookingResponse {
   id: number
   maBooking: string
@@ -63,8 +74,93 @@ export interface BookingResponse {
   trangThaiThanhToan: string
   hanThanhToan: string | null
   ghiChu: string | null
+  hanhKhachs: BookingPassenger[]
+  coTheDanhGia: boolean
+  daDanhGia: boolean
   createdAt: string
   updatedAt: string
+}
+
+export interface BookingListItem {
+  id: number
+  maBooking: string
+  tenTour: string
+  maDotTour: string
+  ngayKhoiHanh: string
+  tongHanhKhach: number
+  tongTien: number
+  trangThaiBooking: string
+  trangThaiThanhToan: string
+  ngayDat: string
+  coTheDanhGia: boolean
+  daDanhGia: boolean
+}
+
+function getAccessToken() {
+  const accessToken = localStorage.getItem('accessToken')
+
+  if (!accessToken) {
+    throw new Error('Vui lòng đăng nhập để tiếp tục')
+  }
+
+  return accessToken
+}
+
+function getAuthHeaders(contentType = false) {
+  return {
+    ...(contentType ? { 'Content-Type': 'application/json' } : {}),
+    Authorization: `Bearer ${getAccessToken()}`,
+  }
+}
+
+async function handleApiResponse<T>(response: Response, fallbackMessage: string): Promise<T> {
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    throw new Error(data?.message || fallbackMessage)
+  }
+
+  return data as T
+}
+
+export async function layDanhSachBookingCuaToi(): Promise<BookingListItem[]> {
+  const response = await fetch(`${API_BASE_URL}/booking/my-bookings`, {
+    headers: getAuthHeaders(),
+  })
+
+  return handleApiResponse<BookingListItem[]>(response, 'Không thể tải danh sách booking')
+}
+
+export async function layChiTietBooking(id: number): Promise<BookingResponse> {
+  const response = await fetch(`${API_BASE_URL}/booking/get-by-id/${id}`, {
+    headers: getAuthHeaders(),
+  })
+
+  return handleApiResponse<BookingResponse>(response, 'Không thể tải chi tiết booking')
+}
+
+export async function layThanhToanTheoBooking(bookingId: number) {
+  const response = await fetch(`${API_BASE_URL}/payment/booking/${bookingId}`, {
+    headers: getAuthHeaders(),
+  })
+
+  return handleApiResponse<Array<{
+    id: number
+    bookingId: number
+    loaiGiaoDich: string
+    kenhThanhToan: string
+    phuongThucThanhToan: string
+    nhaCungCap: string | null
+    soTien: number
+    maGiaoDichNoiBo: string | null
+    maGiaoDichBenThuBa: string | null
+    maThamChieuBenThuBa: string | null
+    duLieuPhanHoi: string | null
+    ghiChu: string | null
+    trangThai: string
+    thoiGianTao: string
+    updatedAt: string
+  }>>(response, 'Không thể tải lịch sử thanh toán')
 }
 
 export interface BookingPageData {
@@ -103,18 +199,9 @@ export async function layDuLieuDatTour(tourId: number, departureId: number): Pro
 }
 
 export async function taoBooking(payload: CreateBookingPayload): Promise<BookingResponse> {
-  const accessToken = localStorage.getItem('accessToken')
-
-  if (!accessToken) {
-    throw new Error('Vui lòng đăng nhập để đặt tour')
-  }
-
   const response = await fetch(`${API_BASE_URL}/booking/create`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
+    headers: getAuthHeaders(true),
     body: JSON.stringify({
       lichKhoiHanhId: payload.lichKhoiHanhId,
       hoTenLienHe: payload.hoTenLienHe,

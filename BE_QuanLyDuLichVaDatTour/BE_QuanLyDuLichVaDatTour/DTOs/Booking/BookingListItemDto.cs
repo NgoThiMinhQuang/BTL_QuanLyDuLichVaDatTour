@@ -21,4 +21,8 @@ public class BookingListItemDto
     public string TrangThaiThanhToan { get; set; } = string.Empty;
 
     public DateTime NgayDat { get; set; }
+
+    public bool CoTheDanhGia { get; set; }
+
+    public bool DaDanhGia { get; set; }
 }

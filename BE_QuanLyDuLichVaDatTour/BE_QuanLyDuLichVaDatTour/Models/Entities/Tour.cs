@@ -47,4 +47,6 @@ public class Tour
     public ICollection<LichTrinh> LichTrinhs { get; set; } = new List<LichTrinh>();
 
     public ICollection<LichKhoiHanh> LichKhoiHanhs { get; set; } = new List<LichKhoiHanh>();
+
+    public ICollection<DanhGia> DanhGias { get; set; } = new List<DanhGia>();
 }

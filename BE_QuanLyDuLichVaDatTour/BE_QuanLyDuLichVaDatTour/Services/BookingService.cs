@@ -4,6 +4,7 @@ using BE_QuanLyDuLichVaDatTour.Models.Enums;
 using BE_QuanLyDuLichVaDatTour.Repositories.Interfaces;
 using BE_QuanLyDuLichVaDatTour.Services.Interfaces;
 using System.Security.Cryptography;
+using System.Linq;
 
 namespace BE_QuanLyDuLichVaDatTour.Services;
 
@@ -385,6 +386,9 @@ public class BookingService : IBookingService
 
     private static BookingListItemDto MapBookingListItem(Booking booking)
     {
+        var daDanhGia = booking.DanhGias.Any();
+        var coTheDanhGia = booking.TrangThaiBooking == TrangThaiBooking.hoan_tat && !daDanhGia;
+
         return new BookingListItemDto
         {
             Id = booking.Id,
@@ -396,12 +400,17 @@ public class BookingService : IBookingService
             TongTien = booking.TongTien,
             TrangThaiBooking = booking.TrangThaiBooking.ToString(),
             TrangThaiThanhToan = booking.TrangThaiThanhToan.ToString(),
-            NgayDat = booking.NgayDat
+            NgayDat = booking.NgayDat,
+            CoTheDanhGia = coTheDanhGia,
+            DaDanhGia = daDanhGia
         };
     }
 
     private static BookingResponseDto MapBookingResponse(Booking booking)
     {
+        var daDanhGia = booking.DanhGias.Any();
+        var coTheDanhGia = booking.TrangThaiBooking == TrangThaiBooking.hoan_tat && !daDanhGia;
+
         return new BookingResponseDto
         {
             Id = booking.Id,
@@ -443,6 +452,8 @@ public class BookingService : IBookingService
                 .OrderBy(x => x.Id)
                 .Select(MapHanhKhachResponse)
                 .ToList(),
+            CoTheDanhGia = coTheDanhGia,
+            DaDanhGia = daDanhGia,
             CreatedAt = booking.CreatedAt,
             UpdatedAt = booking.UpdatedAt
         };
