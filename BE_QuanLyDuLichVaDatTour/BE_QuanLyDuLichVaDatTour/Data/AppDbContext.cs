@@ -780,17 +780,17 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.SoNguoiLon)
                 .HasColumnName("SoNguoiLon")
-                .HasColumnType("tinyint")
+                .HasColumnType("smallint")
                 .IsRequired();
 
             entity.Property(x => x.SoTreEm)
                 .HasColumnName("SoTreEm")
-                .HasColumnType("tinyint")
+                .HasColumnType("smallint")
                 .IsRequired();
 
             entity.Property(x => x.SoEmBe)
                 .HasColumnName("SoEmBe")
-                .HasColumnType("tinyint")
+                .HasColumnType("smallint")
                 .IsRequired();
 
             entity.Property(x => x.LoaiGiaApDung)

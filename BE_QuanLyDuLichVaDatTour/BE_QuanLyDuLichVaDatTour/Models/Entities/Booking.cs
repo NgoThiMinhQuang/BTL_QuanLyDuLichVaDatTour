@@ -24,11 +24,11 @@ public class Booking
 
     public DateTime NgayDat { get; set; }
 
-    public int SoNguoiLon { get; set; }
+    public short SoNguoiLon { get; set; }
 
-    public int SoTreEm { get; set; }
+    public short SoTreEm { get; set; }
 
-    public int SoEmBe { get; set; }
+    public short SoEmBe { get; set; }
 
     public LoaiGiaApDung LoaiGiaApDung { get; set; }
 
