@@ -3,7 +3,7 @@ import type React from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router'
 import { Header } from '../components/Header'
 import { PATHS } from '../constants/paths'
-import { getAccessToken } from '../utils/storage'
+import { useAuthStore } from '../store/authStore'
 import AboutPage from '../pages/AboutPage'
 import BookingPage from '../pages/BookingPage'
 import MyBookingDetailPage from '../pages/MyBookingDetailPage'
@@ -23,7 +23,7 @@ const { Content } = Layout
 
 function RequireAuth({ children }: { children: React.ReactElement }) {
   const location = useLocation()
-  const accessToken = getAccessToken()
+  const accessToken = useAuthStore((state) => state.accessToken)
 
   if (!accessToken) {
     const redirectPath = `${location.pathname}${location.search}`

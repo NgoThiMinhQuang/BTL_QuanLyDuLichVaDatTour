@@ -1,4 +1,4 @@
-import './MyBookings/MyBookings.css'
+import './MyBookingsPage.css'
 import { Alert, Empty, Skeleton, Space, Typography } from 'antd'
 import { useQuery } from '@tanstack/react-query'
 import { BookingListItemCard } from '../components/booking/BookingListItem'

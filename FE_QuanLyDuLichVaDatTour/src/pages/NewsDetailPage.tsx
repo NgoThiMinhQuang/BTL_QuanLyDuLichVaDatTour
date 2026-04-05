@@ -1,4 +1,4 @@
-import './TinTuc/TinTucChiTiet.css'
+import './NewsDetailPage.css'
 import { useQuery } from '@tanstack/react-query'
 import { Breadcrumb, Card, Spin, Tag, Typography } from 'antd'
 import { Link, useParams } from 'react-router'

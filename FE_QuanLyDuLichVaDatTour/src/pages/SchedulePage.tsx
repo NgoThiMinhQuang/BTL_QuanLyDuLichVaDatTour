@@ -1,4 +1,4 @@
-import './LichKhoiHanh/LichKhoiHanh.css'
+import './SchedulePage.css'
 import { Alert, Empty, Skeleton, Space, Typography } from 'antd'
 import bannerImage from '../assets/Banner.jpg'
 import { BoLocLichKhoiHanh } from '../components/lich-khoi-hanh/BoLocLichKhoiHanh'

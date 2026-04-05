@@ -1,4 +1,4 @@
-import './Booking/Booking.css'
+import './BookingPage.css'
 import { Alert, Button, Card, Checkbox, Col, DatePicker, Form, Input, Row, Select, Skeleton, Space, Typography } from 'antd'
 import { CheckOutlined, GiftOutlined, MinusOutlined, RightOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
@@ -10,7 +10,7 @@ import { formatDate } from '../utils/formatDate'
 import { formatMoney } from '../utils/formatMoney'
 import { getTourChiTietPath } from '../constants/paths'
 import { layDuLieuDatTour, taoBooking, type BookingPassengerPayload } from '../services/booking/booking'
-import { getCurrentUser } from '../utils/storage'
+import { useAuthStore } from '../store/authStore'
 
 const { Paragraph, Text, Title } = Typography
 const { TextArea } = Input
@@ -107,7 +107,7 @@ export default function Booking() {
   const tourId = Number(searchParams.get('tourId'))
   const departureId = Number(searchParams.get('departureId'))
   const isValidParams = Number.isInteger(tourId) && tourId > 0 && Number.isInteger(departureId) && departureId > 0
-  const currentUser = getCurrentUser()
+  const currentUser = useAuthStore((state) => state.currentUser)
 
   const bookingQuery = useQuery({
     queryKey: ['booking-page', tourId, departureId],

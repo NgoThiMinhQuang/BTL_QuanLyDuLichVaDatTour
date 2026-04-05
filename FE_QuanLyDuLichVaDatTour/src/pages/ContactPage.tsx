@@ -1,4 +1,4 @@
-import './Contact/Contact.css'
+import './ContactPage.css'
 import { ClockCircleOutlined, EnvironmentOutlined, MailOutlined, PhoneOutlined, SendOutlined } from '@ant-design/icons'
 import { Button, Card, Form, Input, Select, Typography } from 'antd'
 

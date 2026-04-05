@@ -1,4 +1,4 @@
-import './BookingDetail/BookingDetail.css'
+import './MyBookingDetailPage.css'
 import { Alert, Card, Descriptions, Empty, List, Skeleton, Space, Tag, Typography } from 'antd'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router'

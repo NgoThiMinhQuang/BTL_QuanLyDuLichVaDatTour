@@ -1,4 +1,4 @@
-import './Home/Home.css'
+import './HomePage.css'
 import { Space } from 'antd'
 import { CacMucThongTinTrangChu } from '../components/home/CacMucThongTinTrangChu'
 import { MucTourNoiBat } from '../components/home/MucTourNoiBat'

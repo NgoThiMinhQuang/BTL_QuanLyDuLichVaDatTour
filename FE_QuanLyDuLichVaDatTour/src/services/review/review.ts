@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../constants/api'
-import { requireAccessToken } from '../../utils/storage'
+import { useAuthStore } from '../../store/authStore'
 
 export interface ReviewItem {
   id: number
@@ -24,7 +24,7 @@ export interface CreateReviewPayload {
 export async function layDanhGiaCuaToi(): Promise<ReviewItem[]> {
   const response = await fetch(`${API_BASE_URL}/review/my-reviews`, {
     headers: {
-      Authorization: `Bearer ${requireAccessToken()}`,
+      Authorization: `Bearer ${useAuthStore.getState().requireAccessToken()}`,
     },
   })
 
@@ -42,7 +42,7 @@ export async function taoDanhGia(payload: CreateReviewPayload): Promise<ReviewIt
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${requireAccessToken()}`,
+      Authorization: `Bearer ${useAuthStore.getState().requireAccessToken()}`,
     },
     body: JSON.stringify({
       bookingId: payload.bookingId,

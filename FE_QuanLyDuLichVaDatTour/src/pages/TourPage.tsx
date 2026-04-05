@@ -1,4 +1,4 @@
-import './Tour/Tour.css'
+import './TourPage.css'
 import { Alert, Col, Empty, Row, Skeleton, Typography } from 'antd'
 import { BoLocTour } from '../components/tour/BoLocTour'
 import { ThanhCongCuTour } from '../components/tour/ThanhCongCuTour'

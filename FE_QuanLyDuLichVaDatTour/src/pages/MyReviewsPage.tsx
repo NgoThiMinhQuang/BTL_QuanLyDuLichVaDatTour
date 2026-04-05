@@ -1,4 +1,4 @@
-import './MyReviews/MyReviews.css'
+import './MyReviewsPage.css'
 import { Alert, Card, Empty, Skeleton, Space, Typography } from 'antd'
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router'

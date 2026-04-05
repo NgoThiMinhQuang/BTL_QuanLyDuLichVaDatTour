@@ -1,11 +1,11 @@
-import './TourDetail/TourDetail.css'
+import './TourDetailPage.css'
 import { Breadcrumb, Button, Card, Empty, Image, Select, Skeleton, Tabs, Tag, Typography } from 'antd'
 import { Link, useNavigate, useParams } from 'react-router'
 import { formatDate } from '../utils/formatDate'
 import { formatMoney } from '../utils/formatMoney'
 import { PATHS } from '../constants/paths'
 import { useTourChiTietPage } from '../services/tour/useTourChiTietPage'
-import { getAccessToken } from '../utils/storage'
+import { useAuthStore } from '../store/authStore'
 
 const { Paragraph, Text, Title } = Typography
 
@@ -63,7 +63,7 @@ export default function TourDetail() {
     }
 
     const bookingPath = `${PATHS.booking}?tourId=${tourId}&departureId=${selectedDeparture.id}`
-    const accessToken = getAccessToken()
+    const accessToken = useAuthStore.getState().accessToken
 
     if (!accessToken) {
       navigate(`${PATHS.login}?redirect=${encodeURIComponent(bookingPath)}`, { state: { from: bookingPath } })

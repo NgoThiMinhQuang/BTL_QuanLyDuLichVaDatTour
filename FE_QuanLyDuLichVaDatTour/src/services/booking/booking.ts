@@ -1,7 +1,7 @@
 import { API_BASE_URL } from '../../constants/api'
 import { layBangGiaLichKhoiHanh, layLichKhoiHanhTour, layTourChiTiet } from '../tour/layTourChiTiet'
 import type { DeparturePricingItem, TourDetailApiItem, DepartureItem } from '../../types/tour'
-import { requireAccessToken } from '../../utils/storage'
+import { useAuthStore } from '../../store/authStore'
 
 export interface BookingPassengerPayload {
   hoTen: string
@@ -100,7 +100,7 @@ export interface BookingListItem {
 function getAuthHeaders(contentType = false) {
   return {
     ...(contentType ? { 'Content-Type': 'application/json' } : {}),
-    Authorization: `Bearer ${requireAccessToken()}`,
+    Authorization: `Bearer ${useAuthStore.getState().requireAccessToken()}`,
   }
 }
 

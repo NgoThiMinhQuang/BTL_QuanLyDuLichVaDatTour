@@ -2,7 +2,7 @@ import { Button, Layout, Menu, Space } from 'antd'
 import { Link, useLocation, useNavigate } from 'react-router'
 import logoImage from '../assets/image.png'
 import { PATHS } from '../constants/paths'
-import { clearAuthSession, getAccessToken, getCurrentUser } from '../utils/storage'
+import { useAuthStore } from '../store/authStore'
 
 const { Header: AntHeader } = Layout
 
@@ -12,8 +12,9 @@ export function Header() {
   const currentPath = `${location.pathname}${location.search}`
   const loginPath = currentPath === PATHS.home ? PATHS.login : `${PATHS.login}?redirect=${encodeURIComponent(currentPath)}`
   const registerPath = currentPath === PATHS.home ? PATHS.register : `${PATHS.register}?redirect=${encodeURIComponent(currentPath)}`
-  const accessToken = getAccessToken()
-  const currentUser = getCurrentUser()
+  const accessToken = useAuthStore((state) => state.accessToken)
+  const currentUser = useAuthStore((state) => state.currentUser)
+  const clearAuthSession = useAuthStore((state) => state.clearAuthSession)
 
   const handleLogout = () => {
     clearAuthSession()

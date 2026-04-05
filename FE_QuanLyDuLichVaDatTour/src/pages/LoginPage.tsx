@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 import { PATHS } from '../constants/paths'
 import { login } from '../services/auth/login'
-import { setAuthSession } from '../utils/storage'
+import { useAuthStore } from '../store/authStore'
 
 const { Paragraph, Title, Text } = Typography
 
@@ -30,6 +30,7 @@ export default function Login() {
     (typeof location.state?.from === 'string' && location.state.from) ||
     (redirectParam && redirectParam.startsWith('/') ? redirectParam : null) ||
     PATHS.home
+  const setAuthSession = useAuthStore((state) => state.setAuthSession)
 
   const handleSubmit = async (values: LoginFormValues) => {
     try {
