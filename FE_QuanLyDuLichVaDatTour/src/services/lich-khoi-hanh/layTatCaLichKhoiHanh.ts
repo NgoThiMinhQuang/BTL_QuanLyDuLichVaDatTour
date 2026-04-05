@@ -1,4 +1,4 @@
-import { layTourNoiBat } from '../tour/layTourNoiBat'
+import { layTourNoiBat } from '../tour/tour.api'
 import { API_BASE_URL } from '../../constant/api'
 import type { DepartureItem, FeaturedTourApiItem } from '../../libs/types/tour'
 

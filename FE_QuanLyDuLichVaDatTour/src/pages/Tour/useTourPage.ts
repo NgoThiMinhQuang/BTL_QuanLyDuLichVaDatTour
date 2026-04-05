@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react'
 import { TOUR_PAGE_SIZE } from '../../constant/tour'
-import { useLoaiTour } from '../../services/tour/useLoaiTour'
+import { useLoaiTour, useDiaDiem, useTourSearch } from '../../services/tour/tour.hooks'
 import { sortTours } from '../../services/tour/sortTours'
-import { useDiaDiem } from '../../services/tour/useDiaDiem'
-import { useTourSearch } from '../../services/tour/useTourSearch'
 
 function resolvePriceRange(giaRange: string) {
   if (giaRange === 'under-3m') {
