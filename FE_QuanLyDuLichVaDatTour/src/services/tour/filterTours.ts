@@ -1,4 +1,4 @@
-import type { FeaturedTourApiItem } from '../../libs/types/tour'
+import type { FeaturedTourApiItem } from '../../types/tour'
 
 export interface TourFilters {
   keyword: string

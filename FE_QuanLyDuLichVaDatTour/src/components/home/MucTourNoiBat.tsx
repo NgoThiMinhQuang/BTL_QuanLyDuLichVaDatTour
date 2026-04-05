@@ -2,9 +2,9 @@ import './MucTourNoiBat.css'
 import { Alert, Button, Card, Col, Empty, Row, Skeleton } from 'antd'
 import { Link } from 'react-router'
 import { TieuDeMuc } from '../../components/common/TieuDeMuc'
-import { PATHS } from '../../paths'
-import type { FeaturedTourApiItem } from '../../libs/types/tour'
-import { TourThe } from '../tour/TourThe'
+import { PATHS } from '../../constants/paths'
+import type { FeaturedTourApiItem } from '../../types/tour'
+import { TheTour } from '../tour/TheTour'
 
 interface MucTourNoiBatProps {
   tours: FeaturedTourApiItem[]
@@ -69,7 +69,7 @@ export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoi
         <Row gutter={[20, 20]} className="featured-tour-grid">
           {data.map((tour, index) => (
             <Col xs={24} md={12} xl={8} key={tour.id}>
-              <TourThe
+              <TheTour
                 tour={tour}
                 imageIndex={index}
                 viewMode="grid"

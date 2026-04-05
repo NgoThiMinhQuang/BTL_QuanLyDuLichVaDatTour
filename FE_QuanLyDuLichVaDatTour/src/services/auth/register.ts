@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../../constant/api'
+import { API_BASE_URL } from '../../constants/api'
 import type { RegisterRequest, RegisterResponse } from './types'
 
 export async function register(payload: RegisterRequest): Promise<RegisterResponse> {

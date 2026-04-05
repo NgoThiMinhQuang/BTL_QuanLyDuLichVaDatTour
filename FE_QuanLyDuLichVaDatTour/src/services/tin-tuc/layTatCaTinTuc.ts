@@ -1,5 +1,5 @@
-import { API_BASE_URL } from '../../constant/api'
-import type { TinTucItem } from '../../libs/types/tinTuc'
+import { API_BASE_URL } from '../../constants/api'
+import type { TinTucItem } from '../../types/tinTuc'
 
 interface RawTinTucItem {
   id: number

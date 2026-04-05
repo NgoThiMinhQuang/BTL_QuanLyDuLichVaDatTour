@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../../constant/api'
+import { API_BASE_URL } from '../../constants/api'
 import type { LoginRequest, LoginResponse } from './types'
 
 export async function login(payload: LoginRequest): Promise<LoginResponse> {

@@ -1,0 +1,76 @@
+import { Button, Layout, Menu, Space } from 'antd'
+import { Link, useLocation, useNavigate } from 'react-router'
+import logoImage from '../assets/image.png'
+import { PATHS } from '../constants/paths'
+import { clearAuthSession, getAccessToken, getCurrentUser } from '../utils/storage'
+
+const { Header: AntHeader } = Layout
+
+export function Header() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const currentPath = `${location.pathname}${location.search}`
+  const loginPath = currentPath === PATHS.home ? PATHS.login : `${PATHS.login}?redirect=${encodeURIComponent(currentPath)}`
+  const registerPath = currentPath === PATHS.home ? PATHS.register : `${PATHS.register}?redirect=${encodeURIComponent(currentPath)}`
+  const accessToken = getAccessToken()
+  const currentUser = getCurrentUser()
+
+  const handleLogout = () => {
+    clearAuthSession()
+    navigate(PATHS.home)
+  }
+
+  const items = [
+    { key: PATHS.home, label: <Link to={PATHS.home}>Trang chủ</Link> },
+    { key: PATHS.tour, label: <Link to={PATHS.tour}>Tour</Link> },
+    { key: PATHS.lichKhoiHanh, label: <Link to={PATHS.lichKhoiHanh}>Lịch khởi hành</Link> },
+    { key: PATHS.tinTuc, label: <Link to={PATHS.tinTuc}>Tin tức</Link> },
+    { key: PATHS.lienHe, label: <Link to={PATHS.lienHe}>Liên hệ</Link> },
+  ]
+
+  const selectedKey = items.some((item) => item.key === location.pathname) ? location.pathname : PATHS.home
+
+  return (
+    <AntHeader className="app-header">
+      <div className="app-header-inner">
+        <Link to={PATHS.home} className="app-brand">
+          <img src={logoImage} alt="TravelViet" className="app-brand-logo" />
+        </Link>
+
+        <Menu mode="horizontal" selectedKeys={[selectedKey]} items={items} className="app-menu" />
+
+        <Space className="app-header-actions">
+          <button type="button" className="app-header-icon" aria-label="Yêu thích">
+            ♡
+          </button>
+          <button type="button" className="app-header-icon" aria-label="Thông báo">
+            🔔
+          </button>
+          {accessToken ? (
+            <>
+              <Button type="text" className="app-header-link-button" href={PATHS.myBookings}>
+                Đơn đã đặt
+              </Button>
+              <Button type="text" className="app-header-link-button" href={PATHS.myReviews}>
+                Đánh giá của tôi
+              </Button>
+              <span className="app-header-user-name">{currentUser?.hoTen || 'Tài khoản của tôi'}</span>
+              <Button type="primary" danger className="app-header-button app-header-button-primary" onClick={handleLogout}>
+                Đăng xuất
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button type="text" className="app-header-link-button" href={loginPath}>
+                Đăng nhập
+              </Button>
+              <Button type="primary" className="app-header-button app-header-button-primary" href={registerPath}>
+                Đăng ký
+              </Button>
+            </>
+          )}
+        </Space>
+      </div>
+    </AntHeader>
+  )
+}

@@ -1,28 +1,29 @@
 import { Layout } from 'antd'
 import type React from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router'
-import { HeaderChung } from '../components/common/HeaderChung'
-import { PATHS } from '../paths'
-import About from '../pages/About/About'
-import Booking from '../pages/Booking/Booking'
-import BookingDetail from '../pages/BookingDetail/BookingDetail'
-import Home from '../pages/Home/Home'
-import Login from '../pages/Login/Login'
-import MyBookings from '../pages/MyBookings/MyBookings'
-import MyReviews from '../pages/MyReviews/MyReviews'
-import Register from '../pages/Register/Register'
-import Tour from '../pages/Tour/Tour'
-import TourChiTiet from '../pages/TourDetail/TourDetail'
-import LichKhoiHanh from '../pages/LichKhoiHanh/LichKhoiHanh'
-import TinTuc from '../pages/TinTuc/TinTuc'
-import TinTucChiTiet from '../pages/TinTuc/TinTucChiTiet'
-import Contact from '../pages/Contact/Contact'
+import { Header } from '../components/Header'
+import { PATHS } from '../constants/paths'
+import { getAccessToken } from '../utils/storage'
+import AboutPage from '../pages/AboutPage'
+import BookingPage from '../pages/BookingPage'
+import MyBookingDetailPage from '../pages/MyBookingDetailPage'
+import HomePage from '../pages/HomePage'
+import LoginPage from '../pages/LoginPage'
+import MyBookingsPage from '../pages/MyBookingsPage'
+import MyReviewsPage from '../pages/MyReviewsPage'
+import RegisterPage from '../pages/RegisterPage'
+import TourPage from '../pages/TourPage'
+import TourDetailPage from '../pages/TourDetailPage'
+import SchedulePage from '../pages/SchedulePage'
+import NewsPage from '../pages/NewsPage'
+import NewsDetailPage from '../pages/NewsDetailPage'
+import ContactPage from '../pages/ContactPage'
 
 const { Content } = Layout
 
 function RequireAuth({ children }: { children: React.ReactElement }) {
   const location = useLocation()
-  const accessToken = localStorage.getItem('accessToken')
+  const accessToken = getAccessToken()
 
   if (!accessToken) {
     const redirectPath = `${location.pathname}${location.search}`
@@ -40,23 +41,23 @@ export default function AppRouter() {
 
   return (
     <Layout className="app-shell">
-      {!isAuthPage ? <HeaderChung /> : null}
+      {!isAuthPage ? <Header /> : null}
       <Content className="app-content">
         <Routes>
-          <Route path={PATHS.home} element={<Home />} />
-          <Route path={PATHS.about} element={<About />} />
-          <Route path={PATHS.tour} element={<Tour />} />
-          <Route path={PATHS.tourChiTiet} element={<TourChiTiet />} />
-          <Route path={PATHS.lichKhoiHanh} element={<LichKhoiHanh />} />
-          <Route path={PATHS.tinTuc} element={<TinTuc />} />
-          <Route path={PATHS.tinTucChiTiet} element={<TinTucChiTiet />} />
-          <Route path={PATHS.lienHe} element={<Contact />} />
-          <Route path={PATHS.login} element={<Login />} />
-          <Route path={PATHS.register} element={<Register />} />
-          <Route path={PATHS.booking} element={<RequireAuth><Booking /></RequireAuth>} />
-          <Route path={PATHS.myBookings} element={<RequireAuth><MyBookings /></RequireAuth>} />
-          <Route path={PATHS.myBookingDetail} element={<RequireAuth><BookingDetail /></RequireAuth>} />
-          <Route path={PATHS.myReviews} element={<RequireAuth><MyReviews /></RequireAuth>} />
+          <Route path={PATHS.home} element={<HomePage />} />
+          <Route path={PATHS.about} element={<AboutPage />} />
+          <Route path={PATHS.tour} element={<TourPage />} />
+          <Route path={PATHS.tourChiTiet} element={<TourDetailPage />} />
+          <Route path={PATHS.lichKhoiHanh} element={<SchedulePage />} />
+          <Route path={PATHS.tinTuc} element={<NewsPage />} />
+          <Route path={PATHS.tinTucChiTiet} element={<NewsDetailPage />} />
+          <Route path={PATHS.lienHe} element={<ContactPage />} />
+          <Route path={PATHS.login} element={<LoginPage />} />
+          <Route path={PATHS.register} element={<RegisterPage />} />
+          <Route path={PATHS.booking} element={<RequireAuth><BookingPage /></RequireAuth>} />
+          <Route path={PATHS.myBookings} element={<RequireAuth><MyBookingsPage /></RequireAuth>} />
+          <Route path={PATHS.myBookingDetail} element={<RequireAuth><MyBookingDetailPage /></RequireAuth>} />
+          <Route path={PATHS.myReviews} element={<RequireAuth><MyReviewsPage /></RequireAuth>} />
         </Routes>
       </Content>
     </Layout>

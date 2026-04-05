@@ -1,4 +1,5 @@
-import { API_BASE_URL } from '../../constant/api'
+import { API_BASE_URL } from '../../constants/api'
+import { requireAccessToken } from '../../utils/storage'
 
 export interface ReviewItem {
   id: number
@@ -20,20 +21,10 @@ export interface CreateReviewPayload {
   noiDung: string
 }
 
-function getAccessToken() {
-  const accessToken = localStorage.getItem('accessToken')
-
-  if (!accessToken) {
-    throw new Error('Vui lòng đăng nhập để tiếp tục')
-  }
-
-  return accessToken
-}
-
 export async function layDanhGiaCuaToi(): Promise<ReviewItem[]> {
   const response = await fetch(`${API_BASE_URL}/review/my-reviews`, {
     headers: {
-      Authorization: `Bearer ${getAccessToken()}`,
+      Authorization: `Bearer ${requireAccessToken()}`,
     },
   })
 
@@ -51,7 +42,7 @@ export async function taoDanhGia(payload: CreateReviewPayload): Promise<ReviewIt
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${getAccessToken()}`,
+      Authorization: `Bearer ${requireAccessToken()}`,
     },
     body: JSON.stringify({
       bookingId: payload.bookingId,

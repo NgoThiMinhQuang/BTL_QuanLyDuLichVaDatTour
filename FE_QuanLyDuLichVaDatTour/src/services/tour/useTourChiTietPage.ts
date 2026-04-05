@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { resolveApiAssetUrl } from '../../constant/api'
-import type { DepartureItem, TourGalleryItem, TourInfoFact } from '../../libs/types/tour'
+import { resolveApiAssetUrl } from '../../constants/api'
+import type { DepartureItem, TourGalleryItem, TourInfoFact } from '../../types/tour'
 import { layBangGiaLichKhoiHanh, layLichKhoiHanhTour, layLichTrinhTour, layTourChiTiet } from './layTourChiTiet'
 
 export function useTourChiTietPage(tourId: number, isValidId: boolean) {

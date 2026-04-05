@@ -1,9 +1,9 @@
 import { Button, Card, Space, Tag, Typography } from 'antd'
 import { Link } from 'react-router'
 import type { BookingListItem } from '../../services/booking/booking'
-import { PATHS } from '../../paths'
-import { formatNgay } from '../../libs/helpers/formatNgay'
-import { formatTien } from '../../libs/helpers/formatTien'
+import { PATHS } from '../../constants/paths'
+import { formatDate } from '../../utils/formatDate'
+import { formatMoney } from '../../utils/formatMoney'
 
 const { Paragraph, Text, Title } = Typography
 
@@ -33,7 +33,7 @@ export function BookingListItemCard({ booking }: BookingListItemProps) {
           <div className="customer-booking-card-price">
             <Text className="customer-booking-card-price-label">Tổng tiền</Text>
             <Title level={3} className="customer-booking-card-price-value">
-              {formatTien(booking.tongTien)}
+              {formatMoney(booking.tongTien)}
             </Title>
           </div>
         </div>
@@ -41,11 +41,11 @@ export function BookingListItemCard({ booking }: BookingListItemProps) {
         <div className="customer-booking-meta-grid">
           <div>
             <Text className="customer-booking-meta-label">Ngày đặt</Text>
-            <Text className="customer-booking-meta-value">{formatNgay(booking.ngayDat)}</Text>
+            <Text className="customer-booking-meta-value">{formatDate(booking.ngayDat)}</Text>
           </div>
           <div>
             <Text className="customer-booking-meta-label">Khởi hành</Text>
-            <Text className="customer-booking-meta-value">{formatNgay(booking.ngayKhoiHanh)}</Text>
+            <Text className="customer-booking-meta-value">{formatDate(booking.ngayKhoiHanh)}</Text>
           </div>
           <div>
             <Text className="customer-booking-meta-label">Đợt tour</Text>

@@ -1,5 +1,5 @@
-import { API_BASE_URL } from '../../constant/api'
-import type { DiaDiemItem, FeaturedTourApiItem, SearchTourParams, TourCategory } from '../../libs/types/tour'
+import { API_BASE_URL } from '../../constants/api'
+import type { DiaDiemItem, FeaturedTourApiItem, SearchTourParams, TourCategory } from '../../types/tour'
 
 interface RawAnhTour {
   id: number

@@ -1,6 +1,7 @@
-import { API_BASE_URL } from '../../constant/api'
+import { API_BASE_URL } from '../../constants/api'
 import { layBangGiaLichKhoiHanh, layLichKhoiHanhTour, layTourChiTiet } from '../tour/layTourChiTiet'
-import type { DeparturePricingItem, TourDetailApiItem, DepartureItem } from '../../libs/types/tour'
+import type { DeparturePricingItem, TourDetailApiItem, DepartureItem } from '../../types/tour'
+import { requireAccessToken } from '../../utils/storage'
 
 export interface BookingPassengerPayload {
   hoTen: string
@@ -96,20 +97,10 @@ export interface BookingListItem {
   daDanhGia: boolean
 }
 
-function getAccessToken() {
-  const accessToken = localStorage.getItem('accessToken')
-
-  if (!accessToken) {
-    throw new Error('Vui lòng đăng nhập để tiếp tục')
-  }
-
-  return accessToken
-}
-
 function getAuthHeaders(contentType = false) {
   return {
     ...(contentType ? { 'Content-Type': 'application/json' } : {}),
-    Authorization: `Bearer ${getAccessToken()}`,
+    Authorization: `Bearer ${requireAccessToken()}`,
   }
 }
 

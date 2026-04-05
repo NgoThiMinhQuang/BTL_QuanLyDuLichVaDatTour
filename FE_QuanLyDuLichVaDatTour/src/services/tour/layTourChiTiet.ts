@@ -1,11 +1,11 @@
-import { API_BASE_URL } from '../../constant/api'
+import { API_BASE_URL } from '../../constants/api'
 import type {
   DepartureItem,
   DeparturePricingItem,
   TourDetailApiItem,
   TourDestinationItem,
   TourItineraryItem,
-} from '../../libs/types/tour'
+} from '../../types/tour'
 
 interface RawAnhTour {
   id: number
