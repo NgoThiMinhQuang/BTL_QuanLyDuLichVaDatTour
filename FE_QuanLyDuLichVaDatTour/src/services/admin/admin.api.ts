@@ -9,6 +9,8 @@ import type {
   AdminTourStatus,
 } from '../../types/admin'
 
+export type AdminReviewDisplayStatus = 'cho_duyet' | 'hien_thi' | 'an'
+
 function getAuthHeaders(contentType = false) {
   return {
     ...(contentType ? { 'Content-Type': 'application/json' } : {}),
@@ -83,4 +85,14 @@ export async function layDiaDiemQuanTri(): Promise<AdminDiaDiemItem[]> {
   })
 
   return handleApiResponse<AdminDiaDiemItem[]>(response, 'Không thể tải điểm xuất phát quản trị')
+}
+
+export async function capNhatTrangThaiReviewQuanTri(id: number, trangThai: AdminReviewDisplayStatus) {
+  const response = await fetch(`${API_BASE_URL}/admin/review/update-status/${id}`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(true),
+    body: JSON.stringify({ trangThai }),
+  })
+
+  return handleApiResponse<void>(response, 'Không thể cập nhật trạng thái đánh giá')
 }

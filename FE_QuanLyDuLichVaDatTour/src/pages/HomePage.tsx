@@ -1,12 +1,15 @@
 import './HomePage.css'
 import { Space } from 'antd'
-import { CacMucThongTinTrangChu } from '../components/home/CacMucThongTinTrangChu'
 import { MucTourNoiBat } from '../components/home/MucTourNoiBat'
 import { BannerTrangChu } from '../components/home/BannerTrangChu'
 import { UuDaiTrangChu } from '../components/home/UuDaiTrangChu'
 import { DanhMucTour } from '../components/home/DanhMucTour'
 import { MucLichKhoiHanhGan } from '../components/home/MucLichKhoiHanhGan'
 import { BanDoDuLich } from '../components/home/BanDoDuLich'
+import { GioiThieuTrangChu } from '../components/home/GioiThieuTrangChu'
+import { LyDoChonChungToi } from '../components/home/LyDoChonChungToi'
+import { DanhGiaKhachHang } from '../components/home/DanhGiaKhachHang'
+import { TuVanTrangChu } from '../components/home/TuVanTrangChu'
 import { useTourNoiBat } from '../services/tour/tour.hooks'
 
 export default function Home() {
@@ -20,6 +23,7 @@ export default function Home() {
   return (
     <Space orientation="vertical" size={0} className="home-page">
       <BannerTrangChu />
+      <GioiThieuTrangChu />
       <MucTourNoiBat
         tours={featuredTours}
         isLoading={isFeaturedToursLoading}
@@ -30,7 +34,9 @@ export default function Home() {
       <BanDoDuLich />
       <MucLichKhoiHanhGan tours={featuredTours} />
       <UuDaiTrangChu />
-      <CacMucThongTinTrangChu />
+      <DanhGiaKhachHang />
+      <TuVanTrangChu />
+      <LyDoChonChungToi />
     </Space>
   )
 }

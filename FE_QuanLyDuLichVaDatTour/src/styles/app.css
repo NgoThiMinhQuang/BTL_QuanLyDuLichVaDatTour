@@ -38,7 +38,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 22px;
-  width: min(1280px, calc(100% - 72px));
+  width: min(1180px, calc(100% - 380px));
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
@@ -247,7 +247,7 @@
   }
 
   .app-header-inner {
-    width: calc(100% - 24px);
+    width: min(1180px, calc(100% - 24px));
   }
 
   .app-header-actions {

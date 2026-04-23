@@ -1,37 +1,16 @@
-import { Avatar, Breadcrumb, Dropdown, Layout, Menu, Space, Typography } from 'antd'
-import type { MenuProps } from 'antd'
-import { Link, Outlet, useLocation, useNavigate } from 'react-router'
+import { Avatar, Badge, Input, Layout, Menu, Typography } from 'antd'
+import { Link, Outlet, useLocation } from 'react-router'
 import { PATHS } from '../../constants/paths'
 import { useAuthStore } from '../../store/authStore'
 import './AdminLayout.css'
 
-const { Header, Sider, Content } = Layout
-const { Text, Title } = Typography
+const { Sider, Header, Content } = Layout
+const { Text } = Typography
 
 const navigationItems = [
-  {
-    key: PATHS.admin,
-    label: <Link to={PATHS.admin}>Dashboard</Link>,
-  },
-  {
-    key: PATHS.adminTours,
-    label: <Link to={PATHS.adminTours}>Quản lý tour</Link>,
-  },
+  { key: PATHS.admin, label: <Link to={PATHS.admin}>Tổng quan</Link> },
+  { key: PATHS.adminTours, label: <Link to={PATHS.adminTours}>Quản lý tour</Link> },
 ]
-
-function getPageMeta(pathname: string) {
-  if (pathname.startsWith(PATHS.adminTours)) {
-    return {
-      title: 'Quản lý tour',
-      breadcrumb: ['Quản trị', 'Tour'],
-    }
-  }
-
-  return {
-    title: 'Dashboard',
-    breadcrumb: ['Quản trị', 'Dashboard'],
-  }
-}
 
 function getSelectedMenuKey(pathname: string) {
   if (pathname.startsWith(PATHS.adminTours)) {
@@ -46,76 +25,50 @@ function getInitials(name?: string | null) {
     return 'AD'
   }
 
-  const parts = name
+  return name
     .trim()
     .split(/\s+/)
-    .filter(Boolean)
     .slice(0, 2)
-
-  if (parts.length === 0) {
-    return 'AD'
-  }
-
-  return parts.map((part) => part[0]?.toUpperCase() ?? '').join('')
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('')
 }
 
 export default function AdminLayout() {
   const location = useLocation()
-  const navigate = useNavigate()
   const currentUser = useAuthStore((state) => state.currentUser)
-  const clearAuthSession = useAuthStore((state) => state.clearAuthSession)
-  const pageMeta = getPageMeta(location.pathname)
-
-  const userMenuItems: MenuProps['items'] = [
-    {
-      key: 'logout',
-      label: 'Đăng xuất',
-      onClick: () => {
-        clearAuthSession()
-        navigate(PATHS.login, { replace: true })
-      },
-    },
-  ]
 
   return (
-    <Layout className="admin-shell">
-      <Sider breakpoint="lg" collapsedWidth="0" width={260} className="admin-sider">
-        <div className="admin-brand">
-          <div className="admin-brand-mark">TV</div>
-          <div>
-            <Text className="admin-brand-name">Travel Viet</Text>
-            <Text className="admin-brand-desc">Quản trị hệ thống</Text>
-          </div>
+    <Layout className="admin-layout-shell">
+      <Sider width={268} className="admin-layout-sider">
+        <div className="admin-layout-brand">
+          <div className="admin-layout-brand-icon">◉</div>
+          <Text className="admin-layout-brand-name">TravelAdmin</Text>
         </div>
 
-        <Menu theme="dark" mode="inline" selectedKeys={[getSelectedMenuKey(location.pathname)]} items={navigationItems} className="admin-menu" />
+        <Menu theme="dark" mode="inline" selectedKeys={[getSelectedMenuKey(location.pathname)]} items={navigationItems} className="admin-layout-menu" />
+
+        <div className="admin-layout-user-card">
+          <Avatar size={44} className="admin-layout-user-avatar">
+            {getInitials(currentUser?.hoTen)}
+          </Avatar>
+          <div>
+            <Text className="admin-layout-user-name">{currentUser?.hoTen || 'Admin User'}</Text>
+            <Text className="admin-layout-user-email">{currentUser?.email || 'admin@travel.vn'}</Text>
+          </div>
+        </div>
       </Sider>
 
-      <Layout>
-        <Header className="admin-header-bar">
-          <div>
-            <Breadcrumb items={pageMeta.breadcrumb.map((title) => ({ title }))} className="admin-breadcrumb" />
-            <Title level={3} className="admin-header-title">
-              {pageMeta.title}
-            </Title>
-          </div>
-
-          <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
-            <button type="button" className="admin-user-button">
-              <Space size={12}>
-                <Avatar size={40} className="admin-user-avatar">
-                  {getInitials(currentUser?.hoTen)}
-                </Avatar>
-                <Space direction="vertical" size={0}>
-                  <Text className="admin-user-name">{currentUser?.hoTen || 'Quản trị viên'}</Text>
-                  <Text className="admin-user-role">{currentUser?.vaiTro || 'admin'}</Text>
-                </Space>
-              </Space>
+      <Layout className="admin-layout-main">
+        <Header className="admin-layout-header">
+          <Input prefix={<span className="admin-layout-search-icon">⌕</span>} placeholder="Tìm kiếm..." className="admin-layout-search" />
+          <Badge dot>
+            <button type="button" className="admin-layout-bell">
+              🔔
             </button>
-          </Dropdown>
+          </Badge>
         </Header>
 
-        <Content className="admin-page-content">
+        <Content className="admin-layout-content">
           <Outlet />
         </Content>
       </Layout>

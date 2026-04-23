@@ -4,13 +4,147 @@
   gap: 20px;
 }
 
-.admin-page-heading {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.admin-dashboard-heading .ant-typography {
+  margin-bottom: 6px;
 }
 
-.admin-page-description.ant-typography {
-  margin: 0;
-  color: rgba(0, 0, 0, 0.45);
+.admin-dashboard-heading h1.ant-typography {
+  font-size: 54px;
+  line-height: 1.08;
+}
+
+.admin-kpi-card,
+.admin-dashboard-chart-card,
+.admin-dashboard-list-card,
+.admin-dashboard-table-card {
+  border-radius: 28px;
+  box-shadow: 0 10px 30px rgba(17, 25, 45, 0.05);
+}
+
+.admin-kpi-card .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-kpi-meta {
+  color: #20c7b7;
+  font-size: 14px;
+}
+
+.admin-dashboard-chart-card {
+  min-height: 380px;
+}
+
+.admin-dashboard-line-chart {
+  width: 100%;
+  height: 240px;
+  margin-top: 18px;
+}
+
+.admin-dashboard-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 240px;
+  margin-top: 18px;
+}
+
+.admin-dashboard-bar-group {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.admin-dashboard-bar {
+  width: 100%;
+  border-radius: 18px 18px 0 0;
+  background: #4b88ff;
+}
+
+.admin-dashboard-chart-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #6e7b91;
+}
+
+.admin-dashboard-chart-empty {
+  padding: 48px 0;
+  color: #8c98ad;
+}
+
+.admin-dashboard-list-item,
+.admin-dashboard-booking-card,
+.admin-dashboard-review-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 22px;
+  border-radius: 22px;
+  background: #f8fafc;
+}
+
+.admin-dashboard-list-item + .admin-dashboard-list-item,
+.admin-dashboard-booking-card + .admin-dashboard-booking-card,
+.admin-dashboard-review-card + .admin-dashboard-review-card,
+.admin-dashboard-payment-row + .admin-dashboard-payment-row {
+  margin-top: 14px;
+}
+
+.admin-dashboard-subtext {
+  color: #7a869a;
+  margin-top: 6px;
+}
+
+.admin-dashboard-amount {
+  color: #20c7b7;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.admin-dashboard-amount.warning {
+  color: #ff9f1a;
+}
+
+.admin-dashboard-payment-row {
+  padding: 12px 0;
+}
+
+.admin-dashboard-payment-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.admin-dashboard-stars {
+  color: #ffb400;
+}
+
+.admin-dashboard-stack-vertical {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.admin-dashboard-review-text {
+  margin-top: 10px;
+  color: #3c4a61;
+}
+
+.admin-dashboard-action {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-dashboard-action.approve {
+  background: #20c7b7;
+}
+
+.admin-dashboard-action.reject {
+  background: #f25555;
 }

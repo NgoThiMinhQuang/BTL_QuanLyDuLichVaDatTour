@@ -29,21 +29,16 @@ public class AdminDashboardService : IAdminDashboardService
 
     public async Task<AdminDashboardSummaryDto> GetSummaryAsync()
     {
-        var toursTask = _tourService.GetAllAsync();
-        var bookingsTask = _bookingService.GetAllAsync();
-        var paymentsTask = _paymentService.GetAllAsync();
-        var pendingReviewsTask = _reviewService.GetPendingReviewsAsync(5);
-        var allReviewsTask = _reviewService.GetAllAdminReviewsAsync();
-        var usersTask = _nguoiDungRepository.GetAllAsync();
-
-        await Task.WhenAll(toursTask, bookingsTask, paymentsTask, pendingReviewsTask, allReviewsTask, usersTask);
-
-        var tours = toursTask.Result;
-        var bookings = bookingsTask.Result;
-        var payments = paymentsTask.Result;
-        var pendingReviews = pendingReviewsTask.Result;
-        var allReviews = allReviewsTask.Result;
-        var users = usersTask.Result;
+        var tours = await _tourService.GetAllAsync();
+        var bookings = await _bookingService.GetAllAsync();
+        var payments = await _paymentService.GetAllAsync();
+        var allReviews = await _reviewService.GetAllAdminReviewsAsync();
+        var users = await _nguoiDungRepository.GetAllAsync();
+        var pendingReviews = allReviews
+            .Where(review => review.TrangThai == "cho_duyet")
+            .OrderByDescending(review => review.NgayDanhGia)
+            .Take(5)
+            .ToList();
 
         var doanhThuTheoThang = BuildMonthlyRevenue(bookings);
         var bookingTheoThang = BuildMonthlyBookings(bookings);

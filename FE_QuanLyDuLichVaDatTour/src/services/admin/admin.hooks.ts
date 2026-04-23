@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   anTourQuanTri,
+  capNhatTrangThaiReviewQuanTri,
   capNhatTrangThaiTourQuanTri,
   layDanhSachBookingQuanTri,
   layDanhSachTourQuanTri,
@@ -9,6 +10,7 @@ import {
   layTongQuanQuanTri,
 } from './admin.api'
 import type { AdminTourStatus } from '../../types/admin'
+import type { AdminReviewDisplayStatus } from './admin.api'
 
 export function useAdminDashboardSummary() {
   return useQuery({
@@ -69,6 +71,17 @@ export function useHideAdminTour() {
         queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] }),
         queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard', 'summary'] }),
       ])
+    },
+  })
+}
+
+export function useUpdateAdminReviewStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, trangThai }: { id: number; trangThai: AdminReviewDisplayStatus }) => capNhatTrangThaiReviewQuanTri(id, trangThai),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard', 'summary'] })
     },
   })
 }

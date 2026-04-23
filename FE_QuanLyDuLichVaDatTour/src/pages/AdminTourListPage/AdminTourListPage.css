@@ -4,26 +4,103 @@
   gap: 20px;
 }
 
-.admin-page-heading {
+.admin-tour-list-header {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-tour-list-header .ant-typography {
+  margin-bottom: 6px;
+}
+
+.admin-tour-list-create-button {
+  height: 52px;
+  padding-inline: 24px;
+  border-radius: 16px;
+  background: #20c7b7;
+  box-shadow: none;
+}
+
+.admin-tour-list-card {
+  padding: 28px;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(17, 25, 45, 0.05);
+}
+
+.admin-tour-list-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px 180px 90px;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.admin-tour-list-search .ant-input,
+.admin-tour-list-filter .ant-select-selector,
+.admin-tour-list-filter-button {
+  height: 50px !important;
+  border-radius: 18px !important;
+}
+
+.admin-tour-list-filter-button {
+  border: 1px solid #d8dfea;
+  background: #fff;
+}
+
+.admin-tour-list-tabs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.admin-tour-list-tab {
+  border: none;
+  border-radius: 999px;
+  background: #f1f4f9;
+  color: #24324a;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-tour-list-tab.is-active {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px #dde4ef, 0 8px 20px rgba(17, 25, 45, 0.06);
+}
+
+.admin-tour-list-table .ant-table {
+  background: transparent;
+}
+
+.admin-tour-list-table .ant-table-thead > tr > th {
+  background: #fff;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.admin-tour-list-table .ant-table-tbody > tr > td {
+  padding-top: 22px;
+  padding-bottom: 22px;
+  color: #3d4b63;
+  font-size: 15px;
+}
+
+.admin-tour-list-price {
+  color: #18c4b1;
+  font-weight: 700;
+}
+
+.admin-tour-list-action-stack {
   flex-direction: column;
-  gap: 4px;
+  align-items: stretch;
 }
 
-.admin-page-description.ant-typography {
-  margin: 0;
-  color: rgba(0, 0, 0, 0.45);
-}
-
-.admin-tour-list-stack {
-  width: 100%;
-}
-
-.admin-tour-toolbar {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.admin-tour-search {
-  width: min(100%, 420px);
+.admin-tour-list-status-select {
+  width: 150px;
 }

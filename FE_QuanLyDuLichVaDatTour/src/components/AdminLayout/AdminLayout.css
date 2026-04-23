@@ -1,113 +1,141 @@
-.admin-shell {
+.admin-layout-shell {
   min-height: 100vh;
+  background: #f5f7fb;
 }
 
-.admin-sider {
-  position: sticky;
-  top: 0;
-  left: 0;
-  height: 100vh;
+.admin-layout-sider.ant-layout-sider {
+  display: flex;
+  flex-direction: column;
+  background: #11192d;
 }
 
-.admin-brand {
+.admin-layout-sider .ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.admin-layout-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px 16px 12px;
+  padding: 20px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.admin-brand-mark {
+.admin-layout-brand-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1677ff, #69b1ff);
+  border-radius: 999px;
+  background: #20c7b7;
   color: #fff;
+  font-size: 14px;
+}
+
+.admin-layout-brand-name {
+  color: #fff;
+  font-size: 18px;
   font-weight: 700;
 }
 
-.admin-brand-name,
-.admin-brand-desc {
+.admin-layout-menu {
+  flex: 1;
+  padding: 18px 14px;
+  background: transparent;
+  border-inline-end: none;
+}
+
+.admin-layout-menu.ant-menu .ant-menu-item {
+  height: 54px;
+  margin-inline: 0;
+  margin-block: 8px;
+  border-radius: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.admin-layout-menu.ant-menu .ant-menu-item-selected {
+  background: #20c7b7;
+  color: #fff;
+}
+
+.admin-layout-menu.ant-menu .ant-menu-item a {
+  color: inherit;
+}
+
+.admin-layout-user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-layout-user-avatar {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.admin-layout-user-name,
+.admin-layout-user-email {
   display: block;
 }
 
-.admin-brand-name {
+.admin-layout-user-name {
   color: #fff;
   font-weight: 600;
 }
 
-.admin-brand-desc {
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 12px;
+.admin-layout-user-email {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 13px;
 }
 
-.admin-menu {
-  border-inline-end: none;
+.admin-layout-main {
+  background: #f5f7fb;
 }
 
-.admin-header-bar {
+.admin-layout-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  height: auto;
-  padding: 20px 24px;
-  line-height: normal;
+  height: 86px;
+  padding: 18px 28px;
   background: #fff;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #edf0f5;
 }
 
-.admin-breadcrumb {
-  margin-bottom: 6px;
+.admin-layout-search {
+  max-width: 780px;
+  border-radius: 18px;
 }
 
-.admin-header-title.ant-typography {
-  margin: 0;
+.admin-layout-search .ant-input {
+  height: 48px;
+  font-size: 16px;
 }
 
-.admin-user-button {
+.admin-layout-search-icon {
+  color: #9aa5b5;
+  font-size: 18px;
+}
+
+.admin-layout-bell {
+  width: 42px;
+  height: 42px;
   border: none;
-  background: #f5f5f5;
-  border-radius: 16px;
-  padding: 8px 12px;
+  border-radius: 999px;
+  background: transparent;
+  color: #69758f;
+  font-size: 20px;
   cursor: pointer;
 }
 
-.admin-user-avatar {
-  background: #1677ff;
-}
-
-.admin-user-name,
-.admin-user-role {
-  display: block;
-  text-align: left;
-}
-
-.admin-user-name {
-  color: rgba(0, 0, 0, 0.88);
-  font-weight: 600;
-}
-
-.admin-user-role {
-  color: rgba(0, 0, 0, 0.45);
-  font-size: 12px;
-  text-transform: uppercase;
-}
-
-.admin-page-content {
-  padding: 24px;
-  background: #f5f5f5;
-}
-
-@media (max-width: 991px) {
-  .admin-header-bar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .admin-user-button {
-    width: 100%;
-  }
+.admin-layout-content {
+  padding: 28px;
 }

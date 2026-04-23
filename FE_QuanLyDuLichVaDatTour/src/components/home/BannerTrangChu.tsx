@@ -27,11 +27,7 @@ export function BannerTrangChu() {
 
       <Card className="home-section hero-search-section" variant="borderless">
         <Card className="hero-search-card" variant="borderless">
-          <Space direction="vertical" size={28} className="hero-search-stack">
-            <Title level={2} className="hero-search-title">
-              Tìm kiếm tour của bạn
-            </Title>
-
+          <Space direction="vertical" size={18} className="hero-search-stack">
             <div className="hero-search-grid">
               <div className="hero-search-field">
                 <label htmlFor="hero-tour-name">Tên tour</label>

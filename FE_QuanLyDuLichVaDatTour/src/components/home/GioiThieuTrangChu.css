@@ -57,6 +57,7 @@
 
 .about-us-section.home-section {
   width: min(1180px, calc(100% - 380px));
+  margin-top: 108px;
 }
 
 .about-us-section .ant-card-body {
@@ -113,13 +114,13 @@
 .about-us-visual {
   position: relative;
   padding-right: 24px;
-  padding-bottom: 84px;
+  padding-bottom: 68px;
 }
 
 .about-us-image {
   display: block;
   width: 100%;
-  min-height: 570px;
+  min-height: 480px;
   object-fit: cover;
   border-radius: 32px;
   box-shadow: 0 20px 52px rgba(15, 23, 42, 0.10);
@@ -129,7 +130,7 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 290px;
+  width: 240px;
   border-radius: 26px;
   box-shadow: 0 22px 60px rgba(15, 23, 42, 0.14);
 }
