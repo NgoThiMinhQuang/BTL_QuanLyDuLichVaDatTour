@@ -14,19 +14,29 @@
 }
 
 .featured-tour-section-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
   gap: 20px;
 }
 
 .featured-tour-section-header .section-header {
   margin-bottom: 0;
+  width: fit-content;
 }
 
 .featured-tour-section-header .section-title.ant-typography,
 .featured-tour-section-header .section-description.ant-typography {
-  text-align: left;
+  text-align: center;
+}
+
+.featured-tour-section-spacer {
+  min-width: 1px;
+}
+
+.featured-tour-section-action {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .featured-tour-section-link {
@@ -34,6 +44,7 @@
   color: #2563eb;
   font-size: 16px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .featured-tour-grid {

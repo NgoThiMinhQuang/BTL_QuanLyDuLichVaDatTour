@@ -22,6 +22,15 @@
   margin-bottom: 24px;
 }
 
+.section-header-centered {
+  align-items: center;
+}
+
+.section-header-centered .section-title.ant-typography,
+.section-header-centered .section-description.ant-typography {
+  text-align: center;
+}
+
 .section-title.ant-typography {
   margin: 0 !important;
   color: #1e293b;

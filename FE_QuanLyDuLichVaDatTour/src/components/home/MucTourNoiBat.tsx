@@ -28,11 +28,12 @@ export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoi
 
   const titleNode = (
     <div className="featured-tour-section-header">
+      <div className="featured-tour-section-spacer" />
       <TieuDeMuc
         title="Tour nổi bật"
         description="Những tour du lịch được yêu thích nhất tháng này"
       />
-      {extra}
+      <div className="featured-tour-section-action">{extra}</div>
     </div>
   )
 

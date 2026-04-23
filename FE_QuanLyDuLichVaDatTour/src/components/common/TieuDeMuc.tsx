@@ -9,7 +9,7 @@ interface TieuDeMucProps {
 
 export function TieuDeMuc({ title, description }: TieuDeMucProps) {
   return (
-    <Space direction="vertical" size={10} className="section-header">
+    <Space direction="vertical" size={10} className="section-header section-header-centered">
       <Title className="section-title">{title}</Title>
       <Paragraph className="section-description">{description}</Paragraph>
     </Space>
