@@ -8,6 +8,8 @@ public class PaymentResponseDto
 
     public string MaBooking { get; set; } = string.Empty;
 
+    public string HoTenKhachHang { get; set; } = string.Empty;
+
     public string LoaiGiaoDich { get; set; } = string.Empty;
 
     public string KenhThanhToan { get; set; } = string.Empty;

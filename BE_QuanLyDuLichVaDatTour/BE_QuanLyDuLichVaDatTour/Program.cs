@@ -122,16 +122,22 @@ using (var scope = app.Services.CreateScope())
                     TourId BIGINT NOT NULL,
                     KhachHangId BIGINT NOT NULL,
                     SoSao TINYINT NOT NULL,
-                    NoiDungComment NVARCHAR(MAX) NOT NULL,
+                    NoiDungComment NVARCHAR(MAX) NULL,
+                    PhanHoiAdmin NVARCHAR(MAX) NULL,
+                    TrangThai NVARCHAR(20) NOT NULL CONSTRAINT DF_DanhGiaTour_TrangThai DEFAULT N'hien_thi',
+                    NgayDanhGia DATETIME2 NOT NULL CONSTRAINT DF_DanhGiaTour_NgayDanhGia DEFAULT SYSDATETIME(),
+                    NgayPhanHoi DATETIME2 NULL,
                     CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_DanhGiaTour_CreatedAt DEFAULT SYSDATETIME(),
                     UpdatedAt DATETIME2 NOT NULL CONSTRAINT DF_DanhGiaTour_UpdatedAt DEFAULT SYSDATETIME(),
+                    CONSTRAINT CK_DanhGiaTour_TrangThai CHECK (TrangThai IN (N'cho_duyet', N'hien_thi', N'an')),
+                    CONSTRAINT CK_DanhGiaTour_SoSao CHECK (SoSao BETWEEN 1 AND 5),
                     CONSTRAINT FK_DanhGiaTour_Booking FOREIGN KEY (BookingId) REFERENCES Booking(BookingId),
                     CONSTRAINT FK_DanhGiaTour_Tour FOREIGN KEY (TourId) REFERENCES Tour(TourId),
                     CONSTRAINT FK_DanhGiaTour_KhachHang FOREIGN KEY (KhachHangId) REFERENCES NguoiDung(NguoiDungId)
                 );
 
                 CREATE UNIQUE INDEX UX_DanhGiaTour_BookingId ON DanhGiaTour(BookingId);
-                CREATE INDEX IdxDanhGiaTour_Tour_KhachHang ON DanhGiaTour(TourId, KhachHangId);
+                CREATE INDEX IdxDanhGiaTour_Tour_TrangThai_NgayDanhGia ON DanhGiaTour(TourId, TrangThai, NgayDanhGia);
             END
             """);
     }

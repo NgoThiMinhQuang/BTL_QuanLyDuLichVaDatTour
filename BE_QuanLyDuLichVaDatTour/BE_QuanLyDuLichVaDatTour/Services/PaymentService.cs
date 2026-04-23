@@ -194,6 +194,7 @@ public class PaymentService : IPaymentService
             Id = payment.Id,
             BookingId = payment.BookingId,
             MaBooking = payment.Booking?.MaBooking ?? string.Empty,
+            HoTenKhachHang = payment.Booking?.KhachHang?.HoTen ?? string.Empty,
             LoaiGiaoDich = payment.LoaiGiaoDich.ToString(),
             KenhThanhToan = payment.KenhThanhToan.ToString(),
             PhuongThucThanhToan = payment.PhuongThucThanhToan.ToString(),

@@ -1,7 +1,7 @@
 .hero-section {
   position: relative;
   width: 100%;
-  min-height: 640px;
+  min-height: 720px;
   border-radius: 0;
   box-shadow: none;
   background-position: center;
@@ -11,12 +11,14 @@
 
 .hero-section .ant-card-body {
   position: relative;
-  min-height: 640px;
+  min-height: 720px;
   padding: 0;
 }
 
 .hero-search-section {
-  margin-top: -8px;
+  position: relative;
+  z-index: 2;
+  margin-top: -190px;
   background: transparent;
   box-shadow: none;
   overflow: visible;
@@ -30,13 +32,17 @@
 }
 
 .hero-search-section.home-section {
-  width: min(1180px, calc(100% - 380px));
+  width: min(1280px, calc(100% - 72px));
 }
 
 .hero-search-section .hero-search-card {
   width: 100%;
-  max-width: 1680px;
+  max-width: 100%;
   margin: 0 auto;
+}
+
+.hero-search-section .hero-search-card .ant-card-body {
+  padding-top: 34px;
 }
 
 .hero-overlay {
@@ -51,17 +57,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: min(1180px, calc(100% - 380px));
-  min-height: 640px;
+  justify-content: flex-start;
+  width: min(1280px, calc(100% - 72px));
+  min-height: 720px;
   margin: 0 auto;
-  padding: 96px 0 72px;
+  padding: 94px 0 160px;
   text-align: center;
 }
 
 .hero-intro {
   width: min(980px, 100%);
   align-items: center;
+  margin-top: 56px;
 }
 
 .hero-intro .ant-space-item {
@@ -104,10 +111,11 @@
   margin-top: 0;
   border-radius: 30px;
   box-shadow: 0 18px 44px rgba(15, 23, 42, 0.12);
+  background: #fff;
 }
 
 .hero-search-card .ant-card-body {
-  padding: 30px 40px;
+  padding: 34px 44px 40px;
 }
 
 .hero-search-stack {
@@ -128,7 +136,7 @@
 
 .hero-search-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 0.9fr;
+  grid-template-columns: 1.05fr 1fr 1fr 1fr 0.95fr;
   gap: 18px;
   align-items: end;
 }
@@ -198,4 +206,48 @@
   font-size: 16px;
   font-weight: 700;
   box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .hero-section,
+  .hero-section .ant-card-body {
+    min-height: 620px;
+  }
+
+  .hero-content {
+    min-height: 620px;
+    padding: 80px 0 118px;
+  }
+
+  .hero-intro {
+    margin-top: 32px;
+  }
+
+  .hero-search-section {
+    margin-top: -92px;
+  }
+
+  .hero-search-section.home-section {
+    width: calc(100% - 24px);
+  }
+
+  .hero-search-card {
+    border-radius: 24px;
+  }
+
+  .hero-search-card .ant-card-body {
+    padding: 24px 20px;
+  }
+
+  .hero-search-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-search-title.ant-typography {
+    text-align: center;
+  }
+
+  .hero-search-button {
+    width: 100%;
+  }
 }

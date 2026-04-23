@@ -10,5 +10,7 @@ public interface IReviewService
 
     Task<List<AdminReviewResponseDto>> GetPendingReviewsAsync(int limit);
 
+    Task<List<AdminReviewResponseDto>> GetAllAdminReviewsAsync();
+
     Task UpdateAdminStatusAsync(long adminUserId, long reviewId, UpdateAdminReviewStatusRequestDto request);
 }

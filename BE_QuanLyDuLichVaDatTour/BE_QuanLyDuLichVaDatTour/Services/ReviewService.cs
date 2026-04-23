@@ -88,6 +88,12 @@ public class ReviewService : IReviewService
         return reviews.Select(MapAdminReviewResponse).ToList();
     }
 
+    public async Task<List<AdminReviewResponseDto>> GetAllAdminReviewsAsync()
+    {
+        var reviews = await _reviewRepository.GetAllAsync();
+        return reviews.Select(MapAdminReviewResponse).ToList();
+    }
+
     public async Task UpdateAdminStatusAsync(long adminUserId, long reviewId, UpdateAdminReviewStatusRequestDto request)
     {
         _ = await _nguoiDungRepository.GetByIdAsync(adminUserId)

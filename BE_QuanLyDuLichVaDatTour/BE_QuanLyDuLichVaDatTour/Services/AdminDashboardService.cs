@@ -33,14 +33,16 @@ public class AdminDashboardService : IAdminDashboardService
         var bookingsTask = _bookingService.GetAllAsync();
         var paymentsTask = _paymentService.GetAllAsync();
         var pendingReviewsTask = _reviewService.GetPendingReviewsAsync(5);
+        var allReviewsTask = _reviewService.GetAllAdminReviewsAsync();
         var usersTask = _nguoiDungRepository.GetAllAsync();
 
-        await Task.WhenAll(toursTask, bookingsTask, paymentsTask, pendingReviewsTask, usersTask);
+        await Task.WhenAll(toursTask, bookingsTask, paymentsTask, pendingReviewsTask, allReviewsTask, usersTask);
 
         var tours = toursTask.Result;
         var bookings = bookingsTask.Result;
         var payments = paymentsTask.Result;
         var pendingReviews = pendingReviewsTask.Result;
+        var allReviews = allReviewsTask.Result;
         var users = usersTask.Result;
 
         var doanhThuTheoThang = BuildMonthlyRevenue(bookings);
@@ -56,7 +58,7 @@ public class AdminDashboardService : IAdminDashboardService
                 Id = payment.Id,
                 MaGiaoDich = payment.MaGiaoDichBenThuBa ?? payment.MaGiaoDichNoiBo ?? $"PAY{payment.Id}",
                 PhuongThucThanhToan = payment.PhuongThucThanhToan,
-                HoTenKhachHang = payment.MaBooking,
+                HoTenKhachHang = payment.HoTenKhachHang,
                 MaBooking = payment.MaBooking,
                 SoTien = payment.SoTien,
                 ThoiGianTao = payment.ThoiGianTao,
@@ -92,7 +94,7 @@ public class AdminDashboardService : IAdminDashboardService
             TongKhachHang = tongKhachHang,
             TyLeThanhToanDu = tyLeThanhToanDu,
             BookingChoXuLy = bookings.Count(booking => booking.TrangThaiBooking is "moi_tao" or "cho_thanh_toan"),
-            DiemDanhGiaTrungBinh = pendingReviews.Count == 0 ? 0 : Math.Round(pendingReviews.Average(review => review.SoSao), 1),
+            DiemDanhGiaTrungBinh = allReviews.Count == 0 ? 0 : Math.Round(allReviews.Average(review => review.SoSao), 1),
             DoanhThuTheoThang = doanhThuTheoThang,
             BookingTheoThang = bookingTheoThang,
             TopTours = topTours,

@@ -38,7 +38,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 22px;
-  width: min(1320px, calc(100% - 48px));
+  width: min(1280px, calc(100% - 72px));
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
@@ -109,7 +109,8 @@
 
 .app-menu.ant-menu-horizontal > .ant-menu-item-selected::after,
 .app-menu.ant-menu-horizontal > .ant-menu-overflow-item-selected::after {
-  border-bottom: 2px solid #2563eb !important;
+  bottom: -2px;
+  border-bottom: 1px solid #2563eb !important;
 }
 
 .app-menu.ant-menu-horizontal {

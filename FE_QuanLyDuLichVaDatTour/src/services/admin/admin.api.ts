@@ -1,6 +1,13 @@
 import { API_BASE_URL } from '../../constants/api'
 import { useAuthStore } from '../../store/authStore'
-import type { AdminBookingItem, AdminTourItem, AdminTourStatus } from '../../types/admin'
+import type {
+  AdminBookingItem,
+  AdminDashboardSummary,
+  AdminDiaDiemItem,
+  AdminLoaiTourItem,
+  AdminTourItem,
+  AdminTourStatus,
+} from '../../types/admin'
 
 function getAuthHeaders(contentType = false) {
   return {
@@ -17,6 +24,14 @@ async function handleApiResponse<T>(response: Response, fallbackMessage: string)
   }
 
   return data as T
+}
+
+export async function layTongQuanQuanTri(): Promise<AdminDashboardSummary> {
+  const response = await fetch(`${API_BASE_URL}/admin/dashboard/summary`, {
+    headers: getAuthHeaders(),
+  })
+
+  return handleApiResponse<AdminDashboardSummary>(response, 'Không thể tải dashboard quản trị')
 }
 
 export async function layDanhSachTourQuanTri(): Promise<AdminTourItem[]> {
@@ -52,4 +67,20 @@ export async function layDanhSachBookingQuanTri(): Promise<AdminBookingItem[]> {
   })
 
   return handleApiResponse<AdminBookingItem[]>(response, 'Không thể tải danh sách booking quản trị')
+}
+
+export async function layLoaiTourQuanTri(): Promise<AdminLoaiTourItem[]> {
+  const response = await fetch(`${API_BASE_URL}/admin/loai-tour/get-all`, {
+    headers: getAuthHeaders(),
+  })
+
+  return handleApiResponse<AdminLoaiTourItem[]>(response, 'Không thể tải loại tour quản trị')
+}
+
+export async function layDiaDiemQuanTri(): Promise<AdminDiaDiemItem[]> {
+  const response = await fetch(`${API_BASE_URL}/admin/dia-diem/get-all`, {
+    headers: getAuthHeaders(),
+  })
+
+  return handleApiResponse<AdminDiaDiemItem[]>(response, 'Không thể tải điểm xuất phát quản trị')
 }
