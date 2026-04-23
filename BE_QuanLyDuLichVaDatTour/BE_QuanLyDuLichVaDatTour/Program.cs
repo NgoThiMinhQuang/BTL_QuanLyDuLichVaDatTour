@@ -4,6 +4,7 @@ using BE_QuanLyDuLichVaDatTour.Repositories.Interfaces;
 using BE_QuanLyDuLichVaDatTour.Services;
 using BE_QuanLyDuLichVaDatTour.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -97,34 +98,56 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.ExecuteSqlRawAsync("""
-        IF COL_LENGTH('TinTuc', 'DanhMuc') IS NULL
-        BEGIN
-            ALTER TABLE TinTuc ADD DanhMuc NVARCHAR(100) NULL;
-        END
-        """);
+    var connectionInfo = new SqlConnectionStringBuilder(connectionString);
 
-    await dbContext.Database.ExecuteSqlRawAsync("""
-        IF OBJECT_ID('DanhGia', 'U') IS NULL
-        BEGIN
-            CREATE TABLE DanhGia (
-                DanhGiaId BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-                BookingId BIGINT NOT NULL,
-                TourId BIGINT NOT NULL,
-                KhachHangId BIGINT NOT NULL,
-                SoSao TINYINT NOT NULL,
-                NoiDung NVARCHAR(MAX) NOT NULL,
-                CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_DanhGia_CreatedAt DEFAULT SYSDATETIME(),
-                UpdatedAt DATETIME2 NOT NULL CONSTRAINT DF_DanhGia_UpdatedAt DEFAULT SYSDATETIME(),
-                CONSTRAINT FK_DanhGia_Booking FOREIGN KEY (BookingId) REFERENCES Booking(BookingId),
-                CONSTRAINT FK_DanhGia_Tour FOREIGN KEY (TourId) REFERENCES Tour(TourId),
-                CONSTRAINT FK_DanhGia_KhachHang FOREIGN KEY (KhachHangId) REFERENCES NguoiDung(NguoiDungId)
-            );
+    try
+    {
+        await dbContext.Database.OpenConnectionAsync();
+        await dbContext.Database.CloseConnectionAsync();
 
-            CREATE UNIQUE INDEX UX_DanhGia_BookingId ON DanhGia(BookingId);
-            CREATE INDEX IdxDanhGiaTourKhachHang ON DanhGia(TourId, KhachHangId);
-        END
-        """);
+        await dbContext.Database.ExecuteSqlRawAsync("""
+            IF COL_LENGTH('TinTuc', 'DanhMuc') IS NULL
+            BEGIN
+                ALTER TABLE TinTuc ADD DanhMuc NVARCHAR(100) NULL;
+            END
+            """);
+
+        await dbContext.Database.ExecuteSqlRawAsync("""
+            IF OBJECT_ID('DanhGiaTour', 'U') IS NULL
+            BEGIN
+                CREATE TABLE DanhGiaTour (
+                    DanhGiaTourId BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+                    BookingId BIGINT NOT NULL,
+                    TourId BIGINT NOT NULL,
+                    KhachHangId BIGINT NOT NULL,
+                    SoSao TINYINT NOT NULL,
+                    NoiDungComment NVARCHAR(MAX) NOT NULL,
+                    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_DanhGiaTour_CreatedAt DEFAULT SYSDATETIME(),
+                    UpdatedAt DATETIME2 NOT NULL CONSTRAINT DF_DanhGiaTour_UpdatedAt DEFAULT SYSDATETIME(),
+                    CONSTRAINT FK_DanhGiaTour_Booking FOREIGN KEY (BookingId) REFERENCES Booking(BookingId),
+                    CONSTRAINT FK_DanhGiaTour_Tour FOREIGN KEY (TourId) REFERENCES Tour(TourId),
+                    CONSTRAINT FK_DanhGiaTour_KhachHang FOREIGN KEY (KhachHangId) REFERENCES NguoiDung(NguoiDungId)
+                );
+
+                CREATE UNIQUE INDEX UX_DanhGiaTour_BookingId ON DanhGiaTour(BookingId);
+                CREATE INDEX IdxDanhGiaTour_Tour_KhachHang ON DanhGiaTour(TourId, KhachHangId);
+            END
+            """);
+    }
+    catch (SqlException ex)
+    {
+        app.Logger.LogError(
+            ex,
+            "Không thể kết nối tới SQL Server {DataSource} / database {InitialCatalog}. Hãy kiểm tra ConnectionStrings:DefaultConnection và chạy script trong thư mục CSDL nếu database chưa tồn tại.",
+            connectionInfo.DataSource,
+            connectionInfo.InitialCatalog);
+        throw;
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Không thể chạy SQL bootstrap khi khởi động BE_QuanLyDuLichVaDatTour.");
+        throw;
+    }
 }
 
 if (app.Environment.IsDevelopment())

@@ -1,0 +1,113 @@
+.admin-shell {
+  min-height: 100vh;
+}
+
+.admin-sider {
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 100vh;
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 16px 12px;
+}
+
+.admin-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1677ff, #69b1ff);
+  color: #fff;
+  font-weight: 700;
+}
+
+.admin-brand-name,
+.admin-brand-desc {
+  display: block;
+}
+
+.admin-brand-name {
+  color: #fff;
+  font-weight: 600;
+}
+
+.admin-brand-desc {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+}
+
+.admin-menu {
+  border-inline-end: none;
+}
+
+.admin-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: auto;
+  padding: 20px 24px;
+  line-height: normal;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-breadcrumb {
+  margin-bottom: 6px;
+}
+
+.admin-header-title.ant-typography {
+  margin: 0;
+}
+
+.admin-user-button {
+  border: none;
+  background: #f5f5f5;
+  border-radius: 16px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.admin-user-avatar {
+  background: #1677ff;
+}
+
+.admin-user-name,
+.admin-user-role {
+  display: block;
+  text-align: left;
+}
+
+.admin-user-name {
+  color: rgba(0, 0, 0, 0.88);
+  font-weight: 600;
+}
+
+.admin-user-role {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.admin-page-content {
+  padding: 24px;
+  background: #f5f5f5;
+}
+
+@media (max-width: 991px) {
+  .admin-header-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-user-button {
+    width: 100%;
+  }
+}

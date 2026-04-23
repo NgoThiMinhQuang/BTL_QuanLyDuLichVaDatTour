@@ -13,6 +13,8 @@ export const PATHS = {
   myBookings: '/my-bookings',
   myBookingDetail: '/my-bookings/:id',
   myReviews: '/my-reviews',
+  admin: '/admin',
+  adminTours: '/admin/tours',
 } as const
 
 export function getTinTucChiTietPath(id: number | string) {

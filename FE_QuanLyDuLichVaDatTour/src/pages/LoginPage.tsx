@@ -50,7 +50,11 @@ export default function Login() {
         trangThai: response.trangThai,
       })
 
-      navigate(redirectPath, { replace: true })
+      if (response.vaiTro === 'admin') {
+        navigate(PATHS.admin, { replace: true })
+      } else {
+        navigate(redirectPath, { replace: true })
+      }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Đăng nhập thất bại')
     } finally {

@@ -18,18 +18,43 @@ import SchedulePage from '../pages/SchedulePage'
 import NewsPage from '../pages/NewsPage'
 import NewsDetailPage from '../pages/NewsDetailPage'
 import ContactPage from '../pages/ContactPage'
+import AdminLayout from '../components/AdminLayout/AdminLayout'
+import AdminDashboardPage from '../pages/AdminDashboardPage/AdminDashboardPage'
+import AdminTourListPage from '../pages/AdminTourListPage/AdminTourListPage'
 
 const { Content } = Layout
+
+function getRedirectPath(location: ReturnType<typeof useLocation>) {
+  return `${location.pathname}${location.search}`
+}
 
 function RequireAuth({ children }: { children: React.ReactElement }) {
   const location = useLocation()
   const accessToken = useAuthStore((state) => state.accessToken)
 
   if (!accessToken) {
-    const redirectPath = `${location.pathname}${location.search}`
+    const redirectPath = getRedirectPath(location)
     const loginPath = `${PATHS.login}?redirect=${encodeURIComponent(redirectPath)}`
 
     return <Navigate to={loginPath} replace state={{ from: redirectPath }} />
+  }
+
+  return children
+}
+
+function RequireAdmin({ children }: { children: React.ReactElement }) {
+  const location = useLocation()
+  const accessToken = useAuthStore((state) => state.accessToken)
+  const currentUser = useAuthStore((state) => state.currentUser)
+  const redirectPath = getRedirectPath(location)
+
+  if (!accessToken) {
+    const loginPath = `${PATHS.login}?redirect=${encodeURIComponent(redirectPath)}`
+    return <Navigate to={loginPath} replace state={{ from: redirectPath }} />
+  }
+
+  if (currentUser?.vaiTro?.toLowerCase() !== 'admin') {
+    return <Navigate to={PATHS.home} replace />
   }
 
   return children
@@ -39,7 +64,7 @@ export default function AppRouter() {
   const location = useLocation()
   const isAuthPage = location.pathname === PATHS.login || location.pathname === PATHS.register
 
-  return (
+  const clientLayout = (
     <Layout className="app-shell">
       {!isAuthPage ? <Header /> : null}
       <Content className="app-content">
@@ -61,5 +86,25 @@ export default function AppRouter() {
         </Routes>
       </Content>
     </Layout>
+  )
+
+  return (
+    <Routes>
+      {/* Client Routes */}
+      <Route path="/*" element={clientLayout} />
+      
+      {/* Admin Routes */}
+      <Route
+        path={PATHS.admin}
+        element={
+          <RequireAdmin>
+            <AdminLayout />
+          </RequireAdmin>
+        }
+      >
+        <Route index element={<AdminDashboardPage />} />
+        <Route path="tours" element={<AdminTourListPage />} />
+      </Route>
+    </Routes>
   )
 }

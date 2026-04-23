@@ -1,0 +1,16 @@
+.admin-dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-page-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-page-description.ant-typography {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.45);
+}

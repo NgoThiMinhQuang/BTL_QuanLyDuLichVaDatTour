@@ -974,12 +974,12 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<DanhGia>(entity =>
         {
-            entity.ToTable("DanhGia");
+            entity.ToTable("DanhGiaTour");
 
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Id)
-                .HasColumnName("DanhGiaId")
+                .HasColumnName("DanhGiaTourId")
                 .HasColumnType("bigint")
                 .ValueGeneratedOnAdd();
 
@@ -1004,7 +1004,7 @@ public class AppDbContext : DbContext
                 .IsRequired();
 
             entity.Property(x => x.NoiDung)
-                .HasColumnName("NoiDung")
+                .HasColumnName("NoiDungComment")
                 .HasColumnType("nvarchar(max)")
                 .IsRequired();
 

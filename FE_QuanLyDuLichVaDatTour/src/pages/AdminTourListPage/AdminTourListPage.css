@@ -1,0 +1,29 @@
+.admin-tour-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-page-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-page-description.ant-typography {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.admin-tour-list-stack {
+  width: 100%;
+}
+
+.admin-tour-toolbar {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.admin-tour-search {
+  width: min(100%, 420px);
+}
