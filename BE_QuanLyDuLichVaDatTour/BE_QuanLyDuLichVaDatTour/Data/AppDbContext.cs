@@ -1005,8 +1005,26 @@ public class AppDbContext : DbContext
 
             entity.Property(x => x.NoiDung)
                 .HasColumnName("NoiDungComment")
-                .HasColumnType("nvarchar(max)")
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(x => x.PhanHoiAdmin)
+                .HasColumnName("PhanHoiAdmin")
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(x => x.TrangThai)
+                .HasColumnName("TrangThai")
+                .HasMaxLength(20)
                 .IsRequired();
+
+            entity.Property(x => x.NgayDanhGia)
+                .HasColumnName("NgayDanhGia")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.NgayPhanHoi)
+                .HasColumnName("NgayPhanHoi")
+                .HasColumnType("datetime2");
 
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("CreatedAt")

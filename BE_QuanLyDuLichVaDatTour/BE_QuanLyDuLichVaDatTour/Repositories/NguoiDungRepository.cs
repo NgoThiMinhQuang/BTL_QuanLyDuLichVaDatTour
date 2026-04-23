@@ -20,4 +20,11 @@ public class NguoiDungRepository : INguoiDungRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+
+    public async Task<List<NguoiDung>> GetAllAsync()
+    {
+        return await _dbContext.NguoiDungs
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

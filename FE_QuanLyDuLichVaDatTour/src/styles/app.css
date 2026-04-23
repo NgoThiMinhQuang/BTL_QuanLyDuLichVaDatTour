@@ -14,10 +14,11 @@
   height: auto;
   line-height: normal;
   margin: 0;
-  padding: 10px 0;
-  background: rgba(255, 255, 255, 0.98);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.04);
-  backdrop-filter: blur(10px);
+  padding: 12px 0;
+  background: linear-gradient(180deg, rgba(251, 245, 234, 0.98) 0%, rgba(248, 240, 227, 0.98) 100%);
+  border-bottom: 1px solid rgba(193, 153, 96, 0.18);
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
+  backdrop-filter: blur(12px);
 }
 
 .app-header .ant-layout-header {
@@ -36,8 +37,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  width: min(1180px, calc(100% - 380px));
+  gap: 22px;
+  width: min(1320px, calc(100% - 48px));
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
@@ -56,7 +57,7 @@
 .app-brand-logo {
   display: block;
   width: auto;
-  height: 60px;
+  height: 68px;
   object-fit: contain;
 }
 
@@ -71,12 +72,24 @@
   box-sizing: border-box;
 }
 
+.app-menu .ant-menu-item,
+.app-menu .ant-menu-overflow-item {
+  margin-inline: 4px;
+}
+
+.app-menu .ant-menu-item::after,
+.app-menu .ant-menu-overflow-item::after {
+  left: 16px;
+  right: 16px;
+}
+
+
 .app-menu.ant-menu-horizontal > .ant-menu-item,
 .app-menu.ant-menu-horizontal > .ant-menu-overflow-item {
-  color: #0f172a;
+  color: #243449;
   font-weight: 600;
   font-size: 17px;
-  padding-inline: 12px;
+  padding-inline: 16px;
   transition: color 0.2s ease;
 }
 
@@ -91,18 +104,17 @@
 
 .app-menu.ant-menu-horizontal > .ant-menu-item-selected,
 .app-menu.ant-menu-horizontal > .ant-menu-overflow-item-selected {
-  color: #0f172a !important;
+  color: #2563eb !important;
 }
 
 .app-menu.ant-menu-horizontal > .ant-menu-item-selected::after,
-.app-menu.ant-menu-horizontal > .ant-menu-overflow-item-selected::after,
-.app-menu.ant-menu-horizontal > .ant-menu-item::after,
-.app-menu.ant-menu-horizontal > .ant-menu-overflow-item::after {
-  border-bottom: none !important;
+.app-menu.ant-menu-horizontal > .ant-menu-overflow-item-selected::after {
+  border-bottom: 2px solid #2563eb !important;
 }
 
 .app-menu.ant-menu-horizontal {
   border-bottom: none !important;
+  background: transparent;
 }
 
 .app-menu.ant-menu-horizontal::after {
@@ -113,7 +125,7 @@
   flex: 0 0 auto;
   display: flex;
   flex-wrap: nowrap;
-  gap: 4px;
+  gap: 10px;
   align-items: center;
   justify-content: flex-end;
   white-space: nowrap;
@@ -128,8 +140,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border: none;
   background: transparent;
   color: #475569;
@@ -144,12 +156,12 @@
 }
 
 .app-header-link-button.ant-btn {
-  height: 40px;
-  padding-inline: 10px;
+  height: 42px;
+  padding-inline: 12px;
   color: #1e293b;
   font-weight: 500;
   font-size: 17px;
-  border-radius: 12px;
+  border-radius: 999px;
   white-space: nowrap;
 }
 
@@ -159,29 +171,59 @@
 }
 
 .app-header-button {
-  height: 44px;
-  padding-inline: 18px;
-  border-radius: 14px;
-  border: none;
-  font-weight: 500;
+  height: 46px;
+  padding-inline: 20px;
+  border-radius: 999px;
+  font-weight: 600;
   font-size: 17px;
   white-space: nowrap;
 }
 
-.app-header-button:hover,
-.app-header-button:focus {
-  color: #ffffff !important;
+.app-header-button-outline.ant-btn {
+  border: 1.5px solid rgba(37, 99, 235, 0.28);
+  background: rgba(255, 255, 255, 0.78);
+  color: #2563eb;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
 }
 
-.app-header-button-primary {
-  box-shadow: none;
-  min-width: 96px;
+.app-header-button-outline.ant-btn:hover,
+.app-header-button-outline.ant-btn:focus {
+  border-color: rgba(37, 99, 235, 0.45) !important;
+  color: #1d4ed8 !important;
+  background: #ffffff !important;
+}
+
+.app-header-button-cta.ant-btn {
+  border: none;
+  background: linear-gradient(180deg, #2f7cf7 0%, #1d63e0 100%);
+  color: #ffffff;
+  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.2);
+}
+
+.app-header-button-cta.ant-btn:hover,
+.app-header-button-cta.ant-btn:focus {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #3b86ff 0%, #1d63e0 100%) !important;
+}
+
+.app-header-button-danger.ant-btn {
+  border: none;
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  box-shadow: 0 10px 18px rgba(220, 38, 38, 0.18);
+}
+
+.app-header-button-danger.ant-btn:hover,
+.app-header-button-danger.ant-btn:focus {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #f35b5b 0%, #dc2626 100%) !important;
 }
 
 @media (max-width: 992px) {
   .app-header-inner {
     flex-wrap: wrap;
     justify-content: center;
+    gap: 14px;
   }
 
   .app-menu {
@@ -201,6 +243,10 @@
 @media (max-width: 576px) {
   .app-header {
     padding-inline: 12px;
+  }
+
+  .app-header-inner {
+    width: calc(100% - 24px);
   }
 
   .app-header-actions {

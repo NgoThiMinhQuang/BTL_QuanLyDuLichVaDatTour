@@ -1,6 +1,6 @@
-namespace BE_QuanLyDuLichVaDatTour.Models.Entities;
+namespace BE_QuanLyDuLichVaDatTour.DTOs.Review;
 
-public class DanhGia
+public class AdminReviewResponseDto
 {
     public long Id { get; set; }
 
@@ -9,6 +9,12 @@ public class DanhGia
     public long TourId { get; set; }
 
     public long KhachHangId { get; set; }
+
+    public string HoTenKhachHang { get; set; } = string.Empty;
+
+    public string MaBooking { get; set; } = string.Empty;
+
+    public string TenTour { get; set; } = string.Empty;
 
     public int SoSao { get; set; }
 
@@ -25,10 +31,4 @@ public class DanhGia
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
-
-    public Booking? Booking { get; set; }
-
-    public Tour? Tour { get; set; }
-
-    public NguoiDung? KhachHang { get; set; }
 }

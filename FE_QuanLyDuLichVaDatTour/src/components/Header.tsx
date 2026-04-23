@@ -56,16 +56,16 @@ export function Header() {
                 Đánh giá của tôi
               </Button>
               <span className="app-header-user-name">{currentUser?.hoTen || 'Tài khoản của tôi'}</span>
-              <Button type="primary" danger className="app-header-button app-header-button-primary" onClick={handleLogout}>
+              <Button type="primary" danger className="app-header-button app-header-button-danger" onClick={handleLogout}>
                 Đăng xuất
               </Button>
             </>
           ) : (
             <>
-              <Button type="text" className="app-header-link-button" href={loginPath}>
+              <Button type="default" className="app-header-button app-header-button-outline" href={loginPath}>
                 Đăng nhập
               </Button>
-              <Button type="primary" className="app-header-button app-header-button-primary" href={registerPath}>
+              <Button type="primary" className="app-header-button app-header-button-cta" href={registerPath}>
                 Đăng ký
               </Button>
             </>

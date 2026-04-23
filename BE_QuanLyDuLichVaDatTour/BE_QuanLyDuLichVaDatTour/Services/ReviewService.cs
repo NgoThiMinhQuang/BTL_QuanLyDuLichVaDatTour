@@ -59,6 +59,8 @@ public class ReviewService : IReviewService
             KhachHangId = currentUserId,
             SoSao = request.SoSao,
             NoiDung = request.NoiDung.Trim(),
+            TrangThai = "cho_duyet",
+            NgayDanhGia = now,
             CreatedAt = now,
             UpdatedAt = now,
             Booking = booking,
@@ -80,6 +82,28 @@ public class ReviewService : IReviewService
         return reviews.Select(MapReviewResponse).ToList();
     }
 
+    public async Task<List<AdminReviewResponseDto>> GetPendingReviewsAsync(int limit)
+    {
+        var reviews = await _reviewRepository.GetPendingAsync(limit);
+        return reviews.Select(MapAdminReviewResponse).ToList();
+    }
+
+    public async Task UpdateAdminStatusAsync(long adminUserId, long reviewId, UpdateAdminReviewStatusRequestDto request)
+    {
+        _ = await _nguoiDungRepository.GetByIdAsync(adminUserId)
+            ?? throw new KeyNotFoundException("Người dùng không tồn tại.");
+
+        var review = await _reviewRepository.GetTrackedByIdAsync(reviewId)
+            ?? throw new KeyNotFoundException("Đánh giá không tồn tại.");
+
+        review.TrangThai = request.TrangThai.Trim();
+        review.PhanHoiAdmin = string.IsNullOrWhiteSpace(request.PhanHoiAdmin) ? review.PhanHoiAdmin : request.PhanHoiAdmin.Trim();
+        review.NgayPhanHoi = DateTime.UtcNow;
+        review.UpdatedAt = DateTime.UtcNow;
+
+        await _reviewRepository.SaveChangesAsync();
+    }
+
     private static ReviewResponseDto MapReviewResponse(DanhGia danhGia)
     {
         return new ReviewResponseDto
@@ -93,6 +117,28 @@ public class ReviewService : IReviewService
             NgayKetThuc = danhGia.Booking?.LichKhoiHanh?.NgayKetThuc ?? default,
             SoSao = danhGia.SoSao,
             NoiDung = danhGia.NoiDung,
+            CreatedAt = danhGia.CreatedAt,
+            UpdatedAt = danhGia.UpdatedAt
+        };
+    }
+
+    private static AdminReviewResponseDto MapAdminReviewResponse(DanhGia danhGia)
+    {
+        return new AdminReviewResponseDto
+        {
+            Id = danhGia.Id,
+            BookingId = danhGia.BookingId,
+            TourId = danhGia.TourId,
+            KhachHangId = danhGia.KhachHangId,
+            HoTenKhachHang = danhGia.KhachHang?.HoTen ?? string.Empty,
+            MaBooking = danhGia.Booking?.MaBooking ?? string.Empty,
+            TenTour = danhGia.Tour?.TenTour ?? danhGia.Booking?.LichKhoiHanh?.Tour?.TenTour ?? string.Empty,
+            SoSao = danhGia.SoSao,
+            NoiDung = danhGia.NoiDung,
+            PhanHoiAdmin = danhGia.PhanHoiAdmin,
+            TrangThai = danhGia.TrangThai,
+            NgayDanhGia = danhGia.NgayDanhGia,
+            NgayPhanHoi = danhGia.NgayPhanHoi,
             CreatedAt = danhGia.CreatedAt,
             UpdatedAt = danhGia.UpdatedAt
         };

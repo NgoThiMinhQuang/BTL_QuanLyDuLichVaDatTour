@@ -21,33 +21,43 @@ public class ReviewRepository : IReviewRepository
 
     public async Task<DanhGia?> GetByIdAsync(long id)
     {
-        return await _dbContext.DanhGias
-            .AsNoTracking()
-            .Include(x => x.Booking)
-                .ThenInclude(x => x!.LichKhoiHanh)
-            .Include(x => x.Tour)
+        return await BuildReviewQuery(_dbContext.DanhGias.AsNoTracking())
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<DanhGia?> GetTrackedByIdAsync(long id)
+    {
+        return await BuildReviewQuery(_dbContext.DanhGias)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<DanhGia?> GetByBookingIdAsync(long bookingId)
     {
-        return await _dbContext.DanhGias
-            .AsNoTracking()
-            .Include(x => x.Booking)
-                .ThenInclude(x => x!.LichKhoiHanh)
-            .Include(x => x.Tour)
+        return await BuildReviewQuery(_dbContext.DanhGias.AsNoTracking())
             .FirstOrDefaultAsync(x => x.BookingId == bookingId);
     }
 
     public async Task<List<DanhGia>> GetByKhachHangIdAsync(long khachHangId)
     {
-        return await _dbContext.DanhGias
-            .AsNoTracking()
-            .Include(x => x.Booking)
-                .ThenInclude(x => x!.LichKhoiHanh)
-            .Include(x => x.Tour)
+        return await BuildReviewQuery(_dbContext.DanhGias.AsNoTracking())
             .Where(x => x.KhachHangId == khachHangId)
-            .OrderByDescending(x => x.CreatedAt)
+            .OrderByDescending(x => x.NgayDanhGia)
+            .ToListAsync();
+    }
+
+    public async Task<List<DanhGia>> GetPendingAsync(int limit)
+    {
+        return await BuildReviewQuery(_dbContext.DanhGias.AsNoTracking())
+            .Where(x => x.TrangThai == "cho_duyet")
+            .OrderByDescending(x => x.NgayDanhGia)
+            .Take(limit)
+            .ToListAsync();
+    }
+
+    public async Task<List<DanhGia>> GetAllAsync()
+    {
+        return await BuildReviewQuery(_dbContext.DanhGias.AsNoTracking())
+            .OrderByDescending(x => x.NgayDanhGia)
             .ToListAsync();
     }
 
@@ -59,5 +69,15 @@ public class ReviewRepository : IReviewRepository
     public Task<int> SaveChangesAsync()
     {
         return _dbContext.SaveChangesAsync();
+    }
+
+    private static IQueryable<DanhGia> BuildReviewQuery(IQueryable<DanhGia> query)
+    {
+        return query
+            .Include(x => x.Booking)
+                .ThenInclude(x => x!.LichKhoiHanh)
+                    .ThenInclude(x => x!.Tour)
+            .Include(x => x.Tour)
+            .Include(x => x.KhachHang);
     }
 }
