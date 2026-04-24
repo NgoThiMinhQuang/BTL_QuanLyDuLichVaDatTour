@@ -28,7 +28,7 @@ export default function Home() {
       <BannerTrangChu />
       <GioiThieuTrangChu />
       <MucTourNoiBat
-        tours={featuredTours}
+        tours={visibleFeaturedTours}
         isLoading={isFeaturedToursLoading}
         isError={isFeaturedToursError}
         onRetry={() => refetchFeaturedTours()}
