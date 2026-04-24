@@ -1,4 +1,5 @@
 import './HomePage.css'
+import { useMemo } from 'react'
 import { Space } from 'antd'
 import { MucTourNoiBat } from '../components/home/MucTourNoiBat'
 import { BannerTrangChu } from '../components/home/BannerTrangChu'
@@ -19,6 +20,8 @@ export default function Home() {
     isError: isFeaturedToursError,
     refetch: refetchFeaturedTours,
   } = useTourNoiBat()
+
+  const visibleFeaturedTours = useMemo(() => featuredTours.slice(0, 3), [featuredTours])
 
   return (
     <Space orientation="vertical" size={0} className="home-page">
