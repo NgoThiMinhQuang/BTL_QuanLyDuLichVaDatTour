@@ -363,26 +363,29 @@ export default function Booking() {
       return (
         <Card className="booking-card" variant="borderless">
           <Title className="booking-section-title">Chọn số lượng khách</Title>
-          <div className="booking-count-grid">
+          <div className="booking-count-list">
             {[
               { type: 'nguoi_lon' as const, title: 'Người lớn', note: 'Từ 11 tuổi trở lên', price: pricingSummary.nguoiLon },
               { type: 'tre_em' as const, title: 'Trẻ em', note: 'Từ 5-10 tuổi', price: pricingSummary.treEm },
               { type: 'em_be' as const, title: 'Em bé', note: 'Dưới 5 tuổi', price: pricingSummary.emBe },
             ].map((item) => (
-              <div key={item.type} className="booking-count-card">
-                <Title level={3} className="booking-count-title">{item.title}</Title>
-                <Paragraph className="booking-count-note">{item.note}</Paragraph>
-                <div className="booking-stepper-row">
-                  <button type="button" className="booking-stepper-button booking-stepper-button-muted" onClick={() => capNhatSoLuong(item.type, -1)}>
+              <div key={item.type} className="booking-count-list-item">
+                <div className="booking-count-info">
+                  <Title level={4} className="booking-count-title">{item.title}</Title>
+                  <Paragraph className="booking-count-note">{item.note}</Paragraph>
+                </div>
+                <div className="booking-count-price-col">
+                  <div className="booking-count-price">{formatMoney(item.price)}</div>
+                </div>
+                <div className="booking-stepper-wrap">
+                  <button type="button" className="booking-stepper-btn" onClick={() => capNhatSoLuong(item.type, -1)}>
                     <MinusOutlined />
                   </button>
-                  <div className="booking-stepper-value">{passengerCounts[item.type]}</div>
-                  <button type="button" className="booking-stepper-button booking-stepper-button-primary" onClick={() => capNhatSoLuong(item.type, 1)}>
+                  <div className="booking-stepper-val">{passengerCounts[item.type]}</div>
+                  <button type="button" className="booking-stepper-btn" onClick={() => capNhatSoLuong(item.type, 1)}>
                     +
                   </button>
                 </div>
-                <div className="booking-count-price-label">Đơn giá</div>
-                <div className="booking-count-price">{formatMoney(item.price)}</div>
               </div>
             ))}
           </div>
