@@ -382,7 +382,7 @@ export default function Booking() {
                   </button>
                 </div>
                 <div className="booking-count-price-label">Đơn giá</div>
-                <div className="booking-count-price">{formatTien(item.price)}</div>
+                <div className="booking-count-price">{formatMoney(item.price)}</div>
               </div>
             ))}
           </div>
@@ -596,33 +596,33 @@ export default function Booking() {
 
                 <div className="booking-summary-group">
                   <Text className="booking-summary-label">Lịch khởi hành</Text>
-                  <div className="booking-summary-value">{formatNgay(departure.ngayKhoiHanh)}</div>
+                  <div className="booking-summary-value">{formatDate(departure.ngayKhoiHanh)}</div>
                 </div>
 
                 <div className="booking-summary-divider" />
 
                 <div className="booking-summary-line">
                   <span>Người lớn x {passengerCounts.nguoi_lon}</span>
-                  <strong>{formatTien(pricingSummary.nguoiLon * passengerCounts.nguoi_lon)}</strong>
+                  <strong>{formatMoney(pricingSummary.nguoiLon * passengerCounts.nguoi_lon)}</strong>
                 </div>
                 <div className="booking-summary-line">
                   <span>Trẻ em x {passengerCounts.tre_em}</span>
-                  <strong>{formatTien(pricingSummary.treEm * passengerCounts.tre_em)}</strong>
+                  <strong>{formatMoney(pricingSummary.treEm * passengerCounts.tre_em)}</strong>
                 </div>
                 <div className="booking-summary-line">
                   <span>Em bé x {passengerCounts.em_be}</span>
-                  <strong>{formatTien(pricingSummary.emBe * passengerCounts.em_be)}</strong>
+                  <strong>{formatMoney(pricingSummary.emBe * passengerCounts.em_be)}</strong>
                 </div>
                 <div className="booking-summary-line">
                   <span>Tạm tính</span>
-                  <strong>{formatTien(tongTamTinh)}</strong>
+                  <strong>{formatMoney(tongTamTinh)}</strong>
                 </div>
 
                 <div className="booking-summary-divider" />
 
                 <div className="booking-total-row">
                   <span>Tổng tiền</span>
-                  <strong>{formatTien(tongTamTinh)}</strong>
+                  <strong>{formatMoney(tongTamTinh)}</strong>
                 </div>
 
                 <Button className="booking-summary-backlink" onClick={() => navigate(getTourChiTietPath(tour.id))}>

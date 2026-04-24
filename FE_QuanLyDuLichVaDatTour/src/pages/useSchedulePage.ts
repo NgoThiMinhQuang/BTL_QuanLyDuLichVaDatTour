@@ -12,7 +12,7 @@ export function useLichKhoiHanhPage() {
   const [page, setPage] = useState(1)
 
   const destinationOptions = useMemo(
-    () => Array.from(new Set(data.map((item) => item.khuVuc))).sort((a, b) => a.localeCompare(b, 'vi')),
+    () => Array.from(new Set(data.map((item) => item.tenDiemDen))).sort((a, b) => a.localeCompare(b, 'vi')),
     [data],
   )
 

@@ -1,5 +1,6 @@
-import { Button, Layout, Menu, Space } from 'antd'
+import { Button, Dropdown, Layout, Menu, Space, Avatar } from 'antd'
 import { Link, useLocation, useNavigate } from 'react-router'
+import { UserOutlined, LogoutOutlined, BookOutlined, StarOutlined, BellOutlined, HeartOutlined } from '@ant-design/icons'
 import logoImage from '../assets/image.png'
 import { PATHS } from '../constants/paths'
 import { useAuthStore } from '../store/authStore'
@@ -21,7 +22,7 @@ export function Header() {
     navigate(PATHS.home)
   }
 
-  const items = [
+  const navItems = [
     { key: PATHS.home, label: <Link to={PATHS.home}>Trang chủ</Link> },
     { key: PATHS.tour, label: <Link to={PATHS.tour}>Tour</Link> },
     { key: PATHS.lichKhoiHanh, label: <Link to={PATHS.lichKhoiHanh}>Lịch khởi hành</Link> },
@@ -29,7 +30,30 @@ export function Header() {
     { key: PATHS.lienHe, label: <Link to={PATHS.lienHe}>Liên hệ</Link> },
   ]
 
-  const selectedKey = items.some((item) => item.key === location.pathname) ? location.pathname : PATHS.home
+  const selectedKey = navItems.some((item) => item.key === location.pathname) ? location.pathname : PATHS.home
+
+  const userMenuItems = [
+    {
+      key: 'my-bookings',
+      icon: <BookOutlined />,
+      label: <Link to={PATHS.myBookings}>Đơn đã đặt</Link>,
+    },
+    {
+      key: 'my-reviews',
+      icon: <StarOutlined />,
+      label: <Link to={PATHS.myReviews}>Đánh giá của tôi</Link>,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Đăng xuất',
+      danger: true,
+      onClick: handleLogout,
+    },
+  ]
 
   return (
     <AntHeader className="app-header">
@@ -38,37 +62,32 @@ export function Header() {
           <img src={logoImage} alt="TravelViet" className="app-brand-logo" />
         </Link>
 
-        <Menu mode="horizontal" selectedKeys={[selectedKey]} items={items} className="app-menu" />
+        <Menu mode="horizontal" selectedKeys={[selectedKey]} items={navItems} className="app-menu" />
 
-        <Space className="app-header-actions">
+        <Space size={16} className="app-header-actions">
           <button type="button" className="app-header-icon" aria-label="Yêu thích">
-            ♡
+            <HeartOutlined />
           </button>
           <button type="button" className="app-header-icon" aria-label="Thông báo">
-            🔔
+            <BellOutlined />
           </button>
+          
           {accessToken ? (
-            <>
-              <Button type="text" className="app-header-link-button" href={PATHS.myBookings}>
-                Đơn đã đặt
-              </Button>
-              <Button type="text" className="app-header-link-button" href={PATHS.myReviews}>
-                Đánh giá của tôi
-              </Button>
-              <span className="app-header-user-name">{currentUser?.hoTen || 'Tài khoản của tôi'}</span>
-              <Button type="primary" danger className="app-header-button app-header-button-danger" onClick={handleLogout}>
-                Đăng xuất
-              </Button>
-            </>
+            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']} arrow>
+              <div className="app-header-user-profile">
+                <Avatar style={{ backgroundColor: '#2563eb' }} icon={<UserOutlined />} />
+                <span className="app-header-user-name">{currentUser?.hoTen || 'Tài khoản'}</span>
+              </div>
+            </Dropdown>
           ) : (
-            <>
+            <Space size={12}>
               <Button type="default" className="app-header-button app-header-button-outline" href={loginPath}>
                 Đăng nhập
               </Button>
               <Button type="primary" className="app-header-button app-header-button-cta" href={registerPath}>
                 Đăng ký
               </Button>
-            </>
+            </Space>
           )}
         </Space>
       </div>

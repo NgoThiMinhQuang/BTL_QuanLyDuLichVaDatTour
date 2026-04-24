@@ -14,9 +14,11 @@ export function filterLichKhoiHanh(items: LichKhoiHanhCardItem[], filters: LichK
     const matchesKeyword =
       !normalizedKeyword ||
       item.tenTour.toLowerCase().includes(normalizedKeyword) ||
-      item.maTour.toLowerCase().includes(normalizedKeyword)
+      item.maTour.toLowerCase().includes(normalizedKeyword) ||
+      item.maDotTour.toLowerCase().includes(normalizedKeyword) ||
+      item.tenDiemDen.toLowerCase().includes(normalizedKeyword)
     const matchesMonth = filters.thangKhoiHanh === 'all' || departureMonth === Number(filters.thangKhoiHanh)
-    const matchesDestination = filters.diemDen === 'all' || item.tenDiaDiemKhoiHanh === filters.diemDen
+    const matchesDestination = filters.diemDen === 'all' || item.tenDiemDen === filters.diemDen
 
     return matchesKeyword && matchesMonth && matchesDestination
   })

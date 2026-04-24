@@ -36,6 +36,7 @@ export interface FeaturedTourApiItem {
   moTaNgan?: string | null
   giaNguoiLonMacDinh: number | null
   giaTreEmMacDinh: number | null
+  diemDens: TourDestinationItem[]
   anhTours: TourImageItem[]
   trangThai: string
 }

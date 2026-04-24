@@ -1,6 +1,7 @@
 import './BoLocLichKhoiHanh.css'
-import { Input, Select } from 'antd'
+import { Select } from 'antd'
 import { SCHEDULE_MONTH_OPTIONS } from '../../constants/schedule'
+import { SearchOutlined, CalendarOutlined, EnvironmentOutlined } from '@ant-design/icons'
 
 interface BoLocLichKhoiHanhProps {
   keyword: string
@@ -22,39 +23,75 @@ export function BoLocLichKhoiHanh({
   onDiemDenChange,
 }: BoLocLichKhoiHanhProps) {
   return (
-    <div className="schedule-filter-card">
-      <Input
-        size="large"
-        placeholder="Tìm kiếm tour..."
-        className="schedule-search-input"
-        value={keyword}
-        onChange={(event) => onKeywordChange(event.target.value)}
-        prefix={<span className="schedule-search-icon">⌕</span>}
-      />
-
-      <div className="schedule-filter-grid">
-        <div className="schedule-filter-group">
-          <label className="schedule-filter-label">Tháng khởi hành</label>
-          <Select
-            size="large"
-            value={thangKhoiHanh}
-            className="schedule-filter-select"
-            options={SCHEDULE_MONTH_OPTIONS}
-            onChange={onThangKhoiHanhChange}
-          />
+    <div className="schedule-filter-wrapper">
+      <div className="schedule-filter-container">
+        
+        {/* Keyword Search */}
+        <div className="filter-item filter-keyword">
+          <div className="filter-item-icon">
+            <SearchOutlined />
+          </div>
+          <div className="filter-item-content">
+            <label>Tên tour</label>
+            <input 
+              type="text" 
+              placeholder="Bạn muốn đi đâu?" 
+              value={keyword}
+              onChange={(e) => onKeywordChange(e.target.value)}
+            />
+          </div>
         </div>
 
-        <div className="schedule-filter-group">
-          <label className="schedule-filter-label">Điểm đến</label>
-          <Select
-            size="large"
-            value={diemDen}
-            className="schedule-filter-select"
-            popupClassName="schedule-filter-select-dropdown"
-            options={[{ value: 'all', label: 'Tất cả điểm đến' }, ...destinationOptions.map((item) => ({ value: item, label: item }))]}
-            onChange={onDiemDenChange}
-          />
+        <div className="filter-divider"></div>
+
+        {/* Month Select */}
+        <div className="filter-item filter-month">
+          <div className="filter-item-icon">
+            <CalendarOutlined />
+          </div>
+          <div className="filter-item-content">
+            <label>Khởi hành</label>
+            <Select
+              variant="borderless"
+              value={thangKhoiHanh}
+              className="filter-select"
+              popupClassName="filter-select-dropdown"
+              options={SCHEDULE_MONTH_OPTIONS}
+              onChange={onThangKhoiHanhChange}
+              suffixIcon={null}
+            />
+          </div>
         </div>
+
+        <div className="filter-divider"></div>
+
+        {/* Destination Select */}
+        <div className="filter-item filter-destination">
+          <div className="filter-item-icon">
+            <EnvironmentOutlined />
+          </div>
+          <div className="filter-item-content">
+            <label>Điểm đến</label>
+            <Select
+              variant="borderless"
+              value={diemDen}
+              className="filter-select"
+              popupClassName="filter-select-dropdown"
+              options={[{ value: 'all', label: 'Tất cả điểm đến' }, ...destinationOptions.map((item) => ({ value: item, label: item }))]}
+              onChange={onDiemDenChange}
+              suffixIcon={null}
+            />
+          </div>
+        </div>
+
+        {/* Search Button (Visual only) */}
+        <div className="filter-action">
+          <button className="filter-search-btn">
+            <SearchOutlined />
+            <span>Tìm kiếm</span>
+          </button>
+        </div>
+
       </div>
     </div>
   )

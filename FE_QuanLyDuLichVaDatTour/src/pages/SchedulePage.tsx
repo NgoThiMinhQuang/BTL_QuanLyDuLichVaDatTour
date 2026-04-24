@@ -10,7 +10,7 @@ import { useLichKhoiHanhPage } from './useSchedulePage'
 const { Paragraph, Title } = Typography
 
 const heroBackgroundStyle = {
-  backgroundImage: `linear-gradient(180deg, rgba(8, 15, 37, 0.12), rgba(8, 15, 37, 0.36)), url(${bannerImage})`,
+  backgroundImage: `url(${bannerImage})`,
 }
 
 export default function LichKhoiHanh() {
@@ -66,7 +66,7 @@ export default function LichKhoiHanh() {
         <div className="schedule-hero-content">
           <Title className="schedule-hero-title">Lịch khởi hành</Title>
           <Paragraph className="schedule-hero-description">
-            Chọn ngày khởi hành phù hợp cho chuyến du lịch của bạn
+            Khám phá các điểm đến tuyệt đẹp và chọn ngày khởi hành hoàn hảo cho chuyến hành trình của bạn. Hàng ngàn tour hấp dẫn đang chờ đón!
           </Paragraph>
         </div>
       </div>

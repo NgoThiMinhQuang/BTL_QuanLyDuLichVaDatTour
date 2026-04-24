@@ -22,27 +22,29 @@ export function TheLichKhoiHanh({ item }: TheLichKhoiHanhProps) {
   const duration = `${item.soNgay} ngày ${item.soDem} đêm`
   const tapTrung = item.noiTapTrung ?? item.tenDiaDiemKhoiHanh
   const moTa = item.moTaNgan ?? `Khởi hành ${formatDate(item.ngayKhoiHanh)} cho hành trình ${item.tenTour.toLowerCase()}.`
+  const coverImage = item.anhDaiDien ?? bannerImage
 
   return (
     <Card className="schedule-card" variant="borderless">
       <div
         className="schedule-card-media"
         style={{
-          backgroundImage: `linear-gradient(180deg, rgba(37, 99, 235, 0.04), rgba(15, 23, 42, 0.12)), url(${bannerImage})`,
+          backgroundImage: `linear-gradient(180deg, rgba(37, 99, 235, 0.04), rgba(15, 23, 42, 0.16)), url(${coverImage})`,
         }}
       >
         <span className={`schedule-card-seat-badge ${seatStatus.className}`}>{seatStatus.label}</span>
       </div>
 
       <div className="schedule-card-content">
-        <Text className="schedule-card-region">⌖ {item.khuVuc}</Text>
+        <Text className="schedule-card-region">⌖ {item.khuVuc} • {item.tenLoaiTour}</Text>
         <Title level={3} className="schedule-card-title">
           {item.tenTour}
         </Title>
 
         <div className="schedule-card-meta-list">
           <Text className="schedule-card-meta">🗓 Khởi hành: {formatDate(item.ngayKhoiHanh)}</Text>
-          <Text className="schedule-card-meta">◔ {duration}</Text>
+          <Text className="schedule-card-meta">📍 Điểm đến: {item.tenDiemDen}</Text>
+          <Text className="schedule-card-meta">◔ {duration} • {item.phuongTien ?? 'Đang cập nhật'}</Text>
           <Text className="schedule-card-meta">◉ Còn {getCapacityLabel(item)}</Text>
         </div>
 

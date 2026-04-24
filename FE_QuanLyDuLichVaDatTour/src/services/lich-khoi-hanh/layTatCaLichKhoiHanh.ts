@@ -1,3 +1,5 @@
+import { resolveApiAssetUrl } from '../../constants/api'
+import { layBangGiaLichKhoiHanh } from '../tour/layTourChiTiet'
 import { layTourNoiBat } from '../tour/tour.api'
 import { API_BASE_URL } from '../../constants/api'
 import type { DepartureItem, FeaturedTourApiItem } from '../../types/tour'
@@ -18,39 +20,42 @@ interface RawDeparture {
 export interface LichKhoiHanhCardItem extends DepartureItem {
   tenLoaiTour: string
   tenDiaDiemKhoiHanh: string
+  tenDiemDen: string
   khuVuc: string
   soNgay: number
   soDem: number
   phuongTien: string | null
   moTaNgan: string | null
+  anhDaiDien: string | null
   giaNguoiLonMacDinh: number | null
   giaTreEmMacDinh: number | null
 }
 
-function resolveKhuVuc(tenDiaDiemKhoiHanh: string) {
-  const normalized = tenDiaDiemKhoiHanh.toLowerCase()
+function normalizeText(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase()
+}
 
-  if (normalized.includes('hà nội') || normalized.includes('ha noi') || normalized.includes('hạ long') || normalized.includes('ha long')) {
+function resolveKhuVuc(tenDiemDen: string) {
+  const normalized = normalizeText(tenDiemDen)
+
+  if (['ha noi', 'ha long', 'ninh binh', 'sa pa'].some((keyword) => normalized.includes(keyword))) {
     return 'Miền Bắc'
   }
 
-  if (normalized.includes('đà nẵng') || normalized.includes('da nang') || normalized.includes('huế') || normalized.includes('hue') || normalized.includes('hội an') || normalized.includes('hoi an') || normalized.includes('nha trang')) {
+  if (['da nang', 'hue', 'hoi an', 'nha trang', 'da lat'].some((keyword) => normalized.includes(keyword))) {
     return 'Miền Trung'
   }
 
-  if (normalized.includes('hồ chí minh') || normalized.includes('ho chi minh') || normalized.includes('cần thơ') || normalized.includes('can tho') || normalized.includes('phú quốc') || normalized.includes('phu quoc') || normalized.includes('châu đốc') || normalized.includes('chau doc') || normalized.includes('hà tiên') || normalized.includes('ha tien')) {
+  if (['ho chi minh', 'phu quoc', 'can tho', 'chau doc', 'ha tien'].some((keyword) => normalized.includes(keyword))) {
     return 'Miền Nam'
   }
 
-  return 'Quốc tế'
-}
-
-function getChildPrice(adultPrice: number | null) {
-  if (adultPrice === null) {
-    return null
-  }
-
-  return Math.round(adultPrice * 0.8)
+  return 'Việt Nam'
 }
 
 function getRemainingSeats(item: DepartureItem) {
@@ -68,6 +73,22 @@ function getDescription(item: FeaturedTourApiItem) {
   }
 
   return `Hành trình ${item.tenTour.toLowerCase()} với lịch trình cân đối, phù hợp cho kỳ nghỉ sắp tới.`
+}
+
+function getTourDestinations(item: FeaturedTourApiItem) {
+  return item.diemDens
+    .slice()
+    .sort((a, b) => a.thuTu - b.thuTu)
+    .map((destination) => destination.tenDiaDiem)
+}
+
+function getCoverImage(item: FeaturedTourApiItem) {
+  const coverImage = item.anhTours
+    .slice()
+    .sort((a, b) => Number(b.isAvatar) - Number(a.isAvatar) || a.thuTu - b.thuTu)
+    .at(0)?.linkAnh
+
+  return resolveApiAssetUrl(coverImage) ?? null
 }
 
 function getSeatBadgeLabel(item: DepartureItem) {
@@ -102,24 +123,30 @@ function mapDeparture(item: RawDeparture): DepartureItem {
   }
 }
 
-function mergeDepartureWithTour(departure: DepartureItem, toursById: Map<number, FeaturedTourApiItem>): LichKhoiHanhCardItem | null {
+async function mergeDepartureWithTour(departure: DepartureItem, toursById: Map<number, FeaturedTourApiItem>): Promise<LichKhoiHanhCardItem | null> {
   const tour = toursById.get(departure.tourId)
 
   if (!tour) {
     return null
   }
 
+  const diemDens = getTourDestinations(tour)
+  const tenDiemDen = diemDens.join(' - ') || tour.tenTour
+  const pricing = await layBangGiaLichKhoiHanh(departure.id).catch(() => null)
+
   return {
     ...departure,
     tenLoaiTour: tour.tenLoaiTour,
     tenDiaDiemKhoiHanh: tour.tenDiaDiemKhoiHanh,
-    khuVuc: resolveKhuVuc(tour.tenDiaDiemKhoiHanh),
+    tenDiemDen,
+    khuVuc: resolveKhuVuc(tenDiemDen),
     soNgay: tour.soNgay,
     soDem: tour.soDem,
     phuongTien: tour.phuongTien,
     moTaNgan: getDescription(tour),
-    giaNguoiLonMacDinh: tour.giaNguoiLonMacDinh,
-    giaTreEmMacDinh: tour.giaTreEmMacDinh ?? getChildPrice(tour.giaNguoiLonMacDinh),
+    anhDaiDien: getCoverImage(tour),
+    giaNguoiLonMacDinh: pricing?.giaNguoiLonNgayThuong ?? tour.giaNguoiLonMacDinh,
+    giaTreEmMacDinh: pricing?.giaTreEmNgayThuong ?? tour.giaTreEmMacDinh,
   }
 }
 
@@ -140,10 +167,14 @@ export async function layTatCaLichKhoiHanh(): Promise<LichKhoiHanhCardItem[]> {
     }),
   )
 
-  return departureGroups
-    .flat()
-    .map(mapDeparture)
-    .map((departure) => mergeDepartureWithTour(departure, toursById))
+  const mergedItems = await Promise.all(
+    departureGroups
+      .flat()
+      .map(mapDeparture)
+      .map((departure) => mergeDepartureWithTour(departure, toursById)),
+  )
+
+  return mergedItems
     .filter((item): item is LichKhoiHanhCardItem => item !== null)
     .sort((a, b) => new Date(a.ngayKhoiHanh).getTime() - new Date(b.ngayKhoiHanh).getTime())
 }
