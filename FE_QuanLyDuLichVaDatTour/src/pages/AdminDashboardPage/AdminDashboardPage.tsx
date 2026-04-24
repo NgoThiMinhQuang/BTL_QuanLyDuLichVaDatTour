@@ -1,9 +1,12 @@
-import { Alert, Card, Col, Empty, Progress, Row, Skeleton, Space, Statistic, Table, Tag, Typography } from 'antd'
+import { Alert, Button, Card, Col, Empty, Progress, Row, Skeleton, Space, Statistic, Table, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import { Link } from 'react-router'
 import { useMemo } from 'react'
-import { useAdminDashboardSummary, useUpdateAdminReviewStatus } from '../../services/admin/admin.hooks'
+import { PATHS } from '../../constants/paths'
+import { useAdminDashboardSummary, useUpdateAdminReviewDisplayStatus } from '../../services/admin/admin.hooks'
 import type { AdminPendingPayment, AdminPendingReview, AdminRecentBooking, AdminTopTour } from '../../types/admin'
 import { formatMoney } from '../../utils/formatMoney'
+import { adminBookingStatusMeta, adminPaymentStatusMeta } from '../../utils/admin'
 import './AdminDashboardPage.css'
 
 const { Paragraph, Title, Text } = Typography
@@ -50,6 +53,15 @@ function MiniBarChart({ values }: { values: number[] }) {
   )
 }
 
+const quickAccessItems = [
+  { title: 'Quản lý tour', description: 'Kiểm soát danh mục tour và trạng thái mở bán.', to: PATHS.adminTours },
+  { title: 'Booking', description: 'Theo dõi đơn đặt tour và hành khách.', to: PATHS.adminBookings },
+  { title: 'Thanh toán', description: 'Xử lý giao dịch và đối soát trạng thái.', to: PATHS.adminPayments },
+  { title: 'Voucher', description: 'Tạo ưu đãi cho từng chiến dịch bán hàng.', to: PATHS.adminVouchers },
+  { title: 'Tin tức', description: 'Quản trị bài viết và nội dung truyền thông.', to: PATHS.adminTinTucs },
+  { title: 'Lịch khởi hành', description: 'Quản lý đợt tour và số chỗ bán.', to: PATHS.adminLichKhoiHanhs },
+]
+
 const recentBookingColumns: ColumnsType<AdminRecentBooking> = [
   {
     title: 'Booking',
@@ -68,10 +80,22 @@ const recentBookingColumns: ColumnsType<AdminRecentBooking> = [
     key: 'tenTour',
   },
   {
+    title: 'Booking',
+    dataIndex: 'trangThaiBooking',
+    key: 'trangThaiBooking',
+    render: (value: keyof typeof adminBookingStatusMeta | string) => {
+      const meta = adminBookingStatusMeta[value as keyof typeof adminBookingStatusMeta]
+      return <Tag color={meta?.color ?? 'default'}>{meta?.label ?? value}</Tag>
+    },
+  },
+  {
     title: 'Thanh toán',
     dataIndex: 'trangThaiThanhToan',
     key: 'trangThaiThanhToan',
-    render: (value: string) => <Tag color={value === 'da_thanh_toan_du' ? 'green' : 'orange'}>{value}</Tag>,
+    render: (value: keyof typeof adminPaymentStatusMeta | string) => {
+      const meta = adminPaymentStatusMeta[value as keyof typeof adminPaymentStatusMeta]
+      return <Tag color={meta?.color ?? 'default'}>{meta?.label ?? value}</Tag>
+    },
   },
   {
     title: 'Tổng tiền',
@@ -83,7 +107,7 @@ const recentBookingColumns: ColumnsType<AdminRecentBooking> = [
 
 export default function AdminDashboardPage() {
   const { data, isLoading, isError, error } = useAdminDashboardSummary()
-  const updateReviewStatusMutation = useUpdateAdminReviewStatus()
+  const updateReviewStatusMutation = useUpdateAdminReviewDisplayStatus()
 
   const revenueValues = useMemo(() => (data?.doanhThuTheoThang ?? []).map((item) => item.giaTri), [data])
   const bookingValues = useMemo(() => (data?.bookingTheoThang ?? []).map((item) => item.giaTri), [data])
@@ -99,19 +123,19 @@ export default function AdminDashboardPage() {
   return (
     <div className="admin-dashboard-page">
       <div className="admin-dashboard-heading">
-        <Title level={1}>Tổng quan</Title>
-        <Paragraph>Xin chào! Đây là bảng điều khiển quản lý tour du lịch của bạn.</Paragraph>
+        <Title level={1}>Bảng điều khiển quản trị</Title>
+        <Paragraph>Theo dõi toàn cảnh hoạt động booking, doanh thu, review và các module vận hành từ một nơi.</Paragraph>
       </div>
 
       <Row gutter={[18, 18]}>
-        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Tổng tour" value={data.tongTour} /><span className="admin-kpi-meta">↑ dữ liệu thật từ hệ thống</span></Card></Col>
-        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Tour đang mở bán" value={data.tourDangMoBan} /><span className="admin-kpi-meta">↑ trạng thái mở bán</span></Card></Col>
-        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Tổng booking" value={data.tongBooking} /><span className="admin-kpi-meta">↑ số booking hiện có</span></Card></Col>
-        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Doanh thu" value={data.tongDoanhThu} formatter={(value) => formatMoney(Number(value))} /><span className="admin-kpi-meta">↑ tổng doanh thu booking</span></Card></Col>
-        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Tổng khách" value={data.tongKhachHang} /><span className="admin-kpi-meta">↑ khách hàng hoạt động</span></Card></Col>
-        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Tỷ lệ thanh toán đủ" value={data.tyLeThanhToanDu} suffix="%" /><span className="admin-kpi-meta">↑ theo booking đã thanh toán đủ</span></Card></Col>
-        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Booking chờ xử lý" value={data.bookingChoXuLy} /><span className="admin-kpi-meta">↑ cần theo dõi</span></Card></Col>
-        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Đánh giá trung bình" value={data.diemDanhGiaTrungBinh} precision={1} /><span className="admin-kpi-meta">↑ tính từ review thật</span></Card></Col>
+        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Tổng tour" value={data.tongTour} /><span className="admin-kpi-meta">Danh mục tour đang quản lý</span></Card></Col>
+        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Tour đang mở bán" value={data.tourDangMoBan} /><span className="admin-kpi-meta">Các tour có thể nhận booking</span></Card></Col>
+        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Tổng booking" value={data.tongBooking} /><span className="admin-kpi-meta">Số booking tích luỹ toàn hệ thống</span></Card></Col>
+        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Doanh thu" value={data.tongDoanhThu} formatter={(value) => formatMoney(Number(value))} /><span className="admin-kpi-meta">Doanh thu từ booking đã ghi nhận</span></Card></Col>
+        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Tổng khách" value={data.tongKhachHang} /><span className="admin-kpi-meta">Khách hàng đang hoạt động</span></Card></Col>
+        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Tỷ lệ thanh toán đủ" value={data.tyLeThanhToanDu} suffix="%" /><span className="admin-kpi-meta">Tỷ lệ booking đã hoàn tất thanh toán</span></Card></Col>
+        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Booking chờ xử lý" value={data.bookingChoXuLy} /><span className="admin-kpi-meta">Cần xác nhận hoặc xử lý tiếp</span></Card></Col>
+        <Col xs={24} md={12} xl={6}><Card className="admin-kpi-card"><Statistic title="Đánh giá trung bình" value={data.diemDanhGiaTrungBinh} precision={1} /><span className="admin-kpi-meta">Tổng hợp từ review khách hàng</span></Card></Col>
       </Row>
 
       <Row gutter={[18, 18]}>
@@ -133,6 +157,17 @@ export default function AdminDashboardPage() {
         </Col>
       </Row>
 
+      <Card title="Truy cập nhanh các module" className="admin-dashboard-list-card">
+        <div className="admin-dashboard-quick-grid">
+          {quickAccessItems.map((item) => (
+            <Link key={item.to} to={item.to} className="admin-dashboard-quick-card">
+              <Text strong>{item.title}</Text>
+              <Text className="admin-dashboard-subtext">{item.description}</Text>
+            </Link>
+          ))}
+        </div>
+      </Card>
+
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={12}>
           <Card title="Top tour bán chạy" className="admin-dashboard-list-card">
@@ -140,7 +175,7 @@ export default function AdminDashboardPage() {
               <div key={tour.tourId} className="admin-dashboard-list-item">
                 <div>
                   <Text strong>{tour.tenTour}</Text>
-                  <div className="admin-dashboard-subtext">{tour.soBooking} booking</div>
+                  <div className="admin-dashboard-subtext">{tour.maTour} • {tour.soBooking} booking</div>
                 </div>
                 <Text className="admin-dashboard-amount">{formatMoney(tour.doanhThu)}</Text>
               </div>
@@ -164,15 +199,17 @@ export default function AdminDashboardPage() {
 
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={12}>
-          <Card title="Booking mới" className="admin-dashboard-list-card">
+          <Card title="Booking mới" className="admin-dashboard-list-card" extra={<Link to={PATHS.adminBookings}>Xem tất cả</Link>}>
             {data.bookingMoi.length === 0 ? <Empty description="Chưa có booking" /> : data.bookingMoi.map((booking: AdminRecentBooking) => (
               <div key={booking.id} className="admin-dashboard-booking-card">
                 <div>
                   <Space size={10} wrap>
                     <Text strong>{booking.maBooking}</Text>
-                    <Tag color={booking.trangThaiBooking === 'da_xac_nhan' ? 'green' : 'orange'}>{booking.trangThaiBooking}</Tag>
+                    <Tag color={adminBookingStatusMeta[booking.trangThaiBooking as keyof typeof adminBookingStatusMeta]?.color ?? 'default'}>
+                      {adminBookingStatusMeta[booking.trangThaiBooking as keyof typeof adminBookingStatusMeta]?.label ?? booking.trangThaiBooking}
+                    </Tag>
                   </Space>
-                  <div className="admin-dashboard-subtext">{booking.hoTenNguoiDat} - {booking.tenTour}</div>
+                  <div className="admin-dashboard-subtext">{booking.hoTenNguoiDat} • {booking.tenTour}</div>
                 </div>
                 <Text className="admin-dashboard-amount">{formatMoney(booking.tongTien)}</Text>
               </div>
@@ -180,7 +217,7 @@ export default function AdminDashboardPage() {
           </Card>
         </Col>
         <Col xs={24} xl={12}>
-          <Card title="Thanh toán chờ xác nhận" className="admin-dashboard-list-card">
+          <Card title="Thanh toán chờ xác nhận" className="admin-dashboard-list-card" extra={<Link to={PATHS.adminPayments}>Xem tất cả</Link>}>
             {data.thanhToanChoXacNhan.length === 0 ? <Empty description="Không có thanh toán chờ xác nhận" /> : data.thanhToanChoXacNhan.map((payment: AdminPendingPayment) => (
               <div key={payment.id} className="admin-dashboard-booking-card">
                 <div>
@@ -188,7 +225,7 @@ export default function AdminDashboardPage() {
                     <Text strong>{payment.maGiaoDich}</Text>
                     <Tag>{payment.phuongThucThanhToan}</Tag>
                   </Space>
-                  <div className="admin-dashboard-subtext">{payment.hoTenKhachHang} - {payment.maBooking}</div>
+                  <div className="admin-dashboard-subtext">{payment.hoTenKhachHang} • {payment.maBooking}</div>
                 </div>
                 <Text className="admin-dashboard-amount warning">{formatMoney(payment.soTien)}</Text>
               </div>
@@ -197,7 +234,7 @@ export default function AdminDashboardPage() {
         </Col>
       </Row>
 
-      <Card title="Đánh giá chờ duyệt" className="admin-dashboard-list-card">
+      <Card title="Đánh giá chờ duyệt" className="admin-dashboard-list-card" extra={<Link to={PATHS.adminReviews}>Mở moderation</Link>}>
         {data.danhGiaChoDuyet.length === 0 ? <Empty description="Không có đánh giá chờ duyệt" /> : data.danhGiaChoDuyet.map((review: AdminPendingReview) => (
           <div key={review.id} className="admin-dashboard-review-card">
             <div>
@@ -209,12 +246,12 @@ export default function AdminDashboardPage() {
               <div className="admin-dashboard-review-text">{review.noiDung}</div>
             </div>
             <Space>
-              <button type="button" className="admin-dashboard-action approve" onClick={() => void updateReviewStatusMutation.mutateAsync({ id: review.id, trangThai: 'hien_thi' })}>
+              <Button type="primary" className="admin-primary-button" onClick={() => void updateReviewStatusMutation.mutateAsync({ id: review.id, trangThai: 'hien_thi' })}>
                 Duyệt
-              </button>
-              <button type="button" className="admin-dashboard-action reject" onClick={() => void updateReviewStatusMutation.mutateAsync({ id: review.id, trangThai: 'an' })}>
+              </Button>
+              <Button danger onClick={() => void updateReviewStatusMutation.mutateAsync({ id: review.id, trangThai: 'an' })}>
                 Ẩn
-              </button>
+              </Button>
             </Space>
           </div>
         ))}

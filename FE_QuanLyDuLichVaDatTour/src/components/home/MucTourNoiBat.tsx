@@ -14,7 +14,7 @@ interface MucTourNoiBatProps {
 }
 
 export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoiBatProps) {
-  const data = tours.slice(0, 3)
+  const data = tours
   const error = isError
   const refetch = onRetry
 

@@ -18,7 +18,7 @@ export default function Home() {
     isLoading: isFeaturedToursLoading,
     isError: isFeaturedToursError,
     refetch: refetchFeaturedTours,
-  } = useTourNoiBat(6)
+  } = useTourNoiBat()
 
   return (
     <Space orientation="vertical" size={0} className="home-page">

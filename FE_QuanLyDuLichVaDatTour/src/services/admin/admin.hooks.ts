@@ -1,16 +1,90 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   anTourQuanTri,
+  capNhatDiaDiemQuanTri,
+  capNhatLichKhoiHanhQuanTri,
+  capNhatLichTrinhQuanTri,
+  capNhatLoaiTourQuanTri,
+  capNhatTinTucQuanTri,
+  capNhatTourQuanTri,
+  capNhatTrangThaiBookingQuanTri,
+  capNhatTrangThaiDiaDiemQuanTri,
+  capNhatTrangThaiLichKhoiHanhQuanTri,
+  capNhatTrangThaiLoaiTourQuanTri,
+  capNhatTrangThaiPaymentQuanTri,
   capNhatTrangThaiReviewQuanTri,
+  capNhatTrangThaiTinTucQuanTri,
   capNhatTrangThaiTourQuanTri,
+  capNhatTrangThaiVoucherQuanTri,
+  capNhatVoucherQuanTri,
+  layChiTietBookingQuanTri,
+  layChiTietDiaDiemQuanTri,
+  layChiTietLichKhoiHanhQuanTri,
+  layChiTietLichTrinhQuanTri,
+  layChiTietLoaiTourQuanTri,
+  layChiTietPaymentQuanTri,
+  layChiTietTinTucQuanTri,
+  layChiTietTourQuanTri,
+  layChiTietVoucherQuanTri,
   layDanhSachBookingQuanTri,
+  layDanhSachDiaDiemQuanTri,
+  layDanhSachLichKhoiHanhQuanTri,
+  layDanhSachLichTrinhQuanTri,
+  layDanhSachLoaiTourQuanTri,
+  layDanhSachPaymentQuanTri,
+  layDanhSachTinTucQuanTri,
   layDanhSachTourQuanTri,
-  layDiaDiemQuanTri,
-  layLoaiTourQuanTri,
+  layDanhSachVoucherQuanTri,
+  layLichKhoiHanhTheoTourQuanTri,
+  layLichTrinhTheoTourQuanTri,
+  layReviewChoDuyetQuanTri,
   layTongQuanQuanTri,
+  taoDiaDiemQuanTri,
+  taoLichKhoiHanhQuanTri,
+  taoLichTrinhQuanTri,
+  taoLoaiTourQuanTri,
+  taoTinTucQuanTri,
+  taoTourQuanTri,
+  taoVoucherQuanTri,
+  xoaLichTrinhQuanTri,
 } from './admin.api'
-import type { AdminTourStatus } from '../../types/admin'
-import type { AdminReviewDisplayStatus } from './admin.api'
+import type {
+  AdminCreateDiaDiemPayload,
+  AdminCreateLichKhoiHanhPayload,
+  AdminCreateLichTrinhPayload,
+  AdminCreateLoaiTourPayload,
+  AdminCreateTinTucPayload,
+  AdminCreateTourPayload,
+  AdminCreateVoucherPayload,
+  AdminDiaDiemStatus,
+  AdminLichKhoiHanhStatus,
+  AdminLoaiTourStatus,
+  AdminPaymentTransactionStatus,
+  AdminReviewDisplayStatus,
+  AdminTinTucStatus,
+  AdminTourStatus,
+  AdminUpdateBookingStatusPayload,
+  AdminUpdateDiaDiemPayload,
+  AdminUpdateLichKhoiHanhPayload,
+  AdminUpdateLichTrinhPayload,
+  AdminUpdateLoaiTourPayload,
+  AdminUpdatePaymentStatusPayload,
+  AdminUpdateReviewStatusPayload,
+  AdminUpdateTinTucPayload,
+  AdminUpdateTourPayload,
+  AdminUpdateVoucherPayload,
+  AdminVoucherStatus,
+} from '../../types/admin'
+
+function invalidateAdminShell(queryClient: ReturnType<typeof useQueryClient>) {
+  return Promise.all([
+    queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard', 'summary'] }),
+    queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] }),
+    queryClient.invalidateQueries({ queryKey: ['admin', 'bookings'] }),
+    queryClient.invalidateQueries({ queryKey: ['admin', 'payments'] }),
+    queryClient.invalidateQueries({ queryKey: ['admin', 'reviews', 'pending'] }),
+  ])
+}
 
 export function useAdminDashboardSummary() {
   return useQuery({
@@ -26,6 +100,14 @@ export function useAdminTours() {
   })
 }
 
+export function useAdminTour(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'tours', id],
+    queryFn: () => layChiTietTourQuanTri(id as number),
+    enabled: id !== undefined,
+  })
+}
+
 export function useAdminBookings() {
   return useQuery({
     queryKey: ['admin', 'bookings'],
@@ -33,17 +115,164 @@ export function useAdminBookings() {
   })
 }
 
+export function useAdminBooking(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'bookings', id],
+    queryFn: () => layChiTietBookingQuanTri(id as number),
+    enabled: id !== undefined,
+  })
+}
+
+export function useAdminPayments() {
+  return useQuery({
+    queryKey: ['admin', 'payments'],
+    queryFn: layDanhSachPaymentQuanTri,
+  })
+}
+
+export function useAdminPayment(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'payments', id],
+    queryFn: () => layChiTietPaymentQuanTri(id as number),
+    enabled: id !== undefined,
+  })
+}
+
 export function useAdminLoaiTours() {
   return useQuery({
     queryKey: ['admin', 'loai-tour'],
-    queryFn: layLoaiTourQuanTri,
+    queryFn: layDanhSachLoaiTourQuanTri,
+  })
+}
+
+export function useAdminLoaiTour(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'loai-tour', id],
+    queryFn: () => layChiTietLoaiTourQuanTri(id as number),
+    enabled: id !== undefined,
   })
 }
 
 export function useAdminDiaDiems() {
   return useQuery({
     queryKey: ['admin', 'dia-diem'],
-    queryFn: layDiaDiemQuanTri,
+    queryFn: layDanhSachDiaDiemQuanTri,
+  })
+}
+
+export function useAdminDiaDiem(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'dia-diem', id],
+    queryFn: () => layChiTietDiaDiemQuanTri(id as number),
+    enabled: id !== undefined,
+  })
+}
+
+export function useAdminVouchers() {
+  return useQuery({
+    queryKey: ['admin', 'vouchers'],
+    queryFn: layDanhSachVoucherQuanTri,
+  })
+}
+
+export function useAdminVoucher(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'vouchers', id],
+    queryFn: () => layChiTietVoucherQuanTri(id as number),
+    enabled: id !== undefined,
+  })
+}
+
+export function useAdminLichKhoiHanhs() {
+  return useQuery({
+    queryKey: ['admin', 'lich-khoi-hanh'],
+    queryFn: layDanhSachLichKhoiHanhQuanTri,
+  })
+}
+
+export function useAdminLichKhoiHanh(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'lich-khoi-hanh', id],
+    queryFn: () => layChiTietLichKhoiHanhQuanTri(id as number),
+    enabled: id !== undefined,
+  })
+}
+
+export function useAdminLichKhoiHanhByTour(tourId?: number) {
+  return useQuery({
+    queryKey: ['admin', 'lich-khoi-hanh', 'tour', tourId],
+    queryFn: () => layLichKhoiHanhTheoTourQuanTri(tourId as number),
+    enabled: tourId !== undefined,
+  })
+}
+
+export function useAdminLichTrinhs() {
+  return useQuery({
+    queryKey: ['admin', 'lich-trinh'],
+    queryFn: layDanhSachLichTrinhQuanTri,
+  })
+}
+
+export function useAdminLichTrinh(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'lich-trinh', id],
+    queryFn: () => layChiTietLichTrinhQuanTri(id as number),
+    enabled: id !== undefined,
+  })
+}
+
+export function useAdminLichTrinhByTour(tourId?: number) {
+  return useQuery({
+    queryKey: ['admin', 'lich-trinh', 'tour', tourId],
+    queryFn: () => layLichTrinhTheoTourQuanTri(tourId as number),
+    enabled: tourId !== undefined,
+  })
+}
+
+export function useAdminTinTucs() {
+  return useQuery({
+    queryKey: ['admin', 'tin-tuc'],
+    queryFn: layDanhSachTinTucQuanTri,
+  })
+}
+
+export function useAdminTinTuc(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'tin-tuc', id],
+    queryFn: () => layChiTietTinTucQuanTri(id as number),
+    enabled: id !== undefined,
+  })
+}
+
+export function useAdminPendingReviews(limit = 50) {
+  return useQuery({
+    queryKey: ['admin', 'reviews', 'pending', limit],
+    queryFn: () => layReviewChoDuyetQuanTri(limit),
+  })
+}
+
+export function useCreateAdminTour() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: AdminCreateTourPayload) => taoTourQuanTri(payload),
+    onSuccess: async () => {
+      await invalidateAdminShell(queryClient)
+    },
+  })
+}
+
+export function useUpdateAdminTour() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: AdminUpdateTourPayload }) => capNhatTourQuanTri(id, payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        invalidateAdminShell(queryClient),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'tours', variables.id] }),
+      ])
+    },
   })
 }
 
@@ -52,10 +281,10 @@ export function useUpdateAdminTourStatus() {
 
   return useMutation({
     mutationFn: ({ id, trangThai }: { id: number; trangThai: AdminTourStatus }) => capNhatTrangThaiTourQuanTri(id, trangThai),
-    onSuccess: async () => {
+    onSuccess: async (_, variables) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] }),
-        queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard', 'summary'] }),
+        invalidateAdminShell(queryClient),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'tours', variables.id] }),
       ])
     },
   })
@@ -66,10 +295,280 @@ export function useHideAdminTour() {
 
   return useMutation({
     mutationFn: (id: number) => anTourQuanTri(id),
-    onSuccess: async () => {
+    onSuccess: async (_, id) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] }),
-        queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard', 'summary'] }),
+        invalidateAdminShell(queryClient),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'tours', id] }),
+      ])
+    },
+  })
+}
+
+export function useUpdateAdminBookingStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: AdminUpdateBookingStatusPayload }) => capNhatTrangThaiBookingQuanTri(id, payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        invalidateAdminShell(queryClient),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'bookings', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useUpdateAdminPaymentStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: AdminUpdatePaymentStatusPayload }) => capNhatTrangThaiPaymentQuanTri(id, payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        invalidateAdminShell(queryClient),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'payments', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useCreateAdminLoaiTour() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: AdminCreateLoaiTourPayload) => taoLoaiTourQuanTri(payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'loai-tour'] })
+    },
+  })
+}
+
+export function useUpdateAdminLoaiTour() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: AdminUpdateLoaiTourPayload }) => capNhatLoaiTourQuanTri(id, payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'loai-tour'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'loai-tour', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useUpdateAdminLoaiTourStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, trangThai }: { id: number; trangThai: AdminLoaiTourStatus }) => capNhatTrangThaiLoaiTourQuanTri(id, trangThai),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'loai-tour'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'loai-tour', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useCreateAdminDiaDiem() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: AdminCreateDiaDiemPayload) => taoDiaDiemQuanTri(payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'dia-diem'] })
+    },
+  })
+}
+
+export function useUpdateAdminDiaDiem() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: AdminUpdateDiaDiemPayload }) => capNhatDiaDiemQuanTri(id, payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'dia-diem'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'dia-diem', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useUpdateAdminDiaDiemStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, trangThai }: { id: number; trangThai: AdminDiaDiemStatus }) => capNhatTrangThaiDiaDiemQuanTri(id, trangThai),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'dia-diem'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'dia-diem', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useCreateAdminVoucher() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: AdminCreateVoucherPayload) => taoVoucherQuanTri(payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'vouchers'] })
+    },
+  })
+}
+
+export function useUpdateAdminVoucher() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: AdminUpdateVoucherPayload }) => capNhatVoucherQuanTri(id, payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'vouchers'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'vouchers', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useUpdateAdminVoucherStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, trangThai }: { id: number; trangThai: AdminVoucherStatus }) => capNhatTrangThaiVoucherQuanTri(id, trangThai),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'vouchers'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'vouchers', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useCreateAdminLichKhoiHanh() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: AdminCreateLichKhoiHanhPayload) => taoLichKhoiHanhQuanTri(payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-khoi-hanh'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-khoi-hanh', 'tour', variables.tourId] }),
+      ])
+    },
+  })
+}
+
+export function useUpdateAdminLichKhoiHanh() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: AdminUpdateLichKhoiHanhPayload }) => capNhatLichKhoiHanhQuanTri(id, payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-khoi-hanh'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-khoi-hanh', variables.id] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-khoi-hanh', 'tour', variables.payload.tourId] }),
+      ])
+    },
+  })
+}
+
+export function useUpdateAdminLichKhoiHanhStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, trangThai }: { id: number; trangThai: AdminLichKhoiHanhStatus }) => capNhatTrangThaiLichKhoiHanhQuanTri(id, trangThai),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-khoi-hanh'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-khoi-hanh', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useCreateAdminLichTrinh() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: AdminCreateLichTrinhPayload) => taoLichTrinhQuanTri(payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-trinh'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-trinh', 'tour', variables.tourId] }),
+      ])
+    },
+  })
+}
+
+export function useUpdateAdminLichTrinh() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: AdminUpdateLichTrinhPayload }) => capNhatLichTrinhQuanTri(id, payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-trinh'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-trinh', variables.id] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-trinh', 'tour', variables.payload.tourId] }),
+      ])
+    },
+  })
+}
+
+export function useDeleteAdminLichTrinh() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, tourId }: { id: number; tourId?: number }) => xoaLichTrinhQuanTri(id).then(() => ({ tourId })),
+    onSuccess: async ({ tourId }) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lich-trinh'] }),
+        ...(tourId === undefined ? [] : [queryClient.invalidateQueries({ queryKey: ['admin', 'lich-trinh', 'tour', tourId] })]),
+      ])
+    },
+  })
+}
+
+export function useCreateAdminTinTuc() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: AdminCreateTinTucPayload) => taoTinTucQuanTri(payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'tin-tuc'] })
+    },
+  })
+}
+
+export function useUpdateAdminTinTuc() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: AdminUpdateTinTucPayload }) => capNhatTinTucQuanTri(id, payload),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'tin-tuc'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'tin-tuc', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useUpdateAdminTinTucStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, trangThai }: { id: number; trangThai: AdminTinTucStatus }) => capNhatTrangThaiTinTucQuanTri(id, trangThai),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'tin-tuc'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'tin-tuc', variables.id] }),
       ])
     },
   })
@@ -79,9 +578,21 @@ export function useUpdateAdminReviewStatus() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, trangThai }: { id: number; trangThai: AdminReviewDisplayStatus }) => capNhatTrangThaiReviewQuanTri(id, trangThai),
+    mutationFn: ({ id, payload }: { id: number; payload: AdminUpdateReviewStatusPayload }) => capNhatTrangThaiReviewQuanTri(id, payload),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard', 'summary'] })
+      await invalidateAdminShell(queryClient)
+    },
+  })
+}
+
+export function useUpdateAdminReviewDisplayStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, trangThai, phanHoiAdmin }: { id: number; trangThai: AdminReviewDisplayStatus; phanHoiAdmin?: string | null }) =>
+      capNhatTrangThaiReviewQuanTri(id, { trangThai, phanHoiAdmin }),
+    onSuccess: async () => {
+      await invalidateAdminShell(queryClient)
     },
   })
 }

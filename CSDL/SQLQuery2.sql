@@ -1,6 +1,7 @@
 USE QuanLyDuLich;
 GO
 
+
 /* =========================================================
    SEED DATA - CHAY SAU KHI DA TAO BANG
    ========================================================= */
@@ -15,6 +16,7 @@ VALUES
     (N'phamvan.c@gmail.com', N'123456', N'Phạm Văn C', N'0903333333', N'88 Võ Văn Tần, Quận 3, TP.HCM', N'/images/users/kh3.jpg', N'khach_hang', N'bi_khoa');
 GO
 
+
 /* 2. LOAI TOUR */
 INSERT INTO dbo.LoaiTour
     (TenLoai, MoTa, TrangThai)
@@ -23,6 +25,7 @@ VALUES
     (N'Nghỉ dưỡng', N'Tour nghỉ dưỡng, resort, biển đảo', N'hoat_dong'),
     (N'Khám phá', N'Tour trải nghiệm và khám phá', N'hoat_dong');
 GO
+
 
 /* 3. DIA DIEM */
 INSERT INTO dbo.DiaDiem
@@ -35,6 +38,7 @@ VALUES
     (N'Phú Quốc', N'Kiên Giang', N'Viet Nam', N'Thành phố đảo nghỉ dưỡng nổi tiếng.', N'hoat_dong'),
     (N'Grand World Phú Quốc', N'Kiên Giang', N'Viet Nam', N'Khu vui chơi, mua sắm, giải trí.', N'hoat_dong');
 GO
+
 
 /* 4. TOUR */
 INSERT INTO dbo.Tour
@@ -69,6 +73,7 @@ VALUES
     );
 GO
 
+
 /* 5. TOUR DIEM DEN */
 INSERT INTO dbo.TourDiemDen
     (TourId, DiaDiemId, ThuTu, GhiChu)
@@ -94,6 +99,7 @@ VALUES
      2, N'Vui chơi và check-in Grand World');
 GO
 
+
 /* 6. ANH TOUR */
 INSERT INTO dbo.AnhTour
     (TourId, LinkAnh, MoTa, IsAvatar, ThuTu)
@@ -113,6 +119,7 @@ VALUES
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-PQ-001'),
      N'/images/tours/phuquoc/grandworld.jpg', N'Grand World Phú Quốc', 0, 2);
 GO
+
 
 /* 7. LICH TRINH */
 INSERT INTO dbo.LichTrinh
@@ -154,6 +161,7 @@ VALUES
      (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Grand World Phú Quốc'));
 GO
 
+
 /* 8. LICH KHOI HANH */
 INSERT INTO dbo.LichKhoiHanh
     (TourId, MaDotTour, NgayKhoiHanh, NgayKetThuc, NoiTapTrung, SoChoToiDa, GhiChu, LyDoHuy, TrangThai)
@@ -166,6 +174,7 @@ VALUES
      N'DOT-PQ-20260620', '2026-06-20', '2026-06-23',
      N'Sân bay Tân Sơn Nhất - Ga quốc nội', 25, N'Bao gồm xe đưa đón sân bay', NULL, N'mo_ban');
 GO
+
 
 /* 9. BANG GIA LICH KHOI HANH */
 INSERT INTO dbo.BangGiaLichKhoiHanh
@@ -197,6 +206,7 @@ VALUES
     ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-PQ-20260620'),
      N'em_be', N'cuoi_tuan', 1500000, N'Giá cuối tuần cho em bé');
 GO
+
 
 /* 10. VOUCHER */
 INSERT INTO dbo.Voucher
@@ -235,6 +245,7 @@ VALUES
     );
 GO
 
+
 /* 11. BOOKING */
 INSERT INTO dbo.Booking
     (MaBooking, LichKhoiHanhId, KhachHangId, VoucherId,
@@ -272,6 +283,7 @@ VALUES
     );
 GO
 
+
 /* 12. HANH KHACH */
 INSERT INTO dbo.HanhKhach
     (BookingId, HoTen, LoaiKhach, NgaySinh, GioiTinh, SoGiayTo, QuocTich, GhiChu)
@@ -288,6 +300,7 @@ VALUES
     ((SELECT BookingId FROM dbo.Booking WHERE MaBooking = N'BK-20260320001'),
      N'Trần Thị B', N'nguoi_lon', '1998-11-30', N'nu', N'079098003333', N'Việt Nam', N'Khách hủy tour sau khi đã thanh toán');
 GO
+
 
 /* 13. THANH TOAN */
 INSERT INTO dbo.ThanhToan
@@ -337,6 +350,7 @@ VALUES
     );
 GO
 
+
 /* 14. HOA DON */
 INSERT INTO dbo.HoaDon
     (BookingId, SoHoaDon, NgayLap, TongTienTruocThue, ThueVat, TongThanhToan, EmailNhanHoaDon, FilePdf, GhiChu)
@@ -354,6 +368,7 @@ VALUES
     );
 GO
 
+
 /* 15. PHIEU XAC NHAN TOUR */
 INSERT INTO dbo.PhieuXacNhanTour
     (BookingId, MaPhieu, NgayPhatHanh, FilePdf, GhiChu)
@@ -366,6 +381,7 @@ VALUES
         N'Phiếu xác nhận đã gửi email cho khách'
     );
 GO
+
 
 /* 16. HUY BOOKING */
 INSERT INTO dbo.HuyBooking
@@ -384,6 +400,7 @@ VALUES
     );
 GO
 
+
 /* 17. DANH GIA TOUR */
 INSERT INTO dbo.DanhGiaTour
     (BookingId, TourId, KhachHangId, SoSao, NoiDungComment, PhanHoiAdmin, TrangThai, NgayDanhGia, NgayPhanHoi)
@@ -400,6 +417,7 @@ VALUES
         '2026-05-16T09:00:00'
     );
 GO
+
 
 /* 18. TIN TUC */
 INSERT INTO dbo.TinTuc
@@ -426,6 +444,7 @@ VALUES
         '2026-03-18T09:30:00'
     );
 GO
+
 
 /* 19. HO TRO KHACH HANG */
 INSERT INTO dbo.HoTroKhachHang
@@ -464,6 +483,7 @@ VALUES
     );
 GO
 
+
 /* 20. YEU THICH TOUR */
 INSERT INTO dbo.YeuThichTour
     (KhachHangId, TourId)
@@ -477,6 +497,7 @@ VALUES
         (SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DN-001')
     );
 GO
+
 
 /* 21. LICH SU TRANG THAI BOOKING */
 INSERT INTO dbo.LichSuTrangThaiBooking
@@ -503,6 +524,7 @@ VALUES
     ((SELECT BookingId FROM dbo.Booking WHERE MaBooking = N'BK-20260320001'),
      N'da_xac_nhan', N'da_huy', N'da_thanh_toan_du', N'da_hoan_tien', '2026-03-25T11:10:00', N'Booking đã hủy và hoàn tiền');
 GO
+
 
 /* 22. THONG BAO */
 INSERT INTO dbo.ThongBao
@@ -549,3 +571,449 @@ VALUES
         0
     );
 GO
+
+/* 23. DIA DIEM BO SUNG */
+INSERT INTO dbo.DiaDiem
+    (TenDiaDiem, TinhThanh, QuocGia, MoTa, TrangThai)
+VALUES
+    (N'Hà Nội', N'Hà Nội', N'Viet Nam', N'Thủ đô và trung tâm du lịch phía Bắc.', N'hoat_dong'),
+    (N'Ninh Bình', N'Ninh Bình', N'Viet Nam', N'Điểm đến nổi bật với cảnh quan karst.', N'hoat_dong'),
+    (N'Tràng An', N'Ninh Bình', N'Viet Nam', N'Quần thể danh thắng Tràng An.', N'hoat_dong'),
+    (N'Tam Cốc - Bích Động', N'Ninh Bình', N'Viet Nam', N'Khu du lịch sông núi nổi tiếng.', N'hoat_dong'),
+    (N'Hạ Long', N'Quảng Ninh', N'Viet Nam', N'Thành phố biển và trung tâm du lịch Quảng Ninh.', N'hoat_dong'),
+    (N'Vịnh Hạ Long', N'Quảng Ninh', N'Viet Nam', N'Di sản thiên nhiên thế giới.', N'hoat_dong'),
+    (N'Cát Bà', N'Hải Phòng', N'Viet Nam', N'Quần đảo và điểm nghỉ dưỡng nổi tiếng.', N'hoat_dong'),
+    (N'Đà Lạt', N'Lâm Đồng', N'Viet Nam', N'Thành phố sương mù và du lịch nghỉ dưỡng.', N'hoat_dong'),
+    (N'Hồ Tuyền Lâm', N'Lâm Đồng', N'Viet Nam', N'Hồ sinh thái nổi tiếng tại Đà Lạt.', N'hoat_dong'),
+    (N'Langbiang', N'Lâm Đồng', N'Viet Nam', N'Đỉnh núi biểu tượng của Đà Lạt.', N'hoat_dong'),
+    (N'Nha Trang', N'Khánh Hòa', N'Viet Nam', N'Thành phố biển sôi động.', N'hoat_dong'),
+    (N'VinWonders Nha Trang', N'Khánh Hòa', N'Viet Nam', N'Khu vui chơi giải trí nổi tiếng.', N'hoat_dong'),
+    (N'Bãi Dài', N'Khánh Hòa', N'Viet Nam', N'Bãi biển dài và đẹp của Nha Trang.', N'hoat_dong');
+GO
+
+
+/* 24. TOUR BO SUNG */
+INSERT INTO dbo.Tour
+    (MaTour, TenTour, LoaiTourId, DiemXuatPhatId, SoNgay, SoDem, PhuongTien,
+     GiaTuThamKhao, MoTaNgan, MoTaChiTiet, DieuKienTour, IsNoiBat, TrangThai)
+VALUES
+    (
+        N'TOUR-DL-002',
+        N'Đà Lạt - Hồ Tuyền Lâm - Langbiang 3N2Đ',
+        (SELECT LoaiTourId FROM dbo.LoaiTour WHERE TenLoai = N'Nghỉ dưỡng'),
+        (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'TP. Hồ Chí Minh'),
+        3, 2, N'Xe giường nằm',
+        2990000,
+        N'Tour nghỉ dưỡng nhẹ nhàng tại Đà Lạt.',
+        N'Khám phá hồ Tuyền Lâm, Langbiang và các điểm check-in nổi bật.',
+        N'Giá chưa bao gồm chi phí cá nhân ngoài chương trình.',
+        1,
+        N'dang_mo_ban'
+    ),
+    (
+        N'TOUR-NT-002',
+        N'Nha Trang - VinWonders - Bãi Dài 3N2Đ',
+        (SELECT LoaiTourId FROM dbo.LoaiTour WHERE TenLoai = N'Nghỉ dưỡng'),
+        (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'TP. Hồ Chí Minh'),
+        3, 2, N'Máy bay',
+        3490000,
+        N'Tour biển đảo và giải trí tại Nha Trang.',
+        N'Kết hợp nghỉ dưỡng biển, vui chơi và tham quan khu giải trí lớn.',
+        N'Khách mang theo giấy tờ tùy thân hợp lệ khi làm thủ tục.',
+        1,
+        N'dang_mo_ban'
+    ),
+    (
+        N'TOUR-HL-002',
+        N'Hạ Long - Vịnh Hạ Long - Cát Bà 4N3Đ',
+        (SELECT LoaiTourId FROM dbo.LoaiTour WHERE TenLoai = N'Khám phá'),
+        (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Hà Nội'),
+        4, 3, N'Ô tô + Tàu',
+        4890000,
+        N'Tour tham quan di sản biển phía Bắc.',
+        N'Trải nghiệm Vịnh Hạ Long, Cát Bà và các điểm ngắm cảnh đẹp.',
+        N'Giá chưa bao gồm đồ uống và chi phí cá nhân.',
+        1,
+        N'dang_mo_ban'
+    ),
+    (
+        N'TOUR-NB-002',
+        N'Hà Nội - Ninh Bình - Tràng An 3N2Đ',
+        (SELECT LoaiTourId FROM dbo.LoaiTour WHERE TenLoai = N'Khám phá'),
+        (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Hà Nội'),
+        3, 2, N'Ô tô',
+        2790000,
+        N'Tour ngắn ngày khám phá cảnh quan Ninh Bình.',
+        N'Tham quan Tràng An, Tam Cốc và các thắng cảnh nổi bật.',
+        N'Giá áp dụng cho đoàn khởi hành theo lịch mở bán.',
+        1,
+        N'dang_mo_ban'
+    );
+GO
+
+
+/* 25. TOUR DIEM DEN BO SUNG */
+INSERT INTO dbo.TourDiemDen
+    (TourId, DiaDiemId, ThuTu, GhiChu)
+VALUES
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DL-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Đà Lạt'),
+     1, N'Nhận phòng và tham quan trung tâm Đà Lạt'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DL-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Hồ Tuyền Lâm'),
+     2, N'Tham quan hồ Tuyền Lâm'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DL-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Langbiang'),
+     3, N'Check-in đỉnh Langbiang'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Nha Trang'),
+     1, N'Tham quan trung tâm thành phố biển'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'VinWonders Nha Trang'),
+     2, N'Vui chơi tại VinWonders'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Bãi Dài'),
+     3, N'Tắm biển và nghỉ dưỡng'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HL-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Hạ Long'),
+     1, N'Tham quan khu vực Hạ Long'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HL-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Vịnh Hạ Long'),
+     2, N'Du thuyền trên vịnh'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HL-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Cát Bà'),
+     3, N'Tham quan quần đảo Cát Bà'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NB-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Ninh Bình'),
+     1, N'Tham quan cảnh quan Ninh Bình'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NB-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Tràng An'),
+     2, N'Khám phá Tràng An bằng thuyền'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NB-002'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Tam Cốc - Bích Động'),
+     3, N'Tham quan Tam Cốc - Bích Động');
+GO
+
+
+/* 26. ANH TOUR BO SUNG */
+INSERT INTO dbo.AnhTour
+    (TourId, LinkAnh, MoTa, IsAvatar, ThuTu)
+VALUES
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DL-002'),
+     N'/images/tours/dalat/avatar.jpg', N'Ảnh đại diện tour Đà Lạt', 1, 1),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-002'),
+     N'/images/tours/nhatrang/avatar.jpg', N'Ảnh đại diện tour Nha Trang', 1, 1),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HL-002'),
+     N'/images/tours/halong/avatar.jpg', N'Ảnh đại diện tour Hạ Long', 1, 1),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NB-002'),
+     N'/images/tours/ninhbinh/avatar.jpg', N'Ảnh đại diện tour Ninh Bình', 1, 1);
+GO
+
+
+/* 27. LICH TRINH BO SUNG */
+INSERT INTO dbo.LichTrinh
+    (TourId, NgayThu, ThuTuTrongNgay, GioBatDau, GioKetThuc, TieuDe, NoiDung, DiaDiemId)
+VALUES
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DL-002'),
+     1, 1, '07:00', '10:00', N'Khởi hành đến Đà Lạt',
+     N'Khởi hành và nhận phòng khách sạn.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Đà Lạt')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DL-002'),
+     2, 1, '08:00', '16:00', N'Tham quan Hồ Tuyền Lâm',
+     N'Đi thuyền và nghỉ ngơi tại khu hồ sinh thái.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Hồ Tuyền Lâm')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-002'),
+     1, 1, '08:00', '11:00', N'Đến Nha Trang',
+     N'Nhận phòng và nghỉ ngơi tại khách sạn.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Nha Trang')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-002'),
+     2, 1, '09:00', '17:00', N'Vui chơi VinWonders',
+     N'Tham gia các hoạt động giải trí tại VinWonders.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'VinWonders Nha Trang')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HL-002'),
+     1, 1, '06:30', '12:00', N'Khởi hành Hà Nội - Hạ Long',
+     N'Xuất phát từ Hà Nội và nhận phòng tại Hạ Long.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Hạ Long')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HL-002'),
+     2, 1, '08:00', '16:00', N'Du thuyền Vịnh Hạ Long',
+     N'Tham quan vịnh và đảo Cát Bà.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Vịnh Hạ Long')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NB-002'),
+     1, 1, '07:30', '12:00', N'Khởi hành đi Ninh Bình',
+     N'Nhận phòng và bắt đầu hành trình.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Ninh Bình')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NB-002'),
+     2, 1, '08:00', '16:30', N'Tham quan Tràng An',
+     N'Du ngoạn bằng thuyền giữa núi đá vôi.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Tràng An'));
+GO
+
+
+/* 28. LICH KHOI HANH BO SUNG */
+INSERT INTO dbo.LichKhoiHanh
+    (TourId, MaDotTour, NgayKhoiHanh, NgayKetThuc, NoiTapTrung, SoChoToiDa, GhiChu, LyDoHuy, TrangThai)
+VALUES
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DL-002'),
+     N'DOT-DL-20260518', '2026-05-18', '2026-05-20',
+     N'Sân bay Tân Sơn Nhất - Ga quốc nội', 28, N'Khởi hành buổi sáng', NULL, N'mo_ban'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-002'),
+     N'DOT-NT-20260605', '2026-06-05', '2026-06-07',
+     N'Sân bay Tân Sơn Nhất - Ga quốc nội', 32, N'Có vé máy bay khứ hồi', NULL, N'mo_ban'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HL-002'),
+     N'DOT-HL-20260622', '2026-06-22', '2026-06-25',
+     N'Bến xe Mỹ Đình', 35, N'Xe đời mới, điều hòa', NULL, N'mo_ban'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NB-002'),
+     N'DOT-NB-20260710', '2026-07-10', '2026-07-12',
+     N'Ga Hà Nội', 30, N'Khởi hành cuối tuần', NULL, N'mo_ban');
+GO
+
+
+/* 29. BANG GIA LICH KHOI HANH BO SUNG */
+INSERT INTO dbo.BangGiaLichKhoiHanh
+    (LichKhoiHanhId, LoaiKhach, LoaiGia, DonGia, MoTa)
+VALUES
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-DL-20260518'),
+     N'nguoi_lon', N'ngay_thuong', 2990000, N'Giá người lớn tour Đà Lạt'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-DL-20260518'),
+     N'tre_em', N'ngay_thuong', 2390000, N'Giá trẻ em tour Đà Lạt'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-DL-20260518'),
+     N'em_be', N'ngay_thuong', 600000, N'Giá em bé tour Đà Lạt'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-NT-20260605'),
+     N'nguoi_lon', N'ngay_thuong', 3490000, N'Giá người lớn tour Nha Trang'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-NT-20260605'),
+     N'tre_em', N'ngay_thuong', 2890000, N'Giá trẻ em tour Nha Trang'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-NT-20260605'),
+     N'em_be', N'ngay_thuong', 700000, N'Giá em bé tour Nha Trang'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-HL-20260622'),
+     N'nguoi_lon', N'ngay_thuong', 4890000, N'Giá người lớn tour Hạ Long'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-HL-20260622'),
+     N'tre_em', N'ngay_thuong', 3890000, N'Giá trẻ em tour Hạ Long'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-HL-20260622'),
+     N'em_be', N'ngay_thuong', 900000, N'Giá em bé tour Hạ Long'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-NB-20260710'),
+     N'nguoi_lon', N'ngay_thuong', 2790000, N'Giá người lớn tour Ninh Bình'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-NB-20260710'),
+     N'tre_em', N'ngay_thuong', 2190000, N'Giá trẻ em tour Ninh Bình'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-NB-20260710'),
+     N'em_be', N'ngay_thuong', 500000, N'Giá em bé tour Ninh Bình');
+GO
+
+/* 30. DIA DIEM BO SUNG THEM */
+INSERT INTO dbo.DiaDiem
+    (TenDiaDiem, TinhThanh, QuocGia, MoTa, TrangThai)
+VALUES
+    (N'Cần Thơ', N'Cần Thơ', N'Viet Nam', N'Trung tâm du lịch miền Tây sông nước.', N'hoat_dong'),
+    (N'Bến Ninh Kiều', N'Cần Thơ', N'Viet Nam', N'Biểu tượng du lịch nổi tiếng của Cần Thơ.', N'hoat_dong'),
+    (N'Chợ nổi Cái Răng', N'Cần Thơ', N'Viet Nam', N'Điểm trải nghiệm văn hóa sông nước miền Tây.', N'hoat_dong'),
+    (N'Huế', N'Thừa Thiên Huế', N'Viet Nam', N'Thành phố di sản với nhiều công trình lịch sử.', N'hoat_dong'),
+    (N'Đại Nội Huế', N'Thừa Thiên Huế', N'Viet Nam', N'Quần thể di tích cố đô Huế.', N'hoat_dong'),
+    (N'Chùa Thiên Mụ', N'Thừa Thiên Huế', N'Viet Nam', N'Ngôi chùa cổ nổi tiếng bên sông Hương.', N'hoat_dong'),
+    (N'Sa Pa', N'Lào Cai', N'Viet Nam', N'Thị trấn vùng cao nổi tiếng với khí hậu mát mẻ.', N'hoat_dong'),
+    (N'Bản Cát Cát', N'Lào Cai', N'Viet Nam', N'Bản làng du lịch đặc trưng của Sa Pa.', N'hoat_dong'),
+    (N'Fansipan', N'Lào Cai', N'Viet Nam', N'Nóc nhà Đông Dương và điểm đến nổi bật.', N'hoat_dong'),
+    (N'Quy Nhơn', N'Bình Định', N'Viet Nam', N'Thành phố biển yên bình với nhiều bãi tắm đẹp.', N'hoat_dong'),
+    (N'Kỳ Co', N'Bình Định', N'Viet Nam', N'Bãi biển xanh trong nổi tiếng tại Quy Nhơn.', N'hoat_dong'),
+    (N'Eo Gió', N'Bình Định', N'Viet Nam', N'Điểm ngắm biển và hoàng hôn nổi bật.', N'hoat_dong');
+GO
+
+/* 31. TOUR BO SUNG THEM */
+INSERT INTO dbo.Tour
+    (MaTour, TenTour, LoaiTourId, DiemXuatPhatId, SoNgay, SoDem, PhuongTien,
+     GiaTuThamKhao, MoTaNgan, MoTaChiTiet, DieuKienTour, IsNoiBat, TrangThai)
+VALUES
+    (
+        N'TOUR-CT-003',
+        N'Cần Thơ - Chợ nổi Cái Răng - Bến Ninh Kiều 2N1Đ',
+        (SELECT LoaiTourId FROM dbo.LoaiTour WHERE TenLoai = N'Trong nước'),
+        (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'TP. Hồ Chí Minh'),
+        2, 1, N'Xe du lịch',
+        1890000,
+        N'Tour miền Tây ngắn ngày với trải nghiệm chợ nổi và bến Ninh Kiều.',
+        N'Phù hợp cho nhóm bạn và gia đình muốn đổi gió cuối tuần tại miền Tây.',
+        N'Giá chưa bao gồm chi phí cá nhân ngoài chương trình.',
+        1,
+        N'dang_mo_ban'
+    ),
+    (
+        N'TOUR-HUE-003',
+        N'Huế - Đại Nội - Chùa Thiên Mụ 3N2Đ',
+        (SELECT LoaiTourId FROM dbo.LoaiTour WHERE TenLoai = N'Khám phá'),
+        (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Đà Nẵng'),
+        3, 2, N'Ô tô',
+        2690000,
+        N'Tour khám phá di sản cố đô Huế trong 3 ngày 2 đêm.',
+        N'Hành trình tham quan Đại Nội, chùa Thiên Mụ và trải nghiệm ẩm thực Huế.',
+        N'Khách mang theo giấy tờ tùy thân hợp lệ khi tham gia tour.',
+        1,
+        N'dang_mo_ban'
+    ),
+    (
+        N'TOUR-SP-003',
+        N'Sa Pa - Bản Cát Cát - Fansipan 3N2Đ',
+        (SELECT LoaiTourId FROM dbo.LoaiTour WHERE TenLoai = N'Khám phá'),
+        (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Hà Nội'),
+        3, 2, N'Xe giường nằm',
+        3590000,
+        N'Tour vùng cao Sa Pa với lịch trình tham quan bản làng và Fansipan.',
+        N'Phù hợp cho du khách yêu thích khí hậu mát mẻ và cảnh sắc núi rừng Tây Bắc.',
+        N'Giá chưa bao gồm chi phí thuê trang phục và vé dịch vụ ngoài chương trình.',
+        1,
+        N'dang_mo_ban'
+    ),
+    (
+        N'TOUR-QN-003',
+        N'Quy Nhơn - Kỳ Co - Eo Gió 3N2Đ',
+        (SELECT LoaiTourId FROM dbo.LoaiTour WHERE TenLoai = N'Nghỉ dưỡng'),
+        (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'TP. Hồ Chí Minh'),
+        3, 2, N'Máy bay',
+        3290000,
+        N'Tour biển Quy Nhơn kết hợp nghỉ dưỡng và tham quan cảnh đẹp.',
+        N'Trải nghiệm biển xanh, cát trắng tại Kỳ Co và ngắm cảnh tại Eo Gió.',
+        N'Khách nên chuẩn bị đồ bơi và kem chống nắng.',
+        1,
+        N'dang_mo_ban'
+    );
+GO
+
+/* 32. TOUR DIEM DEN BO SUNG THEM */
+INSERT INTO dbo.TourDiemDen
+    (TourId, DiaDiemId, ThuTu, GhiChu)
+VALUES
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-CT-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Cần Thơ'),
+     1, N'Tham quan trung tâm thành phố Cần Thơ'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-CT-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Bến Ninh Kiều'),
+     2, N'Dạo bến Ninh Kiều buổi chiều tối'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-CT-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Chợ nổi Cái Răng'),
+     3, N'Trải nghiệm chợ nổi buổi sáng sớm'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HUE-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Huế'),
+     1, N'Tham quan thành phố Huế'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HUE-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Đại Nội Huế'),
+     2, N'Khám phá quần thể Đại Nội'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HUE-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Chùa Thiên Mụ'),
+     3, N'Tham quan chùa Thiên Mụ bên sông Hương'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-SP-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Sa Pa'),
+     1, N'Nhận phòng và tham quan trung tâm Sa Pa'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-SP-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Bản Cát Cát'),
+     2, N'Tham quan bản làng truyền thống'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-SP-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Fansipan'),
+     3, N'Chinh phục Fansipan bằng cáp treo'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-QN-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Quy Nhơn'),
+     1, N'Tham quan trung tâm thành phố biển Quy Nhơn'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-QN-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Kỳ Co'),
+     2, N'Tắm biển và vui chơi tại Kỳ Co'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-QN-003'),
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Eo Gió'),
+     3, N'Ngắm biển và check-in tại Eo Gió');
+GO
+
+/* 33. ANH TOUR BO SUNG THEM */
+INSERT INTO dbo.AnhTour
+    (TourId, LinkAnh, MoTa, IsAvatar, ThuTu)
+VALUES
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-CT-003'),
+     N'/images/tours/phuquoc/avatar.jpg', N'Ảnh đại diện tour Cần Thơ', 1, 1),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HUE-003'),
+     N'/images/tours/danang/hoi-an.jpg', N'Ảnh đại diện tour Huế', 1, 1),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-SP-003'),
+     N'/images/tour-ha-001-main.jpg', N'Ảnh đại diện tour Sa Pa', 1, 1),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-QN-003'),
+     N'/images/tours/danang/avatar.jpg', N'Ảnh đại diện tour Quy Nhơn', 1, 1);
+GO
+
+/* 34. LICH TRINH BO SUNG THEM */
+INSERT INTO dbo.LichTrinh
+    (TourId, NgayThu, ThuTuTrongNgay, GioBatDau, GioKetThuc, TieuDe, NoiDung, DiaDiemId)
+VALUES
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-CT-003'),
+     1, 1, '06:00', '10:00', N'Khởi hành đi Cần Thơ',
+     N'Di chuyển từ TP. Hồ Chí Minh đến Cần Thơ và nhận phòng.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Cần Thơ')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-CT-003'),
+     2, 1, '05:30', '09:00', N'Tham quan chợ nổi Cái Răng',
+     N'Đi thuyền tham quan và dùng bữa sáng trên chợ nổi.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Chợ nổi Cái Răng')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HUE-003'),
+     1, 1, '08:00', '11:30', N'Khởi hành đến Huế',
+     N'Di chuyển từ Đà Nẵng đến Huế qua hầm Hải Vân.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Huế')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HUE-003'),
+     2, 1, '08:30', '15:30', N'Tham quan Đại Nội Huế',
+     N'Khám phá quần thể kiến trúc cố đô và nghe thuyết minh.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Đại Nội Huế')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-SP-003'),
+     1, 1, '22:00', '05:30', N'Khởi hành từ Hà Nội đi Sa Pa',
+     N'Lên xe giường nằm và nghỉ đêm trên đường.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Hà Nội')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-SP-003'),
+     2, 1, '08:00', '16:30', N'Khám phá Bản Cát Cát',
+     N'Tản bộ tham quan bản làng và chụp ảnh lưu niệm.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Bản Cát Cát')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-QN-003'),
+     1, 1, '07:00', '10:00', N'Bay đến Quy Nhơn',
+     N'Làm thủ tục bay và nhận phòng khách sạn tại Quy Nhơn.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Quy Nhơn')),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-QN-003'),
+     2, 1, '08:30', '16:00', N'Tham quan Kỳ Co - Eo Gió',
+     N'Tắm biển, ăn hải sản và tham quan các điểm check-in nổi tiếng.',
+     (SELECT DiaDiemId FROM dbo.DiaDiem WHERE TenDiaDiem = N'Kỳ Co'));
+GO
+
+/* 35. LICH KHOI HANH BO SUNG THEM */
+INSERT INTO dbo.LichKhoiHanh
+    (TourId, MaDotTour, NgayKhoiHanh, NgayKetThuc, NoiTapTrung, SoChoToiDa, GhiChu, LyDoHuy, TrangThai)
+VALUES
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-CT-003'),
+     N'DOT-CT-20260524', '2026-05-24', '2026-05-25',
+     N'Nhà văn hóa Thanh Niên', 26, N'Phù hợp tour cuối tuần', NULL, N'mo_ban'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HUE-003'),
+     N'DOT-HUE-20260614', '2026-06-14', '2026-06-16',
+     N'Bến xe trung tâm Đà Nẵng', 28, N'Khởi hành buổi sáng', NULL, N'mo_ban'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-SP-003'),
+     N'DOT-SP-20260628', '2026-06-28', '2026-06-30',
+     N'Bến xe Mỹ Đình', 30, N'Xe giường nằm chất lượng cao', NULL, N'mo_ban'),
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-QN-003'),
+     N'DOT-QN-20260705', '2026-07-05', '2026-07-07',
+     N'Sân bay Tân Sơn Nhất - Ga quốc nội', 32, N'Bao gồm hành lý ký gửi 20kg', NULL, N'mo_ban');
+GO
+
+/* 36. BANG GIA LICH KHOI HANH BO SUNG THEM */
+INSERT INTO dbo.BangGiaLichKhoiHanh
+    (LichKhoiHanhId, LoaiKhach, LoaiGia, DonGia, MoTa)
+VALUES
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-CT-20260524'),
+     N'nguoi_lon', N'ngay_thuong', 1890000, N'Giá người lớn tour Cần Thơ'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-CT-20260524'),
+     N'tre_em', N'ngay_thuong', 1490000, N'Giá trẻ em tour Cần Thơ'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-CT-20260524'),
+     N'em_be', N'ngay_thuong', 400000, N'Giá em bé tour Cần Thơ'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-HUE-20260614'),
+     N'nguoi_lon', N'ngay_thuong', 2690000, N'Giá người lớn tour Huế'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-HUE-20260614'),
+     N'tre_em', N'ngay_thuong', 2190000, N'Giá trẻ em tour Huế'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-HUE-20260614'),
+     N'em_be', N'ngay_thuong', 500000, N'Giá em bé tour Huế'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-SP-20260628'),
+     N'nguoi_lon', N'ngay_thuong', 3590000, N'Giá người lớn tour Sa Pa'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-SP-20260628'),
+     N'tre_em', N'ngay_thuong', 2890000, N'Giá trẻ em tour Sa Pa'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-SP-20260628'),
+     N'em_be', N'ngay_thuong', 700000, N'Giá em bé tour Sa Pa'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-QN-20260705'),
+     N'nguoi_lon', N'ngay_thuong', 3290000, N'Giá người lớn tour Quy Nhơn'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-QN-20260705'),
+     N'tre_em', N'ngay_thuong', 2690000, N'Giá trẻ em tour Quy Nhơn'),
+    ((SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-QN-20260705'),
+     N'em_be', N'ngay_thuong', 600000, N'Giá em bé tour Quy Nhơn');
+GO
+

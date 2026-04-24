@@ -15,6 +15,15 @@ export const PATHS = {
   myReviews: '/my-reviews',
   admin: '/admin',
   adminTours: '/admin/tours',
+  adminBookings: '/admin/bookings',
+  adminPayments: '/admin/payments',
+  adminReviews: '/admin/reviews',
+  adminLoaiTours: '/admin/loai-tour',
+  adminDiaDiems: '/admin/dia-diem',
+  adminVouchers: '/admin/vouchers',
+  adminTinTucs: '/admin/tin-tuc',
+  adminLichKhoiHanhs: '/admin/lich-khoi-hanh',
+  adminLichTrinhs: '/admin/lich-trinh',
 } as const
 
 export function getTinTucChiTietPath(id: number | string) {
