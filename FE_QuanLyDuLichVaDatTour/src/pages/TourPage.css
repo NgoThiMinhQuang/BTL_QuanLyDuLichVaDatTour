@@ -1,24 +1,24 @@
 .tour-page {
   width: min(1180px, calc(100% - 380px));
   margin: 0 auto;
-  padding: 48px 0 56px;
+  padding: 24px 0 56px;
 }
 
 .tour-page-header {
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .tour-page-title.ant-typography {
-  margin: 0 0 10px !important;
+  margin: 0 0 6px !important;
   color: #1e293b;
-  font-size: clamp(32px, 3.2vw, 48px) !important;
+  font-size: clamp(28px, 2.4vw, 38px) !important;
   font-weight: 800;
 }
 
 .tour-results-count.ant-typography {
   margin: 0 !important;
   color: #64748b;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .tour-layout {
@@ -147,11 +147,11 @@
 @media (max-width: 768px) {
   .tour-page {
     width: min(100%, calc(100% - 24px));
-    padding: 32px 0 40px;
+    padding: 20px 0 40px;
   }
 
   .tour-page-title.ant-typography {
-    font-size: 34px !important;
+    font-size: 30px !important;
   }
 
   .tour-results-count.ant-typography {

@@ -210,43 +210,46 @@ INSERT INTO dbo.AnhTour
     (TourId, LinkAnh, MoTa, IsAvatar, ThuTu)
 VALUES
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DN-001'),
-     N'/images/tours/danang/avatar.jpg', N'Ảnh đại diện tour Đà Nẵng', 1, 1),
+     N'https://ik.imagekit.io/tvlk/blog/2022/09/dia-diem-check-in-da-nang-cover.jpeg', N'Ảnh đại diện tour Đà Nẵng - Hội An', 1, 1),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DN-001'),
-     N'/images/tours/danang/hoi-an.jpg', N'Phố cổ Hội An về đêm', 0, 2),
+     N'https://cdn-images.vtv.vn/2019/8/28/hoi-an-1-15669737585991662159115.jpg', N'Phố cổ Hội An', 0, 2),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DN-001'),
      N'/images/tours/danang/bana.jpg', N'Bà Nà Hills và Cầu Vàng', 0, 3),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-PQ-001'),
-     N'/images/tours/phuquoc/avatar.jpg', N'Ảnh đại diện tour Phú Quốc', 1, 1),
+     N'https://i1-dulich.vnecdn.net/2022/04/08/dulichPhuQuoc-1649392573-9234-1649405369.jpg?w=0&h=0&q=100&dpr=2&fit=crop&s=SU6n3IvJxW1Sla0xqg31Kg', N'Ảnh đại diện tour Phú Quốc', 1, 1),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-PQ-001'),
-     N'/images/tours/phuquoc/grandworld.jpg', N'Grand World Phú Quốc', 0, 2),
+     N'https://i1-dulich.vnecdn.net/2022/04/08/du-lich-Phu-Quoc-03-1254-1649405349.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=L3hmY-ilsuGlFWPrVQF4Gg', N'Grand World Phú Quốc', 0, 2),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-001'),
-     N'/images/tours/phuquoc/avatar.jpg', N'Ảnh đại diện tour Nha Trang', 1, 1),
+     N'https://baokhanhhoa.vn/file/e7837c02857c8ca30185a8c39b582c03/102023/nh3_20231020164026.jpg', N'Ảnh đại diện tour Nha Trang', 1, 1),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-001'),
-     N'/images/tours/phuquoc/grandworld.jpg', N'Biển đảo Nha Trang', 0, 2),
+     N'https://static.vinwonders.com/production/2025/05/tro-choi-cam-giac-manh-vinwonders-phu-quoc.jpg', N'VinWonders trong hành trình Nha Trang', 0, 2),
+
+    ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-001'),
+     N'https://statics.vinpearl.com/hon-mun-nha-trang-2_1627541859.jpg', N'Hòn Mun Nha Trang', 0, 3),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DL-001'),
-     N'/images/tours/danang/avatar.jpg', N'Ảnh đại diện tour Đà Lạt', 1, 1),
+     N'https://samtenhills.vn/wp-content/uploads/2024/01/top-20-cac-diem-du-lich-da-lat.jpg', N'Ảnh đại diện tour Đà Lạt săn mây', 1, 1),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DL-001'),
-     N'/images/tours/danang/bana.jpg', N'Không gian cao nguyên Đà Lạt', 0, 2),
+     N'https://samtenhills.vn/wp-content/uploads/2024/01/top-20-cac-diem-du-lich-da-lat.jpg', N'Đà Lạt săn mây', 0, 2),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HL-001'),
-     N'/images/tours/danang/hoi-an.jpg', N'Ảnh đại diện tour miền Bắc', 1, 1),
+     N'https://statics.vinpearl.com/dia-diem-chup-anh-dep-o-ha-noi-1_1680675425.jpg', N'Ảnh đại diện tour Hà Nội', 1, 1),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HL-001'),
-     N'/images/tours/phuquoc/avatar.jpg', N'Vịnh biển và di sản miền Bắc', 0, 2),
+     N'https://cdn-media.sforum.vn/storage/app/media/ctv_seo3/anh-vinh-ha-long-thumbnail.jpg', N'Vịnh Hạ Long', 0, 2),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HUE-001'),
-     N'/images/tours/danang/bana.jpg', N'Ảnh đại diện tour Huế - Đà Nẵng - Hội An', 1, 1),
+     N'https://cdn-images.vtv.vn/2019/8/28/hoi-an-1-15669737585991662159115.jpg', N'Ảnh đại diện tour Huế - Đà Nẵng - Hội An', 1, 1),
 
     ((SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HUE-001'),
-     N'/images/tours/danang/hoi-an.jpg', N'Phố cổ Hội An trong hành trình di sản', 0, 2);
+     N'https://cdn-images.vtv.vn/2019/8/28/hoi-an-1-15669737585991662159115.jpg', N'Phố cổ Hội An trong hành trình di sản', 0, 2);
 GO
 
 

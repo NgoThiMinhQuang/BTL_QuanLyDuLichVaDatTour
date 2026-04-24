@@ -5,6 +5,7 @@ import { MucTourNoiBat } from '../components/home/MucTourNoiBat'
 import { BannerTrangChu } from '../components/home/BannerTrangChu'
 import { UuDaiTrangChu } from '../components/home/UuDaiTrangChu'
 import { DanhMucTour } from '../components/home/DanhMucTour'
+import { DiemDenPhoBien } from '../components/home/DiemDenPhoBien'
 import { MucLichKhoiHanhGan } from '../components/home/MucLichKhoiHanhGan'
 import { BanDoDuLich } from '../components/home/BanDoDuLich'
 import { GioiThieuTrangChu } from '../components/home/GioiThieuTrangChu'
@@ -34,6 +35,7 @@ export default function Home() {
         onRetry={() => refetchFeaturedTours()}
       />
       <DanhMucTour />
+      <DiemDenPhoBien />
       <BanDoDuLich />
       <MucLichKhoiHanhGan tours={featuredTours} />
       <UuDaiTrangChu />

@@ -14,7 +14,7 @@
   height: auto;
   line-height: normal;
   margin: 0;
-  padding: 12px 0;
+  padding: 4px 0;
   background: linear-gradient(180deg, rgba(251, 245, 234, 0.98) 0%, rgba(248, 240, 227, 0.98) 100%);
   border-bottom: 1px solid rgba(193, 153, 96, 0.18);
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
@@ -42,6 +42,7 @@
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
+  min-height: 58px;
 }
 
 .app-brand {
@@ -57,7 +58,7 @@
 .app-brand-logo {
   display: block;
   width: auto;
-  height: 68px;
+  height: 52px;
   object-fit: contain;
 }
 
@@ -141,12 +142,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border: none;
   background: transparent;
   color: #475569;
-  font-size: 22px;
+  font-size: 20px;
   cursor: pointer;
   box-sizing: border-box;
   transition: color 0.2s ease;
@@ -172,11 +173,11 @@
 }
 
 .app-header-button {
-  height: 46px;
-  padding-inline: 20px;
+  height: 38px;
+  padding-inline: 18px;
   border-radius: 999px;
   font-weight: 600;
-  font-size: 17px;
+  font-size: 16px;
   white-space: nowrap;
 }
 
