@@ -1,10 +1,11 @@
 import { create } from 'zustand'
+import type { VaiTroNguoiDung } from '../services/auth/types'
 
 export interface NguoiDungDangNhap {
   id: number
   email: string
   hoTen: string
-  vaiTro: string
+  vaiTro: VaiTroNguoiDung
   trangThai: string
 }
 

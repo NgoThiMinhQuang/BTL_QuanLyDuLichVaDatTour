@@ -105,41 +105,6 @@ using (var scope = app.Services.CreateScope())
     {
         await dbContext.Database.OpenConnectionAsync();
         await dbContext.Database.CloseConnectionAsync();
-
-        await dbContext.Database.ExecuteSqlRawAsync("""
-            IF COL_LENGTH('TinTuc', 'DanhMuc') IS NULL
-            BEGIN
-                ALTER TABLE TinTuc ADD DanhMuc NVARCHAR(100) NULL;
-            END
-            """);
-
-        await dbContext.Database.ExecuteSqlRawAsync("""
-            IF OBJECT_ID('DanhGiaTour', 'U') IS NULL
-            BEGIN
-                CREATE TABLE DanhGiaTour (
-                    DanhGiaTourId BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-                    BookingId BIGINT NOT NULL,
-                    TourId BIGINT NOT NULL,
-                    KhachHangId BIGINT NOT NULL,
-                    SoSao TINYINT NOT NULL,
-                    NoiDungComment NVARCHAR(MAX) NULL,
-                    PhanHoiAdmin NVARCHAR(MAX) NULL,
-                    TrangThai NVARCHAR(20) NOT NULL CONSTRAINT DF_DanhGiaTour_TrangThai DEFAULT N'hien_thi',
-                    NgayDanhGia DATETIME2 NOT NULL CONSTRAINT DF_DanhGiaTour_NgayDanhGia DEFAULT SYSDATETIME(),
-                    NgayPhanHoi DATETIME2 NULL,
-                    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_DanhGiaTour_CreatedAt DEFAULT SYSDATETIME(),
-                    UpdatedAt DATETIME2 NOT NULL CONSTRAINT DF_DanhGiaTour_UpdatedAt DEFAULT SYSDATETIME(),
-                    CONSTRAINT CK_DanhGiaTour_TrangThai CHECK (TrangThai IN (N'cho_duyet', N'hien_thi', N'an')),
-                    CONSTRAINT CK_DanhGiaTour_SoSao CHECK (SoSao BETWEEN 1 AND 5),
-                    CONSTRAINT FK_DanhGiaTour_Booking FOREIGN KEY (BookingId) REFERENCES Booking(BookingId),
-                    CONSTRAINT FK_DanhGiaTour_Tour FOREIGN KEY (TourId) REFERENCES Tour(TourId),
-                    CONSTRAINT FK_DanhGiaTour_KhachHang FOREIGN KEY (KhachHangId) REFERENCES NguoiDung(NguoiDungId)
-                );
-
-                CREATE UNIQUE INDEX UX_DanhGiaTour_BookingId ON DanhGiaTour(BookingId);
-                CREATE INDEX IdxDanhGiaTour_Tour_TrangThai_NgayDanhGia ON DanhGiaTour(TourId, TrangThai, NgayDanhGia);
-            END
-            """);
     }
     catch (SqlException ex)
     {
@@ -152,7 +117,7 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "Không thể chạy SQL bootstrap khi khởi động BE_QuanLyDuLichVaDatTour.");
+        app.Logger.LogError(ex, "Không thể kiểm tra kết nối SQL khi khởi động BE_QuanLyDuLichVaDatTour.");
         throw;
     }
 }

@@ -50,7 +50,7 @@ export default function Login() {
         trangThai: response.trangThai,
       })
 
-      if (response.vaiTro === 'admin') {
+      if (response.vaiTro.toLowerCase() === 'admin') {
         navigate(PATHS.admin, { replace: true })
       } else {
         navigate(redirectPath, { replace: true })

@@ -1,3 +1,5 @@
+export type VaiTroNguoiDung = 'admin' | 'khach_hang'
+
 export interface LoginRequest {
   email: string
   matKhau: string
@@ -10,7 +12,7 @@ export interface LoginResponse {
   id: number
   email: string
   hoTen: string
-  vaiTro: string
+  vaiTro: VaiTroNguoiDung
   trangThai: string
 }
 
@@ -27,6 +29,6 @@ export interface RegisterResponse {
   id: number
   email: string
   hoTen: string
-  vaiTro: string
+  vaiTro: VaiTroNguoiDung
   trangThai: string
 }
