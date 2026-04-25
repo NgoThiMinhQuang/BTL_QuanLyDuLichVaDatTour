@@ -1,11 +1,13 @@
 import './TourDetailPage.css'
-import { Breadcrumb, Button, Card, Empty, Image, Select, Skeleton, Tabs, Tag, Typography } from 'antd'
+import { Breadcrumb, Button, Card, Empty, Image, List, Rate, Select, Skeleton, Space, Tabs, Tag, Typography } from 'antd'
+import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router'
 import { formatDate } from '../utils/formatDate'
 import { formatMoney } from '../utils/formatMoney'
 import { PATHS } from '../constants/paths'
 import { useTourChiTietPage } from '../services/tour/useTourChiTietPage'
 import { useAuthStore } from '../store/authStore'
+import { layDanhGiaDaDuyetTheoTour, layThongKeDanhGiaTour } from '../services/review/review'
 
 const { Paragraph, Text, Title } = Typography
 
@@ -32,6 +34,18 @@ export default function TourDetail() {
     infoFacts,
     itineraryByDay,
   } = useTourChiTietPage(tourId, isValidId)
+
+  const reviewsQuery = useQuery({
+    queryKey: ['tour-reviews', tourId],
+    queryFn: () => layDanhGiaDaDuyetTheoTour(tourId),
+    enabled: isValidId,
+  })
+
+  const reviewSummaryQuery = useQuery({
+    queryKey: ['tour-review-summary', tourId],
+    queryFn: () => layThongKeDanhGiaTour(tourId),
+    enabled: isValidId,
+  })
 
   if (!isValidId) {
     return <div className="tour-detail-page-state">Tour không hợp lệ.</div>

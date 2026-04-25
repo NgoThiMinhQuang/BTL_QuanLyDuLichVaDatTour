@@ -18,6 +18,22 @@ public class ReviewController : ControllerBase
         _reviewService = reviewService;
     }
 
+    [AllowAnonymous]
+    [HttpGet("tour/{tourId:long}")]
+    public async Task<IActionResult> GetByTour(long tourId)
+    {
+        var response = await _reviewService.GetApprovedReviewsByTourAsync(tourId);
+        return Ok(response);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("tour/{tourId:long}/summary")]
+    public async Task<IActionResult> GetTourSummary(long tourId)
+    {
+        var response = await _reviewService.GetTourReviewSummaryAsync(tourId);
+        return Ok(response);
+    }
+
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreateReviewRequestDto request)
     {

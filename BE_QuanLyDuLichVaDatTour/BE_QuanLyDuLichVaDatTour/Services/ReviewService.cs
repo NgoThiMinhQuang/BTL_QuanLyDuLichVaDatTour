@@ -82,6 +82,29 @@ public class ReviewService : IReviewService
         return reviews.Select(MapReviewResponse).ToList();
     }
 
+    public async Task<List<TourReviewResponseDto>> GetApprovedReviewsByTourAsync(long tourId)
+    {
+        var reviews = await _reviewRepository.GetApprovedByTourIdAsync(tourId);
+        return reviews.Select(MapTourReviewResponse).ToList();
+    }
+
+    public async Task<TourReviewSummaryDto> GetTourReviewSummaryAsync(long tourId)
+    {
+        var reviews = await _reviewRepository.GetApprovedByTourIdAsync(tourId);
+        var totalReviews = reviews.Count;
+
+        return new TourReviewSummaryDto
+        {
+            TotalReviews = totalReviews,
+            AverageRating = totalReviews == 0 ? 0 : Math.Round((decimal)reviews.Average(x => x.SoSao), 1),
+            FiveStar = reviews.Count(x => x.SoSao == 5),
+            FourStar = reviews.Count(x => x.SoSao == 4),
+            ThreeStar = reviews.Count(x => x.SoSao == 3),
+            TwoStar = reviews.Count(x => x.SoSao == 2),
+            OneStar = reviews.Count(x => x.SoSao == 1)
+        };
+    }
+
     public async Task<List<AdminReviewResponseDto>> GetPendingReviewsAsync(int limit)
     {
         var reviews = await _reviewRepository.GetPendingAsync(limit);
@@ -125,6 +148,20 @@ public class ReviewService : IReviewService
             NoiDung = danhGia.NoiDung,
             CreatedAt = danhGia.CreatedAt,
             UpdatedAt = danhGia.UpdatedAt
+        };
+    }
+
+    private static TourReviewResponseDto MapTourReviewResponse(DanhGia danhGia)
+    {
+        return new TourReviewResponseDto
+        {
+            Id = danhGia.Id,
+            TourId = danhGia.TourId,
+            HoTenKhachHang = danhGia.KhachHang?.HoTen ?? "Khách hàng",
+            SoSao = danhGia.SoSao,
+            NoiDung = danhGia.NoiDung,
+            PhanHoiAdmin = danhGia.PhanHoiAdmin,
+            NgayDanhGia = danhGia.NgayDanhGia
         };
     }
 
