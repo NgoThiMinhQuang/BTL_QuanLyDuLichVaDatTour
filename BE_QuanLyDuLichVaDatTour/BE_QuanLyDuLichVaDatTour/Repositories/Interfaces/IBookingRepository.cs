@@ -16,5 +16,7 @@ public interface IBookingRepository
 
     Task<List<Booking>> GetAllAsync();
 
+    Task<int> GetBookedSeatsAsync(long lichKhoiHanhId, long? excludeBookingId = null);
+
     Task<int> SaveChangesAsync();
 }

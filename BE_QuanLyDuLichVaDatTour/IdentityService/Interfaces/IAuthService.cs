@@ -13,4 +13,8 @@ public interface IAuthService
     Task<CurrentUserResponseDto> UpdateCurrentUserAsync(long userId, UpdateCurrentUserRequestDto request);
 
     Task ChangePasswordAsync(long userId, ChangePasswordRequestDto request);
+
+    Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordRequestDto request);
+
+    Task ResetPasswordAsync(ResetPasswordRequestDto request);
 }

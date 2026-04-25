@@ -1,7 +1,9 @@
-import { App as AntApp, Layout } from 'antd'
+import { App as AntApp, Layout, Spin } from 'antd'
 import type React from 'react'
+import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router'
 import { Header } from '../components/Header'
+import { Footer } from '../components/Footer'
 import { PATHS } from '../constants/paths'
 import { useAuthStore } from '../store/authStore'
 import AboutPage from '../pages/AboutPage'
@@ -18,6 +20,8 @@ import AdminTourListPage from '../pages/AdminTourListPage/AdminTourListPage'
 import AdminVoucherListPage from '../pages/AdminVoucherListPage/AdminVoucherListPage'
 import BookingPage from '../pages/BookingPage'
 import ContactPage from '../pages/ContactPage'
+import FavoriteToursPage from '../pages/FavoriteToursPage'
+import ForgotPasswordPage from '../pages/ForgotPasswordPage'
 import HomePage from '../pages/HomePage'
 import LoginPage from '../pages/LoginPage'
 import MyBookingDetailPage from '../pages/MyBookingDetailPage'
@@ -26,6 +30,7 @@ import MyReviewsPage from '../pages/MyReviewsPage'
 import NewsDetailPage from '../pages/NewsDetailPage'
 import NewsPage from '../pages/NewsPage'
 import RegisterPage from '../pages/RegisterPage'
+import ResetPasswordPage from '../pages/ResetPasswordPage'
 import SchedulePage from '../pages/SchedulePage'
 import TourDetailPage from '../pages/TourDetailPage'
 import TourPage from '../pages/TourPage'
@@ -37,9 +42,23 @@ function getRedirectPath(location: ReturnType<typeof useLocation>) {
   return `${location.pathname}${location.search}`
 }
 
+function AuthLoading() {
+  return (
+    <div className="auth-loading">
+      <Spin size="large" />
+    </div>
+  )
+}
+
 function RequireAuth({ children }: { children: React.ReactElement }) {
   const location = useLocation()
   const accessToken = useAuthStore((state) => state.accessToken)
+  const isHydrated = useAuthStore((state) => state.isHydrated)
+  const isHydrating = useAuthStore((state) => state.isHydrating)
+
+  if (!isHydrated || isHydrating) {
+    return <AuthLoading />
+  }
 
   if (!accessToken) {
     const redirectPath = getRedirectPath(location)
@@ -55,7 +74,13 @@ function RequireAdmin({ children }: { children: React.ReactElement }) {
   const location = useLocation()
   const accessToken = useAuthStore((state) => state.accessToken)
   const currentUser = useAuthStore((state) => state.currentUser)
+  const isHydrated = useAuthStore((state) => state.isHydrated)
+  const isHydrating = useAuthStore((state) => state.isHydrating)
   const redirectPath = getRedirectPath(location)
+
+  if (!isHydrated || isHydrating) {
+    return <AuthLoading />
+  }
 
   if (!accessToken) {
     const loginPath = `${PATHS.login}?redirect=${encodeURIComponent(redirectPath)}`
@@ -71,7 +96,12 @@ function RequireAdmin({ children }: { children: React.ReactElement }) {
 
 export default function AppRouter() {
   const location = useLocation()
-  const isAuthPage = location.pathname === PATHS.login || location.pathname === PATHS.register
+  const hydrateAuth = useAuthStore((state) => state.hydrateAuth)
+  const isAuthPage = location.pathname === PATHS.login || location.pathname === PATHS.register || location.pathname === PATHS.forgotPassword || location.pathname === PATHS.resetPassword
+
+  useEffect(() => {
+    void hydrateAuth()
+  }, [hydrateAuth])
 
   const clientLayout = (
     <Layout className="app-shell">
@@ -82,18 +112,22 @@ export default function AppRouter() {
           <Route path={PATHS.about} element={<AboutPage />} />
           <Route path={PATHS.tour} element={<TourPage />} />
           <Route path={PATHS.tourChiTiet} element={<TourDetailPage />} />
+          <Route path={PATHS.favoriteTours} element={<RequireAuth><FavoriteToursPage /></RequireAuth>} />
           <Route path={PATHS.lichKhoiHanh} element={<SchedulePage />} />
           <Route path={PATHS.tinTuc} element={<NewsPage />} />
           <Route path={PATHS.tinTucChiTiet} element={<NewsDetailPage />} />
           <Route path={PATHS.lienHe} element={<ContactPage />} />
           <Route path={PATHS.login} element={<LoginPage />} />
           <Route path={PATHS.register} element={<RegisterPage />} />
+          <Route path={PATHS.forgotPassword} element={<ForgotPasswordPage />} />
+          <Route path={PATHS.resetPassword} element={<ResetPasswordPage />} />
           <Route path={PATHS.booking} element={<RequireAuth><BookingPage /></RequireAuth>} />
           <Route path={PATHS.myBookings} element={<RequireAuth><MyBookingsPage /></RequireAuth>} />
           <Route path={PATHS.myBookingDetail} element={<RequireAuth><MyBookingDetailPage /></RequireAuth>} />
           <Route path={PATHS.myReviews} element={<RequireAuth><MyReviewsPage /></RequireAuth>} />
         </Routes>
       </Content>
+      {!isAuthPage ? <Footer /> : null}
     </Layout>
   )
 

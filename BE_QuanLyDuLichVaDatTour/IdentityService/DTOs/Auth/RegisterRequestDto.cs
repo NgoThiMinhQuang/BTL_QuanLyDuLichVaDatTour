@@ -10,6 +10,7 @@ public class RegisterRequestDto
     public string Email { get; set; } = string.Empty;
 
     [Required]
+    [MinLength(6)]
     [MaxLength(100)]
     public string MatKhau { get; set; } = string.Empty;
 

@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 import { Space } from 'antd'
 import { MucTourNoiBat } from '../components/home/MucTourNoiBat'
 import { BannerTrangChu } from '../components/home/BannerTrangChu'
-import { UuDaiTrangChu } from '../components/home/UuDaiTrangChu'
 import { DanhMucTour } from '../components/home/DanhMucTour'
 import { DiemDenPhoBien } from '../components/home/DiemDenPhoBien'
 import { MucLichKhoiHanhGan } from '../components/home/MucLichKhoiHanhGan'
@@ -38,10 +37,9 @@ export default function Home() {
       <DiemDenPhoBien />
       <BanDoDuLich />
       <MucLichKhoiHanhGan tours={featuredTours} />
-      <UuDaiTrangChu />
+      <LyDoChonChungToi />
       <DanhGiaKhachHang />
       <TuVanTrangChu />
-      <LyDoChonChungToi />
     </Space>
   )
 }

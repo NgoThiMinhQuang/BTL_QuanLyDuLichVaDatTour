@@ -1,35 +1,34 @@
 import './NewsPage.css'
-import { Input, Tag, Typography } from 'antd'
+import { Input, Tag, Typography, Empty, Spin } from 'antd'
 import { Link } from 'react-router'
 import { getTinTucChiTietPath } from '../constants/paths'
 import bannerImage from '../assets/Banner.jpg'
 import { TourPhanTrang } from '../components/common/TourPhanTrang'
 import { resolveApiAssetUrl } from '../constants/api'
 import { TIN_TUC_PAGE_SIZE, useTinTucPage } from '../services/tin-tuc/useTinTucPage'
+import { 
+  UserOutlined, 
+  CalendarOutlined, 
+  ArrowRightOutlined,
+  SearchOutlined,
+  TagOutlined
+} from '@ant-design/icons'
 
 const { Paragraph, Text, Title } = Typography
 
 function formatDisplayDate(value: string) {
   const parsedDate = new Date(value)
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return value
-  }
-
-  return parsedDate.toLocaleDateString('vi-VN')
+  if (Number.isNaN(parsedDate.getTime())) return value
+  return parsedDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
 function getSummary(summary: string | null, content: string) {
-  if (summary?.trim()) {
-    return summary
-  }
-
+  if (summary?.trim()) return summary
   return `${content.replace(/<[^>]+>/g, '').slice(0, 160).trim()}...`
 }
 
 export default function TinTuc() {
   const {
-    data,
     isLoading,
     isError,
     keyword,
@@ -57,50 +56,58 @@ export default function TinTuc() {
   const getImageUrl = (path?: string | null) => resolveApiAssetUrl(path) ?? bannerImage
 
   if (isLoading) {
-    return <div className="news-page news-page-state">Đang tải tin tức...</div>
+    return (
+      <div className="news-page-loading">
+        <Spin size="large" tip="Đang tải tin tức du lịch..." />
+      </div>
+    )
   }
 
   if (isError) {
-    return <div className="news-page news-page-state">Không thể tải danh sách tin tức.</div>
-  }
-
-  if (!data || data.length === 0) {
-    return <div className="news-page news-page-state">Chưa có tin tức để hiển thị.</div>
-  }
-
-  if (!featuredItem) {
-    return <div className="news-page news-page-state">Không tìm thấy tin tức phù hợp.</div>
+    return (
+      <div className="news-page-empty">
+        <Empty 
+          description="Không thể tải danh sách tin tức. Vui lòng thử lại sau." 
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
+      </div>
+    )
   }
 
   return (
     <div className="news-page">
+      {/* Hero Section */}
       <section className="news-hero">
-        <div className="news-hero-inner">
-          <Title className="news-hero-title">Tin tức & Cẩm nang du lịch</Title>
+        <div className="news-hero-overlay" />
+        <div className="news-hero-content">
+          <Tag className="news-hero-badge">CẨM NANG DU LỊCH</Tag>
+          <Title className="news-hero-title">Khám Phá Thế Giới <br/> Qua Từng Trang Viết</Title>
           <Paragraph className="news-hero-description">
-            Cập nhật những thông tin mới nhất về du lịch, điểm đến và mẹo hữu ích cho chuyến đi của bạn
+            Cập nhật những thông tin mới nhất về du lịch, điểm đến văn hóa và mẹo hữu ích cho hành trình trọn vẹn của bạn.
           </Paragraph>
         </div>
       </section>
 
-      <div className="news-page-container">
+      <div className="news-page-main">
+        {/* Search & Filter Toolbar */}
         <section className="news-toolbar">
-          <Input.Search
-            value={keyword}
-            onChange={(event) => handleKeywordChange(event.target.value)}
-            placeholder="Tìm kiếm bài viết..."
-            allowClear
-            enterButton={false}
-            size="large"
-            className="news-search-input"
-          />
+          <div className="news-search-box">
+            <Input
+              prefix={<SearchOutlined className="search-icon" />}
+              value={keyword}
+              onChange={(e) => handleKeywordChange(e.target.value)}
+              placeholder="Tìm bài viết, mẹo du lịch..."
+              variant="borderless"
+              className="news-search-field"
+            />
+          </div>
 
-          <div className="news-chip-list">
+          <div className="news-categories">
             {categoryOptions.map((category) => (
               <button
                 key={category}
                 type="button"
-                className={`news-chip ${selectedCategory === category ? 'news-chip-active' : ''}`}
+                className={`category-pill ${selectedCategory === category ? 'active' : ''}`}
                 onClick={() => handleCategoryChange(category)}
               >
                 {category}
@@ -109,58 +116,99 @@ export default function TinTuc() {
           </div>
         </section>
 
-        <article className="news-featured-card">
-          <div className="news-featured-image-wrap">
-            <img src={getImageUrl(featuredItem.anhDaiDien)} alt={featuredItem.tieuDe} className="news-featured-image" />
-            <Tag className="news-featured-badge">Nổi bật</Tag>
+        {!featuredItem && !isLoading ? (
+          <div className="news-no-results">
+            <Empty description="Không tìm thấy bài viết nào phù hợp với tìm kiếm của bạn." />
           </div>
-
-          <div className="news-featured-content">
-            <Text className="news-featured-category">🏷 {featuredItem.danhMuc ?? 'Tin tức'}</Text>
-            <Title className="news-featured-title">{featuredItem.tieuDe}</Title>
-            <Paragraph className="news-featured-excerpt">{getSummary(featuredItem.tomTat, featuredItem.noiDung)}</Paragraph>
-
-            <div className="news-meta-row">
-              <Text className="news-meta-item">👤 TravelViet</Text>
-              <Text className="news-meta-item">📅 {formatDisplayDate(featuredItem.ngayDang)}</Text>
-            </div>
-
-            <Link to={getTinTucChiTietPath(featuredItem.id)} className="news-link-button">
-              Đọc thêm →
-            </Link>
-          </div>
-        </article>
-
-        <section className="news-grid">
-          {paginatedItems.map((item) => (
-            <article key={item.id} className="news-card">
-              <div className="news-card-image-wrap">
-                <img src={getImageUrl(item.anhDaiDien)} alt={item.tieuDe} className="news-card-image" />
-                <Tag className="news-card-category">{item.danhMuc ?? 'Tin tức'}</Tag>
-              </div>
-
-              <div className="news-card-body">
-                <Title level={3} className="news-card-title">
-                  {item.tieuDe}
-                </Title>
-                <Paragraph className="news-card-excerpt">{getSummary(item.tomTat, item.noiDung)}</Paragraph>
-
-                <div className="news-meta-row news-meta-row-compact">
-                  <Text className="news-meta-item">👤 TravelViet</Text>
-                  <Text className="news-meta-item">📅 {formatDisplayDate(item.ngayDang)}</Text>
+        ) : (
+          <>
+            {/* Featured Article */}
+            {featuredItem && (
+              <article className="news-featured-card">
+                <div className="featured-image-container">
+                  <img src={getImageUrl(featuredItem.anhDaiDien)} alt={featuredItem.tieuDe} className="featured-image" />
+                  <div className="featured-overlay" />
+                  <Tag className="featured-tag">Nổi bật</Tag>
                 </div>
 
-                <Link to={getTinTucChiTietPath(item.id)} className="news-outline-button">
-                  Đọc thêm
-                </Link>
-              </div>
-            </article>
-          ))}
-        </section>
+                <div className="featured-content">
+                  <div className="featured-meta-top">
+                    <TagOutlined className="meta-icon" />
+                    <span className="featured-category">{featuredItem.danhMuc || 'Tin tức'}</span>
+                  </div>
+                  
+                  <Title className="featured-title">
+                    <Link to={getTinTucChiTietPath(featuredItem.id)}>{featuredItem.tieuDe}</Link>
+                  </Title>
+                  
+                  <Paragraph className="featured-excerpt" ellipsis={{ rows: 3 }}>
+                    {getSummary(featuredItem.tomTat, featuredItem.noiDung)}
+                  </Paragraph>
 
-        {regularItems.length > TIN_TUC_PAGE_SIZE ? (
-          <TourPhanTrang current={page} pageSize={TIN_TUC_PAGE_SIZE} total={regularItems.length} onChange={setPage} />
-        ) : null}
+                  <div className="featured-footer">
+                    <div className="featured-author">
+                      <UserOutlined className="footer-icon" />
+                      <span>Quản trị viên</span>
+                    </div>
+                    <div className="featured-date">
+                      <CalendarOutlined className="footer-icon" />
+                      <span>{formatDisplayDate(featuredItem.ngayDang)}</span>
+                    </div>
+                    <Link to={getTinTucChiTietPath(featuredItem.id)} className="featured-read-more">
+                      Chi tiết <ArrowRightOutlined />
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            )}
+
+            {/* News Grid */}
+            <section className="news-articles-grid">
+              {paginatedItems.map((item) => (
+                <article key={item.id} className="article-card">
+                  <div className="article-image-box">
+                    <img src={getImageUrl(item.anhDaiDien)} alt={item.tieuDe} className="article-image" />
+                    <Tag className="article-tag">{item.danhMuc || 'Du lịch'}</Tag>
+                  </div>
+
+                  <div className="article-info">
+                    <div className="article-meta">
+                      <span className="article-date">
+                        <CalendarOutlined /> {formatDisplayDate(item.ngayDang)}
+                      </span>
+                    </div>
+                    
+                    <Title level={4} className="article-title">
+                      <Link to={getTinTucChiTietPath(item.id)}>{item.tieuDe}</Link>
+                    </Title>
+                    
+                    <Paragraph className="article-summary" ellipsis={{ rows: 2 }}>
+                      {getSummary(item.tomTat, item.noiDung)}
+                    </Paragraph>
+
+                    <div className="article-footer">
+                      <Link to={getTinTucChiTietPath(item.id)} className="article-link">
+                        Xem bài viết <ArrowRightOutlined />
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </section>
+
+            {/* Pagination */}
+            {regularItems.length > TIN_TUC_PAGE_SIZE ? (
+              <div className="news-pagination-wrap">
+                <TourPhanTrang 
+                  current={page} 
+                  pageSize={TIN_TUC_PAGE_SIZE} 
+                  total={regularItems.length} 
+                  onChange={setPage} 
+                />
+              </div>
+            ) : null}
+          </>
+        )}
       </div>
     </div>
   )

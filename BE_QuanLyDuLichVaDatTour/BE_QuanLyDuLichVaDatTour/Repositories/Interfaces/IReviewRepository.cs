@@ -14,6 +14,8 @@ public interface IReviewRepository
 
     Task<List<DanhGia>> GetByKhachHangIdAsync(long khachHangId);
 
+    Task<List<DanhGia>> GetApprovedByTourIdAsync(long tourId);
+
     Task<List<DanhGia>> GetPendingAsync(int limit);
 
     Task<List<DanhGia>> GetAllAsync();

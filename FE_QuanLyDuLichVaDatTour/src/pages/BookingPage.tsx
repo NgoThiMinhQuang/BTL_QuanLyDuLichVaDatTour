@@ -176,6 +176,7 @@ export default function Booking() {
   }
 
   const { tour, departure } = bookingQuery.data
+  const soChoConLai = Math.max(departure.soChoConLai, 0)
 
   const capNhatSoLuong = (type: PassengerType, delta: number) => {
     setErrorMessage(null)
@@ -185,8 +186,8 @@ export default function Booking() {
       const next = { ...prev, [type]: nextValue }
       const total = next.nguoi_lon + next.tre_em + next.em_be
 
-      if (total > departure.soChoToiDa) {
-        setErrorMessage(`Số khách vượt quá số chỗ còn nhận của lịch này (${departure.soChoToiDa} chỗ).`)
+      if (total > soChoConLai) {
+        setErrorMessage(`Số khách vượt quá số chỗ còn nhận của lịch này (${soChoConLai} chỗ).`)
         return prev
       }
 
@@ -199,8 +200,8 @@ export default function Booking() {
   const xuLyQuaBuocSoLuong = () => {
     setErrorMessage(null)
 
-    if (totalGuests > departure.soChoToiDa) {
-      setErrorMessage(`Số khách vượt quá số chỗ tối đa của lịch khởi hành (${departure.soChoToiDa} chỗ).`)
+    if (totalGuests > soChoConLai) {
+      setErrorMessage(`Số khách vượt quá số chỗ còn lại của lịch khởi hành (${soChoConLai} chỗ).`)
       return
     }
 

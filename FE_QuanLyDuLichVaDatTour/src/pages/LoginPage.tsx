@@ -48,7 +48,7 @@ export default function Login() {
         hoTen: response.hoTen,
         vaiTro: response.vaiTro,
         trangThai: response.trangThai,
-      })
+      }, Boolean(values.ghiNho))
 
       if (response.vaiTro.toLowerCase() === 'admin') {
         navigate(PATHS.admin, { replace: true })
@@ -152,9 +152,9 @@ export default function Login() {
                     <Checkbox>Ghi nhớ đăng nhập</Checkbox>
                   </Form.Item>
 
-                  <button type="button" className="auth-inline-link">
+                  <Link to={PATHS.forgotPassword} className="auth-inline-link">
                     Quên mật khẩu?
-                  </button>
+                  </Link>
                 </div>
 
                 <Button type="primary" htmlType="submit" size="large" block loading={submitting} className="auth-submit-button">

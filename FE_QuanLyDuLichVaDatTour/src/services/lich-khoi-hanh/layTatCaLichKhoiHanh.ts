@@ -14,6 +14,8 @@ interface RawDeparture {
   ngayKetThuc: string
   noiTapTrung?: string | null
   soChoToiDa: number
+  soChoDaDat?: number
+  soChoConLai?: number
   trangThai: string
 }
 
@@ -59,12 +61,12 @@ function resolveKhuVuc(tenDiemDen: string) {
 }
 
 function getRemainingSeats(item: DepartureItem) {
-  return Math.max(Math.round(item.soChoToiDa * 0.5), 5)
+  return Math.max(item.soChoConLai, 0)
 }
 
 function getCapacityLabel(item: DepartureItem) {
   const remainingSeats = getRemainingSeats(item)
-  return `${remainingSeats}/${item.soChoToiDa} chỗ`
+  return `${remainingSeats} chỗ`
 }
 
 function getDescription(item: FeaturedTourApiItem) {
@@ -94,6 +96,10 @@ function getCoverImage(item: FeaturedTourApiItem) {
 function getSeatBadgeLabel(item: DepartureItem) {
   const remainingSeats = getRemainingSeats(item)
 
+  if (remainingSeats <= 0 || item.trangThai === 'het_cho') {
+    return 'Hết chỗ'
+  }
+
   if (remainingSeats <= 8) {
     return `Sắp hết chỗ`
   }
@@ -103,7 +109,7 @@ function getSeatBadgeLabel(item: DepartureItem) {
 
 function getSeatStatusClass(item: DepartureItem) {
   const remainingSeats = getRemainingSeats(item)
-  return remainingSeats <= 8 ? 'warning' : 'success'
+  return remainingSeats <= 0 || item.trangThai === 'het_cho' ? 'danger' : remainingSeats <= 8 ? 'warning' : 'success'
 }
 
 export { getCapacityLabel, getDescription, getRemainingSeats, getSeatBadgeLabel, getSeatStatusClass }
@@ -119,6 +125,8 @@ function mapDeparture(item: RawDeparture): DepartureItem {
     ngayKetThuc: item.ngayKetThuc,
     noiTapTrung: item.noiTapTrung ?? null,
     soChoToiDa: item.soChoToiDa,
+    soChoDaDat: item.soChoDaDat ?? Math.max(item.soChoToiDa - (item.soChoConLai ?? item.soChoToiDa), 0),
+    soChoConLai: item.soChoConLai ?? item.soChoToiDa,
     trangThai: item.trangThai,
   }
 }

@@ -11,6 +11,8 @@ public class AppDbContext : DbContext
 
     public DbSet<NguoiDung> NguoiDungs => Set<NguoiDung>();
 
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -82,6 +84,54 @@ public class AppDbContext : DbContext
 
             entity.HasIndex(x => new { x.VaiTro, x.TrangThai })
                 .HasDatabaseName("IdxNguoiDung_VaiTro_TrangThai");
+        });
+
+        modelBuilder.Entity<PasswordResetToken>(entity =>
+        {
+            entity.ToTable("PasswordResetToken");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("PasswordResetTokenId")
+                .HasColumnType("bigint")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.NguoiDungId)
+                .HasColumnName("NguoiDungId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
+            entity.Property(x => x.TokenHash)
+                .HasColumnName("TokenHash")
+                .HasMaxLength(128)
+                .IsRequired();
+
+            entity.Property(x => x.ExpiresAt)
+                .HasColumnName("ExpiresAt")
+                .HasColumnType("datetime2")
+                .IsRequired();
+
+            entity.Property(x => x.UsedAt)
+                .HasColumnName("UsedAt")
+                .HasColumnType("datetime2");
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("CreatedAt")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.HasOne(x => x.NguoiDung)
+                .WithMany(x => x.PasswordResetTokens)
+                .HasForeignKey(x => x.NguoiDungId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => x.TokenHash)
+                .IsUnique();
+
+            entity.HasIndex(x => new { x.NguoiDungId, x.UsedAt, x.ExpiresAt })
+                .HasDatabaseName("IdxPasswordResetToken_NguoiDung_TrangThai");
         });
     }
 }

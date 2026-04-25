@@ -1,24 +1,94 @@
-.review-card {
+.reviews-section.home-section {
+  background: #ffffff;
+}
+
+.reviews-section .ant-card-body {
+  padding: 40px;
+}
+
+.reviews-grid {
+  margin-top: 24px;
+}
+
+.review-modern-card {
+  position: relative;
   height: 100%;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  border-radius: 22px;
-  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #ffffff;
+  border-radius: 28px;
+  border: 1px solid #f1f5f9;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
 }
 
-.review-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.09);
+.review-modern-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.15);
+  border-color: #dbeafe;
 }
 
-.review-card-stack {
-  width: 100%;
+.review-quote-icon {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  font-size: 28px;
+  color: #eff6ff;
+  transition: color 0.3s ease;
 }
 
-.review-card-title.ant-typography {
+.review-modern-card:hover .review-quote-icon {
+  color: #3b82f6;
+  opacity: 0.2;
+}
+
+.review-text.ant-typography {
   margin: 0 !important;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #334155;
+  font-style: italic;
+  font-weight: 500;
 }
 
-.review-card-comment.ant-typography {
-  margin-bottom: 0 !important;
+.review-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.review-avatar {
+  border: 3px solid #eff6ff;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+}
+
+.review-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-user-name.ant-typography {
+  margin: 0 !important;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.review-tour-name.ant-typography {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.review-rate {
+  font-size: 12px;
+}
+
+.review-rate .ant-rate-star {
+  margin-right: 2px !important;
 }

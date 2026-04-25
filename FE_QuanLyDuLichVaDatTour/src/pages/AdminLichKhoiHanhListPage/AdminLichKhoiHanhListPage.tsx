@@ -80,10 +80,9 @@ export default function AdminLichKhoiHanhListPage() {
     },
     {
       title: 'Sức chứa',
-      dataIndex: 'soChoToiDa',
-      key: 'soChoToiDa',
-      width: 120,
-      render: (value: number) => <Text strong>{value}</Text>,
+      key: 'capacity',
+      width: 140,
+      render: (_, record) => <Text strong>Đã đặt {record.soChoDaDat}/{record.soChoToiDa} • Còn {record.soChoConLai}</Text>,
     },
     {
       title: 'Trạng thái',

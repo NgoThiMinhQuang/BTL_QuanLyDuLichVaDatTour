@@ -9,7 +9,7 @@
 .home-hero-container {
   position: relative;
   width: 100%;
-  min-height: 760px;
+  min-height: 560px;
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
@@ -100,7 +100,7 @@
   position: relative;
   z-index: 10;
   width: min(1180px, calc(100% - 48px));
-  margin: -45px auto 45px; /* Overlap by 45px and push next content down */
+  margin: -45px auto 20px; /* Overlap by 45px and push next content down */
   display: flex;
   justify-content: center;
 }
@@ -265,11 +265,11 @@
 /* Responsive */
 @media (max-width: 1024px) {
   .home-hero-container {
-    min-height: 600px;
+    min-height: 460px;
   }
   
   .home-hero-search-wrapper {
-    margin: -30px auto 40px;
+    margin: -30px auto 16px;
   }
 
   .home-search-bar {

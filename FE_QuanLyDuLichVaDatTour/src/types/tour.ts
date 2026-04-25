@@ -106,6 +106,8 @@ export interface DepartureItem {
   ngayKetThuc: string
   noiTapTrung?: string | null
   soChoToiDa: number
+  soChoDaDat: number
+  soChoConLai: number
   trangThai: string
 }
 

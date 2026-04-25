@@ -68,6 +68,8 @@ interface RawDepartureItem {
   ngayKetThuc: string
   noiTapTrung?: string | null
   soChoToiDa: number
+  soChoDaDat?: number
+  soChoConLai?: number
   trangThai: string
 }
 
@@ -148,6 +150,8 @@ function mapDeparture(item: RawDepartureItem): DepartureItem {
     ngayKetThuc: item.ngayKetThuc,
     noiTapTrung: item.noiTapTrung ?? null,
     soChoToiDa: item.soChoToiDa,
+    soChoDaDat: item.soChoDaDat ?? Math.max(item.soChoToiDa - (item.soChoConLai ?? item.soChoToiDa), 0),
+    soChoConLai: item.soChoConLai ?? item.soChoToiDa,
     trangThai: item.trangThai,
   }
 }

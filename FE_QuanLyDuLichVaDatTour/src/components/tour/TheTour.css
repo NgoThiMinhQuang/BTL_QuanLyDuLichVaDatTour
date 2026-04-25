@@ -55,6 +55,10 @@
   cursor: pointer;
 }
 
+.tour-card-favorite-active {
+  color: #ef4444;
+}
+
 .tour-card-code {
   position: absolute;
   left: 14px;

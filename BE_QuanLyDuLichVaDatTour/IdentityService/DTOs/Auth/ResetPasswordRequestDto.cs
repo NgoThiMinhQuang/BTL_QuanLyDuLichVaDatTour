@@ -2,11 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IdentityService.DTOs.Auth;
 
-public class ChangePasswordRequestDto
+public class ResetPasswordRequestDto
 {
     [Required]
-    [MaxLength(100)]
-    public string MatKhauHienTai { get; set; } = string.Empty;
+    [MaxLength(512)]
+    public string Token { get; set; } = string.Empty;
 
     [Required]
     [MinLength(6)]

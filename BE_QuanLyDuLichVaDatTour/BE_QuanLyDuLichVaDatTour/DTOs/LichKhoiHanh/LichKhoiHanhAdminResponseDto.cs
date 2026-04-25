@@ -20,6 +20,10 @@ public class LichKhoiHanhAdminResponseDto
 
     public int SoChoToiDa { get; set; }
 
+    public int SoChoDaDat { get; set; }
+
+    public int SoChoConLai { get; set; }
+
     public string? GhiChu { get; set; }
 
     public string? LyDoHuy { get; set; }

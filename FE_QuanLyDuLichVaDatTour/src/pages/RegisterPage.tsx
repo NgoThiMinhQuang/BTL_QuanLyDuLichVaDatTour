@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, Col, DatePicker, Divider, Form, Input, Row, Select, Space, Typography } from 'antd'
+import { Alert, Button, Checkbox, Divider, Form, Input, Space, Typography } from 'antd'
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { PATHS } from '../constants/paths'
@@ -14,9 +14,6 @@ interface RegisterFormValues {
   xacNhanMatKhau: string
   soDienThoai?: string
   diaChi?: string
-  gioiTinh?: string
-  ngaySinh?: unknown
-  soGiayTo?: string
   dongYDieuKhoan?: boolean
 }
 
@@ -45,11 +42,11 @@ export default function Register() {
       setSuccessMessage(null)
 
       await register({
-        hoTen: values.hoTen,
-        email: values.email,
+        hoTen: values.hoTen.trim(),
+        email: values.email.trim(),
         matKhau: values.matKhau,
-        soDienThoai: values.soDienThoai || undefined,
-        diaChi: values.diaChi || undefined,
+        soDienThoai: values.soDienThoai?.trim() || undefined,
+        diaChi: values.diaChi?.trim() || undefined,
       })
 
       setSuccessMessage('Đăng ký thành công. Bạn có thể đăng nhập ngay bây giờ.')
@@ -126,7 +123,10 @@ export default function Register() {
                       </span>
                     }
                     name="matKhau"
-                    rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
+                    rules={[
+                      { required: true, message: 'Vui lòng nhập mật khẩu' },
+                      { min: 6, message: 'Mật khẩu tối thiểu 6 ký tự' },
+                    ]}
                     extra="Mật khẩu tối thiểu 6 ký tự"
                   >
                     <Input.Password size="large" placeholder="••••••••" className="auth-input" />
@@ -173,30 +173,8 @@ export default function Register() {
                     <Input size="large" placeholder="Nguyễn Văn A" className="auth-input" />
                   </Form.Item>
 
-                  <Row gutter={16}>
-                    <Col xs={24} md={12}>
-                      <Form.Item label="Số điện thoại" name="soDienThoai">
-                        <Input size="large" placeholder="0123 456 789" className="auth-input" />
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} md={12}>
-                      <Form.Item label="Giới tính" name="gioiTinh">
-                        <Select
-                          size="large"
-                          placeholder="Chọn giới tính"
-                          options={[
-                            { label: 'Nam', value: 'Nam' },
-                            { label: 'Nữ', value: 'Nữ' },
-                            { label: 'Khác', value: 'Khác' },
-                          ]}
-                          className="auth-select"
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
-                  <Form.Item label="Ngày sinh" name="ngaySinh">
-                    <DatePicker size="large" format="DD/MM/YYYY" placeholder="dd/mm/yyyy" className="auth-date-picker" />
+                  <Form.Item label="Số điện thoại" name="soDienThoai">
+                    <Input size="large" placeholder="0123 456 789" className="auth-input" />
                   </Form.Item>
 
                   <Form.Item label="Địa chỉ" name="diaChi">
@@ -205,10 +183,6 @@ export default function Register() {
                       placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"
                       className="auth-textarea"
                     />
-                  </Form.Item>
-
-                  <Form.Item label="CMND/Hộ chiếu" name="soGiayTo">
-                    <Input size="large" placeholder="Số CMND hoặc hộ chiếu" className="auth-input" />
                   </Form.Item>
                 </div>
 

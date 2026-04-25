@@ -11,21 +11,24 @@ public class LichKhoiHanhService : ILichKhoiHanhService
     private readonly ILichKhoiHanhRepository _lichKhoiHanhRepository;
     private readonly ITourRepository _tourRepository;
     private readonly IBangGiaLichKhoiHanhRepository _bangGiaLichKhoiHanhRepository;
+    private readonly IBookingRepository _bookingRepository;
 
     public LichKhoiHanhService(
         ILichKhoiHanhRepository lichKhoiHanhRepository,
         ITourRepository tourRepository,
-        IBangGiaLichKhoiHanhRepository bangGiaLichKhoiHanhRepository)
+        IBangGiaLichKhoiHanhRepository bangGiaLichKhoiHanhRepository,
+        IBookingRepository bookingRepository)
     {
         _lichKhoiHanhRepository = lichKhoiHanhRepository;
         _tourRepository = tourRepository;
         _bangGiaLichKhoiHanhRepository = bangGiaLichKhoiHanhRepository;
+        _bookingRepository = bookingRepository;
     }
 
     public async Task<List<LichKhoiHanhAdminResponseDto>> GetAllAsync()
     {
         var lichKhoiHanhs = await _lichKhoiHanhRepository.GetAllAsync();
-        return lichKhoiHanhs.Select(MapAdminResponse).ToList();
+        return await MapAdminResponsesAsync(lichKhoiHanhs);
     }
 
     public async Task<LichKhoiHanhAdminResponseDto> GetByIdAsync(long id)
@@ -33,7 +36,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         var lichKhoiHanh = await _lichKhoiHanhRepository.GetByIdAsync(id)
             ?? throw new KeyNotFoundException("Lịch khởi hành không tồn tại.");
 
-        return MapAdminResponse(lichKhoiHanh);
+        return await MapAdminResponseAsync(lichKhoiHanh);
     }
 
     public async Task<List<LichKhoiHanhAdminResponseDto>> GetByTourIdAsync(long tourId)
@@ -41,7 +44,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         await EnsureTourExistsAsync(tourId);
 
         var lichKhoiHanhs = await _lichKhoiHanhRepository.GetByTourIdAsync(tourId);
-        return lichKhoiHanhs.Select(MapAdminResponse).ToList();
+        return await MapAdminResponsesAsync(lichKhoiHanhs);
     }
 
     public async Task<List<LichKhoiHanhResponseDto>> GetVisibleByTourIdAsync(long tourId)
@@ -50,7 +53,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
 
         var lichKhoiHanhs = await _lichKhoiHanhRepository.GetVisibleByTourIdAsync(tour.Id);
-        return lichKhoiHanhs.Select(MapPublicResponse).ToList();
+        return await MapPublicResponsesAsync(lichKhoiHanhs);
     }
 
     public async Task<BangGiaLichKhoiHanhResponseDto> GetBangGiaAsync(long lichKhoiHanhId)
@@ -103,7 +106,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         await _lichKhoiHanhRepository.AddAsync(lichKhoiHanh);
         await _lichKhoiHanhRepository.SaveChangesAsync();
 
-        return MapAdminResponse(lichKhoiHanh);
+        return await MapAdminResponseAsync(lichKhoiHanh);
     }
 
     public async Task<LichKhoiHanhAdminResponseDto> UpdateAsync(long id, UpdateLichKhoiHanhRequestDto request)
@@ -133,7 +136,7 @@ public class LichKhoiHanhService : ILichKhoiHanhService
 
         await _lichKhoiHanhRepository.SaveChangesAsync();
 
-        return MapAdminResponse(lichKhoiHanh);
+        return await MapAdminResponseAsync(lichKhoiHanh);
     }
 
     public async Task UpdateStatusAsync(long id, UpdateLichKhoiHanhStatusRequestDto request)
@@ -199,8 +202,31 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         return value.Trim();
     }
 
-    private static LichKhoiHanhAdminResponseDto MapAdminResponse(LichKhoiHanh lichKhoiHanh)
+    private async Task<List<LichKhoiHanhAdminResponseDto>> MapAdminResponsesAsync(List<LichKhoiHanh> lichKhoiHanhs)
     {
+        var responses = new List<LichKhoiHanhAdminResponseDto>(lichKhoiHanhs.Count);
+        foreach (var lichKhoiHanh in lichKhoiHanhs)
+        {
+            responses.Add(await MapAdminResponseAsync(lichKhoiHanh));
+        }
+
+        return responses;
+    }
+
+    private async Task<List<LichKhoiHanhResponseDto>> MapPublicResponsesAsync(List<LichKhoiHanh> lichKhoiHanhs)
+    {
+        var responses = new List<LichKhoiHanhResponseDto>(lichKhoiHanhs.Count);
+        foreach (var lichKhoiHanh in lichKhoiHanhs)
+        {
+            responses.Add(await MapPublicResponseAsync(lichKhoiHanh));
+        }
+
+        return responses;
+    }
+
+    private async Task<LichKhoiHanhAdminResponseDto> MapAdminResponseAsync(LichKhoiHanh lichKhoiHanh)
+    {
+        var soChoDaDat = await _bookingRepository.GetBookedSeatsAsync(lichKhoiHanh.Id);
         return new LichKhoiHanhAdminResponseDto
         {
             Id = lichKhoiHanh.Id,
@@ -212,6 +238,8 @@ public class LichKhoiHanhService : ILichKhoiHanhService
             NgayKetThuc = lichKhoiHanh.NgayKetThuc,
             NoiTapTrung = lichKhoiHanh.NoiTapTrung,
             SoChoToiDa = lichKhoiHanh.SoChoToiDa,
+            SoChoDaDat = soChoDaDat,
+            SoChoConLai = Math.Max(lichKhoiHanh.SoChoToiDa - soChoDaDat, 0),
             GhiChu = lichKhoiHanh.GhiChu,
             LyDoHuy = lichKhoiHanh.LyDoHuy,
             TrangThai = lichKhoiHanh.TrangThai.ToString(),
@@ -220,8 +248,9 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         };
     }
 
-    private static LichKhoiHanhResponseDto MapPublicResponse(LichKhoiHanh lichKhoiHanh)
+    private async Task<LichKhoiHanhResponseDto> MapPublicResponseAsync(LichKhoiHanh lichKhoiHanh)
     {
+        var soChoDaDat = await _bookingRepository.GetBookedSeatsAsync(lichKhoiHanh.Id);
         return new LichKhoiHanhResponseDto
         {
             Id = lichKhoiHanh.Id,
@@ -233,6 +262,8 @@ public class LichKhoiHanhService : ILichKhoiHanhService
             NgayKetThuc = lichKhoiHanh.NgayKetThuc,
             NoiTapTrung = lichKhoiHanh.NoiTapTrung,
             SoChoToiDa = lichKhoiHanh.SoChoToiDa,
+            SoChoDaDat = soChoDaDat,
+            SoChoConLai = Math.Max(lichKhoiHanh.SoChoToiDa - soChoDaDat, 0),
             TrangThai = lichKhoiHanh.TrangThai.ToString()
         };
     }

@@ -36,6 +36,7 @@ public class BookingService : IBookingService
         var lichKhoiHanh = await EnsureLichKhoiHanhAvailableAsync(request.LichKhoiHanhId);
 
         ValidatePassengerCounts(request.SoNguoiLon, request.SoTreEm, request.SoEmBe, lichKhoiHanh.SoChoToiDa);
+        await ValidateSeatAvailabilityAsync(lichKhoiHanh, request.SoNguoiLon + request.SoTreEm + request.SoEmBe);
         ValidateHanhKhachList(request.HanhKhachs, request.SoNguoiLon, request.SoTreEm, request.SoEmBe);
 
         var now = DateTime.UtcNow;
@@ -103,6 +104,7 @@ public class BookingService : IBookingService
         }
 
         await _bookingRepository.AddAsync(booking);
+        await SyncLichKhoiHanhAvailabilityAsync(lichKhoiHanh, GetTongHanhKhach(booking));
         await _bookingRepository.SaveChangesAsync();
 
         return MapBookingResponse(booking);
@@ -150,6 +152,12 @@ public class BookingService : IBookingService
         var booking = await _bookingRepository.GetTrackedByIdAsync(id)
             ?? throw new KeyNotFoundException("Booking không tồn tại.");
 
+        var oldStatus = booking.TrangThaiBooking;
+        if (!IsSeatHoldingStatus(oldStatus) && IsSeatHoldingStatus(request.TrangThaiBooking))
+        {
+            await ValidateSeatAvailabilityAsync(booking.LichKhoiHanh ?? throw new InvalidOperationException("Booking chưa có lịch khởi hành."), GetTongHanhKhach(booking), booking.Id);
+        }
+
         booking.TrangThaiBooking = request.TrangThaiBooking;
         if (request.TrangThaiThanhToan.HasValue)
         {
@@ -163,6 +171,14 @@ public class BookingService : IBookingService
         }
 
         booking.UpdatedAt = DateTime.UtcNow;
+        if (booking.LichKhoiHanh is not null)
+        {
+            await SyncLichKhoiHanhAvailabilityAsync(
+                booking.LichKhoiHanh,
+                IsSeatHoldingStatus(booking.TrangThaiBooking) ? GetTongHanhKhach(booking) : 0,
+                booking.Id);
+        }
+
         await _bookingRepository.SaveChangesAsync();
     }
 
@@ -174,7 +190,7 @@ public class BookingService : IBookingService
 
     private async Task<LichKhoiHanh> EnsureLichKhoiHanhAvailableAsync(long lichKhoiHanhId)
     {
-        var lichKhoiHanh = await _lichKhoiHanhRepository.GetByIdAsync(lichKhoiHanhId)
+        var lichKhoiHanh = await _lichKhoiHanhRepository.GetTrackedByIdAsync(lichKhoiHanhId)
             ?? throw new KeyNotFoundException("Lịch khởi hành không tồn tại.");
 
         if (lichKhoiHanh.TrangThai != TrangThaiLichKhoiHanh.mo_ban)
@@ -202,6 +218,40 @@ public class BookingService : IBookingService
         {
             throw new InvalidOperationException("Số lượng hành khách vượt quá số chỗ tối đa.");
         }
+    }
+
+    private async Task ValidateSeatAvailabilityAsync(LichKhoiHanh lichKhoiHanh, int requestedSeats, long? excludeBookingId = null)
+    {
+        var bookedSeats = await _bookingRepository.GetBookedSeatsAsync(lichKhoiHanh.Id, excludeBookingId);
+        var remainingSeats = lichKhoiHanh.SoChoToiDa - bookedSeats;
+
+        if (requestedSeats > remainingSeats)
+        {
+            throw new InvalidOperationException($"Lịch khởi hành chỉ còn {Math.Max(remainingSeats, 0)} chỗ trống.");
+        }
+    }
+
+    private async Task SyncLichKhoiHanhAvailabilityAsync(LichKhoiHanh lichKhoiHanh, int additionalBookedSeats = 0, long? excludeBookingId = null)
+    {
+        var bookedSeats = await _bookingRepository.GetBookedSeatsAsync(lichKhoiHanh.Id, excludeBookingId) + additionalBookedSeats;
+
+        if (bookedSeats >= lichKhoiHanh.SoChoToiDa && lichKhoiHanh.TrangThai == TrangThaiLichKhoiHanh.mo_ban)
+        {
+            lichKhoiHanh.TrangThai = TrangThaiLichKhoiHanh.het_cho;
+            lichKhoiHanh.UpdatedAt = DateTime.UtcNow;
+            return;
+        }
+
+        if (bookedSeats < lichKhoiHanh.SoChoToiDa && lichKhoiHanh.TrangThai == TrangThaiLichKhoiHanh.het_cho)
+        {
+            lichKhoiHanh.TrangThai = TrangThaiLichKhoiHanh.mo_ban;
+            lichKhoiHanh.UpdatedAt = DateTime.UtcNow;
+        }
+    }
+
+    private static bool IsSeatHoldingStatus(TrangThaiBooking status)
+    {
+        return status != TrangThaiBooking.da_huy;
     }
 
     private static void ValidateHanhKhachList(List<CreateHanhKhachRequestDto>? hanhKhachs, int soNguoiLon, int soTreEm, int soEmBe)

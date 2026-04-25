@@ -249,6 +249,8 @@ export interface AdminLichKhoiHanhItem {
   ngayKetThuc: string
   noiTapTrung?: string | null
   soChoToiDa: number
+  soChoDaDat: number
+  soChoConLai: number
   ghiChu?: string | null
   lyDoHuy?: string | null
   trangThai: AdminLichKhoiHanhStatus

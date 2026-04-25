@@ -45,7 +45,7 @@ export function TheLichKhoiHanh({ item }: TheLichKhoiHanhProps) {
           <Text className="schedule-card-meta">🗓 Khởi hành: {formatDate(item.ngayKhoiHanh)}</Text>
           <Text className="schedule-card-meta">📍 Điểm đến: {item.tenDiemDen}</Text>
           <Text className="schedule-card-meta">◔ {duration} • {item.phuongTien ?? 'Đang cập nhật'}</Text>
-          <Text className="schedule-card-meta">◉ Còn {getCapacityLabel(item)}</Text>
+          <Text className="schedule-card-meta">◉ Còn {getCapacityLabel(item)} • Đã đặt {item.soChoDaDat}/{item.soChoToiDa}</Text>
         </div>
 
         <Paragraph className="schedule-card-description">{moTa}</Paragraph>

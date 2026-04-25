@@ -1,11 +1,13 @@
 import './TheTour.css'
 import { Button, Card, Typography } from 'antd'
+import { HeartFilled, HeartOutlined } from '@ant-design/icons'
 import { Link } from 'react-router'
 import { getTourChiTietPath } from '../../constants/paths'
 import bannerImage from '../../assets/Banner.jpg'
 import { resolveApiAssetUrl } from '../../constants/api'
 import type { FeaturedTourApiItem } from '../../types/tour'
 import { formatMoney } from '../../utils/formatMoney'
+import { useFavoriteTourStore } from '../../store/favoriteTourStore'
 
 const { Text, Title } = Typography
 
@@ -75,13 +77,24 @@ export function TheTour({
   ]
     .filter(Boolean)
     .join(' ')
+  const isFavorite = useFavoriteTourStore((state) => state.isFavorite(tour.id))
+  const toggleFavorite = useFavoriteTourStore((state) => state.toggleFavorite)
 
   return (
     <Card className={cardClassName} variant="borderless">
       <div className="tour-card-cover" style={{ backgroundImage }}>
         <span className="tour-card-status">{statusLabel}</span>
-        <button type="button" className="tour-card-favorite" aria-label="Yêu thích tour">
-          ♡
+        <button
+          type="button"
+          className={`tour-card-favorite ${isFavorite ? 'tour-card-favorite-active' : ''}`}
+          aria-label={isFavorite ? 'Bỏ yêu thích tour' : 'Yêu thích tour'}
+          onClick={(event) => {
+            event.preventDefault()
+            event.stopPropagation()
+            toggleFavorite(tour)
+          }}
+        >
+          {isFavorite ? <HeartFilled /> : <HeartOutlined />}
         </button>
         <span className="tour-card-code">{tour.maTour}</span>
       </div>

@@ -1,56 +1,74 @@
 import './LyDoChonChungToi.css'
-import { Card, Col, Row, Space, Typography } from 'antd'
+import { Card, Col, Row, Typography } from 'antd'
 import { TieuDeMuc } from '../../components/common/TieuDeMuc'
+import { 
+  AimOutlined, 
+  SafetyCertificateOutlined, 
+  CustomerServiceOutlined, 
+  StarOutlined 
+} from '@ant-design/icons'
+import React from 'react'
 
 const { Paragraph, Title } = Typography
 
 const benefitItems = [
   {
     id: 1,
-    icon: '🎯',
+    icon: <AimOutlined />,
     title: 'Lịch trình rõ ràng',
-    description: 'Thông tin tour, giá và lịch khởi hành được trình bày rõ để bạn dễ chọn hơn.',
+    description: 'Thông tin tour, giá và lịch khởi hành được trình bày rõ ràng, minh bạch giúp bạn dễ dàng so sánh và lựa chọn hành trình ưng ý.',
+    color: '#3b82f6'
   },
   {
     id: 2,
-    icon: '🛡️',
+    icon: <SafetyCertificateOutlined />,
     title: 'Đặt tour an toàn',
-    description: 'Luồng đặt tour được tách rõ từng bước để khách hàng thao tác dễ và ít nhầm hơn.',
+    description: 'Quy trình đặt tour được chuẩn hóa qua từng bước đơn giản, bảo mật thông tin và hỗ trợ thanh toán linh hoạt, nhanh chóng.',
+    color: '#10b981'
   },
   {
     id: 3,
-    icon: '💬',
-    title: 'Hỗ trợ nhanh',
-    description: 'Khách hàng có thể xem tour, lịch khởi hành và gửi nhu cầu tư vấn ngay trên trang chủ.',
+    icon: <CustomerServiceOutlined />,
+    title: 'Hỗ trợ chuyên nghiệp',
+    description: 'Đội ngũ tư vấn viên am hiểu và tận tâm luôn sẵn sàng giải đáp mọi thắc mắc của bạn qua đa dạng kênh liên lạc ngay lập tức.',
+    color: '#f59e0b'
   },
   {
     id: 4,
-    icon: '⭐',
-    title: 'Trải nghiệm tốt',
-    description: 'Giao diện được sắp xếp gọn để người dùng dễ xem, dễ so sánh và dễ ra quyết định.',
+    icon: <StarOutlined />,
+    title: 'Trải nghiệm tối ưu',
+    description: 'Giao diện hiện đại, tốc độ truy cập nhanh giúp bạn tìm kiếm và đặt tour chỉ trong vài cú nhấp chuột trên mọi thiết bị.',
+    color: '#8b5cf6'
   },
 ]
 
 export function LyDoChonChungToi() {
   return (
-    <Card id="ly-do-chon" className="home-section">
+    <Card id="ly-do-chon" className="home-section benefits-section" variant="borderless">
       <TieuDeMuc
-        title="Vì sao nhiều khách hàng chọn chúng tôi cho chuyến đi tiếp theo"
-        description="Không chỉ đẹp về hình ảnh, hành trình còn được trình bày rõ ràng để bạn dễ chọn tour, so sánh lịch khởi hành và lên kế hoạch phù hợp."
+        title="Vì sao hàng ngàn khách hàng tin tưởng chúng tôi"
+        description="Chúng tôi không chỉ cung cấp những chuyến đi, mà còn mang đến sự an tâm và trải nghiệm du lịch hoàn hảo nhất cho bạn."
       />
 
-      <Row gutter={[16, 16]}>
+      <Row gutter={[24, 24]} className="benefits-grid">
         {benefitItems.map((item) => (
-          <Col xs={24} md={12} key={item.id}>
-            <Card className="benefit-card">
-              <Space orientation="vertical" size={12} className="benefit-card-stack">
-                <span className="benefit-icon">{item.icon}</span>
-                <Title level={4} className="benefit-card-title">
+          <Col xs={24} lg={12} key={item.id}>
+            <div className="benefit-modern-card" style={{ '--theme-color': item.color } as React.CSSProperties}>
+              <div className="benefit-icon-wrapper">
+                {item.icon}
+              </div>
+              <div className="benefit-content">
+                <Title level={4} className="benefit-title">
                   {item.title}
                 </Title>
-                <Paragraph className="benefit-card-description">{item.description}</Paragraph>
-              </Space>
-            </Card>
+                <Paragraph className="benefit-description">
+                  {item.description}
+                </Paragraph>
+              </div>
+              
+              {/* Decorative background shape */}
+              <div className="benefit-card-decoration" />
+            </div>
           </Col>
         ))}
       </Row>

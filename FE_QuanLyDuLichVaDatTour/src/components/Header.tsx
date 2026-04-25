@@ -65,7 +65,7 @@ export function Header() {
         <Menu mode="horizontal" selectedKeys={[selectedKey]} items={navItems} className="app-menu" />
 
         <Space size={16} className="app-header-actions">
-          <button type="button" className="app-header-icon" aria-label="Yêu thích">
+          <button type="button" className="app-header-icon" aria-label="Yêu thích" onClick={() => navigate(accessToken ? PATHS.favoriteTours : loginPath)}>
             <HeartOutlined />
           </button>
           <button type="button" className="app-header-icon" aria-label="Thông báo">

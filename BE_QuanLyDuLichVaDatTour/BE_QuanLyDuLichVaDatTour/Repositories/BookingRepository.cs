@@ -1,5 +1,6 @@
 using BE_QuanLyDuLichVaDatTour.Data;
 using BE_QuanLyDuLichVaDatTour.Models.Entities;
+using BE_QuanLyDuLichVaDatTour.Models.Enums;
 using BE_QuanLyDuLichVaDatTour.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,6 +78,20 @@ public class BookingRepository : IBookingRepository
             .Include(x => x.DanhGias)
             .OrderByDescending(x => x.NgayDat)
             .ToListAsync();
+    }
+
+    public async Task<int> GetBookedSeatsAsync(long lichKhoiHanhId, long? excludeBookingId = null)
+    {
+        var query = _dbContext.Bookings
+            .AsNoTracking()
+            .Where(x => x.LichKhoiHanhId == lichKhoiHanhId && x.TrangThaiBooking != TrangThaiBooking.da_huy);
+
+        if (excludeBookingId.HasValue)
+        {
+            query = query.Where(x => x.Id != excludeBookingId.Value);
+        }
+
+        return await query.SumAsync(x => (int)x.SoNguoiLon + x.SoTreEm + x.SoEmBe);
     }
 
     public Task<int> SaveChangesAsync()

@@ -52,13 +52,15 @@ export default function TourDetail() {
   }
 
   const detail = detailQuery.data
+  const selectedDepartureUnavailable = !selectedDeparture || selectedDeparture.trangThai === 'het_cho' || selectedDeparture.soChoConLai <= 0
   const departureOptions = (departuresQuery.data ?? []).map((item) => ({
     value: item.id,
-    label: `${item.maDotTour} - ${formatDate(item.ngayKhoiHanh)}`,
+    label: `${item.maDotTour} - ${formatDate(item.ngayKhoiHanh)} - còn ${item.soChoConLai} chỗ`,
+    disabled: item.trangThai === 'het_cho' || item.soChoConLai <= 0,
   }))
 
   const handleBooking = () => {
-    if (!selectedDeparture) {
+    if (selectedDepartureUnavailable) {
       return
     }
 
@@ -209,7 +211,7 @@ export default function TourDetail() {
                             <div className="tour-detail-departure-left">
                               <div className="tour-detail-departure-top-row">
                                 <Tag className="tour-detail-departure-code">{item.maDotTour}</Tag>
-                                <Tag className="tour-detail-departure-status">{item.trangThai}</Tag>
+                                <Tag className="tour-detail-departure-status">{item.trangThai === 'het_cho' || item.soChoConLai <= 0 ? 'het_cho' : item.trangThai}</Tag>
                               </div>
                               <div className="tour-detail-departure-grid">
                                 <div>
@@ -225,6 +227,11 @@ export default function TourDetail() {
                                 <Text className="tour-detail-departure-label">Nơi tập trung</Text>
                                 <Title level={4} className="tour-detail-departure-value">{item.noiTapTrung ?? detail.tenDiaDiemKhoiHanh}</Title>
                               </div>
+                              <div>
+                                <Text className="tour-detail-departure-label">Số chỗ</Text>
+                                <Title level={4} className="tour-detail-departure-value">Còn {item.soChoConLai} chỗ</Title>
+                                <Text className="tour-detail-departure-label">Đã đặt {item.soChoDaDat}/{item.soChoToiDa} chỗ</Text>
+                              </div>
                             </div>
                             <div className="tour-detail-departure-right">
                               <Text className="tour-detail-departure-price-label">Giá từ</Text>
@@ -232,9 +239,10 @@ export default function TourDetail() {
                               <Button
                                 type={selectedDeparture?.id === item.id ? 'primary' : 'default'}
                                 className="tour-detail-departure-button"
+                                disabled={item.trangThai === 'het_cho' || item.soChoConLai <= 0}
                                 onClick={() => setSelectedDeparture(item)}
                               >
-                                {selectedDeparture?.id === item.id ? 'Đã chọn' : 'Chọn lịch này'}
+                                {item.trangThai === 'het_cho' || item.soChoConLai <= 0 ? 'Hết chỗ' : selectedDeparture?.id === item.id ? 'Đã chọn' : 'Chọn lịch này'}
                               </Button>
                             </div>
                           </div>
@@ -303,7 +311,7 @@ export default function TourDetail() {
               </div>
 
               <div className="tour-detail-sidebar-actions">
-                <Button type="primary" className="tour-detail-primary-button" onClick={handleBooking} disabled={!selectedDeparture}>Đặt tour ngay</Button>
+                <Button type="primary" className="tour-detail-primary-button" onClick={handleBooking} disabled={selectedDepartureUnavailable}>Đặt tour ngay</Button>
                 <Button className="tour-detail-secondary-button">Liên hệ tư vấn</Button>
               </div>
 

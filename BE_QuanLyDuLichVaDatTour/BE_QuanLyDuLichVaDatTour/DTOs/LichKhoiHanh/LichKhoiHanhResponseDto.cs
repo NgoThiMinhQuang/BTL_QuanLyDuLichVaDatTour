@@ -20,5 +20,9 @@ public class LichKhoiHanhResponseDto
 
     public int SoChoToiDa { get; set; }
 
+    public int SoChoDaDat { get; set; }
+
+    public int SoChoConLai { get; set; }
+
     public string TrangThai { get; set; } = string.Empty;
 }

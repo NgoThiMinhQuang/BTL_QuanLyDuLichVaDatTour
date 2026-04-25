@@ -32,3 +32,30 @@ export interface RegisterResponse {
   vaiTro: VaiTroNguoiDung
   trangThai: string
 }
+
+export interface CurrentUserResponse {
+  id: number
+  email: string
+  hoTen: string
+  soDienThoai?: string | null
+  diaChi?: string | null
+  anhDaiDien?: string | null
+  vaiTro: VaiTroNguoiDung
+  trangThai: string
+}
+
+export interface ForgotPasswordRequest {
+  email: string
+}
+
+export interface ForgotPasswordResponse {
+  message: string
+  resetToken?: string | null
+  resetLink?: string | null
+  expiresAt?: string | null
+}
+
+export interface ResetPasswordRequest {
+  token: string
+  matKhauMoi: string
+}

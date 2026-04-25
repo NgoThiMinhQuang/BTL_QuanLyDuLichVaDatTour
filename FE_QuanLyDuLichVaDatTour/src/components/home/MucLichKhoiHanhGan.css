@@ -1,19 +1,234 @@
-.departures-section {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+.departures-section.home-section {
+  background: #ffffff;
 }
 
-.departure-card-stack {
+.departures-section .ant-card-body {
+  padding: 40px;
+}
+
+/* Glassy Departure Card with Image Background */
+.departure-glass-card {
+  position: relative;
+  height: 420px;
+  background: #0f172a;
+  border-radius: 32px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.1);
+  isolation: isolate;
+  cursor: pointer;
+}
+
+.departure-glass-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px -12px rgba(15, 23, 42, 0.3);
+}
+
+.departure-card-image-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.bg-img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
 }
 
-.departure-card-title.ant-typography {
-  margin: 0 !important;
+.departure-glass-card:hover .bg-img {
+  transform: scale(1.15);
 }
 
-.departure-card-period.ant-typography {
-  margin-bottom: 0 !important;
+.bg-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #cbd5e1;
 }
 
-.departure-meta {
-  color: #64748b;
+.bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.5) 45%, rgba(15, 23, 42, 0.95) 100%);
+  opacity: 0.85;
+  transition: opacity 0.4s ease;
+}
+
+.departure-glass-card:hover .bg-overlay {
+  opacity: 1;
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.1) 0%, rgba(15, 23, 42, 0.6) 45%, rgba(15, 23, 42, 0.98) 100%);
+}
+
+/* Header (Always Visible) */
+.departure-card-header {
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.departure-date-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 18px;
+  color: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.departure-date-badge .day {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.departure-date-badge .month {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.departure-id-tag {
+  margin: 0;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Content (Sliding up on hover) */
+.departure-card-content {
+  position: absolute;
+  inset: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  z-index: 3;
+}
+
+.content-inner {
+  transform: translateY(145px); /* Hide meta and footer initially */
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.departure-glass-card:hover .content-inner {
+  transform: translateY(0);
+}
+
+.departure-title.ant-typography {
+  margin: 0 0 16px !important;
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff !important;
+  line-height: 1.35;
+  min-height: 54px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.departure-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.15s;
+}
+
+.departure-glass-card:hover .departure-meta-list {
+  opacity: 1;
+}
+
+.departure-meta-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.meta-icon {
+  font-size: 16px;
+  color: #60a5fa;
+  margin-top: 3px;
+}
+
+.meta-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.departure-card-footer {
+  margin-top: 24px;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.25s;
+}
+
+.departure-glass-card:hover .departure-card-footer {
+  opacity: 1;
+}
+
+.departure-action-btn.ant-btn {
+  height: 52px;
+  border-radius: 16px;
+  font-weight: 700;
+  background: #ffffff !important;
+  border: none;
+  color: #2563eb !important;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+}
+
+.departure-action-btn.ant-btn:hover {
+  transform: scale(1.02);
+  background: #f0f7ff !important;
+  box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.4);
+}
+
+.departure-action-btn .anticon {
+  transition: transform 0.3s ease;
+}
+
+.departure-action-btn:hover .anticon {
+  transform: translateX(4px);
+}
+
+@media (max-width: 640px) {
+  .departure-glass-card {
+    height: 380px;
+  }
+  
+  .content-inner {
+    transform: translateY(0); /* On mobile, keep it visible */
+  }
+  
+  .departure-meta-list, .departure-card-footer {
+    opacity: 1;
+  }
 }

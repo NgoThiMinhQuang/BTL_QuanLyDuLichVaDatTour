@@ -35,6 +35,21 @@ CREATE INDEX IdxNguoiDung_VaiTro_TrangThai
 ON dbo.NguoiDung(VaiTro, TrangThai);
 GO
 
+CREATE TABLE dbo.PasswordResetToken (
+    PasswordResetTokenId BIGINT IDENTITY(1,1) PRIMARY KEY,
+    NguoiDungId BIGINT NOT NULL,
+    TokenHash NVARCHAR(128) NOT NULL UNIQUE,
+    ExpiresAt DATETIME2(0) NOT NULL,
+    UsedAt DATETIME2(0) NULL,
+    CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
+    CONSTRAINT FK_PasswordResetToken_NguoiDung FOREIGN KEY (NguoiDungId) REFERENCES dbo.NguoiDung(NguoiDungId) ON DELETE CASCADE
+);
+GO
+
+CREATE INDEX IdxPasswordResetToken_NguoiDung_TrangThai
+ON dbo.PasswordResetToken(NguoiDungId, UsedAt, ExpiresAt);
+GO
+
 /* =========================================================
    2. LOAI TOUR
    ========================================================= */

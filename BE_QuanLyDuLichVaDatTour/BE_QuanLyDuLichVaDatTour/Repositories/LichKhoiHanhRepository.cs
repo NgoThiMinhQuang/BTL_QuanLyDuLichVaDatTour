@@ -52,7 +52,7 @@ public class LichKhoiHanhRepository : ILichKhoiHanhRepository
     {
         return await BuildQuery()
             .Where(x => x.TourId == tourId
-                && x.TrangThai == TrangThaiLichKhoiHanh.mo_ban
+                && (x.TrangThai == TrangThaiLichKhoiHanh.mo_ban || x.TrangThai == TrangThaiLichKhoiHanh.het_cho)
                 && x.Tour != null
                 && x.Tour.TrangThai == TrangThaiTour.dang_mo_ban)
             .OrderBy(x => x.NgayKhoiHanh)

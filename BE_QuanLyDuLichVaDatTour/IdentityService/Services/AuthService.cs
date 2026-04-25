@@ -1,20 +1,28 @@
+using IdentityService.Data;
 using IdentityService.DTOs.Auth;
 using IdentityService.Interfaces;
 using IdentityService.Models.Entities;
 using IdentityService.Models.Enums;
 using IdentityService.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace IdentityService.Services;
 
 public class AuthService : IAuthService
 {
+    private const int ResetTokenExpiryMinutes = 30;
+    private const string ForgotPasswordMessage = "Nếu email tồn tại, hệ thống đã tạo liên kết đặt lại mật khẩu.";
+
+    private readonly AppDbContext _dbContext;
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher<NguoiDung> _passwordHasher;
     private readonly ITokenGenerator _tokenGenerator;
 
-    public AuthService(IUserRepository userRepository, IPasswordHasher<NguoiDung> passwordHasher, ITokenGenerator tokenGenerator)
+    public AuthService(AppDbContext dbContext, IUserRepository userRepository, IPasswordHasher<NguoiDung> passwordHasher, ITokenGenerator tokenGenerator)
     {
+        _dbContext = dbContext;
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
         _tokenGenerator = tokenGenerator;
@@ -177,6 +185,82 @@ public class AuthService : IAuthService
         await _userRepository.SaveChangesAsync();
     }
 
+    public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordRequestDto request)
+    {
+        var normalizedEmail = NormalizeEmail(request.Email);
+        var nguoiDung = await _userRepository.GetTrackedByEmailAsync(normalizedEmail);
+
+        if (nguoiDung is null || nguoiDung.TrangThai == TrangThaiNguoiDung.bi_khoa)
+        {
+            return new ForgotPasswordResponseDto { Message = ForgotPasswordMessage };
+        }
+
+        var now = DateTime.UtcNow;
+        var token = GenerateResetToken();
+        var expiresAt = now.AddMinutes(ResetTokenExpiryMinutes);
+
+        var activeTokens = await _dbContext.PasswordResetTokens
+            .Where(x => x.NguoiDungId == nguoiDung.Id && x.UsedAt == null && x.ExpiresAt > now)
+            .ToListAsync();
+
+        foreach (var activeToken in activeTokens)
+        {
+            activeToken.UsedAt = now;
+        }
+
+        await _dbContext.PasswordResetTokens.AddAsync(new PasswordResetToken
+        {
+            NguoiDungId = nguoiDung.Id,
+            TokenHash = HashToken(token),
+            ExpiresAt = expiresAt,
+            CreatedAt = now
+        });
+
+        await _dbContext.SaveChangesAsync();
+
+        return new ForgotPasswordResponseDto
+        {
+            Message = ForgotPasswordMessage,
+            ResetToken = token,
+            ResetLink = $"/reset-password?token={Uri.EscapeDataString(token)}",
+            ExpiresAt = expiresAt
+        };
+    }
+
+    public async Task ResetPasswordAsync(ResetPasswordRequestDto request)
+    {
+        var tokenHash = HashToken(request.Token.Trim());
+        var now = DateTime.UtcNow;
+        var resetToken = await _dbContext.PasswordResetTokens
+            .Include(x => x.NguoiDung)
+            .FirstOrDefaultAsync(x => x.TokenHash == tokenHash);
+
+        if (resetToken is null || resetToken.UsedAt is not null || resetToken.ExpiresAt <= now)
+        {
+            throw new InvalidOperationException("Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.");
+        }
+
+        if (resetToken.NguoiDung.TrangThai == TrangThaiNguoiDung.bi_khoa)
+        {
+            throw new InvalidOperationException("Tài khoản đã bị khóa.");
+        }
+
+        resetToken.NguoiDung.MatKhau = _passwordHasher.HashPassword(resetToken.NguoiDung, request.MatKhauMoi);
+        resetToken.NguoiDung.UpdatedAt = now;
+        resetToken.UsedAt = now;
+
+        var otherActiveTokens = await _dbContext.PasswordResetTokens
+            .Where(x => x.NguoiDungId == resetToken.NguoiDungId && x.Id != resetToken.Id && x.UsedAt == null)
+            .ToListAsync();
+
+        foreach (var activeToken in otherActiveTokens)
+        {
+            activeToken.UsedAt = now;
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
     private static CurrentUserResponseDto MapCurrentUserResponse(NguoiDung nguoiDung)
     {
         return new CurrentUserResponseDto
@@ -205,5 +289,17 @@ public class AuthService : IAuthService
         }
 
         return value.Trim();
+    }
+
+    private static string GenerateResetToken()
+    {
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(48));
+    }
+
+    private static string HashToken(string token)
+    {
+        var tokenBytes = System.Text.Encoding.UTF8.GetBytes(token);
+        var hashBytes = SHA256.HashData(tokenBytes);
+        return Convert.ToHexString(hashBytes);
     }
 }
