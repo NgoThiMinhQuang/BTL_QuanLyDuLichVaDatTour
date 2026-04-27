@@ -166,8 +166,12 @@ export async function layTatCaLichKhoiHanh(): Promise<LichKhoiHanhCardItem[]> {
     tours.map(async (tour) => {
       const response = await fetch(`${API_BASE_URL}/lich-khoi-hanh/get-by-tour/${tour.id}`)
 
-      if (!response.ok) {
+      if (response.status === 404 || response.status === 204) {
         return [] as RawDeparture[]
+      }
+
+      if (!response.ok) {
+        throw new Error('Không thể tải tất cả lịch khởi hành')
       }
 
       const data = (await response.json()) as RawDeparture[]

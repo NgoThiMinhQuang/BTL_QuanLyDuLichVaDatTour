@@ -193,6 +193,10 @@ export async function layLichTrinhTour(id: number): Promise<TourItineraryItem[]>
 export async function layLichKhoiHanhTour(id: number): Promise<DepartureItem[]> {
   const response = await fetch(`${API_BASE_URL}/lich-khoi-hanh/get-by-tour/${id}`)
 
+  if (response.status === 404 || response.status === 204) {
+    return []
+  }
+
   if (!response.ok) {
     throw new Error('Không thể tải lịch khởi hành tour')
   }

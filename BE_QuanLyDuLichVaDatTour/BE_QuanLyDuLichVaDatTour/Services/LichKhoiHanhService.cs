@@ -49,8 +49,11 @@ public class LichKhoiHanhService : ILichKhoiHanhService
 
     public async Task<List<LichKhoiHanhResponseDto>> GetVisibleByTourIdAsync(long tourId)
     {
-        var tour = await _tourRepository.GetVisibleByIdAsync(tourId)
-            ?? throw new KeyNotFoundException("Tour không tồn tại.");
+        var tour = await _tourRepository.GetVisibleByIdAsync(tourId);
+        if (tour is null)
+        {
+            return new List<LichKhoiHanhResponseDto>();
+        }
 
         var lichKhoiHanhs = await _lichKhoiHanhRepository.GetVisibleByTourIdAsync(tour.Id);
         return await MapPublicResponsesAsync(lichKhoiHanhs);

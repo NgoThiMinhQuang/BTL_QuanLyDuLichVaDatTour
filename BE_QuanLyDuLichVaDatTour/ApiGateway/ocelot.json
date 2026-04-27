@@ -2,11 +2,11 @@
   "Routes": [
     {
       "DownstreamPathTemplate": "/api/auth/{catchAll}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7120
+          "Port": 5195
         }
       ],
       "UpstreamPathTemplate": "/gateway/auth/{catchAll}",
@@ -17,11 +17,11 @@
 
     {
       "DownstreamPathTemplate": "/api/{catchAll}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7279
+          "Port": 5219
         }
       ],
       "UpstreamPathTemplate": "/gateway/{catchAll}",
@@ -29,6 +29,6 @@
     } 
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7074"
+    "BaseUrl": "http://localhost:5004"
   }
 }
