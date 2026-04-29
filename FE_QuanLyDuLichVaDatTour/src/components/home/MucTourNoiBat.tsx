@@ -1,4 +1,5 @@
 import './MucTourNoiBat.css'
+import { ArrowRightOutlined } from '@ant-design/icons'
 import { Alert, Button, Card, Col, Empty, Row, Skeleton } from 'antd'
 import { Link } from 'react-router'
 import { TieuDeMuc } from '../../components/common/TieuDeMuc'
@@ -20,7 +21,7 @@ export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoi
 
   const extra = (
     <Link to={PATHS.tour} className="featured-tour-section-link">
-      Xem tất cả tour
+      Khám phá tất cả <ArrowRightOutlined />
     </Link>
   )
 
@@ -28,11 +29,12 @@ export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoi
 
   const titleNode = (
     <div className="featured-tour-section-header">
-      <div className="featured-tour-section-spacer" />
-      <TieuDeMuc
-        title="Tour nổi bật"
-        description="Những tour du lịch được yêu thích nhất tháng này"
-      />
+      <div className="featured-tour-section-info">
+        <TieuDeMuc
+          title="Tour nổi bật"
+          description="Những hành trình độc đáo, được tuyển chọn kỹ lưỡng dành riêng cho bạn"
+        />
+      </div>
       <div className="featured-tour-section-action">{extra}</div>
     </div>
   )

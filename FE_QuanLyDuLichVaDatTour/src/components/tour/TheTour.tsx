@@ -1,6 +1,7 @@
+import { useMemo } from 'react'
 import './TheTour.css'
-import { Button, Card, Typography } from 'antd'
-import { HeartFilled, HeartOutlined } from '@ant-design/icons'
+import { Button, Card, Rate, Typography } from 'antd'
+import { CalendarOutlined, EnvironmentOutlined, HeartFilled, HeartOutlined, TagOutlined } from '@ant-design/icons'
 import { Link } from 'react-router'
 import { getTourChiTietPath } from '../../constants/paths'
 import bannerImage from '../../assets/Banner.jpg'
@@ -61,6 +62,16 @@ export function TheTour({
   ctaHref = getTourChiTietPath(tour.id),
   variant = 'default',
 }: TheTourProps) {
+  // Mock rating data for demonstration
+  const rating = useMemo(() => {
+    const ratings = [4.5, 4.8, 5.0, 4.7, 4.9]
+    return ratings[tour.id % ratings.length]
+  }, [tour.id])
+
+  const reviewCount = useMemo(() => {
+    return (tour.id * 17) % 200 + 50
+  }, [tour.id])
+
   const coverImage = [...tour.anhTours]
     .sort((a, b) => Number(b.isAvatar) - Number(a.isAvatar) || a.thuTu - b.thuTu)
     .at(0)?.linkAnh
@@ -83,7 +94,10 @@ export function TheTour({
   return (
     <Card className={cardClassName} variant="borderless">
       <div className="tour-card-cover" style={{ backgroundImage }}>
-        <span className="tour-card-status">{statusLabel}</span>
+        <div className="tour-card-badges">
+          <span className="tour-card-status">{statusLabel}</span>
+          {variant === 'featured' && <span className="tour-card-badge-hot">Bán chạy</span>}
+        </div>
         <button
           type="button"
           className={`tour-card-favorite ${isFavorite ? 'tour-card-favorite-active' : ''}`}
@@ -101,26 +115,36 @@ export function TheTour({
 
       <div className="tour-card-body">
         <div className="tour-card-main">
+          <div className="tour-card-rating-row">
+            <Rate disabled allowHalf defaultValue={rating} className="tour-card-rate" />
+            <span className="tour-card-review-count">({reviewCount} đánh giá)</span>
+          </div>
+
           <Title level={3} className="tour-card-title">
-            {tour.tenTour}
+            <Link to={ctaHref}>{tour.tenTour}</Link>
           </Title>
 
           <div className="tour-card-meta-list">
-            <Text className="tour-card-meta">📍 Từ {tour.tenDiaDiemKhoiHanh}</Text>
-            <Text className="tour-card-meta">📅 {duration} • {tour.phuongTien ?? 'Đang cập nhật'}</Text>
-            <Text className="tour-card-meta">🏷️ {tour.tenLoaiTour}</Text>
+            <Text className="tour-card-meta">
+              <EnvironmentOutlined /> Từ {tour.tenDiaDiemKhoiHanh}
+            </Text>
+            <Text className="tour-card-meta">
+              <CalendarOutlined /> {duration} • {tour.phuongTien ?? 'Đang cập nhật'}
+            </Text>
+            <Text className="tour-card-meta">
+              <TagOutlined /> {tour.tenLoaiTour}
+            </Text>
           </div>
         </div>
 
         <div className="tour-card-footer">
           <div className="tour-card-price-block">
-            <Text className="tour-card-price-label">Giá từ</Text>
+            <Text className="tour-card-price-label">Giá trọn gói</Text>
             <div className="tour-card-price-row">
               <Title level={2} className="tour-card-price-current">
                 {formatMoney(tour.giaNguoiLonMacDinh)}
               </Title>
             </div>
-            <Text className="tour-card-price-note">Giá tham khảo/người</Text>
           </div>
 
           <Button type="primary" className="tour-card-button">
