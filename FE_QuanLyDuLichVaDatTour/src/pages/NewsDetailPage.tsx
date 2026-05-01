@@ -1,6 +1,7 @@
 import './NewsDetailPage.css'
 import { useQuery } from '@tanstack/react-query'
-import { Breadcrumb, Card, Spin, Tag, Typography } from 'antd'
+import { Breadcrumb, Button, Card, Divider, Spin, Tag, Typography } from 'antd'
+import { CalendarOutlined, ClockCircleOutlined, FolderOutlined, HomeOutlined, RightOutlined, UserOutlined } from '@ant-design/icons'
 import { Link, useParams } from 'react-router'
 import bannerImage from '../assets/Banner.jpg'
 import { resolveApiAssetUrl } from '../constants/api'
@@ -56,9 +57,9 @@ export default function TinTucChiTiet() {
           <Breadcrumb
             className="news-detail-breadcrumb"
             items={[
-              { title: <Link to={PATHS.home}>Trang chủ</Link> },
+              { title: <Link to={PATHS.home}><HomeOutlined /> Trang chủ</Link> },
               { title: <Link to={PATHS.tinTuc}>Tin tức</Link> },
-              { title: item.tieuDe },
+              { title: <span className="news-detail-breadcrumb-current">{item.tieuDe}</span> },
             ]}
           />
           <Tag className="news-detail-hero-tag">{item.danhMuc ?? 'Tin tức'}</Tag>
@@ -76,8 +77,10 @@ export default function TinTucChiTiet() {
 
             <div className="news-detail-body">
               <div className="news-detail-meta">
-                <Text className="news-meta-item">📅 {formatDisplayDate(item.ngayDang)}</Text>
-                <Text className="news-meta-item">👤 TravelViet</Text>
+                <Text className="news-meta-item"><CalendarOutlined /> {formatDisplayDate(item.ngayDang)}</Text>
+                <Text className="news-meta-item"><UserOutlined /> TravelViet</Text>
+                <Text className="news-meta-item"><FolderOutlined /> {item.danhMuc ?? 'Tin tức'}</Text>
+                <Text className="news-meta-item"><ClockCircleOutlined /> 5 phút đọc</Text>
               </div>
 
               {item.tomTat ? <Paragraph className="news-detail-summary">{item.tomTat}</Paragraph> : null}
@@ -94,15 +97,17 @@ export default function TinTucChiTiet() {
               <Title level={4} className="news-detail-sidebar-title">Thông tin bài viết</Title>
               <div className="news-detail-sidebar-list">
                 <div className="news-detail-sidebar-item">
-                  <span className="news-detail-sidebar-label">Chuyên mục</span>
+                  <span className="news-detail-sidebar-label"><FolderOutlined /> Chuyên mục</span>
                   <span className="news-detail-sidebar-value">{item.danhMuc ?? 'Tin tức'}</span>
                 </div>
+                <Divider className="news-detail-sidebar-divider" />
                 <div className="news-detail-sidebar-item">
-                  <span className="news-detail-sidebar-label">Ngày đăng</span>
+                  <span className="news-detail-sidebar-label"><CalendarOutlined /> Ngày đăng</span>
                   <span className="news-detail-sidebar-value">{formatDisplayDate(item.ngayDang)}</span>
                 </div>
+                <Divider className="news-detail-sidebar-divider" />
                 <div className="news-detail-sidebar-item">
-                  <span className="news-detail-sidebar-label">Tác giả</span>
+                  <span className="news-detail-sidebar-label"><UserOutlined /> Tác giả</span>
                   <span className="news-detail-sidebar-value">TravelViet</span>
                 </div>
               </div>
@@ -113,9 +118,11 @@ export default function TinTucChiTiet() {
               <Paragraph className="news-detail-sidebar-text">
                 Theo dõi thêm các cẩm nang, ưu đãi và điểm đến nổi bật để lên kế hoạch chuyến đi phù hợp hơn.
               </Paragraph>
-              <Link to={PATHS.tinTuc} className="news-detail-sidebar-link">
-                Xem tất cả bài viết →
-              </Link>
+              <Button type="primary" block className="news-detail-sidebar-button">
+                <Link to={PATHS.tinTuc}>
+                  Xem tất cả bài viết <RightOutlined />
+                </Link>
+              </Button>
             </Card>
           </aside>
         </div>

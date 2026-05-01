@@ -2,7 +2,6 @@ using BE_QuanLyDuLichVaDatTour.DTOs.Booking;
 using BE_QuanLyDuLichVaDatTour.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace BE_QuanLyDuLichVaDatTour.Controllers;
 
@@ -86,7 +85,6 @@ public class BookingController : ControllerBase
 
     private bool TryGetCurrentUserId(out long userId)
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return long.TryParse(userIdClaim, out userId);
+        return User.TryGetCurrentUserId(out userId);
     }
 }

@@ -6,8 +6,16 @@
 
 .featured-tour-section .ant-card-head {
   border-bottom: none;
-  padding: 0 0 28px;
+  padding: 0 16px 28px;
   min-height: auto;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.featured-tour-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 
 .featured-tour-section .ant-card-head-title,
@@ -32,21 +40,30 @@
 
 .featured-tour-section-header .section-header {
   margin-bottom: 0;
-  text-align: left;
+  text-align: center;
+  width: 100%;
 }
 
 .featured-tour-section-header .section-title.ant-typography {
-  text-align: left;
+  text-align: center;
   margin-bottom: 8px !important;
 }
 
 .featured-tour-section-header .section-description.ant-typography {
-  text-align: left;
+  text-align: center;
   max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .featured-tour-section-action {
-  padding-bottom: 8px;
+  display: none;
+}
+
+.featured-tour-section-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
 }
 
 .featured-tour-section-link {

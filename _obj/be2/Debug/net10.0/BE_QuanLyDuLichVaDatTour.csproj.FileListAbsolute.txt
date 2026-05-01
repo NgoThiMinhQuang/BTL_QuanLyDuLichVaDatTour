@@ -1,0 +1,7 @@
+D:\BTL_QuanLyDuLichVaDatTour\_obj\be2\Debug\net10.0\BE_QuanLyDuLichVaDatTour.csproj.AssemblyReference.cache
+D:\BTL_QuanLyDuLichVaDatTour\_obj\be2\Debug\net10.0\rpswa.dswa.cache.json
+D:\BTL_QuanLyDuLichVaDatTour\_obj\be2\Debug\net10.0\BE_QuanLyDuLichVaDatTour.GeneratedMSBuildEditorConfig.editorconfig
+D:\BTL_QuanLyDuLichVaDatTour\_obj\be2\Debug\net10.0\BE_QuanLyDuLichVaDatTour.csproj.CoreCompileInputs.cache
+D:\BTL_QuanLyDuLichVaDatTour\_obj\be2\Debug\net10.0\BE_QuanLyDuLichVaDatTour.MvcApplicationPartsAssemblyInfo.cs
+D:\BTL_QuanLyDuLichVaDatTour\_obj\be2\Debug\net10.0\BE_QuanLyDuLichVaDatTour.MvcApplicationPartsAssemblyInfo.cache
+D:\BTL_QuanLyDuLichVaDatTour\_obj\be2\Debug\net10.0\BE_QuanLyDuLichVaDatTour.sourcelink.json

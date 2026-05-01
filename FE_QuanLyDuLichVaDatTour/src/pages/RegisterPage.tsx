@@ -59,175 +59,146 @@ export default function Register() {
   }
 
   return (
-    <div className="auth-page auth-page-register">
-      <div className="auth-shell auth-shell-register">
-        <div className="auth-showcase auth-showcase-register">
-          <section className="auth-showcase-panel auth-showcase-panel-primary auth-showcase-panel-register">
-            <Space direction="vertical" size={28} className="auth-panel-stack">
-              <Text className="auth-panel-pill">Thành viên Travel Viet</Text>
-
-              <Space direction="vertical" size={18}>
-                <Title className="auth-panel-title">Bắt đầu hành trình của bạn</Title>
-                <Paragraph className="auth-panel-description">
-                  Tạo tài khoản để quản lý các chuyến đi, nhận ưu đãi độc quyền và trải nghiệm dịch vụ tốt nhất.
-                </Paragraph>
-              </Space>
-
-              <Space direction="vertical" size={18} className="auth-panel-features">
-                {registerHighlights.map((item) => (
-                  <Text key={item} className="auth-panel-feature">
-                    ✓ {item}
-                  </Text>
-                ))}
-              </Space>
-            </Space>
-          </section>
-
-          <section className="auth-showcase-panel auth-showcase-panel-form auth-showcase-panel-form-register">
-            <div className="auth-form-wrap auth-form-wrap-register">
-              <Space direction="vertical" size={10} className="auth-form-heading">
-                <Title className="auth-form-title">Tạo tài khoản mới</Title>
-                <Paragraph className="auth-form-subtitle">
-                  Điền thông tin để bắt đầu hành trình cùng Travel Viet.
-                </Paragraph>
-              </Space>
-
-              {errorMessage ? <Alert type="error" showIcon message={errorMessage} /> : null}
-              {successMessage ? <Alert type="success" showIcon message={successMessage} /> : null}
-
-              <Form layout="vertical" onFinish={handleSubmit} autoComplete="off" className="auth-form auth-form-register">
-                <div className="auth-register-section">
-                  <Title level={3} className="auth-register-section-title">
-                    Thông tin đăng nhập
-                  </Title>
-
-                  <Form.Item
-                    label={
-                      <span>
-                        Email <span className="auth-required">*</span>
-                      </span>
-                    }
-                    name="email"
-                    rules={[
-                      { required: true, message: 'Vui lòng nhập email' },
-                      { type: 'email', message: 'Email không hợp lệ' },
-                    ]}
-                  >
-                    <Input size="large" placeholder="ban@domain.com" className="auth-input" />
-                  </Form.Item>
-
-                  <Form.Item
-                    label={
-                      <span>
-                        Mật khẩu <span className="auth-required">*</span>
-                      </span>
-                    }
-                    name="matKhau"
-                    rules={[
-                      { required: true, message: 'Vui lòng nhập mật khẩu' },
-                      { min: 6, message: 'Mật khẩu tối thiểu 6 ký tự' },
-                    ]}
-                    extra="Mật khẩu tối thiểu 6 ký tự"
-                  >
-                    <Input.Password size="large" placeholder="••••••••" className="auth-input" />
-                  </Form.Item>
-
-                  <Form.Item
-                    label={
-                      <span>
-                        Xác nhận mật khẩu <span className="auth-required">*</span>
-                      </span>
-                    }
-                    name="xacNhanMatKhau"
-                    dependencies={['matKhau']}
-                    rules={[
-                      { required: true, message: 'Vui lòng xác nhận mật khẩu' },
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          if (!value || getFieldValue('matKhau') === value) {
-                            return Promise.resolve()
-                          }
-                          return Promise.reject(new Error('Mật khẩu xác nhận không khớp'))
-                        },
-                      }),
-                    ]}
-                  >
-                    <Input.Password size="large" placeholder="••••••••" className="auth-input" />
-                  </Form.Item>
-                </div>
-
-                <div className="auth-register-section">
-                  <Title level={3} className="auth-register-section-title">
-                    Thông tin cá nhân
-                  </Title>
-
-                  <Form.Item
-                    label={
-                      <span>
-                        Họ và tên <span className="auth-required">*</span>
-                      </span>
-                    }
-                    name="hoTen"
-                    rules={[{ required: true, message: 'Vui lòng nhập họ và tên' }]}
-                  >
-                    <Input size="large" placeholder="Nguyễn Văn A" className="auth-input" />
-                  </Form.Item>
-
-                  <Form.Item label="Số điện thoại" name="soDienThoai">
-                    <Input size="large" placeholder="0123 456 789" className="auth-input" />
-                  </Form.Item>
-
-                  <Form.Item label="Địa chỉ" name="diaChi">
-                    <TextArea
-                      rows={4}
-                      placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"
-                      className="auth-textarea"
-                    />
-                  </Form.Item>
-                </div>
-
-                <Form.Item
-                  name="dongYDieuKhoan"
-                  valuePropName="checked"
-                  rules={[
-                    {
-                      validator(_, value) {
-                        if (value) {
-                          return Promise.resolve()
-                        }
-                        return Promise.reject(new Error('Vui lòng đồng ý với điều khoản sử dụng'))
-                      },
-                    },
-                  ]}
-                >
-                  <Checkbox>
-                    Tôi đồng ý với <Link to={PATHS.about}>Điều khoản sử dụng</Link> và{' '}
-                    <Link to={PATHS.about}>Chính sách bảo mật</Link>
-                  </Checkbox>
-                </Form.Item>
-
-                <Button type="primary" htmlType="submit" size="large" block loading={submitting} className="auth-submit-button">
-                  Đăng ký
-                </Button>
-              </Form>
-
-              <Divider className="auth-divider">Hoặc</Divider>
-
-              <div className="auth-social-grid">
-                <Button size="large" className="auth-social-button">
-                  Google
-                </Button>
-                <Button size="large" className="auth-social-button">
-                  Facebook
-                </Button>
-              </div>
-
-              <Paragraph className="auth-switch">
-                Đã có tài khoản? <Link to={PATHS.login}>Đăng nhập ngay</Link>
-              </Paragraph>
-            </div>
-          </section>
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-split-image">
+        <Link to={PATHS.home} className="auth-branding-large">
+          <div className="auth-brand-logo">✈</div>
+          <Text className="auth-brand-name-large">Travel Viet</Text>
+        </Link>
+        <div className="auth-image-content">
+          <h1 className="auth-quote-title">Bắt đầu<br/>hành trình mới</h1>
+          <p className="auth-quote-text">Tạo tài khoản để quản lý các chuyến đi, nhận ưu đãi độc quyền và trải nghiệm dịch vụ tốt nhất cùng Travel Viet.</p>
         </div>
+      </div>
+
+      <div className="auth-split-form">
+        <div className="auth-topbar">
+          <Link to={PATHS.home} className="auth-home-link">
+            ← Quay về trang chủ
+          </Link>
+        </div>
+
+        <div className="auth-form-container auth-form-container-register">
+          <div className="auth-form-heading">
+            <Title className="auth-form-title">Tạo tài khoản mới</Title>
+            <Paragraph className="auth-form-subtitle">
+              Điền thông tin để bắt đầu hành trình cùng Travel Viet.
+            </Paragraph>
+          </div>
+
+          {errorMessage ? <Alert type="error" showIcon message={errorMessage} style={{ marginBottom: 24 }} /> : null}
+          {successMessage ? <Alert type="success" showIcon message={successMessage} style={{ marginBottom: 24 }} /> : null}
+
+          <Form layout="vertical" onFinish={handleSubmit} autoComplete="off" className="auth-form">
+            <div className="auth-form-grid">
+              <Form.Item
+                label={<span>Họ và tên <span className="auth-required">*</span></span>}
+                name="hoTen"
+                rules={[{ required: true, message: 'Vui lòng nhập họ và tên' }]}
+              >
+                <Input size="large" placeholder="Nguyễn Văn A" className="auth-input" />
+              </Form.Item>
+
+              <Form.Item
+                label="Số điện thoại"
+                name="soDienThoai"
+              >
+                <Input size="large" placeholder="0123 456 789" className="auth-input" />
+              </Form.Item>
+
+              <Form.Item
+                label={<span>Email <span className="auth-required">*</span></span>}
+                name="email"
+                rules={[
+                  { required: true, message: 'Vui lòng nhập email' },
+                  { type: 'email', message: 'Email không hợp lệ' },
+                ]}
+                className="auth-form-full-width"
+              >
+                <Input size="large" placeholder="ban@domain.com" className="auth-input" />
+              </Form.Item>
+
+              <Form.Item
+                label={<span>Mật khẩu <span className="auth-required">*</span></span>}
+                name="matKhau"
+                rules={[
+                  { required: true, message: 'Vui lòng nhập mật khẩu' },
+                  { min: 6, message: 'Mật khẩu tối thiểu 6 ký tự' },
+                ]}
+              >
+                <Input.Password size="large" placeholder="••••••••" className="auth-input" />
+              </Form.Item>
+
+              <Form.Item
+                label={<span>Xác nhận mật khẩu <span className="auth-required">*</span></span>}
+                name="xacNhanMatKhau"
+                dependencies={['matKhau']}
+                rules={[
+                  { required: true, message: 'Vui lòng xác nhận mật khẩu' },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('matKhau') === value) {
+                        return Promise.resolve()
+                      }
+                      return Promise.reject(new Error('Mật khẩu xác nhận không khớp'))
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password size="large" placeholder="••••••••" className="auth-input" />
+              </Form.Item>
+
+              <Form.Item label="Địa chỉ" name="diaChi" className="auth-form-full-width">
+                <TextArea
+                  rows={3}
+                  placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"
+                  className="auth-textarea"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="dongYDieuKhoan"
+                valuePropName="checked"
+                className="auth-form-full-width"
+                rules={[
+                  {
+                    validator(_, value) {
+                      if (value) return Promise.resolve()
+                      return Promise.reject(new Error('Vui lòng đồng ý với điều khoản sử dụng'))
+                    },
+                  },
+                ]}
+              >
+                <Checkbox>
+                  Tôi đồng ý với <Link to={PATHS.about}>Điều khoản sử dụng</Link> và <Link to={PATHS.about}>Chính sách bảo mật</Link>
+                </Checkbox>
+              </Form.Item>
+            </div>
+
+            <Button type="primary" htmlType="submit" size="large" block loading={submitting} className="auth-submit-button">
+              Đăng ký
+            </Button>
+          </Form>
+
+          <Divider className="auth-divider">Hoặc tiếp tục với</Divider>
+
+          <div className="auth-social-grid">
+            <Button size="large" className="auth-social-button">
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="auth-social-icon" />
+              Google
+            </Button>
+            <Button size="large" className="auth-social-button">
+              <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="auth-social-icon" />
+              Facebook
+            </Button>
+          </div>
+
+          <Paragraph className="auth-switch">
+            Đã có tài khoản? <Link to={PATHS.login}>Đăng nhập ngay</Link>
+          </Paragraph>
+        </div>
+      </div>
       </div>
     </div>
   )

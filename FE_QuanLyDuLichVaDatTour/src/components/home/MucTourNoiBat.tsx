@@ -35,7 +35,6 @@ export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoi
           description="Những hành trình độc đáo, được tuyển chọn kỹ lưỡng dành riêng cho bạn"
         />
       </div>
-      <div className="featured-tour-section-action">{extra}</div>
     </div>
   )
 
@@ -69,7 +68,7 @@ export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoi
       ) : null}
 
       {!isLoading && !error && data && data.length > 0 ? (
-        <Row gutter={[20, 20]} className="featured-tour-grid">
+        <Row gutter={[32, 32]} className="featured-tour-grid">
           {data.map((tour, index) => (
             <Col xs={24} md={12} xl={8} key={tour.id}>
               <TheTour
@@ -83,6 +82,12 @@ export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoi
             </Col>
           ))}
         </Row>
+      ) : null}
+
+      {!isLoading && !error && data && data.length > 0 ? (
+        <div className="featured-tour-section-footer">
+          {extra}
+        </div>
       ) : null}
     </Card>
   )

@@ -63,122 +63,89 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-page auth-page-login">
-      <div className="auth-shell">
-        <div className="auth-topbar">
-          <Link to={PATHS.home} className="auth-branding">
-            <div className="auth-brand-logo">✈</div>
-            <Space direction="vertical" size={0}>
-              <Text className="auth-brand-name">Travel Viet</Text>
-              <Text className="auth-brand-tagline">Chạm tới mọi hành trình</Text>
-            </Space>
-          </Link>
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-split-image">
+        <Link to={PATHS.home} className="auth-branding-large">
+          <div className="auth-brand-logo">✈</div>
+          <Text className="auth-brand-name-large">Travel Viet</Text>
+        </Link>
+        <div className="auth-image-content">
+          <h1 className="auth-quote-title">Khám phá<br/>thế giới cùng chúng tôi</h1>
+          <p className="auth-quote-text">Hàng ngàn điểm đến tuyệt vời đang chờ đón bạn. Đăng nhập để tiếp tục hành trình và nhận những ưu đãi tốt nhất.</p>
+        </div>
+      </div>
 
+      <div className="auth-split-form">
+        <div className="auth-topbar">
           <Link to={PATHS.home} className="auth-home-link">
             ← Quay về trang chủ
           </Link>
         </div>
 
-        <div className="auth-showcase auth-showcase-login">
-          <section className="auth-showcase-panel auth-showcase-panel-primary">
-            <Space direction="vertical" size={28} className="auth-panel-stack">
-              <Text className="auth-panel-pill">Thành viên Travel Viet</Text>
+        <div className="auth-form-container">
+          <div className="auth-form-heading">
+            <Title className="auth-form-title">Chào mừng trở lại</Title>
+            <Paragraph className="auth-form-subtitle">
+              Nhập thông tin để tiếp tục hành trình cùng Travel Viet.
+            </Paragraph>
+          </div>
 
-              <Space direction="vertical" size={18}>
-                <Title className="auth-panel-title">Đăng nhập để tiếp tục khám phá</Title>
-                <Paragraph className="auth-panel-description">
-                  Tạo và quản lý các chuyến đi yêu thích, nhận ưu đãi độc quyền và đồng bộ lịch trình trên mọi thiết bị.
-                </Paragraph>
-              </Space>
+          {errorMessage ? <Alert type="error" showIcon message={errorMessage} style={{ marginBottom: 24 }} /> : null}
 
-              <Space direction="vertical" size={18} className="auth-panel-features">
-                {loginHighlights.map((item) => (
-                  <Text key={item} className="auth-panel-feature">
-                    ✓ {item}
-                  </Text>
-                ))}
-              </Space>
+          <Form layout="vertical" onFinish={handleSubmit} autoComplete="off" className="auth-form">
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: 'Vui lòng nhập email' },
+                { type: 'email', message: 'Email không hợp lệ' },
+              ]}
+            >
+              <Input size="large" placeholder="ban@domain.com" className="auth-input" />
+            </Form.Item>
 
-              <div className="auth-panel-metrics">
-                <div>
-                  <Title level={2} className="auth-panel-metric-value">
-                    10.000+
-                  </Title>
-                  <Text className="auth-panel-metric-label">Khách hàng tin tưởng</Text>
-                </div>
-                <div>
-                  <Title level={2} className="auth-panel-metric-value">
-                    4.9/5
-                  </Title>
-                  <Text className="auth-panel-metric-label">Điểm hài lòng trung bình</Text>
-                </div>
-              </div>
-            </Space>
-          </section>
+            <Form.Item
+              label="Mật khẩu"
+              name="matKhau"
+              rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
+            >
+              <Input.Password size="large" placeholder="••••••••" className="auth-input" />
+            </Form.Item>
 
-          <section className="auth-showcase-panel auth-showcase-panel-form">
-            <div className="auth-form-wrap">
-              <Space direction="vertical" size={10} className="auth-form-heading">
-                <Title className="auth-form-title">Chào mừng trở lại</Title>
-                <Paragraph className="auth-form-subtitle">
-                  Nhập thông tin để tiếp tục hành trình cùng Travel Viet.
-                </Paragraph>
-              </Space>
+            <div className="auth-form-meta">
+              <Form.Item name="ghiNho" valuePropName="checked" noStyle>
+                <Checkbox>Ghi nhớ đăng nhập</Checkbox>
+              </Form.Item>
 
-              {errorMessage ? <Alert type="error" showIcon message={errorMessage} /> : null}
-
-              <Form layout="vertical" onFinish={handleSubmit} autoComplete="off" className="auth-form">
-                <Form.Item
-                  label="Email"
-                  name="email"
-                  rules={[
-                    { required: true, message: 'Vui lòng nhập email' },
-                    { type: 'email', message: 'Email không hợp lệ' },
-                  ]}
-                >
-                  <Input size="large" placeholder="ban@domain.com" className="auth-input" />
-                </Form.Item>
-
-                <Form.Item
-                  label="Mật khẩu"
-                  name="matKhau"
-                  rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
-                >
-                  <Input.Password size="large" placeholder="••••••••" className="auth-input" />
-                </Form.Item>
-
-                <div className="auth-form-meta">
-                  <Form.Item name="ghiNho" valuePropName="checked" noStyle>
-                    <Checkbox>Ghi nhớ đăng nhập</Checkbox>
-                  </Form.Item>
-
-                  <Link to={PATHS.forgotPassword} className="auth-inline-link">
-                    Quên mật khẩu?
-                  </Link>
-                </div>
-
-                <Button type="primary" htmlType="submit" size="large" block loading={submitting} className="auth-submit-button">
-                  Đăng nhập
-                </Button>
-              </Form>
-
-              <Divider className="auth-divider">Hoặc</Divider>
-
-              <div className="auth-social-grid">
-                <Button size="large" className="auth-social-button">
-                  Google
-                </Button>
-                <Button size="large" className="auth-social-button">
-                  Facebook
-                </Button>
-              </div>
-
-              <Paragraph className="auth-switch">
-                Chưa có tài khoản? <Link to={redirectPath === PATHS.home ? PATHS.register : `${PATHS.register}?redirect=${encodeURIComponent(redirectPath)}`}>Đăng ký ngay</Link>
-              </Paragraph>
+              <Link to={PATHS.forgotPassword} className="auth-inline-link">
+                Quên mật khẩu?
+              </Link>
             </div>
-          </section>
+
+            <Button type="primary" htmlType="submit" size="large" block loading={submitting} className="auth-submit-button">
+              Đăng nhập
+            </Button>
+          </Form>
+
+          <Divider className="auth-divider">Hoặc tiếp tục với</Divider>
+
+          <div className="auth-social-grid">
+            <Button size="large" className="auth-social-button">
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="auth-social-icon" />
+              Google
+            </Button>
+            <Button size="large" className="auth-social-button">
+              <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="auth-social-icon" />
+              Facebook
+            </Button>
+          </div>
+
+          <Paragraph className="auth-switch">
+            Chưa có tài khoản? <Link to={redirectPath === PATHS.home ? PATHS.register : `${PATHS.register}?redirect=${encodeURIComponent(redirectPath)}`}>Đăng ký ngay</Link>
+          </Paragraph>
         </div>
+      </div>
       </div>
     </div>
   )

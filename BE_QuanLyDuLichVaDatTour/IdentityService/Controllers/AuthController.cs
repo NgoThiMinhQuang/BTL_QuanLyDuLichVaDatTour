@@ -2,7 +2,7 @@
 using IdentityService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+
 
 namespace IdentityService.Controllers;
 
@@ -180,7 +180,6 @@ public class AuthController : ControllerBase
 
     private bool TryGetCurrentUserId(out long userId)
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return long.TryParse(userIdClaim, out userId);
+        return User.TryGetCurrentUserId(out userId);
     }
 }
