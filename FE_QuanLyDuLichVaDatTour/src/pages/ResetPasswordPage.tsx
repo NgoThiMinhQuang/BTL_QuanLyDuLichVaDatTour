@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
         <div className="auth-topbar">
           <Link to={PATHS.home} className="auth-branding">
             <div className="auth-brand-logo">✈</div>
-            <Space direction="vertical" size={0}>
+            <Space orientation="vertical" size={0}>
               <Text className="auth-brand-name">Travel Viet</Text>
               <Text className="auth-brand-tagline">Chạm tới mọi hành trình</Text>
             </Space>
@@ -59,9 +59,9 @@ export default function ResetPasswordPage() {
 
         <div className="auth-showcase auth-showcase-login">
           <section className="auth-showcase-panel auth-showcase-panel-primary">
-            <Space direction="vertical" size={24} className="auth-panel-stack">
+            <Space orientation="vertical" size={24} className="auth-panel-stack">
               <Text className="auth-panel-pill">Mật khẩu mới</Text>
-              <Space direction="vertical" size={18}>
+              <Space orientation="vertical" size={18}>
                 <Title className="auth-panel-title">Bảo vệ tài khoản của bạn</Title>
                 <Paragraph className="auth-panel-description">
                   Tạo mật khẩu mới tối thiểu 6 ký tự để tiếp tục quản lý hành trình cùng Travel Viet.
@@ -72,16 +72,16 @@ export default function ResetPasswordPage() {
 
           <section className="auth-showcase-panel auth-showcase-panel-form">
             <div className="auth-form-wrap">
-              <Space direction="vertical" size={10} className="auth-form-heading">
+              <Space orientation="vertical" size={10} className="auth-form-heading">
                 <Title className="auth-form-title">Đặt lại mật khẩu</Title>
                 <Paragraph className="auth-form-subtitle">
                   Nhập mật khẩu mới cho tài khoản của bạn.
                 </Paragraph>
               </Space>
 
-              {!token ? <Alert type="error" showIcon message="Liên kết đặt lại mật khẩu không hợp lệ" /> : null}
-              {errorMessage ? <Alert type="error" showIcon message={errorMessage} /> : null}
-              {successMessage ? <Alert type="success" showIcon message={successMessage} /> : null}
+              {!token ? <Alert type="error" showIcon title="Liên kết đặt lại mật khẩu không hợp lệ" /> : null}
+              {errorMessage ? <Alert type="error" showIcon title={errorMessage} /> : null}
+              {successMessage ? <Alert type="success" showIcon title={successMessage} /> : null}
 
               <Form layout="vertical" onFinish={handleSubmit} autoComplete="off" className="auth-form">
                 <Form.Item

@@ -1,63 +1,9 @@
-.featured-tour-section {
-  background: #f8fafc;
-  padding: 48px 0;
-  border-radius: 0;
+.featured-tour-section.home-section {
+  background: #ffffff;
 }
 
-.featured-tour-section .ant-card-head {
-  border-bottom: none;
-  padding: 0 16px 28px;
-  min-height: auto;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.featured-tour-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
-
-.featured-tour-section .ant-card-head-title,
-.featured-tour-section .ant-card-head-wrapper {
-  overflow: visible;
-}
-
-.featured-tour-section .ant-card-body {
-  padding: 0;
-}
-
-.featured-tour-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 24px;
-}
-
-.featured-tour-section-info {
-  flex: 1;
-}
-
-.featured-tour-section-header .section-header {
-  margin-bottom: 0;
-  text-align: center;
-  width: 100%;
-}
-
-.featured-tour-section-header .section-title.ant-typography {
-  text-align: center;
-  margin-bottom: 8px !important;
-}
-
-.featured-tour-section-header .section-description.ant-typography {
-  text-align: center;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.featured-tour-section-action {
-  display: none;
+.featured-tour-content {
+  margin-top: 32px;
 }
 
 .featured-tour-section-footer {
@@ -73,49 +19,40 @@
   color: #2563eb;
   font-size: 15px;
   font-weight: 600;
-  padding: 10px 20px;
+  padding: 10px 24px;
   border-radius: 12px;
   background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
   transition: all 0.3s ease;
 }
 
 .featured-tour-section-link:hover {
-  transform: translateX(5px);
   background: #2563eb;
   color: #ffffff;
+  border-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
-.featured-tour-grid {
-  row-gap: 32px;
+.featured-tour-section-link .anticon {
+  transition: transform 0.3s ease;
 }
 
-.featured-tour-grid .ant-col {
-  display: flex;
+.featured-tour-section-link:hover .anticon {
+  transform: translateX(4px);
 }
 
 .featured-tour-grid .tour-card-skeleton {
   width: 100%;
   padding: 24px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
 }
 
 @media (max-width: 768px) {
-  .featured-tour-section {
-    padding: 60px 0;
-  }
-
-  .featured-tour-section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-  }
-
-  .featured-tour-section-action {
-    width: 100%;
-  }
-
   .featured-tour-section-link {
     width: 100%;
     justify-content: center;
   }
 }
+

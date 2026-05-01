@@ -117,7 +117,7 @@ export default function AdminDashboardPage() {
   }
 
   if (isError || !data) {
-    return <Alert type="error" showIcon message={error instanceof Error ? error.message : 'Không thể tải dashboard quản trị'} />
+    return <Alert type="error" showIcon title={error instanceof Error ? error.message : 'Không thể tải dashboard quản trị'} />
   }
 
   return (

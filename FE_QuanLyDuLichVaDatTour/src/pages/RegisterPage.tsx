@@ -87,8 +87,8 @@ export default function Register() {
             </Paragraph>
           </div>
 
-          {errorMessage ? <Alert type="error" showIcon message={errorMessage} style={{ marginBottom: 24 }} /> : null}
-          {successMessage ? <Alert type="success" showIcon message={successMessage} style={{ marginBottom: 24 }} /> : null}
+          {errorMessage ? <Alert type="error" showIcon title={errorMessage} style={{ marginBottom: 24 }} /> : null}
+          {successMessage ? <Alert type="success" showIcon title={successMessage} style={{ marginBottom: 24 }} /> : null}
 
           <Form layout="vertical" onFinish={handleSubmit} autoComplete="off" className="auth-form">
             <div className="auth-form-grid">

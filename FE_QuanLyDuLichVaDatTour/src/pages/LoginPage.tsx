@@ -42,13 +42,18 @@ export default function Login() {
         matKhau: values.matKhau,
       })
 
-      setAuthSession(response.accessToken, {
-        id: response.id,
-        email: response.email,
-        hoTen: response.hoTen,
-        vaiTro: response.vaiTro,
-        trangThai: response.trangThai,
-      }, Boolean(values.ghiNho))
+      setAuthSession(
+        response.accessToken,
+        {
+          id: response.id,
+          email: response.email,
+          hoTen: response.hoTen,
+          vaiTro: response.vaiTro,
+          trangThai: response.trangThai,
+        },
+        Boolean(values.ghiNho),
+        response.expiresIn,
+      )
 
       if (response.vaiTro.toLowerCase() === 'admin') {
         navigate(PATHS.admin, { replace: true })
@@ -91,7 +96,7 @@ export default function Login() {
             </Paragraph>
           </div>
 
-          {errorMessage ? <Alert type="error" showIcon message={errorMessage} style={{ marginBottom: 24 }} /> : null}
+          {errorMessage ? <Alert type="error" showIcon title={errorMessage} style={{ marginBottom: 24 }} /> : null}
 
           <Form layout="vertical" onFinish={handleSubmit} autoComplete="off" className="auth-form">
             <Form.Item

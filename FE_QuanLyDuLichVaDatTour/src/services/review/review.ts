@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../constants/api'
-import { useAuthStore } from '../../store/authStore'
+import { SESSION_EXPIRED_MESSAGE, useAuthStore } from '../../store/authStore'
 
 export interface ReviewItem {
   id: number
@@ -70,10 +70,14 @@ export async function layDanhGiaCuaToi(): Promise<ReviewItem[]> {
     },
   })
 
+  if (response.status === 401) {
+    useAuthStore.getState().clearAuthSession()
+  }
+
   const data = await response.json().catch(() => null)
 
   if (!response.ok) {
-    throw new Error(data?.message || 'Không thể tải danh sách đánh giá')
+    throw new Error(response.status === 401 ? SESSION_EXPIRED_MESSAGE : data?.message || 'Không thể tải danh sách đánh giá')
   }
 
   return data as ReviewItem[]
@@ -96,7 +100,7 @@ export async function taoDanhGia(payload: CreateReviewPayload): Promise<ReviewIt
   const data = await response.json().catch(() => null)
 
   if (!response.ok) {
-    throw new Error(data?.message || 'Gửi đánh giá thất bại')
+    throw new Error(response.status === 401 ? SESSION_EXPIRED_MESSAGE : data?.message || 'Gửi đánh giá thất bại')
   }
 
   return data as ReviewItem

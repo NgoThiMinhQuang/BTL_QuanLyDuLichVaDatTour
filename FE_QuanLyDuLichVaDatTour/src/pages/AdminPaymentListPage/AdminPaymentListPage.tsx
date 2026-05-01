@@ -178,7 +178,7 @@ export default function AdminPaymentListPage() {
           </Button>
         </div>
 
-        {hasError ? <Alert type="error" showIcon message={errorMessage} /> : null}
+        {hasError ? <Alert type="error" showIcon title={errorMessage} /> : null}
 
         <Table
           rowKey="id"
@@ -204,7 +204,7 @@ export default function AdminPaymentListPage() {
           <Alert
             type="error"
             showIcon
-            message={paymentDetailQuery.error instanceof Error ? paymentDetailQuery.error.message : 'Không thể tải chi tiết giao dịch'}
+            title={paymentDetailQuery.error instanceof Error ? paymentDetailQuery.error.message : 'Không thể tải chi tiết giao dịch'}
           />
         ) : null}
 

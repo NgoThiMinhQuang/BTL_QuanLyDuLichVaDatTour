@@ -1,6 +1,6 @@
 import './BookingPage.css'
-import { Alert, Button, Card, Checkbox, Col, DatePicker, Form, Input, Row, Select, Skeleton, Space, Typography } from 'antd'
-import { CheckOutlined, GiftOutlined, MinusOutlined, RightOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons'
+import { Alert, Button, Card, Checkbox, Col, DatePicker, Form, Input, Row, Select, Skeleton, Space, Typography, Tag } from 'antd'
+import { CheckOutlined, GiftOutlined, MinusOutlined, PlusOutlined, RightOutlined, TeamOutlined, UserOutlined, EnvironmentOutlined, IdcardOutlined, BankOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 import { useMemo, useState } from 'react'
@@ -22,6 +22,8 @@ interface BookingContactValues {
   hoTenLienHe: string
   emailLienHe: string
   soDienThoaiLienHe: string
+  tinhThanh?: string
+  quanHuyen?: string
   diaChiLienHe?: string
 }
 
@@ -36,12 +38,11 @@ interface PassengerDraft {
   quocTich?: string
 }
 
-
 const steps = [
-  { key: 'contact' as const, label: 'Thông tin liên hệ', icon: <UserOutlined /> },
+  { key: 'contact' as const, label: 'Thông tin liên hệ', icon: <IdcardOutlined /> },
   { key: 'counts' as const, label: 'Số lượng khách', icon: <TeamOutlined /> },
-  { key: 'passengers' as const, label: 'Thông tin hành khách', icon: <TeamOutlined /> },
-  { key: 'confirm' as const, label: 'Voucher & Xác nhận', icon: <GiftOutlined /> },
+  { key: 'passengers' as const, label: 'Thông tin hành khách', icon: <UserOutlined /> },
+  { key: 'confirm' as const, label: 'Xác nhận & Thanh toán', icon: <CheckOutlined /> },
 ]
 
 const genderOptions = [
@@ -49,7 +50,6 @@ const genderOptions = [
   { value: 'Nữ', label: 'Nữ' },
   { value: 'Khác', label: 'Khác' },
 ]
-
 
 function taoPassengerId(type: PassengerType, index: number) {
   return `${type}-${index + 1}`
@@ -109,17 +109,27 @@ export default function Booking() {
   const isValidParams = Number.isInteger(tourId) && tourId > 0 && Number.isInteger(departureId) && departureId > 0
   const currentUser = useAuthStore((state) => state.currentUser)
 
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState<string | null>(null)
+
   const bookingQuery = useQuery({
     queryKey: ['booking-page', tourId, departureId],
     queryFn: () => layDuLieuDatTour(tourId, departureId),
     enabled: isValidParams,
   })
 
-  const pricingSummary = useMemo(() => {
-    if (!bookingQuery.data) {
-      return null
-    }
+  // Fetch provinces data for the address selection
+  const provincesQuery = useQuery({
+    queryKey: ['provinces'],
+    queryFn: async () => {
+      const res = await fetch('https://provinces.open-api.vn/api/?depth=2')
+      if (!res.ok) throw new Error('Network response was not ok')
+      return res.json()
+    },
+    staleTime: Infinity,
+  })
 
+  const pricingSummary = useMemo(() => {
+    if (!bookingQuery.data) return null
     return {
       nguoiLon: bookingQuery.data.pricing.giaNguoiLonNgayThuong ?? bookingQuery.data.tour.giaNguoiLonMacDinh ?? 0,
       treEm: bookingQuery.data.pricing.giaTreEmNgayThuong ?? 0,
@@ -130,10 +140,7 @@ export default function Booking() {
   const totalGuests = passengerCounts.nguoi_lon + passengerCounts.tre_em + passengerCounts.em_be
 
   const tongTamTinh = useMemo(() => {
-    if (!pricingSummary) {
-      return 0
-    }
-
+    if (!pricingSummary) return 0
     return pricingSummary.nguoiLon * passengerCounts.nguoi_lon + pricingSummary.treEm * passengerCounts.tre_em + pricingSummary.emBe * passengerCounts.em_be
   }, [pricingSummary, passengerCounts])
 
@@ -142,12 +149,7 @@ export default function Booking() {
   if (!isValidParams) {
     return (
       <div className="booking-page-state">
-        <Alert
-          type="warning"
-          showIcon
-          message="Thiếu thông tin đặt tour"
-          description="Vui lòng quay lại trang chi tiết tour và chọn lại lịch khởi hành."
-        />
+        <Alert type="warning" showIcon title="Thiếu thông tin đặt tour" description="Vui lòng quay lại trang chi tiết tour và chọn lại lịch khởi hành." />
       </div>
     )
   }
@@ -165,12 +167,7 @@ export default function Booking() {
   if (bookingQuery.isError || !bookingQuery.data || !pricingSummary) {
     return (
       <div className="booking-page-state">
-        <Alert
-          type="error"
-          showIcon
-          message="Không thể tải trang đặt tour"
-          description="Lịch khởi hành không còn hợp lệ hoặc dữ liệu tour đang tạm thời gián đoạn."
-        />
+        <Alert type="error" showIcon title="Không thể tải trang đặt tour" description="Lịch khởi hành không còn hợp lệ hoặc dữ liệu tour đang tạm thời gián đoạn." />
       </div>
     )
   }
@@ -180,7 +177,6 @@ export default function Booking() {
 
   const capNhatSoLuong = (type: PassengerType, delta: number) => {
     setErrorMessage(null)
-
     setPassengerCounts((prev) => {
       const nextValue = Math.max(type === 'nguoi_lon' ? 1 : 0, prev[type] + delta)
       const next = { ...prev, [type]: nextValue }
@@ -199,12 +195,10 @@ export default function Booking() {
 
   const xuLyQuaBuocSoLuong = () => {
     setErrorMessage(null)
-
     if (totalGuests > soChoConLai) {
       setErrorMessage(`Số khách vượt quá số chỗ còn lại của lịch khởi hành (${soChoConLai} chỗ).`)
       return
     }
-
     setPassengers((prev) => buildPassengerDrafts(passengerCounts, prev))
     setCurrentStep('passengers')
   }
@@ -215,12 +209,10 @@ export default function Booking() {
 
   const xacNhanThongTinHanhKhach = () => {
     const invalidPassenger = passengers.find((item) => !item.hoTen.trim() || !item.gioiTinh)
-
     if (invalidPassenger) {
       setErrorMessage('Vui lòng nhập đầy đủ họ tên và giới tính cho tất cả hành khách.')
       return
     }
-
     setErrorMessage(null)
     setCurrentStep('confirm')
   }
@@ -228,11 +220,27 @@ export default function Booking() {
   const xuLyQuaBuocLienHe = async () => {
     try {
       const values = await contactForm.validateFields()
-      setContactInfo(values)
+      
+      // Construct address string from Province and District
+      let diaChi = values.diaChiLienHe || ''
+      if (provincesQuery.data) {
+        const province = provincesQuery.data.find((p: any) => p.code === values.tinhThanh)
+        const district = province?.districts.find((d: any) => d.code === values.quanHuyen)
+        
+        const addressParts = []
+        if (district) addressParts.push(district.name)
+        if (province) addressParts.push(province.name)
+        diaChi = addressParts.join(', ')
+      }
+
+      setContactInfo({
+        ...values,
+        diaChiLienHe: diaChi || undefined
+      })
       setErrorMessage(null)
       setCurrentStep('counts')
     } catch {
-      setErrorMessage('Vui lòng nhập đầy đủ thông tin liên hệ trước khi tiếp tục.')
+      setErrorMessage('Vui lòng nhập đầy đủ thông tin liên hệ bắt buộc.')
     }
   }
 
@@ -252,7 +260,6 @@ export default function Booking() {
       setErrorMessage('Thiếu thông tin liên hệ.')
       return
     }
-
     if (!acceptedTerms) {
       setErrorMessage('Bạn cần đồng ý điều khoản và điều kiện trước khi đặt tour.')
       return
@@ -289,350 +296,403 @@ export default function Booking() {
   const renderStepContent = () => {
     if (currentStep === 'contact') {
       return (
-        <Card className="booking-card" variant="borderless">
-          <Title className="booking-section-title">Thông tin liên hệ</Title>
-          <Form
-            form={contactForm}
-            layout="vertical"
-            className="booking-form"
-            autoComplete="off"
-            initialValues={{
-              hoTenLienHe: currentUser?.hoTen ?? '',
-              emailLienHe: currentUser?.email ?? '',
-              soDienThoaiLienHe: '',
-              diaChiLienHe: '',
-            }}
-          >
-            <Row gutter={24}>
-              <Col xs={24} md={12}>
-                <Form.Item label="Họ và tên *" name="hoTenLienHe" rules={[{ required: true, message: 'Vui lòng nhập họ tên đầy đủ' }]}>
-                  <Input size="large" placeholder="Nhập họ tên đầy đủ" className="booking-input" />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12}>
-                <Form.Item
-                  label="Số điện thoại *"
-                  name="soDienThoaiLienHe"
-                  rules={[
-                    { required: true, message: 'Vui lòng nhập số điện thoại' },
-                    { pattern: /^\d{10}$/, message: 'Số điện thoại phải đúng 10 chữ số' },
-                  ]}
-                >
-                  <Input
-                    size="large"
-                    placeholder="Nhập số điện thoại"
-                    className="booking-input"
-                    maxLength={10}
-                    inputMode="numeric"
-                    onChange={(event) => {
-                      const onlyDigits = event.target.value.replace(/\D/g, '').slice(0, 10)
-                      contactForm.setFieldValue('soDienThoaiLienHe', onlyDigits)
-                    }}
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12}>
-                <Form.Item
-                  label="Email *"
-                  name="emailLienHe"
-                  rules={[
-                    { required: true, message: 'Vui lòng nhập email' },
-                    { type: 'email', message: 'Email không hợp lệ' },
-                  ]}
-                >
-                  <Input size="large" placeholder="Nhập email" className="booking-input" />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12}>
-                <Form.Item label="Địa chỉ" name="diaChiLienHe">
-                  <Input size="large" placeholder="Nhập địa chỉ" className="booking-input" />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <div className="booking-actions-row booking-actions-row-end">
-              <Button type="primary" size="large" className="booking-primary-button" onClick={xuLyQuaBuocLienHe}>
-                Tiếp tục <RightOutlined />
-              </Button>
+        <div className="booking-panel-fade-in">
+          <Card className="booking-card" variant="borderless">
+            <div className="booking-section-header">
+              <div className="booking-section-icon"><IdcardOutlined /></div>
+              <Title className="booking-section-title">Thông tin liên hệ</Title>
             </div>
-          </Form>
-        </Card>
+            
+            <Form
+              form={contactForm}
+              layout="vertical"
+              className="booking-form"
+              autoComplete="off"
+              initialValues={{
+                hoTenLienHe: currentUser?.hoTen ?? '',
+                emailLienHe: currentUser?.email ?? '',
+                soDienThoaiLienHe: '',
+                tinhThanh: undefined,
+                quanHuyen: undefined,
+              }}
+            >
+              <Row gutter={24}>
+                <Col xs={24} md={12}>
+                  <Form.Item label="Họ và tên người liên hệ" name="hoTenLienHe" rules={[{ required: true, message: 'Vui lòng nhập họ tên đầy đủ' }]}>
+                    <Input size="large" placeholder="Nhập họ tên đầy đủ" className="booking-input" />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={12}>
+                  <Form.Item
+                    label="Số điện thoại"
+                    name="soDienThoaiLienHe"
+                    rules={[
+                      { required: true, message: 'Vui lòng nhập số điện thoại' },
+                      { pattern: /^\d{10}$/, message: 'Số điện thoại phải đúng 10 chữ số' },
+                    ]}
+                  >
+                    <Input
+                      size="large"
+                      placeholder="Nhập số điện thoại"
+                      className="booking-input"
+                      maxLength={10}
+                      inputMode="numeric"
+                      onChange={(event) => {
+                        const onlyDigits = event.target.value.replace(/\D/g, '').slice(0, 10)
+                        contactForm.setFieldValue('soDienThoaiLienHe', onlyDigits)
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={24}>
+                  <Form.Item
+                    label="Email"
+                    name="emailLienHe"
+                    rules={[
+                      { required: true, message: 'Vui lòng nhập email' },
+                      { type: 'email', message: 'Email không hợp lệ' },
+                    ]}
+                  >
+                    <Input size="large" placeholder="Nhập email để nhận xác nhận" className="booking-input" />
+                  </Form.Item>
+                </Col>
+                
+                <Col xs={24} md={12}>
+                  <Form.Item label="Tỉnh/Thành phố" name="tinhThanh">
+                    <Select
+                      size="large"
+                      placeholder="Chọn Tỉnh/Thành phố"
+                      options={provincesQuery.data?.map((p: any) => ({ value: p.code, label: p.name })) || []}
+                      onChange={(value) => {
+                         contactForm.setFieldValue('quanHuyen', undefined)
+                         setSelectedProvinceCode(value)
+                      }}
+                      className="booking-select"
+                      showSearch
+                      filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+                      loading={provincesQuery.isLoading}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={12}>
+                  <Form.Item label="Quận/Huyện" name="quanHuyen">
+                    <Select
+                      size="large"
+                      placeholder="Chọn Quận/Huyện"
+                      disabled={!selectedProvinceCode}
+                      options={
+                        provincesQuery.data
+                          ?.find((p: any) => p.code === selectedProvinceCode)
+                          ?.districts.map((d: any) => ({ value: d.code, label: d.name })) || []
+                      }
+                      className="booking-select"
+                      showSearch
+                      filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <div className="booking-actions-row booking-actions-row-end">
+                <Button type="primary" size="large" className="booking-primary-button" onClick={xuLyQuaBuocLienHe}>
+                  Tiếp tục <RightOutlined />
+                </Button>
+              </div>
+            </Form>
+          </Card>
+        </div>
       )
     }
 
     if (currentStep === 'counts') {
       return (
-        <Card className="booking-card" variant="borderless">
-          <Title className="booking-section-title">Chọn số lượng khách</Title>
-          <div className="booking-count-list">
-            {[
-              { type: 'nguoi_lon' as const, title: 'Người lớn', note: 'Từ 11 tuổi trở lên', price: pricingSummary.nguoiLon },
-              { type: 'tre_em' as const, title: 'Trẻ em', note: 'Từ 5-10 tuổi', price: pricingSummary.treEm },
-              { type: 'em_be' as const, title: 'Em bé', note: 'Dưới 5 tuổi', price: pricingSummary.emBe },
-            ].map((item) => (
-              <div key={item.type} className="booking-count-list-item">
-                <div className="booking-count-info">
-                  <Title level={4} className="booking-count-title">{item.title}</Title>
-                  <Paragraph className="booking-count-note">{item.note}</Paragraph>
+        <div className="booking-panel-fade-in">
+          <Card className="booking-card" variant="borderless">
+            <div className="booking-section-header">
+              <div className="booking-section-icon"><TeamOutlined /></div>
+              <Title className="booking-section-title">Chọn số lượng khách</Title>
+            </div>
+            
+            <div className="booking-count-list">
+              {[
+                { type: 'nguoi_lon' as const, title: 'Người lớn', note: 'Từ 11 tuổi trở lên', price: pricingSummary.nguoiLon },
+                { type: 'tre_em' as const, title: 'Trẻ em', note: 'Từ 5-10 tuổi', price: pricingSummary.treEm },
+                { type: 'em_be' as const, title: 'Em bé', note: 'Dưới 5 tuổi', price: pricingSummary.emBe },
+              ].map((item) => (
+                <div key={item.type} className="booking-count-list-item">
+                  <div className="booking-count-info">
+                    <Title level={4} className="booking-count-title">{item.title}</Title>
+                    <Paragraph className="booking-count-note">{item.note}</Paragraph>
+                  </div>
+                  <div className="booking-count-price-col">
+                    <div className="booking-count-price">{formatMoney(item.price)}</div>
+                  </div>
+                  <div className="booking-stepper-wrap">
+                    <button type="button" className="booking-stepper-btn" onClick={() => capNhatSoLuong(item.type, -1)} disabled={item.type === 'nguoi_lon' && passengerCounts.nguoi_lon <= 1}>
+                      <MinusOutlined />
+                    </button>
+                    <div className="booking-stepper-val">{passengerCounts[item.type]}</div>
+                    <button type="button" className="booking-stepper-btn" onClick={() => capNhatSoLuong(item.type, 1)}>
+                      <PlusOutlined />
+                    </button>
+                  </div>
                 </div>
-                <div className="booking-count-price-col">
-                  <div className="booking-count-price">{formatMoney(item.price)}</div>
-                </div>
-                <div className="booking-stepper-wrap">
-                  <button type="button" className="booking-stepper-btn" onClick={() => capNhatSoLuong(item.type, -1)}>
-                    <MinusOutlined />
-                  </button>
-                  <div className="booking-stepper-val">{passengerCounts[item.type]}</div>
-                  <button type="button" className="booking-stepper-btn" onClick={() => capNhatSoLuong(item.type, 1)}>
-                    +
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="booking-actions-row">
-            <Button size="large" className="booking-secondary-button" onClick={() => setCurrentStep('contact')}>
-              Quay lại
-            </Button>
-            <Button type="primary" size="large" className="booking-primary-button" onClick={xuLyQuaBuocSoLuong}>
-              Tiếp tục <RightOutlined />
-            </Button>
-          </div>
-        </Card>
+            <div className="booking-actions-row">
+              <Button size="large" className="booking-secondary-button" onClick={() => setCurrentStep('contact')}>
+                Quay lại
+              </Button>
+              <Button type="primary" size="large" className="booking-primary-button" onClick={xuLyQuaBuocSoLuong}>
+                Tiếp tục <RightOutlined />
+              </Button>
+            </div>
+          </Card>
+        </div>
       )
     }
 
     if (currentStep === 'passengers') {
       return (
-        <Card className="booking-card" variant="borderless">
-          <Title className="booking-section-title">Thông tin hành khách</Title>
-          <Paragraph className="booking-section-subtitle">Vui lòng nhập thông tin chính xác cho tất cả hành khách</Paragraph>
-
-          <div className="booking-passenger-list">
-            {passengers.map((item) => (
-              <div key={item.id} className="booking-passenger-card">
-                <Title level={3} className="booking-passenger-title">{item.nhan}</Title>
-                <Row gutter={20}>
-                  <Col xs={24} md={14}>
-                    <label className="booking-field-label">Họ và tên *</label>
-                    <Input
-                      size="large"
-                      placeholder="Nhập họ tên đầy đủ"
-                      value={item.hoTen}
-                      onChange={(event) => capNhatPassenger(item.id, 'hoTen', event.target.value)}
-                      className="booking-input"
-                    />
-                  </Col>
-                  <Col xs={24} md={10}>
-                    <label className="booking-field-label">Ngày sinh</label>
-                    <DatePicker
-                      size="large"
-                      format="DD/MM/YYYY"
-                      value={item.ngaySinh ?? null}
-                      onChange={(value) => capNhatPassenger(item.id, 'ngaySinh', value)}
-                      className="booking-date-input"
-                    />
-                  </Col>
-                  <Col xs={24} md={8}>
-                    <label className="booking-field-label">Giới tính *</label>
-                    <Select
-                      size="large"
-                      placeholder="Chọn"
-                      value={item.gioiTinh}
-                      options={genderOptions}
-                      onChange={(value) => capNhatPassenger(item.id, 'gioiTinh', value)}
-                      className="booking-select"
-                    />
-                  </Col>
-                  <Col xs={24} md={8}>
-                    <label className="booking-field-label">Số giấy tờ</label>
-                    <Input
-                      size="large"
-                      placeholder="CCCD / Passport"
-                      value={item.soGiayTo}
-                      onChange={(event) => capNhatPassenger(item.id, 'soGiayTo', event.target.value)}
-                      className="booking-input"
-                    />
-                  </Col>
-                  <Col xs={24} md={8}>
-                    <label className="booking-field-label">Quốc tịch</label>
-                    <Input
-                      size="large"
-                      placeholder="Việt Nam"
-                      value={item.quocTich}
-                      onChange={(event) => capNhatPassenger(item.id, 'quocTich', event.target.value)}
-                      className="booking-input"
-                    />
-                  </Col>
-                </Row>
+        <div className="booking-panel-fade-in">
+          <Card className="booking-card" variant="borderless">
+            <div className="booking-section-header">
+              <div className="booking-section-icon"><UserOutlined /></div>
+              <div>
+                <Title className="booking-section-title">Thông tin hành khách</Title>
+                <Paragraph className="booking-section-subtitle">Vui lòng điền đúng thông tin như trên giấy tờ tùy thân để đảm bảo quyền lợi bảo hiểm và các thủ tục chuyến đi.</Paragraph>
               </div>
-            ))}
-          </div>
+            </div>
 
-          <div className="booking-actions-row">
-            <Button size="large" className="booking-secondary-button" onClick={() => setCurrentStep('counts')}>
-              Quay lại
-            </Button>
-            <Button type="primary" size="large" className="booking-primary-button" onClick={xacNhanThongTinHanhKhach}>
-              Tiếp tục <RightOutlined />
-            </Button>
-          </div>
-        </Card>
+            <div className="booking-passenger-list">
+              {passengers.map((item) => (
+                <div key={item.id} className="booking-passenger-card">
+                  <div className="booking-passenger-header">
+                    <Title level={4} className="booking-passenger-title">{item.nhan}</Title>
+                  </div>
+                  
+                  <div className="booking-passenger-form-grid">
+                    <div className="booking-field-group booking-field-span-2">
+                      <label className="booking-field-label">Họ và tên <span className="auth-required">*</span></label>
+                      <Input
+                        size="large"
+                        placeholder="VD: NGUYỄN VĂN A"
+                        value={item.hoTen}
+                        onChange={(event) => capNhatPassenger(item.id, 'hoTen', event.target.value.toUpperCase())}
+                        className="booking-input"
+                      />
+                    </div>
+                    <div className="booking-field-group">
+                      <label className="booking-field-label">Ngày sinh</label>
+                      <DatePicker
+                        size="large"
+                        format="DD/MM/YYYY"
+                        placeholder="Chọn ngày sinh"
+                        value={item.ngaySinh ?? null}
+                        onChange={(value) => capNhatPassenger(item.id, 'ngaySinh', value)}
+                        className="booking-date-input"
+                      />
+                    </div>
+                    <div className="booking-field-group">
+                      <label className="booking-field-label">Giới tính <span className="auth-required">*</span></label>
+                      <Select
+                        size="large"
+                        placeholder="Chọn"
+                        value={item.gioiTinh}
+                        options={genderOptions}
+                        onChange={(value) => capNhatPassenger(item.id, 'gioiTinh', value)}
+                        className="booking-select"
+                      />
+                    </div>
+                    <div className="booking-field-group">
+                      <label className="booking-field-label">Số CMND/CCCD/Passport</label>
+                      <Input
+                        size="large"
+                        placeholder="Nhập số giấy tờ"
+                        value={item.soGiayTo}
+                        onChange={(event) => capNhatPassenger(item.id, 'soGiayTo', event.target.value)}
+                        className="booking-input"
+                      />
+                    </div>
+                    <div className="booking-field-group">
+                      <label className="booking-field-label">Quốc tịch</label>
+                      <Input
+                        size="large"
+                        placeholder="VD: Việt Nam"
+                        value={item.quocTich}
+                        onChange={(event) => capNhatPassenger(item.id, 'quocTich', event.target.value)}
+                        className="booking-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="booking-actions-row">
+              <Button size="large" className="booking-secondary-button" onClick={() => setCurrentStep('counts')}>
+                Quay lại
+              </Button>
+              <Button type="primary" size="large" className="booking-primary-button" onClick={xacNhanThongTinHanhKhach}>
+                Tiếp tục <RightOutlined />
+              </Button>
+            </div>
+          </Card>
+        </div>
       )
     }
 
     return (
-      <Card className="booking-card" variant="borderless">
-        <Title className="booking-section-title">Xác nhận thông tin</Title>
-
-        <div className="booking-voucher-row">
-          <div className="booking-voucher-input-wrap">
-            <label className="booking-field-label">Mã voucher (nếu có)</label>
-            <Input
-              size="large"
-              placeholder="Nhập mã voucher"
-              value={voucherCode}
-              onChange={(event) => setVoucherCode(event.target.value)}
-              className="booking-input"
-            />
+      <div className="booking-panel-fade-in">
+        <Card className="booking-card" variant="borderless">
+          <div className="booking-section-header">
+            <div className="booking-section-icon"><BankOutlined /></div>
+            <Title className="booking-section-title">Thanh toán & Xác nhận</Title>
           </div>
-          <Button size="large" className="booking-secondary-button booking-voucher-button">Áp dụng</Button>
-        </div>
 
-        <div className="booking-confirm-box">
-          <Title level={3} className="booking-confirm-title">Thông tin liên hệ</Title>
-          <div className="booking-confirm-grid">
-            <span>Họ tên:</span>
-            <strong>{contactInfo?.hoTenLienHe || 'Chưa nhập'}</strong>
-            <span>Điện thoại:</span>
-            <strong>{contactInfo?.soDienThoaiLienHe || 'Chưa nhập'}</strong>
-            <span>Email:</span>
-            <strong>{contactInfo?.emailLienHe || 'Chưa nhập'}</strong>
+          <div className="booking-voucher-row">
+            <div className="booking-voucher-input-wrap">
+              <label className="booking-field-label">Mã giảm giá / Voucher</label>
+              <Input
+                size="large"
+                placeholder="Nhập mã voucher (nếu có)"
+                value={voucherCode}
+                onChange={(event) => setVoucherCode(event.target.value)}
+                className="booking-input"
+                prefix={<GiftOutlined style={{ color: '#94a3b8' }} />}
+              />
+            </div>
+            <Button size="large" className="booking-secondary-button booking-voucher-button">Áp dụng ngay</Button>
           </div>
-        </div>
 
-        <div className="booking-confirm-box">
-          <Title level={3} className="booking-confirm-title">Số lượng khách</Title>
-          <div className="booking-confirm-grid">
-            <span>Người lớn:</span>
-            <strong>{passengerCounts.nguoi_lon} người</strong>
-            <span>Trẻ em:</span>
-            <strong>{passengerCounts.tre_em} người</strong>
-            <span>Em bé:</span>
-            <strong>{passengerCounts.em_be} người</strong>
+          <div className="booking-confirm-box">
+            <Title level={4} className="booking-confirm-title">Xác nhận thông tin người đặt</Title>
+            <div className="booking-confirm-grid">
+              <span>Họ tên:</span>
+              <strong>{contactInfo?.hoTenLienHe || 'Chưa nhập'}</strong>
+              <span>Điện thoại:</span>
+              <strong>{contactInfo?.soDienThoaiLienHe || 'Chưa nhập'}</strong>
+              <span>Email:</span>
+              <strong>{contactInfo?.emailLienHe || 'Chưa nhập'}</strong>
+              <span>Địa chỉ:</span>
+              <strong>{contactInfo?.diaChiLienHe || 'Chưa nhập'}</strong>
+            </div>
           </div>
-        </div>
 
-        <div className="booking-confirm-checkbox">
-          <Checkbox checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)}>
-            Tôi đồng ý với <a href="#">điều khoản và điều kiện</a> của công ty
-          </Checkbox>
-        </div>
+          <div className="booking-note-wrap">
+            <label className="booking-field-label">Ghi chú cho công ty du lịch</label>
+            <TextArea rows={3} placeholder="VD: Khách ăn chay, có người lớn tuổi..." value={ghiChu} onChange={(event) => setGhiChu(event.target.value)} className="booking-input" />
+          </div>
 
-        <div className="booking-note-wrap">
-          <label className="booking-field-label">Ghi chú thêm</label>
-          <TextArea rows={4} placeholder="Nhập ghi chú nếu có" value={ghiChu} onChange={(event) => setGhiChu(event.target.value)} />
-        </div>
+          <div className="booking-confirm-checkbox">
+            <Checkbox checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)}>
+              Tôi đã đọc và đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách hoàn hủy</a> của Travel Viet.
+            </Checkbox>
+          </div>
 
-        <div className="booking-actions-row">
-          <Button size="large" className="booking-secondary-button" onClick={() => setCurrentStep('passengers')}>
-            Quay lại
-          </Button>
-          <Button type="primary" size="large" loading={submitting} className="booking-primary-button" onClick={handleSubmit}>
-            Xác nhận đặt tour <RightOutlined />
-          </Button>
-        </div>
-      </Card>
+          <div className="booking-actions-row">
+            <Button size="large" className="booking-secondary-button" onClick={() => setCurrentStep('passengers')}>
+              Quay lại
+            </Button>
+            <Button type="primary" size="large" loading={submitting} className="booking-primary-button booking-primary-button-lg" onClick={handleSubmit}>
+              Hoàn tất đặt tour <CheckOutlined />
+            </Button>
+          </div>
+        </Card>
+      </div>
     )
   }
 
   return (
     <div className="booking-page">
       <div className="booking-page-container">
-        <div className="booking-page-title-wrap">
-          <Title className="booking-page-title">Đặt tour</Title>
+        <div className="booking-page-header">
+          <Title className="booking-page-main-title">Hoàn tất thủ tục đặt tour</Title>
         </div>
 
-        {successMessage ? <Alert type="success" showIcon message={successMessage} className="booking-alert" /> : null}
-        {errorMessage ? <Alert type="error" showIcon message={errorMessage} className="booking-alert" /> : null}
+        {successMessage ? <Alert type="success" showIcon title={successMessage} className="booking-alert" /> : null}
+        {errorMessage ? <Alert type="error" showIcon title={errorMessage} className="booking-alert" /> : null}
 
-        <Row gutter={[28, 28]} align="top">
+        <Row gutter={[32, 32]} align="top">
           <Col xs={24} xl={16}>
-            <Card className="booking-card booking-step-card" variant="borderless">
-              <div className="booking-steps">
+            <div className="booking-steps-wrapper">
+              <div className="booking-steps-container">
                 {steps.map((step, index) => {
                   const isDone = index < stepsIndex
                   const isCurrent = step.key === currentStep
 
                   return (
-                    <div key={step.key} className="booking-step-item-wrap">
-                      <div className="booking-step-item">
-                        <div className={`booking-step-icon ${isDone ? 'is-done' : isCurrent ? 'is-current' : ''}`}>
+                    <div key={step.key} className={`booking-step-item ${isDone ? 'is-done' : isCurrent ? 'is-current' : ''}`}>
+                      <div className="booking-step-icon-wrapper">
+                        <div className="booking-step-icon">
                           {isDone ? <CheckOutlined /> : step.icon}
                         </div>
-                        <div className={`booking-step-label ${isCurrent ? 'is-current' : ''}`}>{step.label}</div>
                       </div>
-                      {index < steps.length - 1 ? <div className={`booking-step-line ${isDone ? 'is-done' : ''}`} /> : null}
+                      <div className="booking-step-label">{step.label}</div>
+                      {index < steps.length - 1 && <div className="booking-step-connector"></div>}
                     </div>
                   )
                 })}
               </div>
-            </Card>
+            </div>
 
             {renderStepContent()}
           </Col>
 
           <Col xs={24} xl={8}>
-            <Card className="booking-card booking-summary-card" variant="borderless">
-              <Space direction="vertical" size={20} className="booking-card-stack">
-                <Title className="booking-summary-title">Thông tin đặt tour</Title>
-
-                <div className="booking-summary-group">
-                  <Text className="booking-summary-label">Tour</Text>
-                  <div className="booking-summary-value booking-summary-value-large">{tour.tenTour}</div>
+            <Card className="booking-summary-card" variant="borderless">
+              <div className="booking-summary-header">
+                <Title level={3} className="booking-summary-title">Tóm tắt chuyến đi</Title>
+              </div>
+              
+              <div className="booking-summary-body">
+                <div className="booking-summary-tour-name">
+                  <EnvironmentOutlined className="booking-summary-icon" />
+                  {tour.tenTour}
                 </div>
 
-                <div className="booking-summary-group">
-                  <Text className="booking-summary-label">Mã tour</Text>
-                  <div className="booking-summary-value">{tour.maTour}</div>
-                </div>
-
-                <div className="booking-summary-group">
-                  <Text className="booking-summary-label">Lịch khởi hành</Text>
-                  <div className="booking-summary-value">{formatDate(departure.ngayKhoiHanh)}</div>
-                </div>
-
-                <div className="booking-summary-divider" />
-
-                <div className="booking-summary-line">
-                  <span>Người lớn x {passengerCounts.nguoi_lon}</span>
-                  <strong>{formatMoney(pricingSummary.nguoiLon * passengerCounts.nguoi_lon)}</strong>
-                </div>
-                <div className="booking-summary-line">
-                  <span>Trẻ em x {passengerCounts.tre_em}</span>
-                  <strong>{formatMoney(pricingSummary.treEm * passengerCounts.tre_em)}</strong>
-                </div>
-                <div className="booking-summary-line">
-                  <span>Em bé x {passengerCounts.em_be}</span>
-                  <strong>{formatMoney(pricingSummary.emBe * passengerCounts.em_be)}</strong>
-                </div>
-                <div className="booking-summary-line">
-                  <span>Tạm tính</span>
-                  <strong>{formatMoney(tongTamTinh)}</strong>
+                <div className="booking-summary-details">
+                  <div className="booking-summary-detail-row">
+                    <span className="booking-summary-detail-label">Mã tour</span>
+                    <span className="booking-summary-detail-value"><Tag color="blue">{tour.maTour}</Tag></span>
+                  </div>
+                  <div className="booking-summary-detail-row">
+                    <span className="booking-summary-detail-label">Ngày khởi hành</span>
+                    <span className="booking-summary-detail-value font-semibold">{formatDate(departure.ngayKhoiHanh)}</span>
+                  </div>
                 </div>
 
                 <div className="booking-summary-divider" />
 
-                <div className="booking-total-row">
-                  <span>Tổng tiền</span>
-                  <strong>{formatMoney(tongTamTinh)}</strong>
+                <div className="booking-summary-pricing">
+                  {passengerCounts.nguoi_lon > 0 && (
+                    <div className="booking-summary-price-row">
+                      <span>Người lớn x {passengerCounts.nguoi_lon}</span>
+                      <span>{formatMoney(pricingSummary.nguoiLon * passengerCounts.nguoi_lon)}</span>
+                    </div>
+                  )}
+                  {passengerCounts.tre_em > 0 && (
+                    <div className="booking-summary-price-row">
+                      <span>Trẻ em x {passengerCounts.tre_em}</span>
+                      <span>{formatMoney(pricingSummary.treEm * passengerCounts.tre_em)}</span>
+                    </div>
+                  )}
+                  {passengerCounts.em_be > 0 && (
+                    <div className="booking-summary-price-row">
+                      <span>Em bé x {passengerCounts.em_be}</span>
+                      <span>{formatMoney(pricingSummary.emBe * passengerCounts.em_be)}</span>
+                    </div>
+                  )}
                 </div>
 
-                <Button className="booking-summary-backlink" onClick={() => navigate(getTourChiTietPath(tour.id))}>
-                  Quay lại chi tiết tour
-                </Button>
-              </Space>
+                <div className="booking-summary-divider" />
+
+                <div className="booking-total-section">
+                  <span className="booking-total-label">Tổng cộng</span>
+                  <span className="booking-total-value">{formatMoney(tongTamTinh)}</span>
+                </div>
+              </div>
             </Card>
           </Col>
         </Row>

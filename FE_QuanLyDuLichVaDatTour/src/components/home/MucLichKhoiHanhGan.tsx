@@ -124,7 +124,7 @@ export function MucLichKhoiHanhGan({ tours }: MucLichKhoiHanhGanProps) {
                           className="departure-action-btn"
                           href="#tour-noi-bat"
                           icon={<ArrowRightOutlined />}
-                          iconPosition="end"
+                          iconPlacement="end"
                           disabled={isSoldOut}
                         >
                           {isSoldOut ? 'Đã hết chỗ' : 'Xem tour liên quan'}

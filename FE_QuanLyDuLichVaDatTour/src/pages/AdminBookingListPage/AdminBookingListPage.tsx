@@ -184,7 +184,7 @@ export default function AdminBookingListPage() {
           </Button>
         </div>
 
-        {hasError ? <Alert type="error" showIcon message={errorMessage} /> : null}
+        {hasError ? <Alert type="error" showIcon title={errorMessage} /> : null}
 
         <Table
           rowKey="id"
@@ -210,7 +210,7 @@ export default function AdminBookingListPage() {
           <Alert
             type="error"
             showIcon
-            message={bookingDetailQuery.error instanceof Error ? bookingDetailQuery.error.message : 'Không thể tải chi tiết booking'}
+            title={bookingDetailQuery.error instanceof Error ? bookingDetailQuery.error.message : 'Không thể tải chi tiết booking'}
           />
         ) : null}
 

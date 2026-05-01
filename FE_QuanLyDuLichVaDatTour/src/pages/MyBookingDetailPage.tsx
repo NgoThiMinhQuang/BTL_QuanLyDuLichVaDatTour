@@ -52,12 +52,12 @@ export default function BookingDetail() {
         </div>
 
         {bookingQuery.isLoading ? <Skeleton active paragraph={{ rows: 10 }} /> : null}
-        {bookingQuery.isError ? <Alert type="error" showIcon message={bookingQuery.error instanceof Error ? bookingQuery.error.message : 'Không thể tải chi tiết booking'} /> : null}
+        {bookingQuery.isError ? <Alert type="error" showIcon title={bookingQuery.error instanceof Error ? bookingQuery.error.message : 'Không thể tải chi tiết booking'} /> : null}
 
         {bookingQuery.data ? (
-          <Space direction="vertical" size={18} className="customer-page-stack">
+          <Space orientation="vertical" size={18} className="customer-page-stack">
             <Card className="customer-booking-card" variant="borderless">
-              <Space direction="vertical" size={14} className="customer-booking-card-stack">
+              <Space orientation="vertical" size={14} className="customer-booking-card-stack">
                 <div className="customer-booking-card-header">
                   <div>
                     <Title level={3} className="customer-booking-card-title">{bookingQuery.data.tenTour}</Title>
@@ -98,7 +98,7 @@ export default function BookingDetail() {
                 locale={{ emptyText: 'Chưa có hành khách' }}
                 renderItem={(item) => (
                   <List.Item>
-                    <Space direction="vertical" size={2}>
+                    <Space orientation="vertical" size={2}>
                       <Text strong>{item.hoTen}</Text>
                       <Text>Loại khách: {formatTrangThai(item.loaiKhach)}</Text>
                       <Text>Giới tính: {item.gioiTinh || 'Chưa cập nhật'} | Quốc tịch: {item.quocTich || 'Chưa cập nhật'}</Text>
@@ -110,14 +110,14 @@ export default function BookingDetail() {
 
             <Card className="customer-booking-card" title="Lịch sử thanh toán" variant="borderless">
               {paymentQuery.isLoading ? <Skeleton active paragraph={{ rows: 4 }} /> : null}
-              {paymentQuery.isError ? <Alert type="warning" showIcon message={paymentQuery.error instanceof Error ? paymentQuery.error.message : 'Không thể tải lịch sử thanh toán'} /> : null}
+              {paymentQuery.isError ? <Alert type="warning" showIcon title={paymentQuery.error instanceof Error ? paymentQuery.error.message : 'Không thể tải lịch sử thanh toán'} /> : null}
               {!paymentQuery.isLoading && !paymentQuery.isError ? (
                 <List
                   dataSource={paymentQuery.data ?? []}
                   locale={{ emptyText: 'Chưa có giao dịch thanh toán' }}
                   renderItem={(payment) => (
                     <List.Item>
-                      <Space direction="vertical" size={2}>
+                      <Space orientation="vertical" size={2}>
                         <Text strong>{formatMoney(payment.soTien)}</Text>
                         <Text>Phương thức: {formatTrangThai(payment.phuongThucThanhToan)}</Text>
                         <Text>Trạng thái: {formatTrangThai(payment.trangThai)}</Text>

@@ -55,7 +55,7 @@ export function BoLocLichKhoiHanh({
               variant="borderless"
               value={thangKhoiHanh}
               className="filter-select"
-              popupClassName="filter-select-dropdown"
+              classNames={{ popup: { root: 'filter-select-dropdown' } }}
               options={SCHEDULE_MONTH_OPTIONS}
               onChange={onThangKhoiHanhChange}
               suffixIcon={null}
@@ -76,7 +76,7 @@ export function BoLocLichKhoiHanh({
               variant="borderless"
               value={diemDen}
               className="filter-select"
-              popupClassName="filter-select-dropdown"
+              classNames={{ popup: { root: 'filter-select-dropdown' } }}
               options={[{ value: 'all', label: 'Tất cả điểm đến' }, ...destinationOptions.map((item) => ({ value: item, label: item }))]}
               onChange={onDiemDenChange}
               suffixIcon={null}

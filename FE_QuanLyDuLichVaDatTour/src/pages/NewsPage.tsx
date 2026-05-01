@@ -58,7 +58,7 @@ export default function TinTuc() {
   if (isLoading) {
     return (
       <div className="news-page-loading">
-        <Spin size="large" tip="Đang tải tin tức du lịch..." />
+        <Spin size="large" description="Đang tải tin tức du lịch..." />
       </div>
     )
   }

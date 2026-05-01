@@ -1,7 +1,7 @@
 import { API_BASE_URL } from '../../constants/api'
 import { layBangGiaLichKhoiHanh, layLichKhoiHanhTour, layTourChiTiet } from '../tour/layTourChiTiet'
 import type { DeparturePricingItem, TourDetailApiItem, DepartureItem } from '../../types/tour'
-import { useAuthStore } from '../../store/authStore'
+import { SESSION_EXPIRED_MESSAGE, useAuthStore } from '../../store/authStore'
 
 export interface BookingPassengerPayload {
   hoTen: string
@@ -105,10 +105,14 @@ function getAuthHeaders(contentType = false) {
 }
 
 async function handleApiResponse<T>(response: Response, fallbackMessage: string): Promise<T> {
+  if (response.status === 401) {
+    useAuthStore.getState().clearAuthSession()
+  }
+
   const data = await response.json().catch(() => null)
 
   if (!response.ok) {
-    throw new Error(data?.message || fallbackMessage)
+    throw new Error(response.status === 401 ? SESSION_EXPIRED_MESSAGE : data?.message || fallbackMessage)
   }
 
   return data as T

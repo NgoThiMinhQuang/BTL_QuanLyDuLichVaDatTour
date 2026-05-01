@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../constants/api'
-import { useAuthStore } from '../../store/authStore'
+import { SESSION_EXPIRED_MESSAGE, useAuthStore } from '../../store/authStore'
 import type {
   AdminBookingItem,
   AdminCreateDiaDiemPayload,
@@ -47,10 +47,14 @@ function getAuthHeaders(contentType = false) {
 }
 
 async function handleApiResponse<T>(response: Response, fallbackMessage: string): Promise<T> {
+  if (response.status === 401) {
+    useAuthStore.getState().clearAuthSession()
+  }
+
   const data = response.status === 204 ? null : await response.json().catch(() => null)
 
   if (!response.ok) {
-    throw new Error(data?.message || fallbackMessage)
+    throw new Error(response.status === 401 ? SESSION_EXPIRED_MESSAGE : data?.message || fallbackMessage)
   }
 
   return data as T

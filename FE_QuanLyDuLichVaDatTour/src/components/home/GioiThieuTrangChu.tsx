@@ -56,7 +56,7 @@ export function GioiThieuTrangChu() {
               ))}
             </div>
 
-            <Button type="primary" size="large" className="about-us-action-btn" href="#tu-van-tour" icon={<ArrowRightOutlined />} iconPosition="end">
+            <Button type="primary" size="large" className="about-us-action-btn" href="#tu-van-tour" icon={<ArrowRightOutlined />} iconPlacement="end">
               Khám phá thêm
             </Button>
           </div>

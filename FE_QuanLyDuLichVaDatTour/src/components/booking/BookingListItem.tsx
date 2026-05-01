@@ -21,7 +21,7 @@ function formatTrangThai(value: string) {
 export function BookingListItemCard({ booking }: BookingListItemProps) {
   return (
     <Card className="customer-booking-card" variant="borderless">
-      <Space direction="vertical" size={16} className="customer-booking-card-stack">
+      <Space orientation="vertical" size={16} className="customer-booking-card-stack">
         <div className="customer-booking-card-header">
           <div>
             <Title level={3} className="customer-booking-card-title">

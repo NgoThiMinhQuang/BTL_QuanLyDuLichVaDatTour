@@ -83,7 +83,7 @@ export default function LichKhoiHanh() {
         />
 
         <div className="schedule-results">
-          {isLoading ? <Space direction="vertical" size={24} className="schedule-results-stack">{scheduleSkeletons}</Space> : null}
+          {isLoading ? <Space orientation="vertical" size={24} className="schedule-results-stack">{scheduleSkeletons}</Space> : null}
 
           {!isLoading && error ? (
             <Alert
@@ -99,7 +99,7 @@ export default function LichKhoiHanh() {
 
           {shouldShowResults ? (
             <>
-              <Space direction="vertical" size={24} className="schedule-results-stack">
+              <Space orientation="vertical" size={24} className="schedule-results-stack">
                 {scheduleItems}
               </Space>
 

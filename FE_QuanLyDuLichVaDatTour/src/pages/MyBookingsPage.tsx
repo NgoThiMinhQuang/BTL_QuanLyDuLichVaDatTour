@@ -21,7 +21,7 @@ export default function MyBookings() {
         </div>
 
         {isLoading ? (
-          <Space direction="vertical" size={16} className="customer-page-stack">
+          <Space orientation="vertical" size={16} className="customer-page-stack">
             {Array.from({ length: 3 }).map((_, index) => (
               <Skeleton key={index} active paragraph={{ rows: 5 }} className="customer-page-skeleton" />
             ))}
@@ -32,7 +32,7 @@ export default function MyBookings() {
           <Alert
             type="error"
             showIcon
-            message={error instanceof Error ? error.message : 'Không thể tải danh sách booking'}
+            title={error instanceof Error ? error.message : 'Không thể tải danh sách booking'}
             action={<button type="button" className="customer-page-retry" onClick={() => refetch()}>Thử lại</button>}
           />
         ) : null}
@@ -40,7 +40,7 @@ export default function MyBookings() {
         {!isLoading && !isError && data.length === 0 ? <Empty description="Bạn chưa có booking nào" /> : null}
 
         {!isLoading && !isError ? (
-          <Space direction="vertical" size={18} className="customer-page-stack">
+          <Space orientation="vertical" size={18} className="customer-page-stack">
             {data.map((booking) => (
               <BookingListItemCard key={booking.id} booking={booking} />
             ))}

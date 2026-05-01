@@ -54,7 +54,7 @@ export function BoLocTour(props: BoLocTourProps) {
         </button>
       </div>
 
-      <Space direction="vertical" size={24} className="tour-filter-sections">
+      <Space orientation="vertical" size={24} className="tour-filter-sections">
         <div className="tour-filter-group">
           <label className="tour-filter-label">Tìm kiếm</label>
           <Input
@@ -84,7 +84,7 @@ export function BoLocTour(props: BoLocTourProps) {
             value={selectedLoaiTours}
             onChange={(values) => onLoaiToursChange(values as string[])}
           >
-            <Space direction="vertical" size={12}>
+            <Space orientation="vertical" size={12}>
               {categories.map((item) => (
                 <Checkbox key={item.id} value={item.ten}>
                   {item.ten}
@@ -134,7 +134,7 @@ export function BoLocTour(props: BoLocTourProps) {
             value={selectedPhuongTiens}
             onChange={(values) => onPhuongTiensChange(values as string[])}
           >
-            <Space direction="vertical" size={12}>
+            <Space orientation="vertical" size={12}>
               {phuongTienOptions.map((item) => (
                 <Checkbox key={item} value={item}>
                   {item}

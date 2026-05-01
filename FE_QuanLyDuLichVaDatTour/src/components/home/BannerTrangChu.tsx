@@ -54,7 +54,7 @@ export function BannerTrangChu() {
                 variant="borderless"
                 placeholder="Chọn điểm đến"
                 className="home-search-select"
-                popupClassName="home-search-dropdown"
+                classNames={{ popup: { root: 'home-search-dropdown' } }}
                 options={[
                   { value: 'ha-noi', label: 'Hà Nội' },
                   { value: 'da-nang', label: 'Đà Nẵng' },
@@ -76,7 +76,7 @@ export function BannerTrangChu() {
                 variant="borderless"
                 placeholder="Chọn loại tour"
                 className="home-search-select"
-                popupClassName="home-search-dropdown"
+                classNames={{ popup: { root: 'home-search-dropdown' } }}
                 options={[
                   { value: 'trong-nuoc', label: 'Tour trong nước' },
                   { value: 'bien-dao', label: 'Tour biển đảo' },

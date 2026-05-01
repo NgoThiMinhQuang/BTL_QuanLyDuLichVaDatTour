@@ -199,7 +199,7 @@ export default function AdminLichTrinhListPage() {
           </Button>
         </div>
 
-        {hasError ? <Alert type="error" showIcon message={errorMessage} /> : null}
+        {hasError ? <Alert type="error" showIcon title={errorMessage} /> : null}
 
         <Table
           rowKey="id"

@@ -44,14 +44,14 @@ export function ReviewForm({ bookingId, tenTour, onSuccess }: ReviewFormProps) {
 
   return (
     <div className="review-form-wrap">
-      <Space direction="vertical" size={14} className="review-form-stack">
+      <Space orientation="vertical" size={14} className="review-form-stack">
         <div>
           <Title level={3} className="review-form-title">Đánh giá tour</Title>
           <Paragraph className="review-form-subtitle">Chia sẻ cảm nhận của bạn về tour {tenTour}.</Paragraph>
         </div>
 
-        {errorMessage ? <Alert type="error" showIcon message={errorMessage} /> : null}
-        {successMessage ? <Alert type="success" showIcon message={successMessage} /> : null}
+        {errorMessage ? <Alert type="error" showIcon title={errorMessage} /> : null}
+        {successMessage ? <Alert type="success" showIcon title={successMessage} /> : null}
 
         <Form layout="vertical" onFinish={handleSubmit}>
           <Form.Item label="Số sao" name="soSao" rules={[{ required: true, message: 'Vui lòng chọn số sao' }]}>

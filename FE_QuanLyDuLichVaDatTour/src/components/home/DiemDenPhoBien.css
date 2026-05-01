@@ -1,5 +1,5 @@
 .popular-destinations-section {
-  width: min(1180px, calc(100% - 380px));
+  width: min(1200px, calc(100% - 32px));
   margin: 0 auto;
   padding: 40px 0;
 }
