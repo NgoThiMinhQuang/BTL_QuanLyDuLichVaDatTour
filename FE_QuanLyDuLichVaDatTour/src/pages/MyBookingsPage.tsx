@@ -47,7 +47,7 @@ export default function MyBookings() {
         ) : null}
 
         {!isLoading && !isError ? (
-          <Space orientation="vertical" size={24} className="customer-page-stack">
+          <Space orientation="vertical" size={16} className="customer-page-stack">
             {data.map((booking) => (
               <BookingListItemCard key={booking.id} booking={booking} />
             ))}
