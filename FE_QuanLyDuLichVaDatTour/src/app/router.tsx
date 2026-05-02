@@ -34,6 +34,7 @@ import ResetPasswordPage from '../pages/ResetPasswordPage'
 import SchedulePage from '../pages/SchedulePage'
 import TourDetailPage from '../pages/TourDetailPage'
 import TourPage from '../pages/TourPage'
+import ProfilePage from '../pages/ProfilePage'
 import AdminLayout from '../components/AdminLayout/AdminLayout'
 
 const { Content } = Layout
@@ -125,6 +126,7 @@ export default function AppRouter() {
           <Route path={PATHS.myBookings} element={<RequireAuth><MyBookingsPage /></RequireAuth>} />
           <Route path={PATHS.myBookingDetail} element={<RequireAuth><MyBookingDetailPage /></RequireAuth>} />
           <Route path={PATHS.myReviews} element={<RequireAuth><MyReviewsPage /></RequireAuth>} />
+          <Route path={PATHS.profile} element={<RequireAuth><ProfilePage /></RequireAuth>} />
         </Routes>
       </Content>
       {!isAuthPage ? <Footer /> : null}

@@ -27,6 +27,7 @@ export const PATHS = {
   adminTinTucs: '/admin/tin-tuc',
   adminLichKhoiHanhs: '/admin/lich-khoi-hanh',
   adminLichTrinhs: '/admin/lich-trinh',
+  profile: '/profile',
 } as const
 
 export function getTinTucChiTietPath(id: number | string) {

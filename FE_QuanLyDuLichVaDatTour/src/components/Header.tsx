@@ -34,6 +34,11 @@ export function Header() {
 
   const userMenuItems = [
     {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: <Link to={PATHS.profile}>Hồ sơ cá nhân</Link>,
+    },
+    {
       key: 'my-bookings',
       icon: <BookOutlined />,
       label: <Link to={PATHS.myBookings}>Đơn đã đặt</Link>,
