@@ -1,5 +1,5 @@
 import './TourDetailPage.css'
-import { Breadcrumb, Button, Card, Empty, Image, List, Rate, Select, Skeleton, Space, Tabs, Tag, Typography } from 'antd'
+import { Breadcrumb, Button, Card, Empty, Image, List, Rate, Select, Skeleton, Space, Tabs, Tag, Typography, Divider } from 'antd'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router'
 import { formatDate } from '../utils/formatDate'
@@ -123,7 +123,16 @@ export default function TourDetail() {
             </Card>
 
             <Card className="tour-detail-summary-card" variant="borderless">
-              <Text className="tour-detail-code">{detail.maTour}</Text>
+              <div className="tour-detail-header-top">
+                <Text className="tour-detail-code">{detail.maTour}</Text>
+                {reviewSummaryQuery.data && (
+                  <div className="tour-detail-rating-inline">
+                    <Rate disabled allowHalf value={reviewSummaryQuery.data.averageRating || 0} className="inline-stars" />
+                    <Text strong className="inline-avg">{(reviewSummaryQuery.data.averageRating || 0).toFixed(1)}</Text>
+                    <Text className="inline-count">({reviewSummaryQuery.data.totalReviews || 0} đánh giá)</Text>
+                  </div>
+                )}
+              </div>
               <Title className="tour-detail-title">{detail.tenTour}</Title>
 
               <div className="tour-detail-facts-grid">
@@ -295,6 +304,58 @@ export default function TourDetail() {
                           </Paragraph>
                         ) : (
                           <Empty description="Chưa có thông tin" />
+                        )}
+                      </div>
+                    ),
+                  },
+                  {
+                    key: 'danh-gia',
+                    label: 'Đánh giá',
+                    children: (
+                      <div className="tour-detail-reviews-container">
+                        {reviewSummaryQuery.data ? (
+                          <div className="tour-detail-reviews-summary">
+                            <div className="review-summary-stats">
+                              <Title level={1} className="review-summary-avg">
+                                {(reviewSummaryQuery.data.averageRating || 0).toFixed(1)}
+                              </Title>
+                              <div className="review-summary-info">
+                                <Rate disabled allowHalf value={reviewSummaryQuery.data.averageRating || 0} className="review-summary-stars" />
+                                <Text className="review-summary-count">{reviewSummaryQuery.data.totalReviews || 0} đánh giá</Text>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
+
+                        <Divider className="review-section-divider" />
+
+                        {reviewsQuery.isLoading ? (
+                          <Skeleton active paragraph={{ rows: 6 }} />
+                        ) : (reviewsQuery.data ?? []).length === 0 ? (
+                          <Empty description="Chưa có đánh giá nào cho tour này" />
+                        ) : (
+                          <div className="tour-detail-review-list">
+                            {(reviewsQuery.data ?? []).map((review) => (
+                              <div key={review.id} className="tour-detail-review-item">
+                                <div className="review-item-header">
+                                  <Title level={4} className="review-item-author">{review.hoTenKhachHang}</Title>
+                                  <div className="review-item-meta">
+                                    <Rate disabled value={review.soSao} className="review-item-stars" />
+                                    <Text className="review-item-date">{formatDate(review.ngayDanhGia)}</Text>
+                                  </div>
+                                </div>
+                                <Paragraph className="review-item-content">
+                                  {review.noiDung}
+                                </Paragraph>
+                                {review.phanHoiAdmin && (
+                                  <div className="review-item-reply">
+                                    <Text strong>Phản hồi từ Travel Viet:</Text>
+                                    <Paragraph className="reply-text">{review.phanHoiAdmin}</Paragraph>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
                     ),

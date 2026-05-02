@@ -1,6 +1,6 @@
 import './BookingPage.css'
-import { Alert, Button, Card, Checkbox, Col, DatePicker, Form, Input, Row, Select, Skeleton, Space, Typography, Tag } from 'antd'
-import { CheckOutlined, GiftOutlined, MinusOutlined, PlusOutlined, RightOutlined, TeamOutlined, UserOutlined, EnvironmentOutlined, IdcardOutlined, BankOutlined } from '@ant-design/icons'
+import { Alert, Button, Card, Checkbox, Col, DatePicker, Form, Input, Row, Select, Skeleton, Space, Typography, Tag, Divider } from 'antd'
+import { CheckOutlined, GiftOutlined, MinusOutlined, PlusOutlined, RightOutlined, TeamOutlined, UserOutlined, EnvironmentOutlined, IdcardOutlined, BankOutlined, CalendarOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 import { useMemo, useState } from 'react'
@@ -643,54 +643,88 @@ export default function Booking() {
           <Col xs={24} xl={8}>
             <Card className="booking-summary-card" variant="borderless">
               <div className="booking-summary-header">
-                <Title level={3} className="booking-summary-title">Tóm tắt chuyến đi</Title>
+                <Title level={4} className="booking-summary-title">Thông tin tour</Title>
               </div>
               
               <div className="booking-summary-body">
-                <div className="booking-summary-tour-name">
-                  <EnvironmentOutlined className="booking-summary-icon" />
-                  {tour.tenTour}
+                <div className="booking-summary-image-wrap">
+                  <img 
+                    src={tour.anhTours?.find(img => img.isAvatar)?.linkAnh || tour.anhTours?.[0]?.linkAnh || 'https://placehold.co/600x400?text=Travel+Viet'} 
+                    alt={tour.tenTour} 
+                    className="booking-summary-image" 
+                  />
                 </div>
 
-                <div className="booking-summary-details">
-                  <div className="booking-summary-detail-row">
-                    <span className="booking-summary-detail-label">Mã tour</span>
-                    <span className="booking-summary-detail-value"><Tag color="blue">{tour.maTour}</Tag></span>
+                <div className="booking-summary-tour-info">
+                  <Title level={4} className="booking-summary-tour-name">
+                    {tour.tenTour}
+                  </Title>
+                  <Tag color="blue" className="booking-summary-tour-code">{tour.maTour}</Tag>
+                </div>
+
+                <Divider className="booking-summary-divider-subtle" />
+
+                <div className="booking-summary-meta">
+                  <div className="summary-meta-item">
+                    <CalendarOutlined className="summary-meta-icon" />
+                    <div className="summary-meta-content">
+                      <Text type="secondary" className="summary-meta-label">Khởi hành</Text>
+                      <Text className="summary-meta-value">{formatDate(departure.ngayKhoiHanh)}</Text>
+                    </div>
                   </div>
-                  <div className="booking-summary-detail-row">
-                    <span className="booking-summary-detail-label">Ngày khởi hành</span>
-                    <span className="booking-summary-detail-value font-semibold">{formatDate(departure.ngayKhoiHanh)}</span>
+                  <div className="summary-meta-item">
+                    <CalendarOutlined className="summary-meta-icon" />
+                    <div className="summary-meta-content">
+                      <Text type="secondary" className="summary-meta-label">Kết thúc</Text>
+                      <Text className="summary-meta-value">{formatDate(departure.ngayKetThuc)}</Text>
+                    </div>
+                  </div>
+                  <div className="summary-meta-item">
+                    <EnvironmentOutlined className="summary-meta-icon" />
+                    <div className="summary-meta-content">
+                      <Text type="secondary" className="summary-meta-label">Điểm tập trung</Text>
+                      <Text className="summary-meta-value">{departure.noiTapTrung || tour.tenDiaDiemKhoiHanh}</Text>
+                    </div>
                   </div>
                 </div>
 
-                <div className="booking-summary-divider" />
+                <Divider className="booking-summary-divider-subtle" />
 
-                <div className="booking-summary-pricing">
-                  {passengerCounts.nguoi_lon > 0 && (
-                    <div className="booking-summary-price-row">
-                      <span>Người lớn x {passengerCounts.nguoi_lon}</span>
-                      <span>{formatMoney(pricingSummary.nguoiLon * passengerCounts.nguoi_lon)}</span>
+                <div className="booking-summary-pricing-section">
+                  <Title level={5} className="pricing-title">Chi tiết giá</Title>
+                  
+                  <div className="pricing-rows">
+                    {passengerCounts.nguoi_lon > 0 && (
+                      <div className="pricing-row">
+                        <Text type="secondary">{passengerCounts.nguoi_lon} người lớn</Text>
+                        <Text strong>{formatMoney(pricingSummary.nguoiLon * passengerCounts.nguoi_lon)}</Text>
+                      </div>
+                    )}
+                    {passengerCounts.tre_em > 0 && (
+                      <div className="pricing-row">
+                        <Text type="secondary">{passengerCounts.tre_em} trẻ em</Text>
+                        <Text strong>{formatMoney(pricingSummary.treEm * passengerCounts.tre_em)}</Text>
+                      </div>
+                    )}
+                    {passengerCounts.em_be > 0 && (
+                      <div className="pricing-row">
+                        <Text type="secondary">{passengerCounts.em_be} em bé</Text>
+                        <Text strong>{formatMoney(pricingSummary.emBe * passengerCounts.em_be)}</Text>
+                      </div>
+                    )}
+                    
+                    <Divider className="pricing-inner-divider" />
+                    
+                    <div className="pricing-row subtotal-row">
+                      <Text>Tạm tính</Text>
+                      <Text strong>{formatMoney(tongTamTinh)}</Text>
                     </div>
-                  )}
-                  {passengerCounts.tre_em > 0 && (
-                    <div className="booking-summary-price-row">
-                      <span>Trẻ em x {passengerCounts.tre_em}</span>
-                      <span>{formatMoney(pricingSummary.treEm * passengerCounts.tre_em)}</span>
-                    </div>
-                  )}
-                  {passengerCounts.em_be > 0 && (
-                    <div className="booking-summary-price-row">
-                      <span>Em bé x {passengerCounts.em_be}</span>
-                      <span>{formatMoney(pricingSummary.emBe * passengerCounts.em_be)}</span>
-                    </div>
-                  )}
-                </div>
+                  </div>
 
-                <div className="booking-summary-divider" />
-
-                <div className="booking-total-section">
-                  <span className="booking-total-label">Tổng cộng</span>
-                  <span className="booking-total-value">{formatMoney(tongTamTinh)}</span>
+                  <div className="pricing-total-box">
+                    <Title level={3} className="total-label">Tổng cộng</Title>
+                    <Title level={2} className="total-amount">{formatMoney(tongTamTinh)}</Title>
+                  </div>
                 </div>
               </div>
             </Card>
