@@ -37,10 +37,17 @@ export default function MyBookings() {
           />
         ) : null}
 
-        {!isLoading && !isError && data.length === 0 ? <Empty description="Bạn chưa có booking nào" /> : null}
+        {!isLoading && !isError && data.length === 0 ? (
+          <div className="empty-state-container">
+            <Empty 
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={<Text type="secondary" style={{ fontSize: '16px' }}>Bạn chưa có booking nào. Hãy khám phá các tour hấp dẫn của chúng tôi!</Text>} 
+            />
+          </div>
+        ) : null}
 
         {!isLoading && !isError ? (
-          <Space orientation="vertical" size={18} className="customer-page-stack">
+          <Space orientation="vertical" size={24} className="customer-page-stack">
             {data.map((booking) => (
               <BookingListItemCard key={booking.id} booking={booking} />
             ))}
