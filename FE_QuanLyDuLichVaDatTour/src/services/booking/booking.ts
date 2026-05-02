@@ -105,10 +105,6 @@ function getAuthHeaders(contentType = false) {
 }
 
 async function handleApiResponse<T>(response: Response, fallbackMessage: string): Promise<T> {
-  if (response.status === 401) {
-    useAuthStore.getState().clearAuthSession()
-  }
-
   const data = await response.json().catch(() => null)
 
   if (!response.ok) {
