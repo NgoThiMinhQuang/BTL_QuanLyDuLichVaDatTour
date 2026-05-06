@@ -37,3 +37,9 @@ export function getTinTucChiTietPath(id: number | string) {
 export function getTourChiTietPath(id: number | string) {
   return `/tour/${id}`
 }
+
+export function getBookingDetailPath(id: number | string) {
+  return `/my-bookings/${id}`
+}
+
+export const BOOKING_DETAIL_PATH = getBookingDetailPath

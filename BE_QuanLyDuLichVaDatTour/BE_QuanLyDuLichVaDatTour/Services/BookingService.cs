@@ -91,11 +91,17 @@ public class BookingService : IBookingService
             GhiChu = ghiChu,
             CreatedAt = now,
             UpdatedAt = now,
-            LichKhoiHanh = lichKhoiHanh,
-            KhachHang = nguoiDung,
-            Voucher = voucher,
-            HanhKhachs = hanhKhachs
+            HanhKhachs = new List<HanhKhach>()
         };
+
+        await _bookingRepository.AddAsync(booking);
+        await _bookingRepository.SaveChangesAsync();
+
+        foreach (var hanhKhach in hanhKhachs)
+        {
+            hanhKhach.BookingId = booking.Id;
+            booking.HanhKhachs.Add(hanhKhach);
+        }
 
         if (voucher is not null)
         {
@@ -103,7 +109,7 @@ public class BookingService : IBookingService
             voucher.UpdatedAt = now;
         }
 
-        await _bookingRepository.AddAsync(booking);
+        await _bookingRepository.SaveChangesAsync();
         await SyncLichKhoiHanhAvailabilityAsync(lichKhoiHanh, GetTongHanhKhach(booking));
         await _bookingRepository.SaveChangesAsync();
 
@@ -283,7 +289,7 @@ public class BookingService : IBookingService
             HoTen = NormalizeRequiredValue(x.HoTen, "Họ tên hành khách không được để trống."),
             LoaiKhach = x.LoaiKhach,
             NgaySinh = x.NgaySinh,
-            GioiTinh = NormalizeOptionalValue(x.GioiTinh),
+            GioiTinh = NormalizeGioiTinh(x.GioiTinh),
             SoGiayTo = NormalizeOptionalValue(x.SoGiayTo),
             QuocTich = NormalizeOptionalValue(x.QuocTich),
             GhiChu = NormalizeOptionalValue(x.GhiChu),
@@ -427,6 +433,23 @@ public class BookingService : IBookingService
         }
 
         return value.Trim();
+    }
+
+    private static string? NormalizeGioiTinh(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        var normalized = value.Trim().ToLowerInvariant();
+        return normalized switch
+        {
+            "nam" or "male" or "m" => "nam",
+            "nữ" or "nu" or "female" or "f" => "nu",
+            "khác" or "khac" or "other" or "o" => "khac",
+            _ => normalized
+        };
     }
 
     private static int GetTongHanhKhach(Booking booking)

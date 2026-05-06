@@ -446,44 +446,7 @@ CREATE INDEX IdxThanhToan_MaGiaoDichBenThuBa
 ON dbo.ThanhToan(MaGiaoDichBenThuBa);
 GO
 
-/* =========================================================
-   14. HOA DON
-   ========================================================= */
-CREATE TABLE dbo.HoaDon (
-    HoaDonId BIGINT IDENTITY(1,1) PRIMARY KEY,
-    BookingId BIGINT NOT NULL UNIQUE,
-    SoHoaDon NVARCHAR(50) NOT NULL UNIQUE,
-    NgayLap DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    TongTienTruocThue DECIMAL(15,2) NOT NULL DEFAULT 0,
-    ThueVat DECIMAL(15,2) NOT NULL DEFAULT 0,
-    TongThanhToan DECIMAL(15,2) NOT NULL DEFAULT 0,
-    EmailNhanHoaDon NVARCHAR(255) NULL,
-    FilePdf NVARCHAR(500) NULL,
-    GhiChu NVARCHAR(500) NULL,
-    CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    CONSTRAINT CK_HoaDon_Tien CHECK (
-        TongTienTruocThue >= 0 AND ThueVat >= 0 AND TongThanhToan >= 0
-    ),
-    CONSTRAINT FK_HoaDon_Booking FOREIGN KEY (BookingId) REFERENCES dbo.Booking(BookingId)
-);
-GO
 
-/* =========================================================
-   15. PHIEU XAC NHAN TOUR
-   ========================================================= */
-CREATE TABLE dbo.PhieuXacNhanTour (
-    PhieuXacNhanTourId BIGINT IDENTITY(1,1) PRIMARY KEY,
-    BookingId BIGINT NOT NULL UNIQUE,
-    MaPhieu NVARCHAR(50) NOT NULL UNIQUE,
-    NgayPhatHanh DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    FilePdf NVARCHAR(500) NULL,
-    GhiChu NVARCHAR(300) NULL,
-    CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    CONSTRAINT FK_PhieuXacNhanTour_Booking FOREIGN KEY (BookingId) REFERENCES dbo.Booking(BookingId)
-);
-GO
 
 /* =========================================================
    16. DANH GIA TOUR
@@ -545,47 +508,4 @@ GO
 
 CREATE INDEX IdxTinTuc_TrangThai_Ngay
 ON dbo.TinTuc(TrangThai, NgayDang);
-GO
-
-/* =========================================================
-   18. LICH SU TRANG THAI BOOKING
-   ========================================================= */
-CREATE TABLE dbo.LichSuTrangThaiBooking (
-    LichSuTrangThaiBookingId BIGINT IDENTITY(1,1) PRIMARY KEY,
-    BookingId BIGINT NOT NULL,
-    TrangThaiBookingCu NVARCHAR(50) NULL,
-    TrangThaiBookingMoi NVARCHAR(50) NOT NULL,
-    TrangThaiThanhToanCu NVARCHAR(50) NULL,
-    TrangThaiThanhToanMoi NVARCHAR(50) NULL,
-    ThoiGian DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    GhiChu NVARCHAR(300) NULL,
-    CONSTRAINT FK_LichSuTrangThaiBooking_Booking FOREIGN KEY (BookingId) REFERENCES dbo.Booking(BookingId)
-);
-GO
-
-CREATE INDEX IdxLichSuTrangThaiBooking
-ON dbo.LichSuTrangThaiBooking(BookingId, ThoiGian);
-GO
-
-/* =========================================================
-   19. THONG BAO
-   ========================================================= */
-CREATE TABLE dbo.ThongBao (
-    ThongBaoId BIGINT IDENTITY(1,1) PRIMARY KEY,
-    NguoiNhanId BIGINT NOT NULL,
-    TieuDe NVARCHAR(200) NOT NULL,
-    NoiDung NVARCHAR(500) NOT NULL,
-    LoaiThongBao NVARCHAR(20) NOT NULL DEFAULT N'system'
-        CONSTRAINT CK_ThongBao_LoaiThongBao CHECK (
-            LoaiThongBao IN (N'booking', N'payment', N'news', N'system')
-        ),
-    LinkDieuHuong NVARCHAR(500) NULL,
-    DaDoc BIT NOT NULL DEFAULT 0,
-    CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    CONSTRAINT FK_ThongBao_NguoiNhan FOREIGN KEY (NguoiNhanId) REFERENCES dbo.NguoiDung(NguoiDungId)
-);
-GO
-
-CREATE INDEX IdxThongBao_NguoiNhan
-ON dbo.ThongBao(NguoiNhanId, DaDoc, CreatedAt);
 GO

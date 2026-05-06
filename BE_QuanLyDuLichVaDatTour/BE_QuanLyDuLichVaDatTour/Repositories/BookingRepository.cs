@@ -91,11 +91,8 @@ public class BookingRepository : IBookingRepository
             query = query.Where(x => x.Id != excludeBookingId.Value);
         }
 
-        var bookings = await query
-            .Select(x => new { x.SoNguoiLon, x.SoTreEm, x.SoEmBe })
-            .ToListAsync();
-
-        return bookings.Sum(x => (int)x.SoNguoiLon + x.SoTreEm + x.SoEmBe);
+        var bookings = await query.ToListAsync();
+        return bookings.Sum(x => (int)x.SoNguoiLon + (int)x.SoTreEm + (int)x.SoEmBe);
     }
 
     public Task<int> SaveChangesAsync()

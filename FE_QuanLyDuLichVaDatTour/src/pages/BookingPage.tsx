@@ -11,6 +11,7 @@ import { formatMoney } from '../utils/formatMoney'
 import { getTourChiTietPath } from '../constants/paths'
 import { layDuLieuDatTour, taoBooking, type BookingPassengerPayload } from '../services/booking/booking'
 import { useAuthStore } from '../store/authStore'
+import { BOOKING_DETAIL_PATH } from '../constants/paths'
 
 const { Paragraph, Text, Title } = Typography
 const { TextArea } = Input
@@ -46,9 +47,9 @@ const steps = [
 ]
 
 const genderOptions = [
-  { value: 'Nam', label: 'Nam' },
-  { value: 'Nữ', label: 'Nữ' },
-  { value: 'Khác', label: 'Khác' },
+  { value: 'nam', label: 'Nam' },
+  { value: 'nu', label: 'Nữ' },
+  { value: 'khac', label: 'Khác' },
 ]
 
 function taoPassengerId(type: PassengerType, index: number) {
@@ -285,7 +286,7 @@ export default function Booking() {
         ghiChu,
       })
 
-      setSuccessMessage(`Đặt tour thành công. Mã booking của bạn là ${response.maBooking}.`)
+      navigate(BOOKING_DETAIL_PATH(response.id))
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Đặt tour thất bại')
     } finally {
@@ -358,7 +359,7 @@ export default function Booking() {
                 </Col>
                 
                 <Col xs={24} md={12}>
-                  <Form.Item label="Tỉnh/Thành phố" name="tinhThanh">
+                  <Form.Item label="Tỉnh/Thành phố" name="tinhThanh" rules={[{ required: true, message: 'Vui lòng chọn Tỉnh/Thành phố' }]}>
                     <Select
                       size="large"
                       placeholder="Chọn Tỉnh/Thành phố"
