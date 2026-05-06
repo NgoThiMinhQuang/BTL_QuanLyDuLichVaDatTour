@@ -1,5 +1,5 @@
 import './TourDetailPage.css'
-import { Breadcrumb, Button, Card, Empty, Image, List, Rate, Select, Skeleton, Space, Tabs, Tag, Typography, Divider } from 'antd'
+import { Breadcrumb, Button, Card, Empty, Image, Rate, Select, Skeleton, Tabs, Tag, Typography, Divider } from 'antd'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router'
 import { formatDate } from '../utils/formatDate'
@@ -7,7 +7,7 @@ import { formatMoney } from '../utils/formatMoney'
 import { PATHS } from '../constants/paths'
 import { useTourChiTietPage } from '../services/tour/useTourChiTietPage'
 import { useAuthStore } from '../store/authStore'
-import { layDanhGiaDaDuyetTheoTour, layThongKeDanhGiaTour } from '../services/review/review'
+import { layDanhGiaDaDuyetTheoTour } from '../services/review/review'
 
 const { Paragraph, Text, Title } = Typography
 
@@ -41,11 +41,7 @@ export default function TourDetail() {
     enabled: isValidId,
   })
 
-  const reviewSummaryQuery = useQuery({
-    queryKey: ['tour-review-summary', tourId],
-    queryFn: () => layThongKeDanhGiaTour(tourId),
-    enabled: isValidId,
-  })
+  const reviewSummary = detailQuery.data
 
   if (!isValidId) {
     return <div className="tour-detail-page-state">Tour không hợp lệ.</div>
@@ -125,13 +121,11 @@ export default function TourDetail() {
             <Card className="tour-detail-summary-card" variant="borderless">
               <div className="tour-detail-header-top">
                 <Text className="tour-detail-code">{detail.maTour}</Text>
-                {reviewSummaryQuery.data && (
-                  <div className="tour-detail-rating-inline">
-                    <Rate disabled allowHalf value={reviewSummaryQuery.data.averageRating || 0} className="inline-stars" />
-                    <Text strong className="inline-avg">{(reviewSummaryQuery.data.averageRating || 0).toFixed(1)}</Text>
-                    <Text className="inline-count">({reviewSummaryQuery.data.totalReviews || 0} đánh giá)</Text>
-                  </div>
-                )}
+                <div className="tour-detail-rating-inline">
+                  <Rate disabled allowHalf value={reviewSummary?.averageRating || 0} className="inline-stars" />
+                  <Text strong className="inline-avg">{(reviewSummary?.averageRating || 0).toFixed(1)}</Text>
+                  <Text className="inline-count">({reviewSummary?.totalReviews || 0} đánh giá)</Text>
+                </div>
               </div>
               <Title className="tour-detail-title">{detail.tenTour}</Title>
 
@@ -313,19 +307,17 @@ export default function TourDetail() {
                     label: 'Đánh giá',
                     children: (
                       <div className="tour-detail-reviews-container">
-                        {reviewSummaryQuery.data ? (
-                          <div className="tour-detail-reviews-summary">
-                            <div className="review-summary-stats">
-                              <Title level={1} className="review-summary-avg">
-                                {(reviewSummaryQuery.data.averageRating || 0).toFixed(1)}
-                              </Title>
-                              <div className="review-summary-info">
-                                <Rate disabled allowHalf value={reviewSummaryQuery.data.averageRating || 0} className="review-summary-stars" />
-                                <Text className="review-summary-count">{reviewSummaryQuery.data.totalReviews || 0} đánh giá</Text>
-                              </div>
+                        <div className="tour-detail-reviews-summary">
+                          <div className="review-summary-stats">
+                            <Title level={1} className="review-summary-avg">
+                              {(reviewSummary?.averageRating || 0).toFixed(1)}
+                            </Title>
+                            <div className="review-summary-info">
+                              <Rate disabled allowHalf value={reviewSummary?.averageRating || 0} className="review-summary-stars" />
+                              <Text className="review-summary-count">{reviewSummary?.totalReviews || 0} đánh giá</Text>
                             </div>
                           </div>
-                        ) : null}
+                        </div>
 
                         <Divider className="review-section-divider" />
 

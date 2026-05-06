@@ -27,7 +27,7 @@ public class TourService : ITourService
     public async Task<List<TourResponseDto>> GetVisibleAsync()
     {
         var tours = await _tourRepository.GetVisibleAsync();
-        return tours.Select(MapPublicResponse).ToList();
+        return await MapPublicResponsesAsync(tours);
     }
 
     public async Task<List<TourResponseDto>> SearchVisibleAsync(SearchTourRequestDto request)
@@ -45,7 +45,7 @@ public class TourService : ITourService
             request.MinSoNgay,
             request.MaxSoNgay);
 
-        return tours.Select(MapPublicResponse).ToList();
+        return await MapPublicResponsesAsync(tours);
     }
 
     public async Task<TourResponseDto> GetVisibleByIdAsync(long id)
@@ -53,7 +53,7 @@ public class TourService : ITourService
         var tour = await _tourRepository.GetVisibleByIdAsync(id)
             ?? throw new KeyNotFoundException("Tour không tồn tại.");
 
-        return MapPublicResponse(tour);
+        return (await MapPublicResponsesAsync(new List<Tour> { tour })).Single();
     }
 
     public async Task<List<AnhTourResponseDto>> GetVisibleImagesByTourIdAsync(long id)
@@ -86,6 +86,37 @@ public class TourService : ITourService
     {
         var tours = await _tourRepository.GetAllAsync();
         return tours.Select(MapAdminResponse).ToList();
+    }
+
+    private async Task<List<TourResponseDto>> MapPublicResponsesAsync(List<Tour> tours)
+    {
+        var reviewStats = await LoadReviewStatsAsync(tours.Select(tour => tour.Id).ToList());
+
+        return tours.Select(tour => MapPublicResponse(tour, reviewStats)).ToList();
+    }
+
+    private async Task<Dictionary<long, (decimal AverageRating, int TotalReviews)>> LoadReviewStatsAsync(List<long> tourIds)
+    {
+        if (tourIds.Count == 0)
+        {
+            return new Dictionary<long, (decimal AverageRating, int TotalReviews)>();
+        }
+
+        var reviewGroups = await _dbContext.DanhGias
+            .AsNoTracking()
+            .Where(review => review.TourId != 0 && tourIds.Contains(review.TourId) && review.TrangThai == "hien_thi")
+            .GroupBy(review => review.TourId)
+            .Select(group => new
+            {
+                TourId = group.Key,
+                AverageRating = group.Average(review => (decimal)review.SoSao),
+                TotalReviews = group.Count(),
+            })
+            .ToListAsync();
+
+        return reviewGroups.ToDictionary(
+            item => item.TourId,
+            item => (Math.Round(item.AverageRating, 1), item.TotalReviews));
     }
 
     public async Task<TourAdminResponseDto> GetByIdAsync(long id)
@@ -366,8 +397,12 @@ public class TourService : ITourService
         return value.Trim();
     }
 
-    private static TourResponseDto MapPublicResponse(Tour tour)
+    private static TourResponseDto MapPublicResponse(Tour tour, IReadOnlyDictionary<long, (decimal AverageRating, int TotalReviews)> reviewStats)
     {
+        var stats = reviewStats.TryGetValue(tour.Id, out var value)
+            ? value
+            : (AverageRating: 0m, TotalReviews: 0);
+
         return new TourResponseDto
         {
             Id = tour.Id,
@@ -384,6 +419,8 @@ public class TourService : ITourService
             MoTaChiTiet = tour.MoTaChiTiet,
             DieuKienTour = tour.DieuKienTour,
             GiaTuThamKhao = tour.GiaTuThamKhao,
+            AverageRating = stats.AverageRating,
+            TotalReviews = stats.TotalReviews,
             IsNoiBat = tour.IsNoiBat,
             DiemDens = tour.TourDiemDens
                 .OrderBy(x => x.ThuTu)

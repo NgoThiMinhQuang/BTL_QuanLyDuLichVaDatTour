@@ -48,8 +48,17 @@ public class ReviewRepository : IReviewRepository
     public async Task<List<DanhGia>> GetApprovedByTourIdAsync(long tourId)
     {
         return await BuildReviewQuery(_dbContext.DanhGias.AsNoTracking())
-            .Where(x => x.TourId == tourId && x.TrangThai == "da_duyet")
+            .Where(x => x.TourId == tourId && x.TrangThai == "hien_thi")
             .OrderByDescending(x => x.NgayDanhGia)
+            .ToListAsync();
+    }
+
+    public async Task<List<DanhGia>> GetApprovedRecentAsync(int limit)
+    {
+        return await BuildReviewQuery(_dbContext.DanhGias.AsNoTracking())
+            .Where(x => x.TrangThai == "hien_thi")
+            .OrderByDescending(x => x.NgayDanhGia)
+            .Take(limit)
             .ToListAsync();
     }
 

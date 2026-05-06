@@ -33,6 +33,14 @@ public class ReviewController : ControllerBase
         return Ok(response);
     }
 
+    [AllowAnonymous]
+    [HttpGet("featured")]
+    public async Task<IActionResult> GetFeatured([FromQuery] int limit = 3)
+    {
+        var response = await _reviewService.GetFeaturedReviewsAsync(limit);
+        return Ok(response);
+    }
+
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreateReviewRequestDto request)
     {

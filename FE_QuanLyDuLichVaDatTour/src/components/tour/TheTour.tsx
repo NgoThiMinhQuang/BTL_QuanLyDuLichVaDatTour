@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import './TheTour.css'
 import { Button, Card, Rate, Typography } from 'antd'
 import { CalendarOutlined, EnvironmentOutlined, HeartFilled, HeartOutlined, TagOutlined } from '@ant-design/icons'
@@ -62,16 +61,6 @@ export function TheTour({
   ctaHref = getTourChiTietPath(tour.id),
   variant = 'default',
 }: TheTourProps) {
-  // Mock rating data for demonstration
-  const rating = useMemo(() => {
-    const ratings = [4.5, 4.8, 5.0, 4.7, 4.9]
-    return ratings[tour.id % ratings.length]
-  }, [tour.id])
-
-  const reviewCount = useMemo(() => {
-    return (tour.id * 17) % 200 + 50
-  }, [tour.id])
-
   const coverImage = [...tour.anhTours]
     .sort((a, b) => Number(b.isAvatar) - Number(a.isAvatar) || a.thuTu - b.thuTu)
     .at(0)?.linkAnh
@@ -116,8 +105,8 @@ export function TheTour({
       <div className="tour-card-body">
         <div className="tour-card-main">
           <div className="tour-card-rating-row">
-            <Rate disabled allowHalf defaultValue={rating} className="tour-card-rate" />
-            <span className="tour-card-review-count">({reviewCount} đánh giá)</span>
+            <Rate disabled allowHalf value={tour.averageRating ?? 0} className="tour-card-rate" />
+            <span className="tour-card-review-count">({tour.totalReviews ?? 0} đánh giá)</span>
           </div>
 
           <Title level={3} className="tour-card-title">

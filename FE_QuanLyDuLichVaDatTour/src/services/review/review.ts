@@ -25,6 +25,8 @@ export interface TourReviewItem {
   id: number
   tourId: number
   hoTenKhachHang: string
+  anhDaiDien?: string | null
+  tenTour: string
   soSao: number
   noiDung: string
   phanHoiAdmin?: string | null
@@ -47,6 +49,17 @@ export async function layDanhGiaDaDuyetTheoTour(tourId: number): Promise<TourRev
 
   if (!response.ok) {
     throw new Error(data?.message || 'Không thể tải đánh giá tour')
+  }
+
+  return data as TourReviewItem[]
+}
+
+export async function layDanhGiaNoiBat(limit = 3): Promise<TourReviewItem[]> {
+  const response = await fetch(`${API_BASE_URL}/review/featured?limit=${limit}`)
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    throw new Error(data?.message || 'Không thể tải đánh giá nổi bật')
   }
 
   return data as TourReviewItem[]

@@ -30,6 +30,10 @@ public class TourResponseDto
 
     public decimal GiaTuThamKhao { get; set; }
 
+    public decimal AverageRating { get; set; }
+
+    public int TotalReviews { get; set; }
+
     public bool IsNoiBat { get; set; }
 
     public List<TourDiemDenResponseDto> DiemDens { get; set; } = new();

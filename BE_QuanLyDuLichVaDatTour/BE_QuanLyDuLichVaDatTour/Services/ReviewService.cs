@@ -88,6 +88,12 @@ public class ReviewService : IReviewService
         return reviews.Select(MapTourReviewResponse).ToList();
     }
 
+    public async Task<List<TourReviewResponseDto>> GetFeaturedReviewsAsync(int limit)
+    {
+        var reviews = await _reviewRepository.GetApprovedRecentAsync(limit <= 0 ? 3 : limit);
+        return reviews.Select(MapTourReviewResponse).ToList();
+    }
+
     public async Task<TourReviewSummaryDto> GetTourReviewSummaryAsync(long tourId)
     {
         var reviews = await _reviewRepository.GetApprovedByTourIdAsync(tourId);
@@ -158,6 +164,8 @@ public class ReviewService : IReviewService
             Id = danhGia.Id,
             TourId = danhGia.TourId,
             HoTenKhachHang = danhGia.KhachHang?.HoTen ?? "Khách hàng",
+            AnhDaiDien = danhGia.KhachHang?.AnhDaiDien,
+            TenTour = danhGia.Tour?.TenTour ?? danhGia.Booking?.LichKhoiHanh?.Tour?.TenTour ?? string.Empty,
             SoSao = danhGia.SoSao,
             NoiDung = danhGia.NoiDung,
             PhanHoiAdmin = danhGia.PhanHoiAdmin,

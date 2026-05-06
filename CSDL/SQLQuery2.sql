@@ -540,6 +540,71 @@ VALUES
         6490000, 500000, 5990000, 5990000, 2000000,
         N'cong_thanh_toan', N'da_huy', N'da_hoan_tien', '2026-05-20T23:59:59',
         N'Khách đã yêu cầu hủy tour và đã hoàn tiền một phần.'
+    ),
+    (
+        N'BK-20260402001',
+        (SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-PQ-20260620'),
+        (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'nguyenvana@gmail.com'),
+        NULL,
+        N'Nguyễn Văn A', N'nguyenvana@gmail.com', N'0901111111', N'12 Lê Lợi, Quận 1, TP.HCM',
+        '2026-04-02T09:00:00',
+        1, 0, 0, N'ngay_thuong',
+        6490000, 0, 0,
+        6490000, 0, 6490000, 6490000, 1000000,
+        N'chuyen_khoan', N'hoan_tat', N'da_thanh_toan_du', '2026-05-25T23:59:59',
+        N'Khách đã hoàn tất chuyến đi và thanh toán đầy đủ.'
+    ),
+    (
+        N'BK-20260403001',
+        (SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-NT-20260705'),
+        (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'tranthib@gmail.com'),
+        NULL,
+        N'Trần Thị B', N'tranthib@gmail.com', N'0902222222', N'45 Hai Bà Trưng, Quận 3, TP.HCM',
+        '2026-04-03T09:15:00',
+        1, 0, 0, N'ngay_thuong',
+        4590000, 0, 0,
+        4590000, 0, 4590000, 4590000, 1000000,
+        N'chuyen_khoan', N'hoan_tat', N'da_thanh_toan_du', '2026-06-20T23:59:59',
+        N'Khách đã hoàn tất chuyến đi và thanh toán đầy đủ.'
+    ),
+    (
+        N'BK-20260404001',
+        (SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-DL-20260612'),
+        (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'nguyenvana@gmail.com'),
+        NULL,
+        N'Nguyễn Văn A', N'nguyenvana@gmail.com', N'0901111111', N'12 Lê Lợi, Quận 1, TP.HCM',
+        '2026-04-04T09:30:00',
+        1, 0, 0, N'ngay_thuong',
+        2990000, 0, 0,
+        2990000, 0, 2990000, 2990000, 1000000,
+        N'chuyen_khoan', N'hoan_tat', N'da_thanh_toan_du', '2026-05-18T23:59:59',
+        N'Khách đã hoàn tất chuyến đi và thanh toán đầy đủ.'
+    ),
+    (
+        N'BK-20260405001',
+        (SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-HL-20260808'),
+        (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'tranthib@gmail.com'),
+        NULL,
+        N'Trần Thị B', N'tranthib@gmail.com', N'0902222222', N'45 Hai Bà Trưng, Quận 3, TP.HCM',
+        '2026-04-05T10:00:00',
+        1, 0, 0, N'ngay_thuong',
+        7190000, 0, 0,
+        7190000, 0, 7190000, 7190000, 1000000,
+        N'chuyen_khoan', N'hoan_tat', N'da_thanh_toan_du', '2026-07-20T23:59:59',
+        N'Khách đã hoàn tất chuyến đi và thanh toán đầy đủ.'
+    ),
+    (
+        N'BK-20260406001',
+        (SELECT LichKhoiHanhId FROM dbo.LichKhoiHanh WHERE MaDotTour = N'DOT-HUE-20260718'),
+        (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'nguyenvana@gmail.com'),
+        NULL,
+        N'Nguyễn Văn A', N'nguyenvana@gmail.com', N'0901111111', N'12 Lê Lợi, Quận 1, TP.HCM',
+        '2026-04-06T10:30:00',
+        1, 0, 0, N'ngay_thuong',
+        5890000, 0, 0,
+        5890000, 0, 5890000, 5890000, 1000000,
+        N'chuyen_khoan', N'hoan_tat', N'da_thanh_toan_du', '2026-06-30T23:59:59',
+        N'Khách đã hoàn tất chuyến đi và thanh toán đầy đủ.'
     );
 GO
 
@@ -653,11 +718,66 @@ VALUES
         (SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DN-001'),
         (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'nguyenvana@gmail.com'),
         5,
-        N'Tour rất tốt, lịch trình hợp lý, hướng dẫn viên nhiệt tình.',
-        N'Cảm ơn anh đã tin tưởng và sử dụng dịch vụ.',
+        N'Tour Đà Nẵng - Hội An - Bà Nà Hills 3N2Đ có lịch trình hợp lý, dịch vụ ổn và hướng dẫn viên nhiệt tình.',
+        N'Cảm ơn anh đã chia sẻ trải nghiệm.',
         N'hien_thi',
         '2026-05-15T20:00:00',
         '2026-05-16T09:00:00'
+    ),
+    (
+        (SELECT BookingId FROM dbo.Booking WHERE MaBooking = N'BK-20260402001'),
+        (SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-PQ-001'),
+        (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'nguyenvana@gmail.com'),
+        5,
+        N'Phú Quốc nghỉ dưỡng rất thoải mái, resort đẹp và các điểm tham quan được sắp xếp hợp lý.',
+        N'Rất vui khi anh hài lòng với chuyến đi.',
+        N'hien_thi',
+        '2026-05-25T20:00:00',
+        '2026-05-26T09:00:00'
+    ),
+    (
+        (SELECT BookingId FROM dbo.Booking WHERE MaBooking = N'BK-20260403001'),
+        (SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-NT-001'),
+        (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'tranthib@gmail.com'),
+        4,
+        N'Nha Trang phù hợp cho gia đình, lịch trình nhẹ nhàng và nhiều trải nghiệm biển.',
+        N'Xin cảm ơn chị đã tin tưởng.',
+        N'hien_thi',
+        '2026-06-20T18:30:00',
+        '2026-06-21T08:30:00'
+    ),
+    (
+        (SELECT BookingId FROM dbo.Booking WHERE MaBooking = N'BK-20260404001'),
+        (SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-DL-001'),
+        (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'nguyenvana@gmail.com'),
+        5,
+        N'Đà Lạt mát mẻ, cảnh đẹp và phần săn mây rất đáng nhớ.',
+        N'Cảm ơn anh, hy vọng sớm gặp lại.',
+        N'hien_thi',
+        '2026-05-18T19:00:00',
+        '2026-05-19T08:00:00'
+    ),
+    (
+        (SELECT BookingId FROM dbo.Booking WHERE MaBooking = N'BK-20260405001'),
+        (SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HL-001'),
+        (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'tranthib@gmail.com'),
+        4,
+        N'Hà Nội - Hạ Long - Ninh Bình mang lại nhiều trải nghiệm đẹp, xe và hướng dẫn viên đều ổn.',
+        NULL,
+        N'hien_thi',
+        '2026-07-20T20:00:00',
+        NULL
+    ),
+    (
+        (SELECT BookingId FROM dbo.Booking WHERE MaBooking = N'BK-20260406001'),
+        (SELECT TourId FROM dbo.Tour WHERE MaTour = N'TOUR-HUE-001'),
+        (SELECT NguoiDungId FROM dbo.NguoiDung WHERE Email = N'nguyenvana@gmail.com'),
+        5,
+        N'Huế - Đà Nẵng - Hội An rất đáng đi, đặc biệt là phần di sản và ẩm thực.',
+        N'Cảm ơn anh đã tin tưởng hệ thống.',
+        N'hien_thi',
+        '2026-06-30T20:30:00',
+        '2026-07-01T09:00:00'
     );
 GO
 

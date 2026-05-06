@@ -1,6 +1,6 @@
 import { App as AntApp, Layout, Spin } from 'antd'
 import type React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
@@ -103,6 +103,10 @@ export default function AppRouter() {
   useEffect(() => {
     void hydrateAuth()
   }, [hydrateAuth])
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
 
   const clientLayout = (
     <Layout className="app-shell">

@@ -36,6 +36,8 @@ export interface FeaturedTourApiItem {
   moTaNgan?: string | null
   giaNguoiLonMacDinh: number | null
   giaTreEmMacDinh: number | null
+  averageRating: number
+  totalReviews: number
   diemDens: TourDestinationItem[]
   anhTours: TourImageItem[]
   trangThai: string
@@ -78,6 +80,8 @@ export interface TourDetailApiItem {
   dieuKienTour?: string | null
   giaNguoiLonMacDinh: number | null
   giaTreEmMacDinh: number | null
+  averageRating: number
+  totalReviews: number
   diemDens: TourDestinationItem[]
   anhTours: TourImageItem[]
   trangThai: string

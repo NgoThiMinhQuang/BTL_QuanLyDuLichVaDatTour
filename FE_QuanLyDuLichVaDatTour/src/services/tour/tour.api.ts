@@ -32,6 +32,8 @@ interface RawFeaturedTour {
   phuongTien?: string | null
   moTaNgan?: string | null
   giaTuThamKhao?: number | null
+  averageRating?: number | null
+  totalReviews?: number | null
   diemDens?: RawTourDestination[] | null
   anhTours?: RawAnhTour[] | null
   trangThai: string
@@ -80,6 +82,8 @@ function mapTour(item: RawFeaturedTour): FeaturedTourApiItem {
     moTaNgan: item.moTaNgan ?? null,
     giaNguoiLonMacDinh: item.giaTuThamKhao ?? null,
     giaTreEmMacDinh: null,
+    averageRating: item.averageRating ?? 0,
+    totalReviews: item.totalReviews ?? 0,
     diemDens: (item.diemDens ?? []).map(mapDestination),
     anhTours: (item.anhTours ?? []).map((anh) => ({
       id: anh.id,

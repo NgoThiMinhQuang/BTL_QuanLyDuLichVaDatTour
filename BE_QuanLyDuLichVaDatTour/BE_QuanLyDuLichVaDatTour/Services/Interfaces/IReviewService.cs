@@ -10,6 +10,8 @@ public interface IReviewService
 
     Task<List<TourReviewResponseDto>> GetApprovedReviewsByTourAsync(long tourId);
 
+    Task<List<TourReviewResponseDto>> GetFeaturedReviewsAsync(int limit);
+
     Task<TourReviewSummaryDto> GetTourReviewSummaryAsync(long tourId);
 
     Task<List<AdminReviewResponseDto>> GetPendingReviewsAsync(int limit);

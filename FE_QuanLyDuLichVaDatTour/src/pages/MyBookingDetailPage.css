@@ -1,1 +1,354 @@
-@import './MyBookingsPage.css';
+.booking-detail-content {
+  margin-top: 32px;
+}
+
+/* 1. Status Card */
+.booking-status-card {
+  margin-bottom: 20px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.booking-status-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.booking-label-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.booking-id-pill {
+  padding: 4px 12px;
+  background: #eff6ff;
+  color: #2563eb;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.booking-date-label {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.booking-tour-title.ant-typography {
+  margin: 0 !important;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  line-height: 1.3 !important;
+}
+
+.booking-status-group {
+  display: flex;
+  gap: 32px;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.status-label {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-tag.ant-tag {
+  margin: 0;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  border: none;
+}
+
+/* 2. Info Cards */
+.booking-sections-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.booking-info-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.booking-info-card .ant-card-head {
+  border-bottom: 1px solid #f1f5f9;
+  padding: 0 20px;
+  min-height: 48px;
+}
+
+.booking-info-card .ant-card-head-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.booking-info-card .ant-card-body {
+  padding: 16px 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.info-label {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.info-value.ant-typography {
+  font-size: 16px !important;
+  color: #1e293b !important;
+}
+
+.info-item-flex {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.info-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+  font-size: 18px;
+}
+
+.info-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Passenger List */
+.passenger-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.passenger-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+}
+
+.passenger-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #2563eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.passenger-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.passenger-name {
+  font-size: 15px;
+}
+
+.passenger-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.passenger-tag.ant-tag {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.passenger-sub {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* 3. Summary Card - Fresh Light Version */
+.booking-sidebar-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.booking-summary-card {
+  border-radius: 16px;
+  background: #f0f9ff;
+  border: 1px solid #e0f2fe;
+}
+
+.booking-summary-card .ant-card-head {
+  border-bottom: 1px solid #e0f2fe;
+}
+
+.booking-summary-card .ant-card-head-title {
+  color: #0369a1;
+}
+
+.summary-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #475569;
+}
+
+.summary-row.discount {
+  color: #059669;
+}
+
+.summary-divider.ant-divider {
+  margin: 6px 0;
+  border-top-color: #e0f2fe;
+}
+
+.summary-total-box {
+  margin: 12px 0 20px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #bae6fd;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.total-value.ant-typography {
+  margin: 0 !important;
+  color: #0284c7 !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+}
+
+.payment-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.progress-bar-bg {
+  height: 6px;
+  background: #e0f2fe;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #0ea5e9;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.remaining-label {
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: right;
+}
+
+/* History Card */
+.booking-history-card {
+  border-radius: 20px;
+}
+
+.payment-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.payment-history-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.history-icon {
+  font-size: 18px;
+  margin-top: 2px;
+}
+
+.history-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-sub {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.review-action-btn {
+  height: 50px !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  background: #2563eb !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2) !important;
+}
+
+@media (max-width: 768px) {
+  .booking-status-flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .booking-status-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
