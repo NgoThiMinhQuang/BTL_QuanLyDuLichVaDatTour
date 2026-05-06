@@ -12,6 +12,9 @@ export type AdminPaymentTransactionType = 'dat_coc' | 'thanh_toan_con_lai' | 'th
 export type AdminPaymentChannel = 'noi_bo' | 'ben_thu_ba'
 export type AdminPaymentMethod = 'tien_mat' | 'chuyen_khoan' | 'the' | 'vi_dien_tu' | 'cong_thanh_toan'
 export type AdminTinTucStatus = 'nhap' | 'hoat_dong' | 'hien_thi' | 'an'
+export type AdminLienHeStatus = 'moi' | 'dang_xu_ly' | 'da_xu_ly' | 'bo_qua'
+export type AdminKhachHangStatus = 'hoat_dong' | 'bi_khoa'
+export type AdminKhachHangVaiTro = 'admin' | 'khach_hang'
 
 export interface AdminChartPoint {
   nhan: string
@@ -306,6 +309,58 @@ export interface AdminReviewItem {
   updatedAt: string
 }
 
+export interface AdminKhachHangItem {
+  id: number
+  email: string
+  hoTen: string
+  soDienThoai?: string | null
+  diaChi?: string | null
+  anhDaiDien?: string | null
+  vaiTro: AdminKhachHangVaiTro
+  trangThai: AdminKhachHangStatus
+  createdAt: string
+  updatedAt: string
+  tongSoDon: number
+  tongChiTieu: number
+  soDanhGia: number
+  danhGiaTrungBinh: number | null
+}
+
+export interface AdminKhachHangListResponse {
+  items: AdminKhachHangItem[]
+  totalCount: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
+export interface AdminSearchKhachHangParams {
+  keyword?: string
+  vaiTro?: string
+  trangThai?: string
+  page?: number
+  pageSize?: number
+}
+
+export interface GlobalSearchResult {
+  module: string
+  label: string
+  description?: string | null
+  status?: string | null
+  url: string
+  icon?: string | null
+}
+
+export interface GlobalSearchResponse {
+  tours: GlobalSearchResult[]
+  bookings: GlobalSearchResult[]
+  customers: GlobalSearchResult[]
+  vouchers: GlobalSearchResult[]
+  lichKhoiHanhs: GlobalSearchResult[]
+  tinTucs: GlobalSearchResult[]
+  totalCount: number
+}
+
 export interface AdminCreateTourPayload {
   maTour: string
   tenTour: string
@@ -441,4 +496,75 @@ export interface AdminUpdateTinTucPayload {
 export interface AdminUpdateReviewStatusPayload {
   trangThai: AdminReviewDisplayStatus
   phanHoiAdmin?: string | null
+}
+
+export interface AdminUpdateKhachHangStatusPayload {
+  trangThai: AdminKhachHangStatus
+}
+
+export interface AdminLienHeItem {
+  id: number
+  hoTen: string
+  email: string
+  soDienThoai?: string | null
+  chuDe: string
+  noiDung: string
+  trangThai: AdminLienHeStatus
+  nguoiXuLyId?: number | null
+  hoTenNguoiXuLy?: string | null
+  phanHoi?: string | null
+  ngayGui: string
+  ngayXuLy?: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AdminLienHeListResponse {
+  items: AdminLienHeItem[]
+  totalCount: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
+export interface AdminSearchLienHeParams {
+  keyword?: string
+  trangThai?: string
+  page?: number
+  pageSize?: number
+}
+
+export interface AdminUpdateLienHeStatusPayload {
+  trangThai: AdminLienHeStatus
+  phanHoi?: string | null
+}
+
+export interface AdminAuditLogItem {
+  id: number
+  nguoiDungId?: number | null
+  hoTenNguoiDung?: string | null
+  hanhDong: string
+  bang: string
+  banGhiId?: number | null
+  chiTiet?: string | null
+  diaChiIp?: string | null
+  thoiGian: string
+}
+
+export interface AdminAuditLogListResponse {
+  items: AdminAuditLogItem[]
+  totalCount: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
+export interface AdminSearchAuditLogParams {
+  keyword?: string
+  hanhDong?: string
+  bang?: string
+  tuNgay?: string
+  denNgay?: string
+  page?: number
+  pageSize?: number
 }

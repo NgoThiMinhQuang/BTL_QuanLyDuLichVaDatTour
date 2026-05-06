@@ -1,4 +1,4 @@
-import { Alert, Button, Descriptions, Drawer, Empty, Form, Input, Select, Space, Table, Tag, Typography } from 'antd'
+import { Alert, Button, Descriptions, Drawer, Empty, Form, Input, Select, Space, Table, Tag, Typography, Modal } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
 import { useAdminBooking, useAdminBookings, useUpdateAdminBookingStatus } from '../../services/admin/admin.hooks'
@@ -6,6 +6,8 @@ import type { AdminBookingItem, AdminBookingStatus, AdminPaymentStatus } from '.
 import { formatDate } from '../../utils/formatDate'
 import { formatMoney } from '../../utils/formatMoney'
 import { adminBookingStatusMeta, adminPaymentStatusMeta, formatDateTime, mapStatusOptions } from '../../utils/admin'
+import { API_BASE_URL } from '../../constants/api'
+import { useAuthStore } from '../../store/authStore'
 import './AdminBookingListPage.css'
 
 const { Paragraph, Text, Title } = Typography
@@ -126,6 +128,28 @@ export default function AdminBookingListPage() {
             })
           }}>
             Xem chi tiết
+          </Button>
+          <Button
+            onClick={async () => {
+              try {
+                const token = useAuthStore.getState().accessToken
+                const response = await fetch(`${API_BASE_URL}/admin/booking/export-invoice/${record.id}`, {
+                  headers: { Authorization: `Bearer ${token}` },
+                })
+                if (!response.ok) throw new Error('Không thể xuất hóa đơn')
+                const blob = await response.blob()
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `HoaDon_${record.maBooking}.pdf`
+                a.click()
+                URL.revokeObjectURL(url)
+              } catch {
+                Modal.error({ title: 'Lỗi', content: 'Không thể xuất hóa đơn. Vui lòng thử lại.' })
+              }
+            }}
+          >
+            Xuất PDF
           </Button>
           <Button
             type="primary"

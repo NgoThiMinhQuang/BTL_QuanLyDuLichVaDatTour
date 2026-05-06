@@ -12,6 +12,13 @@ import type {
   AdminDashboardSummary,
   AdminDiaDiemItem,
   AdminDiaDiemStatus,
+  AdminKhachHangItem,
+  AdminKhachHangListResponse,
+  AdminKhachHangStatus,
+  AdminAuditLogItem,
+  AdminAuditLogListResponse,
+  AdminLienHeItem,
+  AdminLienHeListResponse,
   AdminLichKhoiHanhItem,
   AdminLichKhoiHanhStatus,
   AdminLichTrinhItem,
@@ -21,12 +28,16 @@ import type {
   AdminPaymentTransactionStatus,
   AdminReviewDisplayStatus,
   AdminReviewItem,
+  AdminSearchAuditLogParams,
+  AdminSearchKhachHangParams,
+  AdminSearchLienHeParams,
   AdminTinTucItem,
   AdminTinTucStatus,
   AdminTourItem,
   AdminTourStatus,
   AdminUpdateBookingStatusPayload,
   AdminUpdateDiaDiemPayload,
+  AdminUpdateKhachHangStatusPayload,
   AdminUpdateLichKhoiHanhPayload,
   AdminUpdateLichTrinhPayload,
   AdminUpdateLoaiTourPayload,
@@ -273,3 +284,54 @@ export async function capNhatTrangThaiReviewQuanTri(id: number, payload: AdminUp
 
 export const layLoaiTourQuanTri = layDanhSachLoaiTourQuanTri
 export const layDiaDiemQuanTri = layDanhSachDiaDiemQuanTri
+
+export async function timKiemKhachHangQuanTri(params: AdminSearchKhachHangParams): Promise<AdminKhachHangListResponse> {
+  const query = new URLSearchParams()
+  if (params.keyword) query.set('keyword', params.keyword)
+  if (params.vaiTro) query.set('vaiTro', params.vaiTro)
+  if (params.trangThai) query.set('trangThai', params.trangThai)
+  query.set('page', String(params.page ?? 1))
+  query.set('pageSize', String(params.pageSize ?? 10))
+  return getJson<AdminKhachHangListResponse>(`/admin/khach-hang/search?${query}`, 'Không thể tải danh sách khách hàng')
+}
+
+export async function layChiTietKhachHangQuanTri(id: number): Promise<AdminKhachHangItem> {
+  return getJson<AdminKhachHangItem>(`/admin/khach-hang/get-by-id/${id}`, 'Không thể tải chi tiết khách hàng')
+}
+
+export async function capNhatTrangThaiKhachHangQuanTri(id: number, trangThai: AdminKhachHangStatus) {
+  return sendJson<void, AdminUpdateKhachHangStatusPayload>(`/admin/khach-hang/update-status/${id}`, 'PATCH', { trangThai }, 'Không thể cập nhật trạng thái khách hàng')
+}
+
+export async function layKetQuaTimKiemQuanTri(q: string): Promise<GlobalSearchResponse> {
+  return getJson<GlobalSearchResponse>(`/admin/search?q=${encodeURIComponent(q)}`, 'Tìm kiếm thất bại')
+}
+
+export async function timKiemLienHeQuanTri(params: AdminSearchLienHeParams): Promise<AdminLienHeListResponse> {
+  const query = new URLSearchParams()
+  if (params.keyword) query.set('keyword', params.keyword)
+  if (params.trangThai) query.set('trangThai', params.trangThai)
+  query.set('page', String(params.page ?? 1))
+  query.set('pageSize', String(params.pageSize ?? 10))
+  return getJson<AdminLienHeListResponse>(`/admin/lien-he/search?${query}`, 'Không thể tải danh sách liên hệ')
+}
+
+export async function layChiTietLienHeQuanTri(id: number): Promise<AdminLienHeItem> {
+  return getJson<AdminLienHeItem>(`/admin/lien-he/get-by-id/${id}`, 'Không thể tải chi tiết liên hệ')
+}
+
+export async function capNhatTrangThaiLienHeQuanTri(id: number, payload: AdminUpdateLienHeStatusPayload) {
+  return sendJson<void, AdminUpdateLienHeStatusPayload>(`/admin/lien-he/update-status/${id}`, 'PATCH', payload, 'Không thể cập nhật trạng thái liên hệ')
+}
+
+export async function timKiemAuditLogQuanTri(params: AdminSearchAuditLogParams): Promise<AdminAuditLogListResponse> {
+  const query = new URLSearchParams()
+  if (params.keyword) query.set('keyword', params.keyword)
+  if (params.hanhDong) query.set('hanhDong', params.hanhDong)
+  if (params.bang) query.set('bang', params.bang)
+  if (params.tuNgay) query.set('tuNgay', params.tuNgay)
+  if (params.denNgay) query.set('denNgay', params.denNgay)
+  query.set('page', String(params.page ?? 1))
+  query.set('pageSize', String(params.pageSize ?? 20))
+  return getJson<AdminAuditLogListResponse>(`/admin/audit-log/search?${query}`, 'Không thể tải nhật ký hệ thống')
+}

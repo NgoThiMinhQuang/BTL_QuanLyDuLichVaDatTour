@@ -104,3 +104,71 @@
 .admin-tour-list-status-select {
   width: 150px;
 }
+
+.admin-tour-form .admin-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.admin-tour-form .admin-modal-grid > * {
+  margin-bottom: 0;
+}
+
+.admin-tour-image-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.admin-tour-image-section .ant-typography {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.admin-tour-image-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.admin-tour-image-input-row .ant-input {
+  flex: 1;
+}
+
+.admin-tour-image-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.admin-tour-image-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.admin-tour-image-thumb {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.admin-tour-image-url {
+  flex: 1;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.admin-tour-image-hint {
+  display: block;
+  font-size: 12px;
+  padding: 8px 0;
+}

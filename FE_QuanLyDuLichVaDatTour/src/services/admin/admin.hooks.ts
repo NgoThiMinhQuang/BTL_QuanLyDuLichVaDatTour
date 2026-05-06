@@ -9,7 +9,9 @@ import {
   capNhatTourQuanTri,
   capNhatTrangThaiBookingQuanTri,
   capNhatTrangThaiDiaDiemQuanTri,
+  capNhatTrangThaiKhachHangQuanTri,
   capNhatTrangThaiLichKhoiHanhQuanTri,
+  capNhatTrangThaiLienHeQuanTri,
   capNhatTrangThaiLoaiTourQuanTri,
   capNhatTrangThaiPaymentQuanTri,
   capNhatTrangThaiReviewQuanTri,
@@ -19,8 +21,10 @@ import {
   capNhatVoucherQuanTri,
   layChiTietBookingQuanTri,
   layChiTietDiaDiemQuanTri,
+  layChiTietKhachHangQuanTri,
   layChiTietLichKhoiHanhQuanTri,
   layChiTietLichTrinhQuanTri,
+  layChiTietLienHeQuanTri,
   layChiTietLoaiTourQuanTri,
   layChiTietPaymentQuanTri,
   layChiTietTinTucQuanTri,
@@ -46,6 +50,9 @@ import {
   taoTinTucQuanTri,
   taoTourQuanTri,
   taoVoucherQuanTri,
+  timKiemAuditLogQuanTri,
+  timKiemKhachHangQuanTri,
+  timKiemLienHeQuanTri,
   xoaLichTrinhQuanTri,
 } from './admin.api'
 import type {
@@ -57,14 +64,20 @@ import type {
   AdminCreateTourPayload,
   AdminCreateVoucherPayload,
   AdminDiaDiemStatus,
+  AdminKhachHangStatus,
+  AdminLienHeStatus,
   AdminLichKhoiHanhStatus,
   AdminLoaiTourStatus,
   AdminPaymentTransactionStatus,
   AdminReviewDisplayStatus,
+  AdminSearchAuditLogParams,
+  AdminSearchKhachHangParams,
+  AdminSearchLienHeParams,
   AdminTinTucStatus,
   AdminTourStatus,
   AdminUpdateBookingStatusPayload,
   AdminUpdateDiaDiemPayload,
+  AdminUpdateKhachHangStatusPayload,
   AdminUpdateLichKhoiHanhPayload,
   AdminUpdateLichTrinhPayload,
   AdminUpdateLoaiTourPayload,
@@ -594,5 +607,69 @@ export function useUpdateAdminReviewDisplayStatus() {
     onSuccess: async () => {
       await invalidateAdminShell(queryClient)
     },
+  })
+}
+
+export function useAdminKhachHang(params?: AdminSearchKhachHangParams) {
+  return useQuery({
+    queryKey: ['admin', 'khach-hang', 'search', params],
+    queryFn: () => timKiemKhachHangQuanTri(params ?? {}),
+  })
+}
+
+export function useAdminKhachHangDetail(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'khach-hang', id],
+    queryFn: () => layChiTietKhachHangQuanTri(id as number),
+    enabled: id !== undefined,
+  })
+}
+
+export function useUpdateAdminKhachHangStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, trangThai }: { id: number; trangThai: AdminKhachHangStatus }) =>
+      capNhatTrangThaiKhachHangQuanTri(id, trangThai),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'khach-hang'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'khach-hang', variables.id] }),
+      ])
+    },
+  })
+}
+
+export function useAdminLienHe(params?: AdminSearchLienHeParams) {
+  return useQuery({
+    queryKey: ['admin', 'lien-he', 'search', params],
+    queryFn: () => timKiemLienHeQuanTri(params ?? {}),
+  })
+}
+
+export function useAdminLienHeDetail(id?: number) {
+  return useQuery({
+    queryKey: ['admin', 'lien-he', id],
+    queryFn: () => layChiTietLienHeQuanTri(id as number),
+    enabled: id !== undefined,
+  })
+}
+
+export function useUpdateAdminLienHeStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: { trangThai: AdminLienHeStatus; phanHoi?: string | null } }) =>
+      capNhatTrangThaiLienHeQuanTri(id, payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'lien-he'] })
+    },
+  })
+}
+
+export function useAdminAuditLog(params?: AdminSearchAuditLogParams) {
+  return useQuery({
+    queryKey: ['admin', 'audit-log', 'search', params],
+    queryFn: () => timKiemAuditLogQuanTri(params ?? {}),
   })
 }

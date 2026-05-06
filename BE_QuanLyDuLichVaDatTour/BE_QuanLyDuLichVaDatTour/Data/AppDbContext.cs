@@ -29,6 +29,10 @@ public class AppDbContext : DbContext
 
     public DbSet<Voucher> Vouchers => Set<Voucher>();
 
+    public DbSet<LienHe> LienHes => Set<LienHe>();
+
+    public DbSet<NhatKyHeThong> NhatKyHeThongs => Set<NhatKyHeThong>();
+
     public DbSet<Booking> Bookings => Set<Booking>();
 
     public DbSet<HanhKhach> HanhKhachs => Set<HanhKhach>();
@@ -1126,6 +1130,146 @@ public class AppDbContext : DbContext
 
             entity.HasIndex(x => new { x.TrangThai, x.NgayDang })
                 .HasDatabaseName("IdxTinTucTrangThaiNgayDang");
+        });
+
+        modelBuilder.Entity<LienHe>(entity =>
+        {
+            entity.ToTable("LienHe");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("LienHeId")
+                .HasColumnType("bigint")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.HoTen)
+                .HasColumnName("HoTen")
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(x => x.Email)
+                .HasColumnName("Email")
+                .HasMaxLength(255)
+                .IsRequired();
+
+            entity.Property(x => x.SoDienThoai)
+                .HasColumnName("SoDienThoai")
+                .HasMaxLength(20);
+
+            entity.Property(x => x.ChuDe)
+                .HasColumnName("ChuDe")
+                .HasMaxLength(300)
+                .IsRequired();
+
+            entity.Property(x => x.NoiDung)
+                .HasColumnName("NoiDung")
+                .HasColumnType("nvarchar(max)")
+                .IsRequired();
+
+            entity.Property(x => x.TrangThai)
+                .HasColumnName("TrangThai")
+                .HasConversion<string>()
+                .HasMaxLength(20)
+                .IsRequired();
+
+            entity.Property(x => x.NguoiXuLyId)
+                .HasColumnName("NguoiXuLyId")
+                .HasColumnType("bigint");
+
+            entity.Property(x => x.PhanHoi)
+                .HasColumnName("PhanHoi")
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(x => x.NgayGui)
+                .HasColumnName("NgayGui")
+                .HasColumnType("datetime2(0)")
+                .IsRequired();
+
+            entity.Property(x => x.NgayXuLy)
+                .HasColumnName("NgayXuLy")
+                .HasColumnType("datetime2(0)");
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("CreatedAt")
+                .HasColumnType("datetime2(0)")
+                .IsRequired();
+
+            entity.Property(x => x.UpdatedAt)
+                .HasColumnName("UpdatedAt")
+                .HasColumnType("datetime2(0)")
+                .IsRequired();
+
+            entity.HasOne(x => x.NguoiXuLy)
+                .WithMany()
+                .HasForeignKey(x => x.NguoiXuLyId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasIndex(x => x.TrangThai)
+                .HasDatabaseName("IdxLienHe_TrangThai");
+
+            entity.HasIndex(x => x.NgayGui)
+                .HasDatabaseName("IdxLienHe_NgayGui");
+        });
+
+        modelBuilder.Entity<NhatKyHeThong>(entity =>
+        {
+            entity.ToTable("NhatKyHeThong");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("NhatKyId")
+                .HasColumnType("bigint")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.NguoiDungId)
+                .HasColumnName("NguoiDungId")
+                .HasColumnType("bigint");
+
+            entity.Property(x => x.HoTenNguoiDung)
+                .HasColumnName("HoTenNguoiDung")
+                .HasMaxLength(200);
+
+            entity.Property(x => x.HanhDong)
+                .HasColumnName("HanhDong")
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(x => x.Bang)
+                .HasColumnName("Bang")
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(x => x.BanGhiId)
+                .HasColumnName("BanGhiId")
+                .HasColumnType("bigint");
+
+            entity.Property(x => x.ChiTiet)
+                .HasColumnName("ChiTiet")
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(x => x.DiaChiIp)
+                .HasColumnName("DiaChiIp")
+                .HasMaxLength(50);
+
+            entity.Property(x => x.UserAgent)
+                .HasColumnName("UserAgent")
+                .HasMaxLength(500);
+
+            entity.Property(x => x.ThoiGian)
+                .HasColumnName("ThoiGian")
+                .HasColumnType("datetime2(0)")
+                .IsRequired();
+
+            entity.HasIndex(x => x.ThoiGian)
+                .HasDatabaseName("IdxNhatKy_ThoiGian");
+
+            entity.HasIndex(x => x.Bang)
+                .HasDatabaseName("IdxNhatKy_Bang");
+
+            entity.HasIndex(x => x.HanhDong)
+                .HasDatabaseName("IdxNhatKy_HanhDong");
         });
 
         modelBuilder.Entity<ThanhToan>(entity =>

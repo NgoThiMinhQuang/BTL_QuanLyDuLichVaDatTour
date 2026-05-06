@@ -1,0 +1,37 @@
+.admin-lien-he-drawer-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.admin-lien-he-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-lien-he-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-lien-he-noi-dung {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #f7f9fc;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.admin-lien-he-phan-hoi {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #e6f7f5;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  border-left: 3px solid #20c7b7;
+}

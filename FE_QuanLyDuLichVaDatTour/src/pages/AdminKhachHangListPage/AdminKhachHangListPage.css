@@ -1,0 +1,57 @@
+.admin-customer-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.admin-customer-detail-header .ant-typography {
+  margin-bottom: 4px;
+}
+
+.admin-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.admin-stats-row .ant-statistic-title {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.admin-stats-row .ant-statistic-content-value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.admin-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-info-item {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-info-item:last-child {
+  border-bottom: none;
+}
+
+.admin-info-item .admin-muted {
+  color: #8c8c8c;
+  font-size: 13px;
+}
+
+.admin-drawer-actions {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 12px;
+}

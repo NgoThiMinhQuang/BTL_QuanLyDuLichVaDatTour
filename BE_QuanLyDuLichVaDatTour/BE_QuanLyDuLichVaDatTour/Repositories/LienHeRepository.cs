@@ -6,45 +6,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BE_QuanLyDuLichVaDatTour.Repositories;
 
-public class NguoiDungRepository : INguoiDungRepository
+public class LienHeRepository : ILienHeRepository
 {
     private readonly AppDbContext _dbContext;
 
-    public NguoiDungRepository(AppDbContext dbContext)
+    public LienHeRepository(AppDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<NguoiDung?> GetByIdAsync(long id)
+    public async Task<LienHe?> GetByIdAsync(long id)
     {
-        return await _dbContext.NguoiDungs
+        return await _dbContext.LienHes
             .AsNoTracking()
+            .Include(x => x.NguoiXuLy)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<NguoiDung?> GetByIdTrackedAsync(long id)
+    public async Task<LienHe?> GetByIdTrackedAsync(long id)
     {
-        return await _dbContext.NguoiDungs
+        return await _dbContext.LienHes
+            .Include(x => x.NguoiXuLy)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<NguoiDung?> GetByEmailAsync(string email)
+    public async Task<List<LienHe>> SearchAsync(string? keyword, TrangThaiLienHe? trangThai, int page, int pageSize)
     {
-        return await _dbContext.NguoiDungs
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
-    }
-
-    public async Task<List<NguoiDung>> GetAllAsync()
-    {
-        return await _dbContext.NguoiDungs
-            .AsNoTracking()
-            .ToListAsync();
-    }
-
-    public async Task<List<NguoiDung>> SearchAsync(string? keyword, VaiTroNguoiDung? vaiTro, TrangThaiNguoiDung? trangThai, int page, int pageSize)
-    {
-        var query = _dbContext.NguoiDungs.AsNoTracking();
+        IQueryable<LienHe> query = _dbContext.LienHes.AsNoTracking().Include(x => x.NguoiXuLy);
 
         if (!string.IsNullOrWhiteSpace(keyword))
         {
@@ -52,12 +40,9 @@ public class NguoiDungRepository : INguoiDungRepository
             query = query.Where(x =>
                 x.HoTen.ToLower().Contains(kw) ||
                 x.Email.ToLower().Contains(kw) ||
+                x.ChuDe.ToLower().Contains(kw) ||
+                x.NoiDung.ToLower().Contains(kw) ||
                 (x.SoDienThoai != null && x.SoDienThoai.Contains(kw)));
-        }
-
-        if (vaiTro.HasValue)
-        {
-            query = query.Where(x => x.VaiTro == vaiTro.Value);
         }
 
         if (trangThai.HasValue)
@@ -66,15 +51,15 @@ public class NguoiDungRepository : INguoiDungRepository
         }
 
         return await query
-            .OrderByDescending(x => x.CreatedAt)
+            .OrderByDescending(x => x.NgayGui)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
     }
 
-    public async Task<int> CountAsync(string? keyword, VaiTroNguoiDung? vaiTro, TrangThaiNguoiDung? trangThai)
+    public async Task<int> CountAsync(string? keyword, TrangThaiLienHe? trangThai)
     {
-        var query = _dbContext.NguoiDungs.AsNoTracking();
+        IQueryable<LienHe> query = _dbContext.LienHes.AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(keyword))
         {
@@ -82,12 +67,9 @@ public class NguoiDungRepository : INguoiDungRepository
             query = query.Where(x =>
                 x.HoTen.ToLower().Contains(kw) ||
                 x.Email.ToLower().Contains(kw) ||
+                x.ChuDe.ToLower().Contains(kw) ||
+                x.NoiDung.ToLower().Contains(kw) ||
                 (x.SoDienThoai != null && x.SoDienThoai.Contains(kw)));
-        }
-
-        if (vaiTro.HasValue)
-        {
-            query = query.Where(x => x.VaiTro == vaiTro.Value);
         }
 
         if (trangThai.HasValue)
@@ -98,9 +80,9 @@ public class NguoiDungRepository : INguoiDungRepository
         return await query.CountAsync();
     }
 
-    public async Task AddAsync(NguoiDung nguoiDung)
+    public async Task AddAsync(LienHe lienHe)
     {
-        await _dbContext.NguoiDungs.AddAsync(nguoiDung);
+        await _dbContext.LienHes.AddAsync(lienHe);
     }
 
     public async Task<int> SaveChangesAsync()

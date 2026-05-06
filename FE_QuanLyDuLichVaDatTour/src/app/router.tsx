@@ -7,6 +7,9 @@ import { Footer } from '../components/Footer'
 import { PATHS } from '../constants/paths'
 import { useAuthStore } from '../store/authStore'
 import AboutPage from '../pages/AboutPage'
+import AdminKhachHangListPage from '../pages/AdminKhachHangListPage/AdminKhachHangListPage'
+import AdminLienHeListPage from '../pages/AdminLienHeListPage/AdminLienHeListPage'
+import AdminAuditLogPage from '../pages/AdminAuditLogPage/AdminAuditLogPage'
 import AdminBookingListPage from '../pages/AdminBookingListPage/AdminBookingListPage'
 import AdminDashboardPage from '../pages/AdminDashboardPage/AdminDashboardPage'
 import AdminDiaDiemListPage from '../pages/AdminDiaDiemListPage/AdminDiaDiemListPage'
@@ -161,6 +164,9 @@ export default function AppRouter() {
           <Route path="tin-tuc" element={<AdminTinTucListPage />} />
           <Route path="lich-khoi-hanh" element={<AdminLichKhoiHanhListPage />} />
           <Route path="lich-trinh" element={<AdminLichTrinhListPage />} />
+          <Route path="khach-hang" element={<AdminKhachHangListPage />} />
+          <Route path="lien-he" element={<AdminLienHeListPage />} />
+          <Route path="audit-log" element={<AdminAuditLogPage />} />
         </Route>
       </Routes>
     </AntApp>

@@ -27,6 +27,9 @@ export const PATHS = {
   adminTinTucs: '/admin/tin-tuc',
   adminLichKhoiHanhs: '/admin/lich-khoi-hanh',
   adminLichTrinhs: '/admin/lich-trinh',
+  adminKhachHangs: '/admin/khach-hang',
+  adminLienHes: '/admin/lien-he',
+  adminAuditLogs: '/admin/audit-log',
   profile: '/profile',
 } as const
 
