@@ -17,4 +17,6 @@ public class SearchTourRequestDto
     public int? MinSoNgay { get; set; }
 
     public int? MaxSoNgay { get; set; }
+
+    public int? MinRating { get; set; }
 }

@@ -11,6 +11,7 @@ interface BoLocTourProps {
   thoiGian: string
   selectedLoaiTours: string[]
   selectedPhuongTiens: string[]
+  selectedRating: number
   categories: TourCategory[]
   destinationOptions: string[]
   onKeywordChange: (value: string) => void
@@ -19,6 +20,7 @@ interface BoLocTourProps {
   onThoiGianChange: (value: string) => void
   onLoaiToursChange: (value: string[]) => void
   onPhuongTiensChange: (value: string[]) => void
+  onRatingChange: (value: number) => void
   onReset: () => void
 }
 
@@ -32,6 +34,7 @@ export function BoLocTour(props: BoLocTourProps) {
     thoiGian,
     selectedLoaiTours,
     selectedPhuongTiens,
+    selectedRating,
     categories,
     destinationOptions,
     onKeywordChange,
@@ -40,6 +43,7 @@ export function BoLocTour(props: BoLocTourProps) {
     onThoiGianChange,
     onLoaiToursChange,
     onPhuongTiensChange,
+    onRatingChange,
     onReset,
   } = props
 
@@ -123,6 +127,22 @@ export function BoLocTour(props: BoLocTourProps) {
               { value: 'short', label: '1 - 2 ngày' },
               { value: 'medium', label: '3 - 4 ngày' },
               { value: 'long', label: 'Từ 5 ngày' },
+            ]}
+          />
+        </div>
+
+        <div className="tour-filter-group">
+          <label className="tour-filter-label">Đánh giá</label>
+          <Select
+            size="large"
+            value={selectedRating}
+            className="tour-filter-select"
+            onChange={(value) => onRatingChange(value)}
+            options={[
+              { value: 0, label: 'Tất cả' },
+              { value: 4, label: 'Từ 4 sao trở lên' },
+              { value: 3, label: 'Từ 3 sao trở lên' },
+              { value: 2, label: 'Từ 2 sao trở lên' },
             ]}
           />
         </div>

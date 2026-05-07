@@ -284,18 +284,58 @@ public class BookingService : IBookingService
             return new List<HanhKhach>();
         }
 
-        return hanhKhachs.Select(x => new HanhKhach
+        return hanhKhachs.Select(x =>
         {
-            HoTen = NormalizeRequiredValue(x.HoTen, "Họ tên hành khách không được để trống."),
-            LoaiKhach = x.LoaiKhach,
-            NgaySinh = x.NgaySinh,
-            GioiTinh = NormalizeGioiTinh(x.GioiTinh),
-            SoGiayTo = NormalizeOptionalValue(x.SoGiayTo),
-            QuocTich = NormalizeOptionalValue(x.QuocTich),
-            GhiChu = NormalizeOptionalValue(x.GhiChu),
-            CreatedAt = now,
-            UpdatedAt = now
+            if (x.NgaySinh.HasValue)
+            {
+                ValidatePassengerAge(x.NgaySinh.Value, x.LoaiKhach);
+            }
+
+            return new HanhKhach
+            {
+                HoTen = NormalizeRequiredValue(x.HoTen, "Họ tên hành khách không được để trống."),
+                LoaiKhach = x.LoaiKhach,
+                NgaySinh = x.NgaySinh,
+                GioiTinh = NormalizeGioiTinh(x.GioiTinh),
+                SoGiayTo = NormalizeOptionalValue(x.SoGiayTo),
+                QuocTich = NormalizeOptionalValue(x.QuocTich),
+                GhiChu = NormalizeOptionalValue(x.GhiChu),
+                CreatedAt = now,
+                UpdatedAt = now
+            };
         }).ToList();
+    }
+
+    private static void ValidatePassengerAge(DateTime ngaySinh, LoaiKhach loaiKhach)
+    {
+        var today = DateTime.UtcNow.Date;
+        var age = today.Year - ngaySinh.Year;
+        if (ngaySinh.Date > today.AddYears(-age)) age--;
+
+        var expectedType = age >= 12 ? LoaiKhach.nguoi_lon
+            : age >= 2 ? LoaiKhach.tre_em
+            : LoaiKhach.em_be;
+
+        if (loaiKhach != expectedType)
+        {
+            var typeName = loaiKhach switch
+            {
+                LoaiKhach.nguoi_lon => "người lớn",
+                LoaiKhach.tre_em => "trẻ em",
+                LoaiKhach.em_be => "em bé",
+                _ => loaiKhach.ToString()
+            };
+
+            var expectedName = expectedType switch
+            {
+                LoaiKhach.nguoi_lon => "người lớn (từ 12 tuổi)",
+                LoaiKhach.tre_em => "trẻ em (2-11 tuổi)",
+                LoaiKhach.em_be => "em bé (dưới 2 tuổi)",
+                _ => expectedType.ToString()
+            };
+
+            throw new InvalidOperationException($"Hành khách {age} tuổi phải được phân loại là {expectedName}, không phải {typeName}.");
+        }
     }
 
     private static LoaiGiaApDung ResolveLoaiGiaApDung(DateTime ngayKhoiHanh)

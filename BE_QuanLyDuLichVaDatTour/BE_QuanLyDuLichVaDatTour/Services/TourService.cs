@@ -34,6 +34,7 @@ public class TourService : ITourService
     {
         ValidateSearchPriceRange(request.MinPrice, request.MaxPrice);
         ValidateSearchDurationRange(request.MinSoNgay, request.MaxSoNgay);
+        ValidateSearchRating(request.MinRating);
 
         var tours = await _tourRepository.SearchVisibleAsync(
             NormalizeOptionalValue(request.Keyword),
@@ -45,7 +46,14 @@ public class TourService : ITourService
             request.MinSoNgay,
             request.MaxSoNgay);
 
-        return await MapPublicResponsesAsync(tours);
+        var results = await MapPublicResponsesAsync(tours);
+
+        if (request.MinRating.HasValue)
+        {
+            results = results.Where(x => x.AverageRating >= request.MinRating.Value).ToList();
+        }
+
+        return results;
     }
 
     public async Task<TourResponseDto> GetVisibleByIdAsync(long id)
@@ -90,9 +98,23 @@ public class TourService : ITourService
 
     private async Task<List<TourResponseDto>> MapPublicResponsesAsync(List<Tour> tours)
     {
-        var reviewStats = await LoadReviewStatsAsync(tours.Select(tour => tour.Id).ToList());
+        if (tours.Count == 0) return new List<TourResponseDto>();
 
-        return tours.Select(tour => MapPublicResponse(tour, reviewStats)).ToList();
+        var tourIds = tours.Select(t => t.Id).ToList();
+        var reviewStats = await LoadReviewStatsAsync(tourIds);
+        var departureSummaries = await LoadDepartureSummaryAsync(tourIds);
+
+        return tours.Select(tour =>
+        {
+            var dto = MapPublicResponse(tour, reviewStats);
+            if (departureSummaries.TryGetValue(tour.Id, out var summary))
+            {
+                dto.SoChoConLai = summary.MinRemainingSeats;
+                dto.NgayKhoiHanhGanNhat = summary.NextDepartureDate;
+                dto.GiaThapNhat = summary.LowestPrice;
+            }
+            return dto;
+        }).ToList();
     }
 
     private async Task<Dictionary<long, (decimal AverageRating, int TotalReviews)>> LoadReviewStatsAsync(List<long> tourIds)
@@ -376,6 +398,14 @@ public class TourService : ITourService
         }
     }
 
+    private static void ValidateSearchRating(int? minRating)
+    {
+        if (minRating.HasValue && (minRating.Value < 1 || minRating.Value > 5))
+        {
+            throw new InvalidOperationException("Đánh giá sao không hợp lệ (1-5).");
+        }
+    }
+
     private static string NormalizeRequiredValue(string value, string errorMessage)
     {
         var normalizedValue = value.Trim();
@@ -395,6 +425,83 @@ public class TourService : ITourService
         }
 
         return value.Trim();
+    }
+
+    private async Task<Dictionary<long, (int MinRemainingSeats, DateTime? NextDepartureDate, decimal LowestPrice)>> LoadDepartureSummaryAsync(List<long> tourIds)
+    {
+        var today = DateTime.UtcNow.Date;
+
+        var lichKhoiHanhs = await _dbContext.LichKhoiHanhs
+            .AsNoTracking()
+            .Where(lkh => tourIds.Contains(lkh.TourId) && lkh.TrangThai == TrangThaiLichKhoiHanh.mo_ban)
+            .ToListAsync();
+
+        var lkhIds = lichKhoiHanhs.Select(lkh => lkh.Id).ToList();
+
+        var bookedSeatsLookup = new Dictionary<long, int>();
+        if (lkhIds.Count > 0)
+        {
+            var bookings = await _dbContext.Bookings
+                .AsNoTracking()
+                .Where(b => lkhIds.Contains(b.LichKhoiHanhId) && b.TrangThaiBooking != TrangThaiBooking.da_huy)
+                .Select(b => new { b.LichKhoiHanhId, b.SoNguoiLon, b.SoTreEm, b.SoEmBe })
+                .ToListAsync();
+
+            bookedSeatsLookup = bookings
+                .GroupBy(b => b.LichKhoiHanhId)
+                .ToDictionary(g => g.Key, g => g.Sum(b => (int)b.SoNguoiLon + (int)b.SoTreEm + (int)b.SoEmBe));
+        }
+
+        var bangGiaLowestPrice = new Dictionary<long, decimal>();
+        if (lkhIds.Count > 0)
+        {
+            var prices = await _dbContext.BangGiaLichKhoiHanhs
+                .AsNoTracking()
+                .Where(bg => lkhIds.Contains(bg.LichKhoiHanhId) && bg.LoaiKhach == LoaiKhach.nguoi_lon && bg.LoaiGia == LoaiGiaApDung.ngay_thuong)
+                .GroupBy(bg => bg.LichKhoiHanhId)
+                .Select(g => new { LichKhoiHanhId = g.Key, MinPrice = g.Min(bg => bg.DonGia) })
+                .ToListAsync();
+
+            foreach (var priceItem in prices)
+            {
+                bangGiaLowestPrice[priceItem.LichKhoiHanhId] = priceItem.MinPrice;
+            }
+        }
+
+        var result = new Dictionary<long, (int, DateTime?, decimal)>();
+
+        foreach (var tourId in tourIds)
+        {
+            var tourDepartures = lichKhoiHanhs.Where(d => d.TourId == tourId).ToList();
+
+            if (tourDepartures.Count == 0)
+            {
+                result[tourId] = (0, null, 0m);
+                continue;
+            }
+
+            var minRemainingSeats = tourDepartures.Min(d =>
+            {
+                var booked = bookedSeatsLookup.GetValueOrDefault(d.Id, 0);
+                return Math.Max(d.SoChoToiDa - booked, 0);
+            });
+
+            var nextDeparture = tourDepartures
+                .Where(d => d.NgayKhoiHanh.Date >= today)
+                .OrderBy(d => d.NgayKhoiHanh)
+                .Select(d => (DateTime?)d.NgayKhoiHanh)
+                .FirstOrDefault();
+
+            var lowestPrice = tourDepartures
+                .Select(d => bangGiaLowestPrice.GetValueOrDefault(d.Id, 0m))
+                .Where(price => price > 0)
+                .DefaultIfEmpty(0m)
+                .Min();
+
+            result[tourId] = (minRemainingSeats, nextDeparture, lowestPrice);
+        }
+
+        return result;
     }
 
     private static TourResponseDto MapPublicResponse(Tour tour, IReadOnlyDictionary<long, (decimal AverageRating, int TotalReviews)> reviewStats)

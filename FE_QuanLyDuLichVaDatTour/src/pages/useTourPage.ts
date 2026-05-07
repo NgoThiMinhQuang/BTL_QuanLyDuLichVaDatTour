@@ -72,6 +72,7 @@ function buildSearchParams(input: {
   thoiGian: string
   selectedLoaiTours: string[]
   selectedPhuongTiens: string[]
+  selectedRating: number
   categories: Array<{ id: number; ten: string }>
   diaDiems: Array<{ id: number; tenDiaDiem: string }>
 }) {
@@ -82,6 +83,7 @@ function buildSearchParams(input: {
     phuongTiens: resolveSelectedPhuongTiens(input.selectedPhuongTiens),
     ...resolvePriceRange(input.giaRange),
     ...resolveDurationRange(input.thoiGian),
+    minRating: input.selectedRating > 0 ? input.selectedRating : undefined,
   }
 }
 
@@ -95,13 +97,14 @@ export function useTourPage() {
   const [thoiGian, setThoiGian] = useState('all')
   const [selectedLoaiTours, setSelectedLoaiTours] = useState<string[]>([])
   const [selectedPhuongTiens, setSelectedPhuongTiens] = useState<string[]>([])
+  const [selectedRating, setSelectedRating] = useState(0)
   const [sortBy, setSortBy] = useState('price-asc')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [page, setPage] = useState(1)
 
   const searchParams = useMemo(
-    () => buildSearchParams({ keyword, diemDen, giaRange, thoiGian, selectedLoaiTours, selectedPhuongTiens, categories, diaDiems }),
-    [keyword, diemDen, giaRange, thoiGian, selectedLoaiTours, selectedPhuongTiens, categories, diaDiems],
+    () => buildSearchParams({ keyword, diemDen, giaRange, thoiGian, selectedLoaiTours, selectedPhuongTiens, selectedRating, categories, diaDiems }),
+    [keyword, diemDen, giaRange, thoiGian, selectedLoaiTours, selectedPhuongTiens, selectedRating, categories, diaDiems],
   )
 
   const { data: tours = [], isLoading: isLoadingTours, error: toursError, refetch: refetchTours } = useTourSearch(searchParams)
@@ -125,6 +128,7 @@ export function useTourPage() {
     setThoiGian('all')
     setSelectedLoaiTours([])
     setSelectedPhuongTiens([])
+    setSelectedRating(0)
     setSortBy('price-asc')
     setViewMode('grid')
     setPage(1)
@@ -146,6 +150,7 @@ export function useTourPage() {
     thoiGian,
     selectedLoaiTours,
     selectedPhuongTiens,
+    selectedRating,
     sortBy,
     viewMode,
     page,
@@ -155,6 +160,7 @@ export function useTourPage() {
     setThoiGian,
     setSelectedLoaiTours,
     setSelectedPhuongTiens,
+    setSelectedRating,
     setSortBy,
     setViewMode,
     setPage,

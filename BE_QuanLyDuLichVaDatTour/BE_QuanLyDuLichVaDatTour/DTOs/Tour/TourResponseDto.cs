@@ -41,4 +41,10 @@ public class TourResponseDto
     public List<AnhTourResponseDto> AnhTours { get; set; } = new();
 
     public string TrangThai { get; set; } = string.Empty;
+
+    public int SoChoConLai { get; set; }
+
+    public DateTime? NgayKhoiHanhGanNhat { get; set; }
+
+    public decimal GiaThapNhat { get; set; }
 }

@@ -38,6 +38,9 @@ export interface FeaturedTourApiItem {
   giaTreEmMacDinh: number | null
   averageRating: number
   totalReviews: number
+  soChoConLai: number
+  ngayKhoiHanhGanNhat?: string | null
+  giaThapNhat?: number | null
   diemDens: TourDestinationItem[]
   anhTours: TourImageItem[]
   trangThai: string
@@ -52,6 +55,7 @@ export interface SearchTourParams {
   maxPrice?: number
   minSoNgay?: number
   maxSoNgay?: number
+  minRating?: number
 }
 
 export interface TourDestinationItem {

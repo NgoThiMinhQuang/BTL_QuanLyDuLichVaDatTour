@@ -131,10 +131,19 @@ export default function Booking() {
 
   const pricingSummary = useMemo(() => {
     if (!bookingQuery.data) return null
+    const departureDay = dayjs(bookingQuery.data.departure.ngayKhoiHanh).day()
+    const isWeekend = departureDay === 0 || departureDay === 6
+    const pricing = bookingQuery.data.pricing
     return {
-      nguoiLon: bookingQuery.data.pricing.giaNguoiLonNgayThuong ?? bookingQuery.data.tour.giaNguoiLonMacDinh ?? 0,
-      treEm: bookingQuery.data.pricing.giaTreEmNgayThuong ?? 0,
-      emBe: bookingQuery.data.pricing.giaEmBeNgayThuong ?? 0,
+      nguoiLon: isWeekend
+        ? (pricing.giaNguoiLonCuoiTuan ?? pricing.giaNguoiLonNgayThuong ?? bookingQuery.data.tour.giaNguoiLonMacDinh ?? 0)
+        : (pricing.giaNguoiLonNgayThuong ?? bookingQuery.data.tour.giaNguoiLonMacDinh ?? 0),
+      treEm: isWeekend
+        ? (pricing.giaTreEmCuoiTuan ?? pricing.giaTreEmNgayThuong ?? 0)
+        : (pricing.giaTreEmNgayThuong ?? 0),
+      emBe: isWeekend
+        ? (pricing.giaEmBeCuoiTuan ?? pricing.giaEmBeNgayThuong ?? 0)
+        : (pricing.giaEmBeNgayThuong ?? 0),
     }
   }, [bookingQuery.data])
 
@@ -416,9 +425,9 @@ export default function Booking() {
             
             <div className="booking-count-list">
               {[
-                { type: 'nguoi_lon' as const, title: 'Người lớn', note: 'Từ 11 tuổi trở lên', price: pricingSummary.nguoiLon },
-                { type: 'tre_em' as const, title: 'Trẻ em', note: 'Từ 5-10 tuổi', price: pricingSummary.treEm },
-                { type: 'em_be' as const, title: 'Em bé', note: 'Dưới 5 tuổi', price: pricingSummary.emBe },
+                { type: 'nguoi_lon' as const, title: 'Người lớn', note: 'Từ 12 tuổi trở lên', price: pricingSummary.nguoiLon },
+                { type: 'tre_em' as const, title: 'Trẻ em', note: 'Từ 2-11 tuổi', price: pricingSummary.treEm },
+                { type: 'em_be' as const, title: 'Em bé', note: 'Dưới 2 tuổi', price: pricingSummary.emBe },
               ].map((item) => (
                 <div key={item.type} className="booking-count-list-item">
                   <div className="booking-count-info">
@@ -723,8 +732,15 @@ export default function Booking() {
                   </div>
 
                   <div className="pricing-total-box">
-                    <Title level={3} className="total-label">Tổng cộng</Title>
-                    <Title level={2} className="total-amount">{formatMoney(tongTamTinh)}</Title>
+                    <div className="total-pricing-line">
+                      <Text type="secondary" className="total-label">Tổng tạm tính</Text>
+                      <Title level={3} className="total-subamount">{formatMoney(tongTamTinh)}</Title>
+                    </div>
+                    <div className="total-pricing-line total-pricing-final">
+                      <Text className="total-final-label">Cần thanh toán</Text>
+                      <Title level={2} className="total-amount">{formatMoney(tongTamTinh)}</Title>
+                    </div>
+                    <Text type="secondary" className="total-note">Giá thực tế sẽ được xác nhận sau khi đặt tour</Text>
                   </div>
                 </div>
               </div>

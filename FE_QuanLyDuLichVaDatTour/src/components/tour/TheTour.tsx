@@ -1,11 +1,12 @@
 import './TheTour.css'
 import { Button, Card, Rate, Typography } from 'antd'
-import { CalendarOutlined, EnvironmentOutlined, HeartFilled, HeartOutlined, TagOutlined } from '@ant-design/icons'
+import { CalendarOutlined, EnvironmentOutlined, HeartFilled, HeartOutlined, TagOutlined, TeamOutlined } from '@ant-design/icons'
 import { Link } from 'react-router'
 import { getTourChiTietPath } from '../../constants/paths'
 import bannerImage from '../../assets/Banner.jpg'
 import { resolveApiAssetUrl } from '../../constants/api'
 import type { FeaturedTourApiItem } from '../../types/tour'
+import { formatDate } from '../../utils/formatDate'
 import { formatMoney } from '../../utils/formatMoney'
 import { useFavoriteTourStore } from '../../store/favoriteTourStore'
 
@@ -123,6 +124,16 @@ export function TheTour({
             <Text className="tour-card-meta">
               <TagOutlined /> {tour.tenLoaiTour}
             </Text>
+            {tour.soChoConLai > 0 && (
+              <Text className="tour-card-meta tour-card-seats-available">
+                <TeamOutlined /> Còn {tour.soChoConLai} chỗ
+              </Text>
+            )}
+            {tour.ngayKhoiHanhGanNhat && (
+              <Text className="tour-card-meta tour-card-next-departure">
+                <CalendarOutlined /> Khởi hành: {formatDate(tour.ngayKhoiHanhGanNhat)}
+              </Text>
+            )}
           </div>
         </div>
 

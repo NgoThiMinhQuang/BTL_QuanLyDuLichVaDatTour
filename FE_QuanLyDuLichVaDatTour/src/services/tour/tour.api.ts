@@ -34,6 +34,9 @@ interface RawFeaturedTour {
   giaTuThamKhao?: number | null
   averageRating?: number | null
   totalReviews?: number | null
+  soChoConLai?: number
+  ngayKhoiHanhGanNhat?: string | null
+  giaThapNhat?: number | null
   diemDens?: RawTourDestination[] | null
   anhTours?: RawAnhTour[] | null
   trangThai: string
@@ -84,6 +87,9 @@ function mapTour(item: RawFeaturedTour): FeaturedTourApiItem {
     giaTreEmMacDinh: null,
     averageRating: item.averageRating ?? 0,
     totalReviews: item.totalReviews ?? 0,
+    soChoConLai: item.soChoConLai ?? 0,
+    ngayKhoiHanhGanNhat: item.ngayKhoiHanhGanNhat ?? null,
+    giaThapNhat: item.giaThapNhat ?? null,
     diemDens: (item.diemDens ?? []).map(mapDestination),
     anhTours: (item.anhTours ?? []).map((anh) => ({
       id: anh.id,
@@ -140,6 +146,10 @@ export async function timTours(params: SearchTourParams): Promise<FeaturedTourAp
 
   if (typeof params.maxSoNgay === 'number') {
     searchParams.set('maxSoNgay', String(params.maxSoNgay))
+  }
+
+  if (typeof params.minRating === 'number') {
+    searchParams.set('minRating', String(params.minRating))
   }
 
   const response = await fetch(`${API_BASE_URL}/tour/search?${searchParams.toString()}`)

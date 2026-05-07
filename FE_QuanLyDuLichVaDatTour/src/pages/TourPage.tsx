@@ -26,6 +26,7 @@ export default function Tour() {
     thoiGian,
     selectedLoaiTours,
     selectedPhuongTiens,
+    selectedRating,
     sortBy,
     viewMode,
     page,
@@ -35,6 +36,7 @@ export default function Tour() {
     setThoiGian,
     setSelectedLoaiTours,
     setSelectedPhuongTiens,
+    setSelectedRating,
     setSortBy,
     setViewMode,
     setPage,
@@ -76,6 +78,11 @@ export default function Tour() {
     setPage(1)
   }
 
+  const handleRatingChange = (value: number) => {
+    setSelectedRating(value)
+    setPage(1)
+  }
+
   const handleSortChange = (value: string) => {
     setSortBy(value)
     setPage(1)
@@ -103,6 +110,7 @@ export default function Tour() {
             thoiGian={thoiGian}
             selectedLoaiTours={selectedLoaiTours}
             selectedPhuongTiens={selectedPhuongTiens}
+            selectedRating={selectedRating}
             categories={categories}
             destinationOptions={destinationOptions}
             onKeywordChange={handleKeywordChange}
@@ -111,6 +119,7 @@ export default function Tour() {
             onThoiGianChange={handleThoiGianChange}
             onLoaiToursChange={handleLoaiToursChange}
             onPhuongTiensChange={handlePhuongTiensChange}
+            onRatingChange={handleRatingChange}
             onReset={handleReset}
           />
         </aside>
