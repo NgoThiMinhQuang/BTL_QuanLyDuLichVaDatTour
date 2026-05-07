@@ -23,6 +23,8 @@ import { useState, useRef, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAdminDashboardSummary } from '../../services/admin/admin.hooks'
 import { layKetQuaTimKiemQuanTri } from '../../services/admin/admin.api'
+import { formatMoney } from '../../utils/formatMoney'
+import type { GlobalSearchResult } from '../../types/admin'
 import './AdminLayout.css'
 
 const { Sider, Header, Content } = Layout
@@ -205,29 +207,36 @@ export default function AdminLayout() {
 
   const dashboardQuery = useAdminDashboardSummary()
 
-  const notificationItems = [
-    ...(dashboardQuery.data?.danhGiaChoDuyet?.map((r: { id: number; hoTenKhachHang: string; tenTour: string; noiDung: string }) => ({
+  const notificationItems: Array<{
+    type: 'review' | 'payment' | 'booking'
+    id: number
+    title: string
+    description: string
+    url: string
+    time?: string
+  }> = [
+    ...(dashboardQuery.data?.danhGiaChoDuyet?.map((r) => ({
       type: 'review' as const,
       id: r.id,
       title: `Đánh giá mới từ ${r.hoTenKhachHang}`,
       description: r.tenTour,
       url: PATHS.adminReviews,
       time: r.ngayDanhGia,
-    })) ?? [],
-    ...(dashboardQuery.data?.thanhToanChoXacNhan?.map((p: { id: number; hoTenKhachHang: string; maBooking: string; soTien: number }) => ({
+    })) ?? []),
+    ...(dashboardQuery.data?.thanhToanChoXacNhan?.map((p) => ({
       type: 'payment' as const,
       id: p.id,
       title: `Thanh toán chờ xác nhận: ${p.maBooking}`,
       description: `${p.hoTenKhachHang} - ${formatMoney(p.soTien)}`,
       url: PATHS.adminPayments,
-    })) ?? ([] as any[]),
-    ...(dashboardQuery.data?.bookingMoi?.slice(0, 3).map((b: { id: number; maBooking: string; hoTenNguoiDat: string; tenTour: string }) => ({
+    })) ?? []),
+    ...(dashboardQuery.data?.bookingMoi?.slice(0, 3).map((b) => ({
       type: 'booking' as const,
       id: b.id,
       title: `Booking mới: ${b.maBooking}`,
       description: `${b.hoTenNguoiDat} - ${b.tenTour}`,
       url: PATHS.adminBookings,
-    })) ?? ([] as any[])),
+    })) ?? []),
   ]
 
   const hasNotifications = notificationItems.length > 0
@@ -255,13 +264,17 @@ export default function AdminLayout() {
     ]
   }
 
-  const moduleLabels: Record<string, string> = {
-    tours: 'Tour',
-    bookings: 'Booking',
-    customers: 'Khách hàng',
-    vouchers: 'Voucher',
-    'lich-khoi-hanh': 'Lịch khởi hành',
-    'tin-tuc': 'Tin tức',
+  const getGroupedResults = () => {
+    const r = searchQuery_.data
+    if (!r) return []
+    return [
+      { module: 'tours', label: 'Tour', items: r.tours ?? [], color: 'blue' },
+      { module: 'bookings', label: 'Booking', items: r.bookings ?? [], color: 'green' },
+      { module: 'customers', label: 'Khách hàng', items: r.customers ?? [], color: 'purple' },
+      { module: 'vouchers', label: 'Voucher', items: r.vouchers ?? [], color: 'orange' },
+      { module: 'lich-khoi-hanh', label: 'Lịch khởi hành', items: r.lichKhoiHanhs ?? [], color: 'cyan' },
+      { module: 'tin-tuc', label: 'Tin tức', items: r.tinTucs ?? [], color: 'magenta' },
+    ].filter((g) => g.items.length > 0)
   }
 
   const moduleColors: Record<string, string> = {
@@ -271,6 +284,15 @@ export default function AdminLayout() {
     vouchers: 'orange',
     'lich-khoi-hanh': 'cyan',
     'tin-tuc': 'magenta',
+  }
+
+  const moduleLabels: Record<string, string> = {
+    tours: 'Tour',
+    bookings: 'Booking',
+    customers: 'Khách hàng',
+    vouchers: 'Voucher',
+    'lich-khoi-hanh': 'Lịch khởi hành',
+    'tin-tuc': 'Tin tức',
   }
 
   const handleSearchClick = (item: GlobalSearchResult) => {
@@ -349,19 +371,32 @@ export default function AdminLayout() {
                   ) : (
                     <>
                       <div className="admin-global-search-count">
-                        {searchQuery_.data?.totalCount ?? 0} kết quả
+                        {searchQuery_.data?.totalCount ?? 0} kết quả cho "{searchInput}"
                       </div>
-                      {getSearchResults().map((item, i) => (
-                        <div
-                          key={i}
-                          className="admin-global-search-item"
-                          onClick={() => void handleSearchClick(item)}
-                        >
-                          <div className="admin-global-search-item-content">
-                            <Text strong>{item.label}</Text>
-                            {item.description && <Text type="secondary" style={{ fontSize: 12 }}>{item.description}</Text>}
+                      {getGroupedResults().map((group) => (
+                        <div key={group.module} className="admin-global-search-group">
+                          <div className="admin-global-search-group-header">
+                            <Tag color={group.color}>{group.label}</Tag>
+                            <Text type="secondary" style={{ fontSize: 11 }}>{group.items.length} kết quả</Text>
                           </div>
-                          <Tag color={moduleColors[item.module] ?? 'default'}>{moduleLabels[item.module] ?? item.module}</Tag>
+                          {group.items.slice(0, 5).map((item, i) => (
+                            <div
+                              key={`${group.module}-${i}`}
+                              className="admin-global-search-item"
+                              onClick={() => void handleSearchClick(item)}
+                            >
+                              <div className="admin-global-search-item-content">
+                                <Text>{item.label}</Text>
+                                {item.description && <Text type="secondary" style={{ fontSize: 12 }}>{item.description}</Text>}
+                              </div>
+                              <Text type="secondary" style={{ fontSize: 11 }}>{item.status}</Text>
+                            </div>
+                          ))}
+                          {group.items.length > 5 && (
+                            <Text type="secondary" style={{ fontSize: 11, padding: '4px 8px', display: 'block' }}>
+                              +{group.items.length - 5} kết quả khác
+                            </Text>
+                          )}
                         </div>
                       ))}
                     </>
@@ -373,7 +408,7 @@ export default function AdminLayout() {
 
           <div className="admin-layout-header-actions">
             <Dropdown
-              dropdownRender={() => (
+              popupRender={() => (
                 <div className="admin-notification-panel">
                   <div className="admin-notification-panel-header">
                     <Text strong>Thông báo</Text>

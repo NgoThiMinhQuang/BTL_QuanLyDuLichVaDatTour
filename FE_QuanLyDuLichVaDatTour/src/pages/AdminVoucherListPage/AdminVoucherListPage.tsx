@@ -1,4 +1,4 @@
-import { Alert, Button, Empty, Form, Input, InputNumber, Modal, Select, Space, Table, Tag, Typography } from 'antd'
+import { Alert, Button, Empty, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Table, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
 import {
@@ -152,16 +152,26 @@ export default function AdminVoucherListPage() {
           }}>
             Chỉnh sửa
           </Button>
-          <Button
-            type="primary"
-            className="admin-primary-button"
-            onClick={() => void updateStatusMutation.mutateAsync({
+          <Popconfirm
+            title={record.trangThai === 'hoat_dong' ? 'Ẩn voucher?' : 'Kích hoạt voucher?'}
+            description={record.trangThai === 'hoat_dong'
+              ? 'Voucher sẽ không còn áp dụng cho khách hàng.'
+              : 'Voucher sẽ được kích hoạt và có thể sử dụng.'}
+            onConfirm={() => void updateStatusMutation.mutateAsync({
               id: record.id,
               trangThai: record.trangThai === 'hoat_dong' ? 'an' : 'hoat_dong',
             })}
+            okText={record.trangThai === 'hoat_dong' ? 'Ẩn' : 'Kích hoạt'}
+            cancelText="Hủy"
+            okButtonProps={record.trangThai === 'hoat_dong' ? { danger: true } : undefined}
           >
-            {record.trangThai === 'hoat_dong' ? 'Ẩn' : 'Kích hoạt'}
-          </Button>
+            <Button
+              type="primary"
+              className="admin-primary-button"
+            >
+              {record.trangThai === 'hoat_dong' ? 'Ẩn' : 'Kích hoạt'}
+            </Button>
+          </Popconfirm>
         </div>
       ),
     },

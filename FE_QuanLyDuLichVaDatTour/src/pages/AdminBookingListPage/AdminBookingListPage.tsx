@@ -1,4 +1,4 @@
-import { Alert, Button, Descriptions, Drawer, Empty, Form, Input, Select, Space, Table, Tag, Typography, Modal } from 'antd'
+import { Alert, Button, Descriptions, Drawer, Empty, Form, Input, Popconfirm, Select, Space, Table, Tag, Typography, Modal } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
 import { useAdminBooking, useAdminBookings, useUpdateAdminBookingStatus } from '../../services/admin/admin.hooks'
@@ -17,7 +17,8 @@ const paymentStatusOptions = mapStatusOptions(adminPaymentStatusMeta)
 
 export default function AdminBookingListPage() {
   const [keyword, setKeyword] = useState('')
-  const [statusFilter, setStatusFilter] = useState<AdminBookingStatus | undefined>()
+  const [bookingStatusFilter, setBookingStatusFilter] = useState<AdminBookingStatus | undefined>()
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState<AdminPaymentStatus | undefined>()
   const [selectedBookingId, setSelectedBookingId] = useState<number | undefined>()
   const [statusForm] = Form.useForm<{ trangThaiBooking: AdminBookingStatus; trangThaiThanhToan?: AdminPaymentStatus; ghiChu?: string }>()
 
@@ -34,10 +35,11 @@ export default function AdminBookingListPage() {
         : [booking.maBooking, booking.maTour, booking.tenTour, booking.hoTenLienHe, booking.emailLienHe, booking.hoTenNguoiDat]
             .some((value) => value.toLowerCase().includes(normalizedKeyword))
 
-      const matchesStatus = statusFilter === undefined ? true : booking.trangThaiBooking === statusFilter
-      return matchesKeyword && matchesStatus
+      const matchesBookingStatus = bookingStatusFilter === undefined || booking.trangThaiBooking === bookingStatusFilter
+      const matchesPaymentStatus = paymentStatusFilter === undefined || booking.trangThaiThanhToan === paymentStatusFilter
+      return matchesKeyword && matchesBookingStatus && matchesPaymentStatus
     })
-  }, [bookingsQuery.data, keyword, statusFilter])
+  }, [bookingsQuery.data, keyword, bookingStatusFilter, paymentStatusFilter])
 
   const columns: ColumnsType<AdminBookingItem> = [
     {
@@ -151,10 +153,12 @@ export default function AdminBookingListPage() {
           >
             Xuất PDF
           </Button>
-          <Button
-            type="primary"
-            className="admin-primary-button"
-            onClick={() => void updateBookingStatusMutation.mutateAsync({
+          <Popconfirm
+            title={record.trangThaiBooking === 'da_xac_nhan' ? 'Hoàn tất booking?' : 'Xác nhận booking?'}
+            description={record.trangThaiBooking === 'da_xac_nhan'
+              ? 'Booking sẽ được đánh dấu là hoàn tất. Bạn không thể hoàn tác.'
+              : 'Booking sẽ được xác nhận và khách hàng sẽ được thông báo.'}
+            onConfirm={() => void updateBookingStatusMutation.mutateAsync({
               id: record.id,
               payload: {
                 trangThaiBooking: record.trangThaiBooking === 'da_xac_nhan' ? 'hoan_tat' : 'da_xac_nhan',
@@ -162,9 +166,13 @@ export default function AdminBookingListPage() {
                 ghiChu: record.ghiChu ?? undefined,
               },
             })}
+            okText={record.trangThaiBooking === 'da_xac_nhan' ? 'Hoàn tất' : 'Xác nhận'}
+            cancelText="Hủy"
           >
-            {record.trangThaiBooking === 'da_xac_nhan' ? 'Hoàn tất' : 'Xác nhận'}
-          </Button>
+            <Button type="primary" className="admin-primary-button" loading={updateBookingStatusMutation.isPending}>
+              {record.trangThaiBooking === 'da_xac_nhan' ? 'Hoàn tất' : 'Xác nhận'}
+            </Button>
+          </Popconfirm>
         </div>
       ),
     },
@@ -194,15 +202,24 @@ export default function AdminBookingListPage() {
           />
           <Select
             allowClear
-            value={statusFilter}
-            onChange={(value) => setStatusFilter(value)}
+            value={bookingStatusFilter}
+            onChange={(value) => setBookingStatusFilter(value)}
             options={bookingStatusOptions}
             placeholder="Trạng thái booking"
             className="admin-filter-field"
           />
+          <Select
+            allowClear
+            value={paymentStatusFilter}
+            onChange={(value) => setPaymentStatusFilter(value)}
+            options={paymentStatusOptions}
+            placeholder="Trạng thái thanh toán"
+            className="admin-filter-field"
+          />
           <Button className="admin-filter-button" onClick={() => {
             setKeyword('')
-            setStatusFilter(undefined)
+            setBookingStatusFilter(undefined)
+            setPaymentStatusFilter(undefined)
           }}>
             Xoá bộ lọc
           </Button>

@@ -190,7 +190,7 @@ export default function AdminDashboardPage() {
                   <Text>{item.trangThai}</Text>
                   <Text>{item.tyLe}%</Text>
                 </div>
-                <Progress percent={Number(item.tyLe)} showInfo={false} strokeColor="#20c7b7" trailColor="#eef2f7" />
+                <Progress percent={Number(item.tyLe)} showInfo={false} strokeColor="#20c7b7" railColor="#eef2f7" />
               </div>
             ))}
           </Card>

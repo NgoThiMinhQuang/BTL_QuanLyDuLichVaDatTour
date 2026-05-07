@@ -1,4 +1,4 @@
-import { Alert, Avatar, Button, Drawer, Empty, Input, Select, Space, Statistic, Table, Tag, Typography } from 'antd'
+import { Alert, Avatar, Button, Drawer, Empty, Input, Popconfirm, Select, Space, Statistic, Table, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useState } from 'react'
 import { UserOutlined } from '@ant-design/icons'
@@ -267,11 +267,12 @@ export default function AdminKhachHangListPage() {
 
             {detailQuery.data.vaiTro === 'khach_hang' && (
               <div className="admin-drawer-actions">
-                <Button
-                  type="primary"
-                  danger={detailQuery.data.trangThai === 'hoat_dong'}
-                  loading={updateStatusMutation.isPending}
-                  onClick={() => {
+                <Popconfirm
+                  title={detailQuery.data.trangThai === 'hoat_dong' ? 'Khóa tài khoản?' : 'Mở khóa tài khoản?'}
+                  description={detailQuery.data.trangThai === 'hoat_dong'
+                    ? 'Khách hàng sẽ không thể đăng nhập cho đến khi được mở khóa.'
+                    : 'Khách hàng sẽ có thể đăng nhập và sử dụng dịch vụ bình thường.'}
+                  onConfirm={() => {
                     const newStatus: AdminKhachHangStatus = detailQuery.data!.trangThai === 'hoat_dong' ? 'bi_khoa' : 'hoat_dong'
                     updateStatusMutation.mutate(
                       { id: detailQuery.data!.id, trangThai: newStatus },
@@ -283,9 +284,18 @@ export default function AdminKhachHangListPage() {
                       }
                     )
                   }}
+                  okText={detailQuery.data.trangThai === 'hoat_dong' ? 'Khóa' : 'Mở khóa'}
+                  cancelText="Hủy"
+                  okButtonProps={{ danger: detailQuery.data.trangThai === 'hoat_dong' }}
                 >
-                  {detailQuery.data.trangThai === 'hoat_dong' ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
-                </Button>
+                  <Button
+                    type="primary"
+                    danger={detailQuery.data.trangThai === 'hoat_dong'}
+                    loading={updateStatusMutation.isPending}
+                  >
+                    {detailQuery.data.trangThai === 'hoat_dong' ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
+                  </Button>
+                </Popconfirm>
               </div>
             )}
           </div>

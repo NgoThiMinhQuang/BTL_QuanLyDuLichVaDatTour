@@ -278,6 +278,17 @@
   background: #f7f9fc;
 }
 
+.admin-global-search-group {
+  margin-bottom: 4px;
+}
+
+.admin-global-search-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 4px;
+}
+
 .admin-global-search-item-content {
   display: flex;
   flex-direction: column;
