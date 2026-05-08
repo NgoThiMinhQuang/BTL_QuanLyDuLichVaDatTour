@@ -1,6 +1,6 @@
 import { Button, Dropdown, Layout, Menu, Space, Avatar } from 'antd'
 import { Link, useLocation, useNavigate } from 'react-router'
-import { UserOutlined, LogoutOutlined, BookOutlined, StarOutlined, BellOutlined, HeartOutlined } from '@ant-design/icons'
+import { UserOutlined, LogoutOutlined, BookOutlined, StarOutlined, BellOutlined, HeartOutlined, GiftOutlined } from '@ant-design/icons'
 import logoImage from '../assets/image.png'
 import { PATHS } from '../constants/paths'
 import { useAuthStore } from '../store/authStore'
@@ -47,6 +47,11 @@ export function Header() {
       key: 'my-reviews',
       icon: <StarOutlined />,
       label: <Link to={PATHS.myReviews}>Đánh giá của tôi</Link>,
+    },
+    {
+      key: 'my-vouchers',
+      icon: <GiftOutlined />,
+      label: <Link to={PATHS.myVouchers}>Voucher của tôi</Link>,
     },
     {
       type: 'divider',

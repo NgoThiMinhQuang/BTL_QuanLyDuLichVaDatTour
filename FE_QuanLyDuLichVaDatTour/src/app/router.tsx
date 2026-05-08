@@ -9,6 +9,7 @@ import { useAuthStore } from '../store/authStore'
 import AboutPage from '../pages/AboutPage'
 import AdminKhachHangListPage from '../pages/AdminKhachHangListPage/AdminKhachHangListPage'
 import AdminLienHeListPage from '../pages/AdminLienHeListPage/AdminLienHeListPage'
+import AdminCancellationPage from '../pages/AdminCancellationPage/AdminCancellationPage'
 import AdminAuditLogPage from '../pages/AdminAuditLogPage/AdminAuditLogPage'
 import AdminBookingListPage from '../pages/AdminBookingListPage/AdminBookingListPage'
 import AdminDashboardPage from '../pages/AdminDashboardPage/AdminDashboardPage'
@@ -38,6 +39,7 @@ import SchedulePage from '../pages/SchedulePage'
 import TourDetailPage from '../pages/TourDetailPage'
 import TourPage from '../pages/TourPage'
 import ProfilePage from '../pages/ProfilePage'
+import VouchersPage from '../pages/VouchersPage'
 import AdminLayout from '../components/AdminLayout/AdminLayout'
 
 const { Content } = Layout
@@ -98,14 +100,19 @@ function RequireAdmin({ children }: { children: React.ReactElement }) {
   return children
 }
 
+import { useFavoriteTourStore } from '../store/favoriteTourStore'
+
 export default function AppRouter() {
   const location = useLocation()
   const hydrateAuth = useAuthStore((state) => state.hydrateAuth)
+  const syncFavorites = useFavoriteTourStore((state) => state.syncFromApi)
   const isAuthPage = location.pathname === PATHS.login || location.pathname === PATHS.register || location.pathname === PATHS.forgotPassword || location.pathname === PATHS.resetPassword
 
   useEffect(() => {
-    void hydrateAuth()
-  }, [hydrateAuth])
+    void hydrateAuth().then(() => {
+      syncFavorites()
+    })
+  }, [hydrateAuth, syncFavorites])
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0)
@@ -134,6 +141,7 @@ export default function AppRouter() {
           <Route path={PATHS.myBookingDetail} element={<RequireAuth><MyBookingDetailPage /></RequireAuth>} />
           <Route path={PATHS.myReviews} element={<RequireAuth><MyReviewsPage /></RequireAuth>} />
           <Route path={PATHS.profile} element={<RequireAuth><ProfilePage /></RequireAuth>} />
+          <Route path={PATHS.myVouchers} element={<RequireAuth><VouchersPage /></RequireAuth>} />
         </Routes>
       </Content>
       {!isAuthPage ? <Footer /> : null}
@@ -166,6 +174,7 @@ export default function AppRouter() {
           <Route path="lich-trinh" element={<AdminLichTrinhListPage />} />
           <Route path="khach-hang" element={<AdminKhachHangListPage />} />
           <Route path="lien-he" element={<AdminLienHeListPage />} />
+          <Route path="huy-tour" element={<AdminCancellationPage />} />
           <Route path="audit-log" element={<AdminAuditLogPage />} />
         </Route>
       </Routes>

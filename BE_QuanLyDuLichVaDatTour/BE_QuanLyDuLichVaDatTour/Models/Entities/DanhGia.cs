@@ -20,6 +20,8 @@ public class DanhGia
 
     public DateTime NgayDanhGia { get; set; }
 
+    public string? HinhAnh { get; set; } // JSON array of URLs
+
     public DateTime? NgayPhanHoi { get; set; }
 
     public DateTime CreatedAt { get; set; }

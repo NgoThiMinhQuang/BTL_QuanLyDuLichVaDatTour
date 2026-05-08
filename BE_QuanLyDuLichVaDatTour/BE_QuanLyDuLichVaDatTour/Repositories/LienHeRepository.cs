@@ -85,6 +85,16 @@ public class LienHeRepository : ILienHeRepository
         await _dbContext.LienHes.AddAsync(lienHe);
     }
 
+    public async Task<List<LienHe>> GetByEmailAsync(string email)
+    {
+        return await _dbContext.LienHes
+            .AsNoTracking()
+            .Include(x => x.NguoiXuLy)
+            .Where(x => x.Email == email)
+            .OrderByDescending(x => x.NgayGui)
+            .ToListAsync();
+    }
+
     public async Task<int> SaveChangesAsync()
     {
         return await _dbContext.SaveChangesAsync();

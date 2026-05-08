@@ -12,10 +12,12 @@ namespace BE_QuanLyDuLichVaDatTour.Controllers;
 public class BookingController : ControllerBase
 {
     private readonly IBookingService _bookingService;
+    private readonly IInvoiceExportService _invoiceService;
 
-    public BookingController(IBookingService bookingService)
+    public BookingController(IBookingService bookingService, IInvoiceExportService invoiceService)
     {
         _bookingService = bookingService;
+        _invoiceService = invoiceService;
     }
 
     [HttpPost("create")]
@@ -51,7 +53,7 @@ public class BookingController : ControllerBase
     }
 
     [HttpGet("my-bookings")]
-    public async Task<IActionResult> GetMyBookings()
+    public async Task<IActionResult> GetMyBookings([FromQuery] string? status, [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate, [FromQuery] string? sortBy, [FromQuery] bool? ascending)
     {
         if (!TryGetCurrentUserId(out var userId))
         {
@@ -60,7 +62,10 @@ public class BookingController : ControllerBase
 
         try
         {
-            var response = await _bookingService.GetMyBookingsAsync(userId);
+            var hasFilter = !string.IsNullOrWhiteSpace(status) || fromDate.HasValue || toDate.HasValue || !string.IsNullOrWhiteSpace(sortBy);
+            var response = hasFilter
+                ? await _bookingService.GetMyBookingsFilteredAsync(userId, status, fromDate, toDate, sortBy, ascending)
+                : await _bookingService.GetMyBookingsAsync(userId);
             return Ok(response);
         }
         catch (KeyNotFoundException ex)
@@ -81,6 +86,42 @@ public class BookingController : ControllerBase
         {
             var response = await _bookingService.GetMyBookingByIdAsync(userId, id);
             return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("export-invoice/{id:long}")]
+    public async Task<IActionResult> ExportInvoice(long id)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            await _bookingService.GetMyBookingByIdAsync(userId, id);
+            var pdfBytes = await _invoiceService.ExportInvoicePdfAsync(id);
+            return File(pdfBytes, "application/pdf", $"HoaDon_{id}.pdf");
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("export-confirmation/{id:long}")]
+    public async Task<IActionResult> ExportConfirmation(long id)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            await _bookingService.GetMyBookingByIdAsync(userId, id);
+            var pdfBytes = await _invoiceService.ExportConfirmationPdfAsync(id);
+            return File(pdfBytes, "application/pdf", $"XacNhanBooking_{id}.pdf");
         }
         catch (KeyNotFoundException ex)
         {

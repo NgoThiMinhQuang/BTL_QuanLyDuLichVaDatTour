@@ -59,6 +59,7 @@ public class ReviewService : IReviewService
             KhachHangId = currentUserId,
             SoSao = request.SoSao,
             NoiDung = request.NoiDung.Trim(),
+            HinhAnh = request.HinhAnh != null && request.HinhAnh.Count > 0 ? System.Text.Json.JsonSerializer.Serialize(request.HinhAnh) : null,
             TrangThai = "cho_duyet",
             NgayDanhGia = now,
             CreatedAt = now,
@@ -152,6 +153,7 @@ public class ReviewService : IReviewService
             NgayKetThuc = danhGia.Booking?.LichKhoiHanh?.NgayKetThuc ?? default,
             SoSao = danhGia.SoSao,
             NoiDung = danhGia.NoiDung,
+            HinhAnh = DeserializeImages(danhGia.HinhAnh),
             CreatedAt = danhGia.CreatedAt,
             UpdatedAt = danhGia.UpdatedAt
         };
@@ -169,6 +171,7 @@ public class ReviewService : IReviewService
             SoSao = danhGia.SoSao,
             NoiDung = danhGia.NoiDung,
             PhanHoiAdmin = danhGia.PhanHoiAdmin,
+            HinhAnh = DeserializeImages(danhGia.HinhAnh),
             NgayDanhGia = danhGia.NgayDanhGia
         };
     }
@@ -188,10 +191,24 @@ public class ReviewService : IReviewService
             NoiDung = danhGia.NoiDung,
             PhanHoiAdmin = danhGia.PhanHoiAdmin,
             TrangThai = danhGia.TrangThai,
+            HinhAnh = DeserializeImages(danhGia.HinhAnh),
             NgayDanhGia = danhGia.NgayDanhGia,
             NgayPhanHoi = danhGia.NgayPhanHoi,
             CreatedAt = danhGia.CreatedAt,
             UpdatedAt = danhGia.UpdatedAt
         };
+    }
+
+    private static List<string>? DeserializeImages(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return null;
+        try
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<List<string>>(json);
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

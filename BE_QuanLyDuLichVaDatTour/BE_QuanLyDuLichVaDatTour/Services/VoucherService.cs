@@ -10,11 +10,13 @@ public class VoucherService : IVoucherService
 {
     private readonly IVoucherRepository _voucherRepository;
     private readonly ITourRepository _tourRepository;
+    private readonly IBookingRepository _bookingRepository;
 
-    public VoucherService(IVoucherRepository voucherRepository, ITourRepository tourRepository)
+    public VoucherService(IVoucherRepository voucherRepository, ITourRepository tourRepository, IBookingRepository bookingRepository)
     {
         _voucherRepository = voucherRepository;
         _tourRepository = tourRepository;
+        _bookingRepository = bookingRepository;
     }
 
     public async Task<List<VoucherAdminResponseDto>> GetAllAsync()
@@ -178,6 +180,52 @@ public class VoucherService : IVoucherService
         }
 
         return value.Trim();
+    }
+
+    public async Task<List<VoucherUserResponseDto>> GetAvailableForUserAsync(long userId)
+    {
+        var vouchers = await _voucherRepository.GetAvailableVouchersAsync();
+        var usedIds = await _voucherRepository.GetUsedVoucherIdsByUserAsync(userId);
+        var usedSet = new HashSet<long>(usedIds);
+
+        return vouchers
+            .Where(x => !usedSet.Contains(x.Id))
+            .Select(x => new VoucherUserResponseDto
+            {
+                Id = x.Id,
+                MaVoucher = x.MaVoucher,
+                TenVoucher = x.TenVoucher,
+                KieuGiam = x.KieuGiam.ToString(),
+                GiaTriGiam = x.GiaTriGiam,
+                GiamToiDa = x.GiamToiDa,
+                DonHangToiThieu = x.DonHangToiThieu,
+                NgayBatDau = x.NgayBatDau,
+                NgayKetThuc = x.NgayKetThuc,
+                MoTa = x.MoTa,
+                SoLuongConLai = x.SoLuongToiDa - x.SoLuongDaDung
+            })
+            .ToList();
+    }
+
+    public async Task<List<VoucherHistoryResponseDto>> GetVoucherHistoryAsync(long userId)
+    {
+        var bookings = await _bookingRepository.GetByNguoiDungIdAsync(userId);
+        return bookings
+            .Where(x => x.VoucherId != null && x.Voucher != null)
+            .Select(x => new VoucherHistoryResponseDto
+            {
+                Id = x.Voucher!.Id,
+                MaVoucher = x.Voucher!.MaVoucher,
+                TenVoucher = x.Voucher!.TenVoucher,
+                KieuGiam = x.Voucher!.KieuGiam.ToString(),
+                GiaTriGiam = x.Voucher!.GiaTriGiam,
+                MaBooking = x.MaBooking,
+                BookingId = x.Id,
+                NgayDat = x.NgayDat,
+                TongTien = x.TongTien,
+                TrangThaiBooking = x.TrangThaiBooking.ToString()
+            })
+            .ToList();
     }
 
     private static VoucherAdminResponseDto MapResponse(Voucher voucher)

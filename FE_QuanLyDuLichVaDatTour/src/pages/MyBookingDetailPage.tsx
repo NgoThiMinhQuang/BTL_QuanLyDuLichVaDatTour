@@ -1,27 +1,53 @@
 import './MyBookingDetailPage.css'
-import { Alert, Card, Empty, List, Skeleton, Space, Tag, Typography, Row, Col, Divider, Steps, Button } from 'antd'
-import { useQuery } from '@tanstack/react-query'
+import { Alert, Card, Empty, List, Skeleton, Space, Tag, Typography, Row, Col, Divider, Steps, Button, Modal, Input } from 'antd'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router'
-import { 
-  CalendarOutlined, 
-  EnvironmentOutlined, 
-  UserOutlined, 
-  MailOutlined, 
-  PhoneOutlined, 
-  IdcardOutlined, 
-  CreditCardOutlined, 
+import { useState } from 'react'
+import {
+  CalendarOutlined,
+  EnvironmentOutlined,
+  UserOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  IdcardOutlined,
+  CreditCardOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
   SyncOutlined,
   CloseCircleOutlined,
-  FileTextOutlined
+  FileTextOutlined,
+  ExclamationCircleOutlined
 } from '@ant-design/icons'
 import { PATHS } from '../constants/paths'
 import { formatDate } from '../utils/formatDate'
 import { formatMoney } from '../utils/formatMoney'
+import { API_BASE_URL } from '../constants/api'
+import { useAuthStore } from '../store/authStore'
 import { layChiTietBooking, layThanhToanTheoBooking } from '../services/booking/booking'
+import { taoYeuCauHuyTour, layYeuCauHuyTourTheoBooking, type YeuCauHuyTourResponse } from '../services/huy-tour/huyTour'
 
 const { Paragraph, Title, Text } = Typography
+const { TextArea } = Input
+
+function handleDownload(url: string, filename: string) {
+  const token = useAuthStore.getState().accessToken
+  fetch(`${API_BASE_URL}${url}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((r) => {
+      if (!r.ok) throw new Error('Tải thất bại')
+      return r.blob()
+    })
+    .then((blob) => {
+      const objUrl = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = objUrl
+      a.download = filename
+      a.click()
+      window.URL.revokeObjectURL(objUrl)
+    })
+    .catch(() => {})
+}
 
 function formatTrangThai(value: string) {
   return value
@@ -34,6 +60,11 @@ export default function BookingDetail() {
   const params = useParams()
   const bookingId = Number(params.id)
   const isValidBookingId = Number.isInteger(bookingId) && bookingId > 0
+  const queryClient = useQueryClient()
+  const [cancelModalOpen, setCancelModalOpen] = useState(false)
+  const [cancelReason, setCancelReason] = useState('')
+  const [cancelSubmitting, setCancelSubmitting] = useState(false)
+  const [cancelError, setCancelError] = useState<string | null>(null)
 
   const bookingQuery = useQuery({
     queryKey: ['booking-detail', bookingId],
@@ -46,6 +77,28 @@ export default function BookingDetail() {
     queryFn: () => layThanhToanTheoBooking(bookingId),
     enabled: isValidBookingId,
   })
+
+  const cancelQuery = useQuery({
+    queryKey: ['cancellation-request', bookingId],
+    queryFn: () => layYeuCauHuyTourTheoBooking(bookingId),
+    enabled: isValidBookingId,
+  })
+
+  const handleCancelSubmit = async () => {
+    if (!cancelReason.trim()) return
+    setCancelSubmitting(true)
+    setCancelError(null)
+    try {
+      await taoYeuCauHuyTour({ bookingId, lyDo: cancelReason.trim() })
+      setCancelModalOpen(false)
+      setCancelReason('')
+      queryClient.invalidateQueries({ queryKey: ['cancellation-request', bookingId] })
+    } catch (e) {
+      setCancelError((e as Error).message)
+    } finally {
+      setCancelSubmitting(false)
+    }
+  }
 
   if (!isValidBookingId) {
     return (
@@ -260,14 +313,76 @@ export default function BookingDetail() {
                     )}
                   </Card>
 
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <Button icon={<FileTextOutlined />} block onClick={() => handleDownload(`/booking/export-invoice/${bookingId}`, `HoaDon_${bookingId}.pdf`)}>
+                      Tải hóa đơn (PDF)
+                    </Button>
+                    <Button icon={<FileTextOutlined />} block onClick={() => handleDownload(`/booking/export-confirmation/${bookingId}`, `XacNhanBooking_${bookingId}.pdf`)}>
+                      Tải xác nhận booking (PDF)
+                    </Button>
+                  </Space>
+
                   {bookingQuery.data.coTheDanhGia && (
-                    <Button type="primary" block className="review-action-btn" size="large">
+                    <Button type="primary" block className="review-action-btn" size="large" style={{ marginTop: 12 }}>
                       <Link to={`${PATHS.myReviews}?bookingId=${bookingQuery.data.id}`}>Viết đánh giá cho chuyến đi</Link>
                     </Button>
+                  )}
+
+                  {bookingQuery.data.trangThaiBooking !== 'da_huy' && (
+                    <Card className="cancellation-card" variant="borderless" title={<span><ExclamationCircleOutlined /> Yêu cầu hủy tour</span>}>
+                      {cancelQuery.isLoading ? (
+                        <Skeleton active paragraph={{ rows: 2 }} />
+                      ) : cancelQuery.data ? (
+                        <div className="cancellation-status-box">
+                          <Tag color={
+                            cancelQuery.data.trangThai === 'cho_duyet' ? 'processing' :
+                            cancelQuery.data.trangThai === 'da_duyet' ? 'success' : 'error'
+                          }>
+                            {cancelQuery.data.trangThai === 'cho_duyet' ? 'Đang chờ duyệt' :
+                             cancelQuery.data.trangThai === 'da_duyet' ? 'Đã duyệt' : 'Từ chối'}
+                          </Tag>
+                          <Text className="cancel-reason">Lý do: {cancelQuery.data.lyDo}</Text>
+                          {cancelQuery.data.ghiChuAdmin && (
+                            <Text className="cancel-admin-note">Phản hồi: {cancelQuery.data.ghiChuAdmin}</Text>
+                          )}
+                        </div>
+                      ) : (
+                        <Button
+                          danger
+                          block
+                          icon={<CloseCircleOutlined />}
+                          onClick={() => setCancelModalOpen(true)}
+                        >
+                          Gửi yêu cầu hủy tour
+                        </Button>
+                      )}
+                    </Card>
                   )}
                 </div>
               </Col>
             </Row>
+
+            <Modal
+              title="Gửi yêu cầu hủy tour"
+              open={cancelModalOpen}
+              onCancel={() => { setCancelModalOpen(false); setCancelReason(''); setCancelError(null) }}
+              onOk={handleCancelSubmit}
+              confirmLoading={cancelSubmitting}
+              okText="Gửi yêu cầu"
+              cancelText="Đóng"
+              okButtonProps={{ danger: true }}
+            >
+              <Text>Vui lòng nhập lý do hủy tour:</Text>
+              <TextArea
+                rows={4}
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="Nhập lý do bạn muốn hủy tour..."
+                style={{ marginTop: 12 }}
+                maxLength={1000}
+              />
+              {cancelError && <Alert type="error" message={cancelError} style={{ marginTop: 12 }} />}
+            </Modal>
           </div>
         ) : null}
       </div>

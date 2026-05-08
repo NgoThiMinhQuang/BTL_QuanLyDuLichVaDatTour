@@ -14,4 +14,6 @@ public class CreateReviewRequestDto
     [Required]
     [MaxLength(2000)]
     public string NoiDung { get; set; } = string.Empty;
+
+    public List<string>? HinhAnh { get; set; }
 }

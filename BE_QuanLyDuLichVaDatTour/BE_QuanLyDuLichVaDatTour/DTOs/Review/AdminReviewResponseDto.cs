@@ -28,6 +28,8 @@ public class AdminReviewResponseDto
 
     public DateTime? NgayPhanHoi { get; set; }
 
+    public List<string>? HinhAnh { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

@@ -289,6 +289,73 @@ public class InvoiceExportService : IInvoiceExportService
         });
     }
 
+    public async Task<byte[]> ExportConfirmationPdfAsync(long bookingId)
+    {
+        var booking = await _dbContext.Bookings
+            .AsNoTracking()
+            .Include(b => b.LichKhoiHanh).ThenInclude(l => l!.Tour)
+            .Include(b => b.HanhKhachs)
+            .Include(b => b.KhachHang)
+            .FirstOrDefaultAsync(b => b.Id == bookingId)
+            ?? throw new KeyNotFoundException("Không tìm thấy booking.");
+
+        var dto = MapToDto(booking);
+        return GenerateConfirmationPdf(dto);
+    }
+
+    private static byte[] GenerateConfirmationPdf(InvoiceExportDto dto)
+    {
+        var document = Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(40);
+                page.DefaultTextStyle(x => x.FontSize(11));
+
+                page.Header().Element(c => ComposeConfirmationHeader(c, dto));
+                page.Content().Element(c => ComposeContent(c, dto));
+                page.Footer().Element(ComposeConfirmationFooter);
+            });
+        });
+
+        return document.GeneratePdf();
+    }
+
+    private static void ComposeConfirmationHeader(IContainer container, InvoiceExportDto dto)
+    {
+        container.Row(row =>
+        {
+            row.RelativeItem().Column(col =>
+            {
+                col.Item().Text("TravelTour").FontSize(20).Bold().FontColor(Colors.Blue.Darken1);
+                col.Item().Text("Công ty Du Lịch & Đặt Tour").FontSize(10).FontColor(Colors.Grey.Darken1);
+                col.Item().Text("123 Đường ABC, Quận 1, TP.HCM").FontSize(9).FontColor(Colors.Grey.Medium);
+                col.Item().Text("Hotline: 1900 1234 | Email: info@traveltour.vn").FontSize(9).FontColor(Colors.Grey.Medium);
+            });
+
+            row.RelativeItem().AlignRight().Column(col =>
+            {
+                col.Item().Text("PHIẾU XÁC NHẬN").FontSize(22).Bold().FontColor(Colors.Blue.Darken1);
+                col.Item().Text("ĐẶT TOUR").FontSize(14).Bold().FontColor(Colors.Blue.Medium);
+                col.Item().Text($"#{dto.MaBooking}").FontSize(12).Bold();
+                col.Item().Text($"Ngày đặt: {dto.NgayDat:dd/MM/yyyy}").FontSize(10);
+            });
+        });
+
+        container.PaddingVertical(16).LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+    }
+
+    private static void ComposeConfirmationFooter(IContainer container)
+    {
+        container.AlignCenter().Column(col =>
+        {
+            col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+            col.Item().PaddingTop(8).AlignCenter().Text("Cảm ơn quý khách đã tin tưởng TravelTour!").FontSize(10).FontColor(Colors.Grey.Darken1);
+            col.Item().AlignCenter().Text("Vui lòng mang theo phiếu xác nhận này khi đi tour").FontSize(9).FontColor(Colors.Grey.Medium);
+        });
+    }
+
     private static void ComposeFooter(IContainer container)
     {
         container.AlignCenter().Column(col =>

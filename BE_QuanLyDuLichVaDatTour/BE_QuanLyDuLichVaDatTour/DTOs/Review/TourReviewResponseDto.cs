@@ -18,5 +18,7 @@ public class TourReviewResponseDto
 
     public string? PhanHoiAdmin { get; set; }
 
+    public List<string>? HinhAnh { get; set; }
+
     public DateTime NgayDanhGia { get; set; }
 }

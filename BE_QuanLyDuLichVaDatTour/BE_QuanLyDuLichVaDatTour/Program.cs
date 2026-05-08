@@ -99,18 +99,34 @@ builder.Services.AddScoped<IInvoiceExportService, InvoiceExportService>();
 builder.Services.AddScoped<ILienHeService, LienHeService>();
 builder.Services.AddScoped<ILienHeRepository, LienHeRepository>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
+builder.Services.AddScoped<IYeuThichRepository, YeuThichRepository>();
+builder.Services.AddScoped<IYeuThichService, YeuThichService>();
+builder.Services.AddScoped<IYeuCauHuyTourRepository, YeuCauHuyTourRepository>();
+builder.Services.AddScoped<IYeuCauHuyTourService, YeuCauHuyTourService>();
+builder.Services.AddScoped<IThongBaoRepository, ThongBaoRepository>();
+builder.Services.AddScoped<IThongBaoService, ThongBaoService>();
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var connectionInfo = new SqlConnectionStringBuilder(connectionString);
 
     try
     {
-        await dbContext.Database.OpenConnectionAsync();
-        await dbContext.Database.CloseConnectionAsync();
+        // Run raw schema fixes via SqlConnection (avoid EF model validation before column exists)
+        using var sqlConnection = new SqlConnection(connectionString);
+        await sqlConnection.OpenAsync();
+
+        using var cmd = sqlConnection.CreateCommand();
+        cmd.CommandText = @"
+            IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE Name = N'HinhAnh' AND Object_ID = Object_ID(N'DanhGiaTour'))
+            BEGIN
+                ALTER TABLE DanhGiaTour ADD HinhAnh NVARCHAR(MAX) NULL;
+            END";
+        await cmd.ExecuteNonQueryAsync();
+
+        await sqlConnection.CloseAsync();
     }
     catch (SqlException ex)
     {
@@ -123,7 +139,7 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "Không thể kiểm tra kết nối SQL khi khởi động BE_QuanLyDuLichVaDatTour.");
+        app.Logger.LogError(ex, "Không thể khởi tạo schema database.");
         throw;
     }
 }

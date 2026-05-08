@@ -20,6 +20,8 @@ public class ReviewResponseDto
 
     public string NoiDung { get; set; } = string.Empty;
 
+    public List<string>? HinhAnh { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

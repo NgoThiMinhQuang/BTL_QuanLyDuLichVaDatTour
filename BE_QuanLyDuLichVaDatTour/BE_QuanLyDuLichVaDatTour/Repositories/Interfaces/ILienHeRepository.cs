@@ -10,5 +10,6 @@ public interface ILienHeRepository
     Task<List<LienHe>> SearchAsync(string? keyword, TrangThaiLienHe? trangThai, int page, int pageSize);
     Task<int> CountAsync(string? keyword, TrangThaiLienHe? trangThai);
     Task AddAsync(LienHe lienHe);
+    Task<List<LienHe>> GetByEmailAsync(string email);
     Task<int> SaveChangesAsync();
 }

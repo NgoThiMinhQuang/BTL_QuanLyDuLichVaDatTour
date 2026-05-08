@@ -10,8 +10,8 @@ export interface UpdateProfilePayload {
 }
 
 export async function updateProfile(payload: UpdateProfilePayload): Promise<CurrentUserResponse> {
-  const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
-    method: 'POST',
+  const response = await fetch(`${API_BASE_URL}/auth/me`, {
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${useAuthStore.getState().requireAccessToken()}`,

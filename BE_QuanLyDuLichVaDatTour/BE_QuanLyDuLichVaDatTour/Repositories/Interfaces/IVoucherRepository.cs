@@ -14,5 +14,9 @@ public interface IVoucherRepository
 
     Task<List<Voucher>> GetAllAsync();
 
+    Task<List<Voucher>> GetAvailableVouchersAsync();
+
+    Task<List<long>> GetUsedVoucherIdsByUserAsync(long userId);
+
     Task<int> SaveChangesAsync();
 }

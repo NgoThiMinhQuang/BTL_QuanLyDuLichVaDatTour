@@ -13,4 +13,8 @@ public interface IVoucherService
     Task<VoucherAdminResponseDto> UpdateAsync(long id, UpdateVoucherRequestDto request);
 
     Task UpdateStatusAsync(long id, UpdateVoucherStatusRequestDto request);
+
+    Task<List<VoucherUserResponseDto>> GetAvailableForUserAsync(long userId);
+
+    Task<List<VoucherHistoryResponseDto>> GetVoucherHistoryAsync(long userId);
 }

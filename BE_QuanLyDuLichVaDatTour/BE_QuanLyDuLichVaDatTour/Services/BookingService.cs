@@ -124,6 +124,43 @@ public class BookingService : IBookingService
         return bookings.Select(MapBookingListItem).ToList();
     }
 
+    public async Task<List<BookingListItemDto>> GetMyBookingsFilteredAsync(long currentUserId, string? status, DateTime? fromDate, DateTime? toDate, string? sortBy, bool? ascending)
+    {
+        await EnsureNguoiDungExistsAsync(currentUserId);
+
+        var bookings = await _bookingRepository.GetByNguoiDungIdAsync(currentUserId);
+
+        IEnumerable<Booking> query = bookings;
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            query = query.Where(b => b.TrangThaiBooking.ToString() == status);
+        }
+
+        if (fromDate.HasValue)
+        {
+            query = query.Where(b => b.NgayDat >= fromDate.Value);
+        }
+
+        if (toDate.HasValue)
+        {
+            var toEnd = toDate.Value.Date.AddDays(1).AddTicks(-1);
+            query = query.Where(b => b.NgayDat <= toEnd);
+        }
+
+        var asc = ascending ?? false;
+        query = sortBy switch
+        {
+            "tongTien" => asc ? query.OrderBy(b => b.TongTien) : query.OrderByDescending(b => b.TongTien),
+            "ngayKhoiHanh" => asc
+                ? query.OrderBy(b => b.LichKhoiHanh?.NgayKhoiHanh ?? DateTime.MaxValue)
+                : query.OrderByDescending(b => b.LichKhoiHanh?.NgayKhoiHanh ?? DateTime.MinValue),
+            _ => asc ? query.OrderBy(b => b.NgayDat) : query.OrderByDescending(b => b.NgayDat),
+        };
+
+        return query.Select(MapBookingListItem).ToList();
+    }
+
     public async Task<BookingResponseDto> GetMyBookingByIdAsync(long currentUserId, long id)
     {
         var booking = await _bookingRepository.GetByIdAsync(id)

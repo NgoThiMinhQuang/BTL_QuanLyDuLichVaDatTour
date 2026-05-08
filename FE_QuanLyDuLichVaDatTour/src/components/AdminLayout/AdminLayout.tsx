@@ -4,6 +4,7 @@ import type { MenuProps } from 'antd'
 import {
   AppstoreOutlined,
   CalendarOutlined,
+  CloseCircleOutlined,
   CreditCardOutlined,
   EnvironmentOutlined,
   FileTextOutlined,
@@ -77,6 +78,11 @@ const navigationItems: MenuProps['items'] = [
         key: PATHS.adminLienHes,
         icon: <NotificationOutlined />,
         label: <Link to={PATHS.adminLienHes}>Liên hệ hỗ trợ</Link>,
+      },
+      {
+        key: PATHS.adminHuyTours,
+        icon: <CloseCircleOutlined />,
+        label: <Link to={PATHS.adminHuyTours}>Yêu cầu hủy tour</Link>,
       },
       {
         key: PATHS.adminAuditLogs,

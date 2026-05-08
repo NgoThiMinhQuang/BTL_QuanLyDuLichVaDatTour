@@ -43,6 +43,12 @@ public class AppDbContext : DbContext
 
     public DbSet<TinTuc> TinTucs => Set<TinTuc>();
 
+    public DbSet<YeuThich> YeuThichs => Set<YeuThich>();
+
+    public DbSet<YeuCauHuyTour> YeuCauHuyTours => Set<YeuCauHuyTour>();
+
+    public DbSet<ThongBao> ThongBaos => Set<ThongBao>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -1015,6 +1021,10 @@ public class AppDbContext : DbContext
                 .HasColumnName("PhanHoiAdmin")
                 .HasColumnType("nvarchar(max)");
 
+            entity.Property(x => x.HinhAnh)
+                .HasColumnName("HinhAnh")
+                .HasColumnType("nvarchar(max)");
+
             entity.Property(x => x.TrangThai)
                 .HasColumnName("TrangThai")
                 .HasMaxLength(20)
@@ -1130,6 +1140,175 @@ public class AppDbContext : DbContext
 
             entity.HasIndex(x => new { x.TrangThai, x.NgayDang })
                 .HasDatabaseName("IdxTinTucTrangThaiNgayDang");
+        });
+
+        modelBuilder.Entity<YeuThich>(entity =>
+        {
+            entity.ToTable("YeuThich");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("YeuThichId")
+                .HasColumnType("bigint")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UserId)
+                .HasColumnName("NguoiDungId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
+            entity.Property(x => x.TourId)
+                .HasColumnName("TourId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("CreatedAt")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.HasIndex(x => new { x.UserId, x.TourId })
+                .IsUnique()
+                .HasDatabaseName("UQ_YeuThich_User_Tour");
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.Tour)
+                .WithMany()
+                .HasForeignKey(x => x.TourId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<YeuCauHuyTour>(entity =>
+        {
+            entity.ToTable("YeuCauHuyTour");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("YeuCauHuyTourId")
+                .HasColumnType("bigint")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.BookingId)
+                .HasColumnName("BookingId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
+            entity.Property(x => x.UserId)
+                .HasColumnName("NguoiDungId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
+            entity.Property(x => x.LyDo)
+                .HasColumnName("LyDo")
+                .HasMaxLength(1000)
+                .IsRequired();
+
+            entity.Property(x => x.TrangThai)
+                .HasColumnName("TrangThai")
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.Property(x => x.GhiChuAdmin)
+                .HasColumnName("GhiChuAdmin")
+                .HasMaxLength(500);
+
+            entity.Property(x => x.NguoiXuLyId)
+                .HasColumnName("NguoiXuLyId")
+                .HasColumnType("bigint");
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("CreatedAt")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UpdatedAt)
+                .HasColumnName("UpdatedAt")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.HasIndex(x => x.BookingId)
+                .HasDatabaseName("IdxYeuCauHuyTour_Booking");
+
+            entity.HasIndex(x => x.TrangThai)
+                .HasDatabaseName("IdxYeuCauHuyTour_TrangThai");
+
+            entity.HasOne(x => x.Booking)
+                .WithMany(x => x.YeuCauHuyTours)
+                .HasForeignKey(x => x.BookingId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.NguoiXuLy)
+                .WithMany()
+                .HasForeignKey(x => x.NguoiXuLyId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ThongBao>(entity =>
+        {
+            entity.ToTable("ThongBao");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("ThongBaoId")
+                .HasColumnType("bigint")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UserId)
+                .HasColumnName("NguoiDungId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
+            entity.Property(x => x.Loai)
+                .HasColumnName("Loai")
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.Property(x => x.TieuDe)
+                .HasColumnName("TieuDe")
+                .HasMaxLength(300)
+                .IsRequired();
+
+            entity.Property(x => x.NoiDung)
+                .HasColumnName("NoiDung")
+                .HasColumnType("nvarchar(max)")
+                .IsRequired();
+
+            entity.Property(x => x.DuongDan)
+                .HasColumnName("DuongDan")
+                .HasMaxLength(500);
+
+            entity.Property(x => x.DaDoc)
+                .HasColumnName("DaDoc")
+                .HasColumnType("bit")
+                .IsRequired();
+
+            entity.Property(x => x.ThoiGian)
+                .HasColumnName("ThoiGian")
+                .HasColumnType("datetime2")
+                .IsRequired();
+
+            entity.HasIndex(x => new { x.UserId, x.DaDoc, x.ThoiGian })
+                .HasDatabaseName("IdxThongBao_User_DaDoc_ThoiGian");
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<LienHe>(entity =>

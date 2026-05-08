@@ -555,6 +555,43 @@
   }
 }
 
+.cancellation-card {
+  border-radius: 16px;
+  border: 1px solid #fee2e2;
+  background: #fffbfb;
+  box-shadow: 0 4px 20px -5px rgba(239, 68, 68, 0.08);
+}
+
+.cancellation-card .ant-card-head-title {
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cancellation-status-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cancel-reason {
+  color: #475569;
+  font-size: 13px;
+}
+
+.cancel-admin-note {
+  color: #0369a1;
+  font-size: 13px;
+  font-style: italic;
+  background: #f0f9ff;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #e0f2fe;
+}
+
 @media (max-width: 768px) {
   .booking-status-flex {
     flex-direction: column;

@@ -55,4 +55,30 @@ public class VoucherRepository : IVoucherRepository
     {
         return _dbContext.SaveChangesAsync();
     }
+
+    public async Task<List<Voucher>> GetAvailableVouchersAsync()
+    {
+        var now = DateTime.UtcNow;
+        return await _dbContext.Vouchers
+            .AsNoTracking()
+            .Include(x => x.Tour)
+            .Where(x => x.TrangThai == Models.Enums.TrangThaiVoucher.hoat_dong
+                        && x.NgayBatDau <= now
+                        && x.NgayKetThuc >= now
+                        && x.SoLuongDaDung < x.SoLuongToiDa)
+            .OrderByDescending(x => x.CreatedAt)
+            .ToListAsync();
+    }
+
+    public async Task<List<long>> GetUsedVoucherIdsByUserAsync(long userId)
+    {
+        return await _dbContext.Bookings
+            .AsNoTracking()
+            .Where(x => x.KhachHangId == userId
+                        && x.VoucherId != null
+                        && x.TrangThaiBooking != Models.Enums.TrangThaiBooking.da_huy)
+            .Select(x => x.VoucherId!.Value)
+            .Distinct()
+            .ToListAsync();
+    }
 }
