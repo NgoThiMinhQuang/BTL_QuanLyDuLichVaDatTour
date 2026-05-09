@@ -1,5 +1,5 @@
 import './BookingPage.css'
-import { Alert, Button, Card, Checkbox, Col, DatePicker, Form, Input, Row, Select, Skeleton, Space, Typography, Tag, Divider } from 'antd'
+import { Alert, Button, Card, Checkbox, Col, DatePicker, Form, Input, Row, Select, Skeleton, Space, Typography, Tag, Divider, Modal, List } from 'antd'
 import { CheckOutlined, GiftOutlined, MinusOutlined, PlusOutlined, RightOutlined, TeamOutlined, UserOutlined, EnvironmentOutlined, IdcardOutlined, BankOutlined, CalendarOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
@@ -12,6 +12,7 @@ import { getTourChiTietPath } from '../constants/paths'
 import { layDuLieuDatTour, taoBooking, type BookingPassengerPayload } from '../services/booking/booking'
 import { useAuthStore } from '../store/authStore'
 import { BOOKING_DETAIL_PATH } from '../constants/paths'
+import { layVoucherKhaDung } from '../services/voucher/voucher'
 
 const { Paragraph, Text, Title } = Typography
 const { TextArea } = Input
@@ -104,6 +105,7 @@ export default function Booking() {
   const [voucherCode, setVoucherCode] = useState('')
   const [ghiChu, setGhiChu] = useState('')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [isVoucherModalOpen, setIsVoucherModalOpen] = useState(false)
 
   const tourId = Number(searchParams.get('tourId'))
   const departureId = Number(searchParams.get('departureId'))
@@ -127,6 +129,12 @@ export default function Booking() {
       return res.json()
     },
     staleTime: Infinity,
+  })
+
+  const vouchersQuery = useQuery({
+    queryKey: ['available-vouchers'],
+    queryFn: layVoucherKhaDung,
+    enabled: currentStep === 'confirm',
   })
 
   const pricingSummary = useMemo(() => {
@@ -153,6 +161,21 @@ export default function Booking() {
     if (!pricingSummary) return 0
     return pricingSummary.nguoiLon * passengerCounts.nguoi_lon + pricingSummary.treEm * passengerCounts.tre_em + pricingSummary.emBe * passengerCounts.em_be
   }, [pricingSummary, passengerCounts])
+
+  const voucherGiamGia = useMemo(() => {
+    if (!voucherCode || !vouchersQuery.data) return 0;
+    const voucher = vouchersQuery.data.find(v => v.maVoucher === voucherCode);
+    if (!voucher || tongTamTinh < voucher.donHangToiThieu) return 0;
+
+    if (voucher.kieuGiam === 'phan_tram') {
+      const discount = (tongTamTinh * voucher.giaTriGiam) / 100;
+      return voucher.giamToiDa ? Math.min(discount, voucher.giamToiDa) : discount;
+    } else {
+      return voucher.giaTriGiam;
+    }
+  }, [voucherCode, vouchersQuery.data, tongTamTinh]);
+
+  const tongThanhToan = Math.max(0, tongTamTinh - voucherGiamGia);
 
   const stepsIndex = steps.findIndex((item) => item.key === currentStep)
 
@@ -562,18 +585,19 @@ export default function Booking() {
           </div>
 
           <div className="booking-voucher-row">
-            <div className="booking-voucher-input-wrap">
+            <div className="booking-voucher-input-wrap" onClick={() => setIsVoucherModalOpen(true)} style={{ cursor: 'pointer' }}>
               <label className="booking-field-label">Mã giảm giá / Voucher</label>
               <Input
                 size="large"
-                placeholder="Nhập mã voucher (nếu có)"
+                placeholder="Chọn mã voucher (nếu có)"
                 value={voucherCode}
-                onChange={(event) => setVoucherCode(event.target.value)}
                 className="booking-input"
                 prefix={<GiftOutlined style={{ color: '#94a3b8' }} />}
+                readOnly
+                style={{ cursor: 'pointer' }}
               />
             </div>
-            <Button size="large" className="booking-secondary-button booking-voucher-button">Áp dụng ngay</Button>
+            <Button size="large" className="booking-secondary-button booking-voucher-button" onClick={() => setIsVoucherModalOpen(true)}>Chọn mã</Button>
           </div>
 
           <div className="booking-confirm-box">
@@ -623,6 +647,64 @@ export default function Booking() {
 
         {successMessage ? <Alert type="success" showIcon title={successMessage} className="booking-alert" /> : null}
         {errorMessage ? <Alert type="error" showIcon title={errorMessage} className="booking-alert" /> : null}
+
+        <Modal
+          title="Chọn Voucher / Mã giảm giá"
+          open={isVoucherModalOpen}
+          onCancel={() => setIsVoucherModalOpen(false)}
+          footer={null}
+          width={500}
+        >
+          {vouchersQuery.isLoading ? (
+            <Skeleton active />
+          ) : vouchersQuery.isError ? (
+            <Alert type="error" message="Lỗi tải danh sách voucher" />
+          ) : vouchersQuery.data?.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '20px 0' }}>Không có voucher nào khả dụng</div>
+          ) : (
+            <List
+              dataSource={vouchersQuery.data}
+              renderItem={(item) => {
+                const isApplicable = tongTamTinh >= item.donHangToiThieu;
+                return (
+                  <List.Item
+                    style={{
+                      cursor: isApplicable ? 'pointer' : 'not-allowed',
+                      padding: '16px',
+                      border: `1px solid ${isApplicable ? '#e2e8f0' : '#f1f5f9'}`,
+                      borderRadius: '12px',
+                      marginBottom: '12px',
+                      opacity: isApplicable ? 1 : 0.6,
+                      background: isApplicable ? '#fff' : '#f8fafc'
+                    }}
+                    onClick={() => {
+                      if (isApplicable) {
+                        setVoucherCode(item.maVoucher)
+                        setIsVoucherModalOpen(false)
+                      }
+                    }}
+                  >
+                    <List.Item.Meta
+                      avatar={<div style={{ width: 48, height: 48, borderRadius: '12px', background: isApplicable ? '#eff6ff' : '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isApplicable ? '#3b82f6' : '#94a3b8', fontSize: '24px' }}><GiftOutlined /></div>}
+                      title={<strong style={{ fontSize: '16px', color: isApplicable ? '#1e293b' : '#64748b' }}>{item.tenVoucher}</strong>}
+                      description={
+                        <div style={{ marginTop: '4px' }}>
+                          <div style={{ color: isApplicable ? '#10b981' : '#94a3b8', fontWeight: 600, fontSize: '15px' }}>
+                            Giảm {item.kieuGiam === 'phan_tram' ? `${item.giaTriGiam}%` : formatMoney(item.giaTriGiam)}
+                          </div>
+                          <div style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>Mã: {item.maVoucher}</div>
+                          <div style={{ fontSize: '13px', color: '#64748b' }}>Đơn tối thiểu: {formatMoney(item.donHangToiThieu)}</div>
+                          {item.giamToiDa && <div style={{ fontSize: '13px', color: '#64748b' }}>Giảm tối đa: {formatMoney(item.giamToiDa)}</div>}
+                          {!isApplicable && <div style={{ color: '#ef4444', fontSize: '13px', marginTop: '4px' }}>Chưa đạt giá trị đơn hàng tối thiểu</div>}
+                        </div>
+                      }
+                    />
+                  </List.Item>
+                )
+              }}
+            />
+          )}
+        </Modal>
 
         <Row gutter={[32, 32]} align="top">
           <Col xs={24} xl={16}>
@@ -736,9 +818,15 @@ export default function Booking() {
                       <Text type="secondary" className="total-label">Tổng tạm tính</Text>
                       <Title level={3} className="total-subamount">{formatMoney(tongTamTinh)}</Title>
                     </div>
+                    {voucherGiamGia > 0 && (
+                      <div className="total-pricing-line">
+                        <Text type="secondary" className="total-label" style={{ color: '#10b981' }}>Giảm giá</Text>
+                        <Title level={3} className="total-subamount" style={{ color: '#10b981' }}>-{formatMoney(voucherGiamGia)}</Title>
+                      </div>
+                    )}
                     <div className="total-pricing-line total-pricing-final">
                       <Text className="total-final-label">Cần thanh toán</Text>
-                      <Title level={2} className="total-amount">{formatMoney(tongTamTinh)}</Title>
+                      <Title level={2} className="total-amount">{formatMoney(tongThanhToan)}</Title>
                     </div>
                     <Text type="secondary" className="total-note">Giá thực tế sẽ được xác nhận sau khi đặt tour</Text>
                   </div>

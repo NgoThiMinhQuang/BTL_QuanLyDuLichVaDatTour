@@ -1,1 +1,123 @@
 @import '../../styles/admin.css';
+
+/* Typography Synchronization */
+.admin-page-header h1.ant-typography {
+  margin: 0 0 4px !important;
+  font-size: 24px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.admin-page-header p.ant-typography {
+  color: #64748b;
+  margin: 0 !important;
+  font-size: 14px;
+}
+
+/* Custom Payment List Container */
+.admin-payment-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-payment-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  transition: all 0.3s ease;
+  gap: 24px;
+}
+
+.admin-payment-list-item:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.admin-payment-item-main {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-payment-item-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-payment-item-meta {
+  font-size: 13px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-payment-item-type {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-payment-item-channel {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-payment-item-pricing {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.admin-payment-item-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.admin-payment-item-time {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.admin-payment-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.admin-payment-list-pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+@media (max-width: 992px) {
+  .admin-payment-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .admin-payment-item-pricing {
+    align-items: flex-start;
+  }
+}

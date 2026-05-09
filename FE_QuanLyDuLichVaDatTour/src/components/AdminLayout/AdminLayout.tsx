@@ -367,6 +367,7 @@ export default function AdminLayout() {
                 onFocus={() => setSearchOpen(true)}
                 onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
                 className="admin-layout-search"
+                variant="borderless"
               />
               {searchOpen && searchInput.length >= 2 && (
                 <div className="admin-global-search-dropdown">
@@ -446,22 +447,25 @@ export default function AdminLayout() {
               trigger={['click']}
               placement="bottomRight"
             >
-              <Badge dot={hasNotifications} offset={[-4, 4]}>
-                <button type="button" className="admin-layout-bell" aria-label="Thông báo quản trị">
-                  <NotificationOutlined />
-                </button>
-              </Badge>
+              <div className="admin-layout-bell-wrapper">
+                <Badge dot={hasNotifications} offset={[-2, 2]}>
+                  <div className="admin-layout-bell">
+                    <NotificationOutlined />
+                  </div>
+                </Badge>
+              </div>
             </Dropdown>
+            
             <Dropdown menu={{ items: userMenuItems }} trigger={['click']} placement="bottomRight">
-              <button type="button" className="admin-layout-account-button">
+              <div className="admin-layout-account-button">
                 <Avatar size={40} className="admin-layout-user-avatar admin-layout-user-avatar--header">
                   {getInitials(currentUser?.hoTen)}
                 </Avatar>
-                <span className="admin-layout-account-text">
-                  <strong>{currentUser?.hoTen || 'Admin User'}</strong>
-                  <span>{currentUser?.email || 'admin@travel.vn'}</span>
-                </span>
-              </button>
+                <div className="admin-layout-account-text">
+                  <span className="admin-account-name">{currentUser?.hoTen || 'Admin User'}</span>
+                  <span className="admin-account-email">{currentUser?.email || 'admin@travel.vn'}</span>
+                </div>
+              </div>
             </Dropdown>
           </div>
         </Header>

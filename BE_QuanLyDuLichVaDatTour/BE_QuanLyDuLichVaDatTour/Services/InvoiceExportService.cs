@@ -110,26 +110,29 @@ public class InvoiceExportService : IInvoiceExportService
 
     private static void ComposeHeader(IContainer container, InvoiceExportDto dto)
     {
-        container.Row(row =>
+        container.Column(col =>
         {
-            row.RelativeItem().Column(col =>
+            col.Item().Row(row =>
             {
-                col.Item().Text("TravelTour").FontSize(20).Bold().FontColor(Colors.Teal.Darken1);
-                col.Item().Text("Công ty Du Lịch & Đặt Tour").FontSize(10).FontColor(Colors.Grey.Darken1);
-                col.Item().Text("123 Đường ABC, Quận 1, TP.HCM").FontSize(9).FontColor(Colors.Grey.Medium);
-                col.Item().Text("Hotline: 1900 1234 | Email: info@traveltour.vn").FontSize(9).FontColor(Colors.Grey.Medium);
+                row.RelativeItem().Column(c =>
+                {
+                    c.Item().Text("TravelTour").FontSize(20).Bold().FontColor(Colors.Teal.Darken1);
+                    c.Item().Text("Công ty Du Lịch & Đặt Tour").FontSize(10).FontColor(Colors.Grey.Darken1);
+                    c.Item().Text("123 Đường ABC, Quận 1, TP.HCM").FontSize(9).FontColor(Colors.Grey.Medium);
+                    c.Item().Text("Hotline: 1900 1234 | Email: info@traveltour.vn").FontSize(9).FontColor(Colors.Grey.Medium);
+                });
+
+                row.RelativeItem().AlignRight().Column(c =>
+                {
+                    c.Item().Text("HÓA ĐƠN").FontSize(24).Bold().FontColor(Colors.Teal.Darken1);
+                    c.Item().Text($"#{dto.MaBooking}").FontSize(12).Bold();
+                    c.Item().Text($"Ngày đặt: {dto.NgayDat:dd/MM/yyyy}").FontSize(10);
+                    c.Item().Text($"In lúc: {dto.NgayIn}").FontSize(9).FontColor(Colors.Grey.Medium);
+                });
             });
 
-            row.RelativeItem().AlignRight().Column(col =>
-            {
-                col.Item().Text("HÓA ĐƠN").FontSize(24).Bold().FontColor(Colors.Teal.Darken1);
-                col.Item().Text($"#{dto.MaBooking}").FontSize(12).Bold();
-                col.Item().Text($"Ngày đặt: {dto.NgayDat:dd/MM/yyyy}").FontSize(10);
-                col.Item().Text($"In lúc: {dto.NgayIn}").FontSize(9).FontColor(Colors.Grey.Medium);
-            });
+            col.Item().PaddingVertical(16).LineHorizontal(1).LineColor(Color.FromHex("#E0E0E0"));
         });
-
-        container.PaddingVertical(16).LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
     }
 
     private static void ComposeContent(IContainer container, InvoiceExportDto dto)
@@ -204,7 +207,7 @@ public class InvoiceExportService : IInvoiceExportService
                     for (var i = 0; i < dto.HanhKhachs.Count; i++)
                     {
                         var h = dto.HanhKhachs[i];
-                        var bg = i % 2 == 0 ? Colors.White : Colors.Grey.Lighten4;
+                        var bg = i % 2 == 0 ? Colors.White : Color.FromHex("#F5F5F5");
                         t.Cell().Background(bg).Padding(4).Text($"{i + 1}");
                         t.Cell().Background(bg).Padding(4).Text(h.HoTen);
                         t.Cell().Background(bg).Padding(4).Text(h.LoaiKhach);
@@ -234,7 +237,7 @@ public class InvoiceExportService : IInvoiceExportService
                     t.Cell().AlignRight().Padding(4).Text($"{dto.DonGiaTreEm:N0} đ");
                     t.Cell().Padding(4).Text($"Em bé x{dto.SoEmBe}:");
                     t.Cell().AlignRight().Padding(4).Text($"{dto.DonGiaEmBe:N0} đ");
-                    t.Cell().PaddingVertical(6).LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+                    t.Cell().PaddingVertical(6).LineHorizontal(1).LineColor(Color.FromHex("#E0E0E0"));
                     t.Cell().Padding(4).Text("Tạm tính:");
                     t.Cell().AlignRight().Padding(4).Text($"{dto.TamTinh:N0} đ");
 
@@ -276,7 +279,7 @@ public class InvoiceExportService : IInvoiceExportService
                         for (var i = 0; i < dto.ThanhToans.Count; i++)
                         {
                             var p = dto.ThanhToans[i];
-                            var bg = i % 2 == 0 ? Colors.White : Colors.Grey.Lighten4;
+                            var bg = i % 2 == 0 ? Colors.White : Color.FromHex("#F5F5F5");
                             t.Cell().Background(bg).Padding(4).Text(p.MaGiaoDich);
                             t.Cell().Background(bg).Padding(4).Text(p.LoaiGiaoDich);
                             t.Cell().Background(bg).Padding(4).Text(p.PhuongThuc);
@@ -324,33 +327,36 @@ public class InvoiceExportService : IInvoiceExportService
 
     private static void ComposeConfirmationHeader(IContainer container, InvoiceExportDto dto)
     {
-        container.Row(row =>
+        container.Column(col =>
         {
-            row.RelativeItem().Column(col =>
+            col.Item().Row(row =>
             {
-                col.Item().Text("TravelTour").FontSize(20).Bold().FontColor(Colors.Blue.Darken1);
-                col.Item().Text("Công ty Du Lịch & Đặt Tour").FontSize(10).FontColor(Colors.Grey.Darken1);
-                col.Item().Text("123 Đường ABC, Quận 1, TP.HCM").FontSize(9).FontColor(Colors.Grey.Medium);
-                col.Item().Text("Hotline: 1900 1234 | Email: info@traveltour.vn").FontSize(9).FontColor(Colors.Grey.Medium);
+                row.RelativeItem().Column(c =>
+                {
+                    c.Item().Text("TravelTour").FontSize(20).Bold().FontColor(Colors.Blue.Darken1);
+                    c.Item().Text("Công ty Du Lịch & Đặt Tour").FontSize(10).FontColor(Colors.Grey.Darken1);
+                    c.Item().Text("123 Đường ABC, Quận 1, TP.HCM").FontSize(9).FontColor(Colors.Grey.Medium);
+                    c.Item().Text("Hotline: 1900 1234 | Email: info@traveltour.vn").FontSize(9).FontColor(Colors.Grey.Medium);
+                });
+
+                row.RelativeItem().AlignRight().Column(c =>
+                {
+                    c.Item().Text("PHIẾU XÁC NHẬN").FontSize(22).Bold().FontColor(Colors.Blue.Darken1);
+                    c.Item().Text("ĐẶT TOUR").FontSize(14).Bold().FontColor(Colors.Blue.Medium);
+                    c.Item().Text($"#{dto.MaBooking}").FontSize(12).Bold();
+                    c.Item().Text($"Ngày đặt: {dto.NgayDat:dd/MM/yyyy}").FontSize(10);
+                });
             });
 
-            row.RelativeItem().AlignRight().Column(col =>
-            {
-                col.Item().Text("PHIẾU XÁC NHẬN").FontSize(22).Bold().FontColor(Colors.Blue.Darken1);
-                col.Item().Text("ĐẶT TOUR").FontSize(14).Bold().FontColor(Colors.Blue.Medium);
-                col.Item().Text($"#{dto.MaBooking}").FontSize(12).Bold();
-                col.Item().Text($"Ngày đặt: {dto.NgayDat:dd/MM/yyyy}").FontSize(10);
-            });
+            col.Item().PaddingVertical(16).LineHorizontal(1).LineColor(Color.FromHex("#E0E0E0"));
         });
-
-        container.PaddingVertical(16).LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
     }
 
     private static void ComposeConfirmationFooter(IContainer container)
     {
         container.AlignCenter().Column(col =>
         {
-            col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+            col.Item().LineHorizontal(1).LineColor(Color.FromHex("#E0E0E0"));
             col.Item().PaddingTop(8).AlignCenter().Text("Cảm ơn quý khách đã tin tưởng TravelTour!").FontSize(10).FontColor(Colors.Grey.Darken1);
             col.Item().AlignCenter().Text("Vui lòng mang theo phiếu xác nhận này khi đi tour").FontSize(9).FontColor(Colors.Grey.Medium);
         });
@@ -360,7 +366,7 @@ public class InvoiceExportService : IInvoiceExportService
     {
         container.AlignCenter().Column(col =>
         {
-            col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+            col.Item().LineHorizontal(1).LineColor(Color.FromHex("#E0E0E0"));
             col.Item().PaddingTop(8).AlignCenter().Text("Cảm ơn quý khách đã tin tưởng TravelTour!").FontSize(10).FontColor(Colors.Grey.Darken1);
             col.Item().AlignCenter().Text("Hóa đơn được tạo tự động — không cần chữ ký").FontSize(9).FontColor(Colors.Grey.Medium);
         });

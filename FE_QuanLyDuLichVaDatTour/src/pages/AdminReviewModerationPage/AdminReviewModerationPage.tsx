@@ -1,10 +1,10 @@
-import { Alert, Button, Card, DatePicker, Empty, Form, Input, Popconfirm, Rate, Select, Space, Table, Tag, Typography } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
+import { Alert, Button, DatePicker, Empty, Form, Input, Popconfirm, Rate, Select, Space, Tag, Typography, Pagination } from 'antd'
 import dayjs from 'dayjs'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useAdminPendingReviews, useUpdateAdminReviewDisplayStatus } from '../../services/admin/admin.hooks'
 import type { AdminReviewDisplayStatus, AdminReviewItem } from '../../types/admin'
 import { adminReviewStatusMeta, formatDateTime } from '../../utils/admin'
+import { CheckCircleOutlined, EyeInvisibleOutlined, MessageOutlined } from '@ant-design/icons'
 import './AdminReviewModerationPage.css'
 
 const { Paragraph, Text, Title } = Typography
@@ -29,13 +29,17 @@ export default function AdminReviewModerationPage() {
   const [statusFilter, setStatusFilter] = useState<string | undefined>()
   const [starFilter, setStarFilter] = useState<number | undefined>()
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 5
+
   const [responseForm] = Form.useForm<Record<number, { phanHoiAdmin?: string }>>()
 
   const reviewsQuery = useAdminPendingReviews(100)
   const updateReviewStatusMutation = useUpdateAdminReviewDisplayStatus()
 
+  const reviews = reviewsQuery.data ?? []
+
   const filteredReviews = useMemo(() => {
-    const reviews = reviewsQuery.data ?? []
     return reviews.filter((review) => {
       const normalizedKeyword = keyword.trim().toLowerCase()
       const matchesKeyword = normalizedKeyword.length === 0
@@ -53,101 +57,32 @@ export default function AdminReviewModerationPage() {
 
       return matchesKeyword && matchesStatus && matchesStars && matchesDate
     })
-  }, [keyword, statusFilter, starFilter, dateRange, reviewsQuery.data])
+  }, [keyword, statusFilter, starFilter, dateRange, reviews])
 
-  const columns: ColumnsType<AdminReviewItem> = [
-    {
-      title: 'Khách hàng',
-      key: 'customer',
-      width: 220,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <Text strong>{record.hoTenKhachHang}</Text>
-          <Text className="admin-muted">Booking {record.maBooking}</Text>
-          <Text className="admin-muted">{formatDateTime(record.ngayDanhGia)}</Text>
-        </div>
-      ),
-    },
-    {
-      title: 'Tour',
-      dataIndex: 'tenTour',
-      key: 'tenTour',
-      width: 220,
-      render: (value: string) => <Text strong>{value}</Text>,
-    },
-    {
-      title: 'Đánh giá',
-      key: 'rating',
-      width: 360,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <Rate disabled value={record.soSao} />
-          <Text>{record.noiDung}</Text>
-          {record.phanHoiAdmin ? <Text className="admin-muted">Phản hồi: {record.phanHoiAdmin}</Text> : null}
-        </div>
-      ),
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'trangThai',
-      key: 'trangThai',
-      width: 140,
-      render: (value: AdminReviewDisplayStatus) => <Tag color={adminReviewStatusMeta[value].color}>{adminReviewStatusMeta[value].label}</Tag>,
-    },
-    {
-      title: 'Thao tác',
-      key: 'actions',
-      width: 320,
-      fixed: 'right',
-      render: (_, record) => {
-        const responseValue = responseForm.getFieldValue([record.id, 'phanHoiAdmin']) as string | undefined
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [keyword, statusFilter, starFilter, dateRange])
 
-        return (
-          <Space orientation="vertical" size={10} style={{ width: '100%' }}>
-            <Form form={responseForm} component={false}>
-              <Form.Item name={[record.id, 'phanHoiAdmin']} style={{ marginBottom: 0 }}>
-                <Input.TextArea rows={3} placeholder="Phản hồi ngắn cho đánh giá này (không bắt buộc)" />
-              </Form.Item>
-            </Form>
-            <div className="admin-inline-actions">
-              <Popconfirm
-                title="Duyệt đánh giá?"
-                description="Đánh giá sẽ được hiển thị công khai trên trang tour."
-                onConfirm={() => void updateReviewStatusMutation.mutateAsync({
-                  id: record.id,
-                  trangThai: 'hien_thi',
-                  phanHoiAdmin: responseValue,
-                })}
-                okText="Duyệt"
-                cancelText="Hủy"
-              >
-                <Button type="primary" className="admin-primary-button">
-                  Duyệt hiển thị
-                </Button>
-              </Popconfirm>
-              <Popconfirm
-                title="Ẩn đánh giá?"
-                description="Đánh giá sẽ bị ẩn khỏi trang công khai. Bạn có thể hiển thị lại sau."
-                onConfirm={() => void updateReviewStatusMutation.mutateAsync({
-                  id: record.id,
-                  trangThai: 'an',
-                  phanHoiAdmin: responseValue,
-                })}
-                okText="Ẩn"
-                cancelText="Hủy"
-                okButtonProps={{ danger: true }}
-              >
-                <Button danger>Ẩn đánh giá</Button>
-              </Popconfirm>
-            </div>
-          </Space>
-        )
-      },
-    },
-  ]
+  const paginatedReviews = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    return filteredReviews.slice(start, start + pageSize)
+  }, [filteredReviews, currentPage])
+
+  const handleUpdateStatus = async (review: AdminReviewItem, status: AdminReviewDisplayStatus) => {
+    const responseValue = responseForm.getFieldValue([review.id, 'phanHoiAdmin']) as string | undefined
+    await updateReviewStatusMutation.mutateAsync({
+      id: review.id,
+      trangThai: status,
+      phanHoiAdmin: responseValue,
+    })
+  }
 
   const hasError = reviewsQuery.isError
   const errorMessage = reviewsQuery.error instanceof Error ? reviewsQuery.error.message : 'Không thể tải danh sách review chờ duyệt'
+
+  const avgRating = filteredReviews.length > 0
+    ? (filteredReviews.reduce((sum, review) => sum + review.soSao, 0) / filteredReviews.length).toFixed(1)
+    : '0.0'
 
   return (
     <div className="admin-page">
@@ -158,13 +93,14 @@ export default function AdminReviewModerationPage() {
         </div>
       </div>
 
-      <Card className="admin-page-card" bordered={false}>
-        <div className="admin-filter-toolbar is-compact" style={{ gridTemplateColumns: '1fr 180px 120px 200px 100px', gap: 12 }}>
+      <div className="admin-page-card">
+        <div className="admin-filter-toolbar is-compact" style={{ gridTemplateColumns: 'minmax(0, 1fr) 160px 120px 240px 100px', gap: 12 }}>
           <Input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
-            placeholder="Tìm theo khách hàng, booking, tour hoặc nội dung..."
+            placeholder="Tìm khách hàng, booking, tour, nội dung..."
             className="admin-filter-field"
+            style={{ height: 40, borderRadius: 8 }}
           />
           <Select
             allowClear
@@ -173,6 +109,7 @@ export default function AdminReviewModerationPage() {
             options={statusFilterOptions}
             placeholder="Trạng thái"
             className="admin-filter-field"
+            style={{ height: 40, borderRadius: 8 }}
           />
           <Select
             allowClear
@@ -181,59 +118,136 @@ export default function AdminReviewModerationPage() {
             options={starFilterOptions}
             placeholder="Số sao"
             className="admin-filter-field"
+            style={{ height: 40, borderRadius: 8 }}
           />
           <RangePicker
             value={dateRange}
             onChange={(dates) => setDateRange(dates as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)}
             className="admin-filter-field"
-            style={{ width: '100%' }}
+            style={{ height: 40, borderRadius: 8, width: '100%' }}
           />
-          <Button className="admin-filter-button" onClick={() => {
-            setKeyword('')
-            setStatusFilter(undefined)
-            setStarFilter(undefined)
-            setDateRange(null)
-          }}>
+          <Button 
+            className="admin-filter-button" 
+            style={{ height: 40, borderRadius: 8 }}
+            onClick={() => {
+              setKeyword('')
+              setStatusFilter(undefined)
+              setStarFilter(undefined)
+              setDateRange(null)
+            }}
+          >
             Xoá lọc
           </Button>
         </div>
 
-        <div className="admin-kpi-grid" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', marginBottom: 16, marginTop: 16 }}>
-          <div className="admin-details-card">
-            <Text className="admin-muted">Tổng review</Text>
-            <Title level={3} style={{ margin: 0 }}>{filteredReviews.length}</Title>
+        <div className="admin-review-kpi-grid">
+          <div className="admin-review-kpi-card">
+            <span className="admin-review-kpi-label">Tổng review</span>
+            <span className="admin-review-kpi-value">{filteredReviews.length}</span>
           </div>
-          <div className="admin-details-card">
-            <Text className="admin-muted">Review chờ duyệt</Text>
-            <Title level={3} style={{ margin: 0 }}>{filteredReviews.filter((r) => r.trangThai === 'cho_duyet').length}</Title>
+          <div className="admin-review-kpi-card">
+            <span className="admin-review-kpi-label">Review chờ duyệt</span>
+            <span className="admin-review-kpi-value">{filteredReviews.filter((r) => r.trangThai === 'cho_duyet').length}</span>
           </div>
-          <div className="admin-details-card">
-            <Text className="admin-muted">Đánh giá trung bình</Text>
-            <Title level={3} style={{ margin: 0 }}>
-              {filteredReviews.length > 0
-                ? (filteredReviews.reduce((sum, review) => sum + review.soSao, 0) / filteredReviews.length).toFixed(1)
-                : '0.0'}
-            </Title>
+          <div className="admin-review-kpi-card">
+            <span className="admin-review-kpi-label">Đánh giá trung bình</span>
+            <span className="admin-review-kpi-value">{avgRating}</span>
           </div>
-          <div className="admin-details-card">
-            <Text className="admin-muted">5 sao</Text>
-            <Title level={3} style={{ margin: 0 }}>{filteredReviews.filter((r) => r.soSao === 5).length}</Title>
+          <div className="admin-review-kpi-card">
+            <span className="admin-review-kpi-label">5 sao</span>
+            <span className="admin-review-kpi-value">{filteredReviews.filter((r) => r.soSao === 5).length}</span>
           </div>
         </div>
 
-        {hasError ? <Alert type="error" showIcon title={errorMessage} /> : null}
+        {hasError ? <Alert type="error" showIcon title={errorMessage} style={{ marginBottom: 20 }} /> : null}
 
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={filteredReviews}
-          loading={reviewsQuery.isLoading || updateReviewStatusMutation.isPending}
-          pagination={{ pageSize: 6, showSizeChanger: false }}
-          locale={{ emptyText: <Empty description="Không có đánh giá chờ duyệt" /> }}
-          scroll={{ x: 1400 }}
-          className="admin-table"
-        />
-      </Card>
+        <div className="admin-review-list-container">
+          {reviewsQuery.isLoading ? (
+            <Empty description="Đang tải dữ liệu..." />
+          ) : filteredReviews.length === 0 ? (
+            <Empty description="Không có đánh giá phù hợp" />
+          ) : (
+            paginatedReviews.map((review) => {
+              const statusMeta = adminReviewStatusMeta[review.trangThai]
+              
+              return (
+                <div key={review.id} className="admin-review-list-item">
+                  <div className="admin-review-item-header">
+                    <div className="admin-review-item-customer">
+                      <span className="admin-review-item-name">{review.hoTenKhachHang}</span>
+                      <span className="admin-review-item-meta">Booking: {review.maBooking} • {formatDateTime(review.ngayDanhGia)}</span>
+                    </div>
+                    <Space>
+                      <Rate disabled value={review.soSao} style={{ fontSize: 16 }} />
+                      <Tag color={statusMeta.color} style={{ margin: 0, fontWeight: 600 }}>{statusMeta.label}</Tag>
+                    </Space>
+                  </div>
+
+                  <div className="admin-review-item-content-wrap">
+                    <div className="admin-review-item-tour-tag">Tour: {review.tenTour}</div>
+                    <div className="admin-review-item-text">
+                      {review.noiDung}
+                      {review.phanHoiAdmin && (
+                        <div className="admin-review-item-reply">
+                          <MessageOutlined style={{ marginRight: 8 }} />
+                          Phản hồi của Admin: {review.phanHoiAdmin}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="admin-review-item-footer">
+                    <Form form={responseForm} component={false} className="admin-review-reply-input">
+                      <Form.Item name={[review.id, 'phanHoiAdmin']} style={{ marginBottom: 0 }}>
+                        <Input.TextArea 
+                          autoSize={{ minRows: 1, maxRows: 4 }} 
+                          placeholder="Viết phản hồi cho khách hàng tại đây..." 
+                          style={{ borderRadius: 8 }}
+                        />
+                      </Form.Item>
+                    </Form>
+                    <div className="admin-review-item-actions">
+                      <Popconfirm
+                        title="Duyệt đánh giá này?"
+                        onConfirm={() => void handleUpdateStatus(review, 'hien_thi')}
+                        okText="Duyệt"
+                        cancelText="Hủy"
+                      >
+                        <Button type="primary" icon={<CheckCircleOutlined />} loading={updateReviewStatusMutation.isPending}>
+                          Duyệt hiển thị
+                        </Button>
+                      </Popconfirm>
+                      <Popconfirm
+                        title="Ẩn đánh giá này?"
+                        onConfirm={() => void handleUpdateStatus(review, 'an')}
+                        okText="Ẩn"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true }}
+                      >
+                        <Button danger icon={<EyeInvisibleOutlined />} loading={updateReviewStatusMutation.isPending}>
+                          Ẩn
+                        </Button>
+                      </Popconfirm>
+                    </div>
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+
+        {filteredReviews.length > 0 && (
+          <div className="admin-review-list-pagination">
+            <Pagination 
+              current={currentPage} 
+              total={filteredReviews.length} 
+              pageSize={pageSize} 
+              onChange={(page) => setCurrentPage(page)} 
+              showSizeChanger={false}
+            />
+          </div>
+        )}
+      </div>
     </div>
   )
 }

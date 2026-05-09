@@ -1,5 +1,5 @@
 import './MyBookingDetailPage.css'
-import { Alert, Card, Empty, List, Skeleton, Space, Tag, Typography, Row, Col, Divider, Steps, Button, Modal, Input } from 'antd'
+import { Alert, Card, Empty, List, Skeleton, Tag, Typography, Row, Col, Divider, Steps, Button, Modal, Input } from 'antd'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router'
 import { useState } from 'react'
@@ -16,6 +16,8 @@ import {
   SyncOutlined,
   CloseCircleOutlined,
   FileTextOutlined,
+  BarcodeOutlined,
+  DownloadOutlined,
   ExclamationCircleOutlined
 } from '@ant-design/icons'
 import { PATHS } from '../constants/paths'
@@ -24,7 +26,7 @@ import { formatMoney } from '../utils/formatMoney'
 import { API_BASE_URL } from '../constants/api'
 import { useAuthStore } from '../store/authStore'
 import { layChiTietBooking, layThanhToanTheoBooking } from '../services/booking/booking'
-import { taoYeuCauHuyTour, layYeuCauHuyTourTheoBooking, type YeuCauHuyTourResponse } from '../services/huy-tour/huyTour'
+import { taoYeuCauHuyTour, layYeuCauHuyTourTheoBooking } from '../services/huy-tour/huyTour'
 
 const { Paragraph, Title, Text } = Typography
 const { TextArea } = Input
@@ -113,6 +115,7 @@ export default function BookingDetail() {
   return (
     <div className="customer-page">
       <div className="customer-page-container">
+        
         <div className="customer-page-header">
           <Title className="customer-page-title">Chi tiết booking</Title>
           <Paragraph className="customer-page-subtitle">Xem đầy đủ thông tin booking, hành khách và lịch sử thanh toán của bạn.</Paragraph>
@@ -122,161 +125,169 @@ export default function BookingDetail() {
         {bookingQuery.isError ? <Alert type="error" showIcon title={bookingQuery.error instanceof Error ? bookingQuery.error.message : 'Không thể tải chi tiết booking'} /> : null}
 
         {bookingQuery.data ? (
-          <div className="booking-detail-content">
-            {/* 1. Header Card with Status and Code */}
-            <Card className="booking-status-card" variant="borderless">
-              <div className="booking-status-flex">
-                <div className="booking-main-info">
-                  <div className="booking-label-row">
-                    <Text className="booking-id-pill">#{bookingQuery.data.maBooking}</Text>
-                    <Text className="booking-date-label">Đặt ngày: {formatDate(bookingQuery.data.ngayDat)}</Text>
-                  </div>
-                  <Title level={2} className="booking-tour-title">{bookingQuery.data.tenTour}</Title>
+          <div className="booking-detail-wrapper">
+            
+            {/* 1. HERO HEADER */}
+            <div className="booking-hero-card">
+              <div className="booking-hero-content">
+                <div className="hero-top-row">
+                  <Tag className={`hero-status-tag ${bookingQuery.data.trangThaiBooking}`} color={bookingQuery.data.trangThaiBooking === 'hoan_tat' ? 'success' : 'processing'}>
+                    {formatTrangThai(bookingQuery.data.trangThaiBooking)}
+                  </Tag>
+                  <div className="hero-booking-id"><BarcodeOutlined /> #{bookingQuery.data.maBooking}</div>
                 </div>
-                <div className="booking-status-group">
-                  <div className="status-item">
-                    <Text className="status-label">Trạng thái booking</Text>
-                    <Tag color={bookingQuery.data.trangThaiBooking === 'hoan_tat' ? 'success' : 'processing'} className="status-tag">
-                      {formatTrangThai(bookingQuery.data.trangThaiBooking)}
-                    </Tag>
-                  </div>
-                  <div className="status-item">
-                    <Text className="status-label">Thanh toán</Text>
-                    <Tag color={bookingQuery.data.trangThaiThanhToan === 'da_thanh_toan' ? 'success' : 'warning'} className="status-tag">
-                      {formatTrangThai(bookingQuery.data.trangThaiThanhToan)}
-                    </Tag>
-                  </div>
+                <Title level={1} className="hero-tour-title">{bookingQuery.data.tenTour}</Title>
+                <div className="hero-meta">
+                  <Text className="hero-date"><CalendarOutlined /> Đặt ngày: {formatDate(bookingQuery.data.ngayDat)}</Text>
+                  <Tag color={bookingQuery.data.trangThaiThanhToan === 'da_thanh_toan' ? 'success' : 'warning'} className="payment-status-tag">
+                    {formatTrangThai(bookingQuery.data.trangThaiThanhToan)}
+                  </Tag>
                 </div>
               </div>
-            </Card>
+            </div>
 
-            <Row gutter={[24, 24]}>
-              {/* 2. Tour Details Card */}
-              <Col xs={24} lg={16}>
-                <div className="booking-sections-stack">
-                  <Card className="booking-info-card" variant="borderless" title={<span><CalendarOutlined /> Thông tin chuyến đi</span>}>
-                    <Row gutter={[24, 24]}>
-                      <Col xs={24} sm={12}>
-                        <div className="info-item">
-                          <Text className="info-label">Mã đợt tour</Text>
-                          <Text strong className="info-value">{bookingQuery.data.maDotTour}</Text>
+            <Row gutter={[32, 32]} className="booking-content-row">
+              {/* 2. MAIN CONTENT LEFT */}
+              <Col xs={24} lg={15} xl={16}>
+                <div className="detail-cards-stack">
+                  
+                  {/* Timeline & Tour Info */}
+                  <Card className="detail-card" title={<span><EnvironmentOutlined /> Hành trình & Thông tin</span>} bordered={false}>
+                    <div className="tour-info-grid">
+                      <div className="tour-timeline">
+                        <Steps
+                          direction="vertical"
+                          current={1}
+                          items={[
+                            { title: 'Khởi hành', description: formatDate(bookingQuery.data.ngayKhoiHanh), status: 'process' },
+                            { title: 'Kết thúc', description: formatDate(bookingQuery.data.ngayKetThuc), status: 'finish' },
+                          ]}
+                        />
+                      </div>
+                      <div className="tour-meta-grid">
+                        <div className="meta-box">
+                          <Text type="secondary" className="meta-label">Mã đợt tour</Text>
+                          <Text strong className="meta-value">{bookingQuery.data.maDotTour}</Text>
                         </div>
-                        <div className="info-item">
-                          <Text className="info-label">Khởi hành</Text>
-                          <Text strong className="info-value">{formatDate(bookingQuery.data.ngayKhoiHanh)}</Text>
+                        <div className="meta-box">
+                          <Text type="secondary" className="meta-label">Địa điểm</Text>
+                          <Text strong className="meta-value">{bookingQuery.data.diaChiLienHe || 'Theo lịch trình'}</Text>
                         </div>
-                      </Col>
-                      <Col xs={24} sm={12}>
-                        <div className="info-item">
-                          <Text className="info-label">Kết thúc</Text>
-                          <Text strong className="info-value">{formatDate(bookingQuery.data.ngayKetThuc)}</Text>
-                        </div>
-                        <div className="info-item">
-                          <Text className="info-label">Địa điểm</Text>
-                          <Text strong className="info-value">{bookingQuery.data.diaChiLienHe || 'Theo lịch trình'}</Text>
-                        </div>
-                      </Col>
-                    </Row>
+                      </div>
+                    </div>
                   </Card>
 
-                  <Card className="booking-info-card" variant="borderless" title={<span><UserOutlined /> Thông tin liên hệ</span>}>
+                  {/* Contact Info */}
+                  <Card className="detail-card" title={<span><UserOutlined /> Thông tin liên hệ</span>} bordered={false}>
                     <Row gutter={[24, 24]}>
                       <Col xs={24} sm={12}>
-                        <div className="info-item-flex">
-                          <div className="info-icon-box"><UserOutlined /></div>
-                          <div className="info-text-group">
-                            <Text className="info-label">Người liên hệ</Text>
+                        <div className="contact-box">
+                          <div className="contact-icon-wrap"><UserOutlined /></div>
+                          <div className="contact-text">
+                            <Text type="secondary">Người liên hệ</Text>
                             <Text strong>{bookingQuery.data.hoTenLienHe}</Text>
                           </div>
                         </div>
-                        <div className="info-item-flex">
-                          <div className="info-icon-box"><MailOutlined /></div>
-                          <div className="info-text-group">
-                            <Text className="info-label">Email</Text>
+                      </Col>
+                      <Col xs={24} sm={12}>
+                        <div className="contact-box">
+                          <div className="contact-icon-wrap"><PhoneOutlined /></div>
+                          <div className="contact-text">
+                            <Text type="secondary">Số điện thoại</Text>
+                            <Text strong>{bookingQuery.data.soDienThoaiLienHe}</Text>
+                          </div>
+                        </div>
+                      </Col>
+                      <Col xs={24} sm={24}>
+                        <div className="contact-box">
+                          <div className="contact-icon-wrap"><MailOutlined /></div>
+                          <div className="contact-text">
+                            <Text type="secondary">Email</Text>
                             <Text strong>{bookingQuery.data.emailLienHe}</Text>
                           </div>
                         </div>
                       </Col>
-                      <Col xs={24} sm={12}>
-                        <div className="info-item-flex">
-                          <div className="info-icon-box"><PhoneOutlined /></div>
-                          <div className="info-text-group">
-                            <Text className="info-label">Số điện thoại</Text>
-                            <Text strong>{bookingQuery.data.soDienThoaiLienHe}</Text>
-                          </div>
-                        </div>
-                        <div className="info-item-flex">
-                          <div className="info-icon-box"><EnvironmentOutlined /></div>
-                          <div className="info-text-group">
-                            <Text className="info-label">Địa chỉ</Text>
-                            <Text strong>{bookingQuery.data.diaChiLienHe || 'Chưa cập nhật'}</Text>
-                          </div>
-                        </div>
-                      </Col>
                     </Row>
                   </Card>
 
-                  <Card className="booking-info-card" variant="borderless" title={<span><IdcardOutlined /> Danh sách hành khách ({bookingQuery.data.tongHanhKhach})</span>}>
-                    <div className="passenger-grid">
-                      {bookingQuery.data.hanhKhachs.map((item, index) => (
-                        <div key={item.id} className="passenger-item">
-                          <div className="passenger-num">{index + 1}</div>
-                          <div className="passenger-info">
-                            <Text strong className="passenger-name">{item.hoTen}</Text>
-                            <div className="passenger-meta">
-                              <Tag className="passenger-tag">{formatTrangThai(item.loaiKhach)}</Tag>
-                              <Text className="passenger-sub">{item.gioiTinh} • {item.quocTich || 'Việt Nam'}</Text>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  {/* Passengers */}
+                  <Card className="detail-card" title={<span><IdcardOutlined /> Danh sách hành khách ({bookingQuery.data.tongHanhKhach})</span>} bordered={false}>
+                    <List
+                      dataSource={bookingQuery.data.hanhKhachs}
+                      renderItem={(item, index) => (
+                        <List.Item className="passenger-list-item">
+                          <List.Item.Meta
+                            avatar={<div className="passenger-avatar">{index + 1}</div>}
+                            title={<Text className="passenger-name">{item.hoTen}</Text>}
+                            description={
+                              <div className="passenger-desc">
+                                <Tag className="passenger-type-tag">{formatTrangThai(item.loaiKhach)}</Tag>
+                                <Text className="passenger-meta">{item.gioiTinh} • {item.quocTich || 'Việt Nam'}</Text>
+                              </div>
+                            }
+                          />
+                        </List.Item>
+                      )}
+                    />
                   </Card>
+
                 </div>
               </Col>
 
-              {/* 3. Payment & Pricing Sidebar */}
-              <Col xs={24} lg={8}>
-                <div className="booking-sidebar-stack">
-                  <Card className="booking-summary-card" variant="borderless" title={<span><CreditCardOutlined /> Tóm tắt thanh toán</span>}>
-                    <div className="summary-rows">
-                      <div className="summary-row">
-                        <Text>Người lớn x {bookingQuery.data.soNguoiLon}</Text>
-                        <Text strong>{formatMoney(bookingQuery.data.donGiaNguoiLon * bookingQuery.data.soNguoiLon)}</Text>
-                      </div>
-                      {bookingQuery.data.soTreEm > 0 && (
-                        <div className="summary-row">
-                          <Text>Trẻ em x {bookingQuery.data.soTreEm}</Text>
-                          <Text strong>{formatMoney(bookingQuery.data.donGiaTreEm * bookingQuery.data.soTreEm)}</Text>
+              {/* 3. SIDEBAR RIGHT (RECEIPT & ACTIONS) */}
+              <Col xs={24} lg={9} xl={8}>
+                <div className="sidebar-sticky">
+                  
+                  {/* Receipt Card */}
+                  <div className="receipt-card">
+                    <div className="receipt-header">
+                      <CreditCardOutlined className="receipt-icon" /> Tóm tắt thanh toán
+                    </div>
+                    
+                    <div className="receipt-body">
+                      <div className="receipt-rows">
+                        <div className="receipt-row">
+                          <Text>Người lớn x {bookingQuery.data.soNguoiLon}</Text>
+                          <Text strong>{formatMoney(bookingQuery.data.donGiaNguoiLon * bookingQuery.data.soNguoiLon)}</Text>
                         </div>
-                      )}
-                      {bookingQuery.data.soEmBe > 0 && (
-                        <div className="summary-row">
-                          <Text>Em bé x {bookingQuery.data.soEmBe}</Text>
-                          <Text strong>{formatMoney(bookingQuery.data.donGiaEmBe * bookingQuery.data.soEmBe)}</Text>
-                        </div>
-                      )}
-                      
-                      <Divider className="summary-divider" />
-                      
-                      <div className="summary-row">
-                        <Text>Tạm tính</Text>
-                        <Text strong>{formatMoney(bookingQuery.data.tamTinh)}</Text>
-                      </div>
-                      <div className="summary-row discount">
-                        <Text>Giảm giá {bookingQuery.data.maVoucher ? `(${bookingQuery.data.maVoucher})` : ''}</Text>
-                        <Text strong>- {formatMoney(bookingQuery.data.giamGia)}</Text>
+                        {bookingQuery.data.soTreEm > 0 && (
+                          <div className="receipt-row">
+                            <Text>Trẻ em x {bookingQuery.data.soTreEm}</Text>
+                            <Text strong>{formatMoney(bookingQuery.data.donGiaTreEm * bookingQuery.data.soTreEm)}</Text>
+                          </div>
+                        )}
+                        {bookingQuery.data.soEmBe > 0 && (
+                          <div className="receipt-row">
+                            <Text>Em bé x {bookingQuery.data.soEmBe}</Text>
+                            <Text strong>{formatMoney(bookingQuery.data.donGiaEmBe * bookingQuery.data.soEmBe)}</Text>
+                          </div>
+                        )}
                       </div>
 
-                      <div className="summary-total-box">
-                        <Text className="total-label">Tổng cộng</Text>
-                        <Title level={3} className="total-value">{formatMoney(bookingQuery.data.tongTien)}</Title>
+                      <Divider dashed className="receipt-divider" />
+
+                      <div className="receipt-rows">
+                        <div className="receipt-row">
+                          <Text>Tạm tính</Text>
+                          <Text strong>{formatMoney(bookingQuery.data.tamTinh)}</Text>
+                        </div>
+                        {bookingQuery.data.giamGia > 0 && (
+                          <div className="receipt-row discount">
+                            <Text>Giảm giá {bookingQuery.data.maVoucher ? `(${bookingQuery.data.maVoucher})` : ''}</Text>
+                            <Text strong>-{formatMoney(bookingQuery.data.giamGia)}</Text>
+                          </div>
+                        )}
                       </div>
 
-                      <div className="payment-progress">
-                        <div className="progress-label">
-                          <Text>Đã thanh toán</Text>
-                          <Text strong>{formatMoney(bookingQuery.data.soTienDaThanhToan)}</Text>
+                      <div className="receipt-total-box">
+                        <Text className="total-label">Cần thanh toán</Text>
+                        <Title level={2} className="total-value">{formatMoney(bookingQuery.data.tongTien)}</Title>
+                      </div>
+
+                      <div className="receipt-progress-box">
+                        <div className="progress-row">
+                          <Text className="progress-label">Đã thanh toán</Text>
+                          <Text strong className="progress-paid">{formatMoney(bookingQuery.data.soTienDaThanhToan)}</Text>
                         </div>
                         <div className="progress-bar-bg">
                           <div 
@@ -285,79 +296,105 @@ export default function BookingDetail() {
                           ></div>
                         </div>
                         {bookingQuery.data.tongTien > bookingQuery.data.soTienDaThanhToan && (
-                          <Text className="remaining-label">Còn lại: {formatMoney(bookingQuery.data.tongTien - bookingQuery.data.soTienDaThanhToan)}</Text>
+                          <div className="progress-row progress-remaining">
+                            <Text>Còn lại</Text>
+                            <Text strong>{formatMoney(bookingQuery.data.tongTien - bookingQuery.data.soTienDaThanhToan)}</Text>
+                          </div>
                         )}
                       </div>
                     </div>
-                  </Card>
 
-                  <Card className="booking-history-card" variant="borderless" title={<span><ClockCircleOutlined /> Lịch sử thanh toán</span>}>
-                    {paymentQuery.isLoading ? <Skeleton active paragraph={{ rows: 3 }} /> : (
-                      <div className="payment-history-list">
-                        {(paymentQuery.data ?? []).length === 0 ? (
-                          <Empty description="Chưa có giao dịch" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                        ) : (
-                          paymentQuery.data?.map((payment) => (
-                            <div key={payment.id} className="payment-history-item">
-                              <div className="history-icon">
-                                {payment.trangThai === 'da_thanh_toan' ? <CheckCircleOutlined style={{ color: '#10b981' }} /> : <SyncOutlined spin style={{ color: '#3b82f6' }} />}
+                    {/* History Section inside Receipt */}
+                    <div className="receipt-history">
+                      <div className="history-title"><ClockCircleOutlined /> Lịch sử giao dịch</div>
+                      {paymentQuery.isLoading ? <Skeleton active paragraph={{ rows: 2 }} /> : (
+                        <div className="history-list">
+                          {(paymentQuery.data ?? []).length === 0 ? (
+                            <div className="history-empty">Chưa có giao dịch nào</div>
+                          ) : (
+                            paymentQuery.data?.map((payment) => (
+                              <div key={payment.id} className="history-item">
+                                <div className="history-icon-box">
+                                  {payment.trangThai === 'da_thanh_toan' ? <CheckCircleOutlined className="success-icon" /> : <SyncOutlined spin className="processing-icon" />}
+                                </div>
+                                <div className="history-info">
+                                  <Text strong className="history-amount">{formatMoney(payment.soTien)}</Text>
+                                  <Text className="history-time">{formatTrangThai(payment.phuongThucThanhToan)} • {formatDate(payment.thoiGianTao)}</Text>
+                                </div>
                               </div>
-                              <div className="history-info">
-                                <Text strong>{formatMoney(payment.soTien)}</Text>
-                                <Text className="history-sub">{formatTrangThai(payment.phuongThucThanhToan)} • {formatDate(payment.thoiGianTao)}</Text>
-                              </div>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    )}
-                  </Card>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-                  <Space direction="vertical" style={{ width: '100%' }}>
-                    <Button icon={<FileTextOutlined />} block onClick={() => handleDownload(`/booking/export-invoice/${bookingId}`, `HoaDon_${bookingId}.pdf`)}>
+                  {/* Action Buttons */}
+                  <div className="booking-actions">
+                    <Button 
+                      type="primary" 
+                      block 
+                      size="large" 
+                      icon={<DownloadOutlined />} 
+                      className="btn-download-primary"
+                      onClick={() => handleDownload(`/booking/export-confirmation/${bookingId}`, `XacNhanBooking_${bookingId}.pdf`)}
+                    >
+                      Tải xác nhận booking
+                    </Button>
+                    <Button 
+                      block 
+                      size="large" 
+                      icon={<FileTextOutlined />} 
+                      className="btn-download-secondary"
+                      onClick={() => handleDownload(`/booking/export-invoice/${bookingId}`, `HoaDon_${bookingId}.pdf`)}
+                    >
                       Tải hóa đơn (PDF)
                     </Button>
-                    <Button icon={<FileTextOutlined />} block onClick={() => handleDownload(`/booking/export-confirmation/${bookingId}`, `XacNhanBooking_${bookingId}.pdf`)}>
-                      Tải xác nhận booking (PDF)
-                    </Button>
-                  </Space>
 
-                  {bookingQuery.data.coTheDanhGia && (
-                    <Button type="primary" block className="review-action-btn" size="large" style={{ marginTop: 12 }}>
-                      <Link to={`${PATHS.myReviews}?bookingId=${bookingQuery.data.id}`}>Viết đánh giá cho chuyến đi</Link>
-                    </Button>
-                  )}
+                    {bookingQuery.data.coTheDanhGia && (
+                      <Link to={`${PATHS.myReviews}?bookingId=${bookingQuery.data.id}`}>
+                        <Button block type="dashed" size="large" className="btn-review">
+                          Viết đánh giá cho chuyến đi
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
 
+                  {/* Cancellation */}
                   {bookingQuery.data.trangThaiBooking !== 'da_huy' && (
-                    <Card className="cancellation-card" variant="borderless" title={<span><ExclamationCircleOutlined /> Yêu cầu hủy tour</span>}>
-                      {cancelQuery.isLoading ? (
-                        <Skeleton active paragraph={{ rows: 2 }} />
-                      ) : cancelQuery.data ? (
-                        <div className="cancellation-status-box">
-                          <Tag color={
-                            cancelQuery.data.trangThai === 'cho_duyet' ? 'processing' :
-                            cancelQuery.data.trangThai === 'da_duyet' ? 'success' : 'error'
-                          }>
-                            {cancelQuery.data.trangThai === 'cho_duyet' ? 'Đang chờ duyệt' :
-                             cancelQuery.data.trangThai === 'da_duyet' ? 'Đã duyệt' : 'Từ chối'}
-                          </Tag>
-                          <Text className="cancel-reason">Lý do: {cancelQuery.data.lyDo}</Text>
-                          {cancelQuery.data.ghiChuAdmin && (
-                            <Text className="cancel-admin-note">Phản hồi: {cancelQuery.data.ghiChuAdmin}</Text>
-                          )}
+                    <div className="cancellation-box">
+                      {cancelQuery.isLoading ? <Skeleton active paragraph={{ rows: 1 }} /> : cancelQuery.data ? (
+                        <div className="cancel-status-wrap">
+                          <ExclamationCircleOutlined className="cancel-icon" />
+                          <div className="cancel-content">
+                            <Tag color={
+                              cancelQuery.data.trangThai === 'cho_duyet' ? 'processing' :
+                              cancelQuery.data.trangThai === 'da_duyet' ? 'success' : 'error'
+                            }>
+                              {cancelQuery.data.trangThai === 'cho_duyet' ? 'Yêu cầu hủy đang chờ duyệt' :
+                               cancelQuery.data.trangThai === 'da_duyet' ? 'Đã duyệt hủy tour' : 'Yêu cầu hủy bị từ chối'}
+                            </Tag>
+                            <Text className="cancel-reason-text">Lý do: {cancelQuery.data.lyDo}</Text>
+                            {cancelQuery.data.ghiChuAdmin && (
+                              <Text className="cancel-admin-note">Phản hồi: {cancelQuery.data.ghiChuAdmin}</Text>
+                            )}
+                          </div>
                         </div>
                       ) : (
                         <Button
+                          type="text"
                           danger
                           block
                           icon={<CloseCircleOutlined />}
                           onClick={() => setCancelModalOpen(true)}
+                          className="btn-cancel"
                         >
-                          Gửi yêu cầu hủy tour
+                          Yêu cầu hủy tour
                         </Button>
                       )}
-                    </Card>
+                    </div>
                   )}
+
                 </div>
               </Col>
             </Row>
@@ -371,14 +408,15 @@ export default function BookingDetail() {
               okText="Gửi yêu cầu"
               cancelText="Đóng"
               okButtonProps={{ danger: true }}
+              className="cancel-modal"
             >
-              <Text>Vui lòng nhập lý do hủy tour:</Text>
+              <Text>Vui lòng nhập lý do bạn muốn hủy chuyến đi này. Yêu cầu sẽ được gửi đến bộ phận chăm sóc khách hàng để xử lý.</Text>
               <TextArea
                 rows={4}
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
-                placeholder="Nhập lý do bạn muốn hủy tour..."
-                style={{ marginTop: 12 }}
+                placeholder="Ví dụ: Bận việc đột xuất, vấn đề sức khỏe..."
+                style={{ marginTop: 16 }}
                 maxLength={1000}
               />
               {cancelError && <Alert type="error" message={cancelError} style={{ marginTop: 12 }} />}

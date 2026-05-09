@@ -449,7 +449,106 @@ GO
 
 
 /* =========================================================
-   16. DANH GIA TOUR
+   14. LIEN HE (Form lien he ho tro)
+   ========================================================= */
+CREATE TABLE dbo.LienHe (
+    LienHeId BIGINT IDENTITY(1,1) PRIMARY KEY,
+    HoTen NVARCHAR(200) NOT NULL,
+    Email NVARCHAR(255) NOT NULL,
+    SoDienThoai NVARCHAR(20) NULL,
+    ChuDe NVARCHAR(300) NOT NULL,
+    NoiDung NVARCHAR(MAX) NOT NULL,
+    TrangThai NVARCHAR(20) NOT NULL DEFAULT N'moi'
+        CONSTRAINT CK_LienHe_TrangThai CHECK (
+            TrangThai IN (N'moi', N'dang_xu_ly', N'da_xu_ly', N'bo_qua')
+        ),
+    NguoiXuLyId BIGINT NULL,
+    PhanHoi NVARCHAR(MAX) NULL,
+    NgayGui DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
+    NgayXuLy DATETIME2(0) NULL,
+    CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
+    UpdatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
+    CONSTRAINT FK_LienHe_NguoiXuLy FOREIGN KEY (NguoiXuLyId) REFERENCES dbo.NguoiDung(NguoiDungId) ON DELETE SET NULL
+);
+GO
+
+CREATE INDEX IdxLienHe_TrangThai
+ON dbo.LienHe(TrangThai);
+GO
+
+CREATE INDEX IdxLienHe_NgayGui
+ON dbo.LienHe(NgayGui);
+GO
+
+/* =========================================================
+   15. THONG BAO
+   ========================================================= */
+CREATE TABLE dbo.ThongBao (
+    ThongBaoId BIGINT IDENTITY(1,1) PRIMARY KEY,
+    NguoiDungId BIGINT NOT NULL,
+    Loai NVARCHAR(50) NOT NULL,
+    TieuDe NVARCHAR(300) NOT NULL,
+    NoiDung NVARCHAR(MAX) NOT NULL,
+    DuongDan NVARCHAR(500) NULL,
+    DaDoc BIT NOT NULL DEFAULT 0,
+    ThoiGian DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
+    CONSTRAINT FK_ThongBao_NguoiDung FOREIGN KEY (NguoiDungId) REFERENCES dbo.NguoiDung(NguoiDungId)
+);
+GO
+
+CREATE INDEX IdxThongBao_User_DaDoc_ThoiGian
+ON dbo.ThongBao(NguoiDungId, DaDoc, ThoiGian);
+GO
+
+/* =========================================================
+   16. YEU THICH (Tour yeu thich)
+   ========================================================= */
+CREATE TABLE dbo.YeuThich (
+    YeuThichId BIGINT IDENTITY(1,1) PRIMARY KEY,
+    NguoiDungId BIGINT NOT NULL,
+    TourId BIGINT NOT NULL,
+    CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
+    CONSTRAINT FK_YeuThich_NguoiDung FOREIGN KEY (NguoiDungId) REFERENCES dbo.NguoiDung(NguoiDungId),
+    CONSTRAINT FK_YeuThich_Tour FOREIGN KEY (TourId) REFERENCES dbo.Tour(TourId)
+);
+GO
+
+CREATE UNIQUE INDEX UQ_YeuThich_User_Tour
+ON dbo.YeuThich(NguoiDungId, TourId);
+GO
+
+/* =========================================================
+   17. NHAT KY HE THONG
+   ========================================================= */
+CREATE TABLE dbo.NhatKyHeThong (
+    NhatKyId BIGINT IDENTITY(1,1) PRIMARY KEY,
+    NguoiDungId BIGINT NULL,
+    HoTenNguoiDung NVARCHAR(200) NULL,
+    HanhDong NVARCHAR(100) NOT NULL,
+    Bang NVARCHAR(100) NOT NULL,
+    BanGhiId BIGINT NULL,
+    ChiTiet NVARCHAR(MAX) NULL,
+    DiaChiIp NVARCHAR(50) NULL,
+    UserAgent NVARCHAR(500) NULL,
+    ThoiGian DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
+    CONSTRAINT FK_NhatKyHeThong_NguoiDung FOREIGN KEY (NguoiDungId) REFERENCES dbo.NguoiDung(NguoiDungId) ON DELETE SET NULL
+);
+GO
+
+CREATE INDEX IdxNhatKy_ThoiGian
+ON dbo.NhatKyHeThong(ThoiGian);
+GO
+
+CREATE INDEX IdxNhatKy_Bang
+ON dbo.NhatKyHeThong(Bang);
+GO
+
+CREATE INDEX IdxNhatKy_HanhDong
+ON dbo.NhatKyHeThong(HanhDong);
+GO
+
+/* =========================================================
+   18. DANH GIA TOUR
    ========================================================= */
 CREATE TABLE dbo.DanhGiaTour (
     DanhGiaTourId BIGINT IDENTITY(1,1) PRIMARY KEY,
@@ -479,7 +578,7 @@ ON dbo.DanhGiaTour(TourId, TrangThai, NgayDanhGia);
 GO
 
 /* =========================================================
-   17. TIN TUC
+   19. TIN TUC
    ========================================================= */
 CREATE TABLE dbo.TinTuc (
     TinTucId BIGINT IDENTITY(1,1) PRIMARY KEY,
@@ -508,4 +607,31 @@ GO
 
 CREATE INDEX IdxTinTuc_TrangThai_Ngay
 ON dbo.TinTuc(TrangThai, NgayDang);
+GO
+
+/* =========================================================
+   20. YEU CAU HUY TOUR
+   ========================================================= */
+CREATE TABLE dbo.YeuCauHuyTour (
+    YeuCauHuyTourId BIGINT IDENTITY(1,1) PRIMARY KEY,
+    BookingId BIGINT NOT NULL,
+    NguoiDungId BIGINT NOT NULL,
+    LyDo NVARCHAR(1000) NOT NULL,
+    TrangThai NVARCHAR(50) NOT NULL DEFAULT N'cho_duyet',
+    GhiChuAdmin NVARCHAR(500) NULL,
+    NguoiXuLyId BIGINT NULL,
+    CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
+    UpdatedAt DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
+    CONSTRAINT FK_YeuCauHuyTour_Booking FOREIGN KEY (BookingId) REFERENCES dbo.Booking(BookingId),
+    CONSTRAINT FK_YeuCauHuyTour_User FOREIGN KEY (NguoiDungId) REFERENCES dbo.NguoiDung(NguoiDungId),
+    CONSTRAINT FK_YeuCauHuyTour_NguoiXuLy FOREIGN KEY (NguoiXuLyId) REFERENCES dbo.NguoiDung(NguoiDungId)
+);
+GO
+
+CREATE INDEX IdxYeuCauHuyTour_Booking
+ON dbo.YeuCauHuyTour(BookingId);
+GO
+
+CREATE INDEX IdxYeuCauHuyTour_TrangThai
+ON dbo.YeuCauHuyTour(TrangThai);
 GO

@@ -1,6 +1,6 @@
-import { Alert, Button, Descriptions, Drawer, Empty, Form, Input, Popconfirm, Select, Space, Table, Tag, Typography, Modal } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
-import { useMemo, useState } from 'react'
+import { Alert, Button, Descriptions, Drawer, Empty, Form, Input, Popconfirm, Select, Space, Tag, Typography, Modal, Pagination, Dropdown } from 'antd'
+import type { MenuProps } from 'antd'
+import { useMemo, useState, useEffect } from 'react'
 import { useAdminBooking, useAdminBookings, useUpdateAdminBookingStatus } from '../../services/admin/admin.hooks'
 import type { AdminBookingItem, AdminBookingStatus, AdminPaymentStatus } from '../../types/admin'
 import { formatDate } from '../../utils/formatDate'
@@ -8,6 +8,7 @@ import { formatMoney } from '../../utils/formatMoney'
 import { adminBookingStatusMeta, adminPaymentStatusMeta, formatDateTime, mapStatusOptions } from '../../utils/admin'
 import { API_BASE_URL } from '../../constants/api'
 import { useAuthStore } from '../../store/authStore'
+import { MoreOutlined, FilePdfOutlined, CheckCircleOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import './AdminBookingListPage.css'
 
 const { Paragraph, Text, Title } = Typography
@@ -20,6 +21,9 @@ export default function AdminBookingListPage() {
   const [bookingStatusFilter, setBookingStatusFilter] = useState<AdminBookingStatus | undefined>()
   const [paymentStatusFilter, setPaymentStatusFilter] = useState<AdminPaymentStatus | undefined>()
   const [selectedBookingId, setSelectedBookingId] = useState<number | undefined>()
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 8
+
   const [statusForm] = Form.useForm<{ trangThaiBooking: AdminBookingStatus; trangThaiThanhToan?: AdminPaymentStatus; ghiChu?: string }>()
 
   const bookingsQuery = useAdminBookings()
@@ -41,142 +45,84 @@ export default function AdminBookingListPage() {
     })
   }, [bookingsQuery.data, keyword, bookingStatusFilter, paymentStatusFilter])
 
-  const columns: ColumnsType<AdminBookingItem> = [
-    {
-      title: 'Booking',
-      key: 'booking',
-      width: 220,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <Text strong>{record.maBooking}</Text>
-          <Text className="admin-muted">{record.hoTenNguoiDat}</Text>
-          <Text className="admin-muted">{record.emailNguoiDat}</Text>
-        </div>
-      ),
-    },
-    {
-      title: 'Tour',
-      key: 'tour',
-      width: 260,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <Text strong>{record.tenTour}</Text>
-          <Text className="admin-muted">{record.maTour} • {record.maDotTour}</Text>
-          <Text className="admin-muted">Khởi hành {formatDate(record.ngayKhoiHanh)}</Text>
-        </div>
-      ),
-    },
-    {
-      title: 'Liên hệ',
-      key: 'contact',
-      width: 220,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <Text>{record.hoTenLienHe}</Text>
-          <Text className="admin-muted">{record.soDienThoaiLienHe}</Text>
-          <Text className="admin-muted">{record.emailLienHe}</Text>
-        </div>
-      ),
-    },
-    {
-      title: 'Hành khách',
-      key: 'travellers',
-      width: 130,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <Text strong>{record.tongHanhKhach}</Text>
-          <Text className="admin-muted">NL {record.soNguoiLon} • TE {record.soTreEm} • EB {record.soEmBe}</Text>
-        </div>
-      ),
-    },
-    {
-      title: 'Thanh toán',
-      key: 'finance',
-      width: 180,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <Text className="admin-price">{formatMoney(record.tongTien)}</Text>
-          <Tag color={adminPaymentStatusMeta[record.trangThaiThanhToan].color}>{adminPaymentStatusMeta[record.trangThaiThanhToan].label}</Tag>
-        </div>
-      ),
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'trangThaiBooking',
-      key: 'trangThaiBooking',
-      width: 150,
-      render: (value: AdminBookingStatus) => <Tag color={adminBookingStatusMeta[value].color}>{adminBookingStatusMeta[value].label}</Tag>,
-    },
-    {
-      title: 'Ngày đặt',
-      dataIndex: 'ngayDat',
-      key: 'ngayDat',
-      width: 140,
-      render: (value: string) => formatDate(value),
-    },
-    {
-      title: 'Thao tác',
-      key: 'actions',
-      width: 220,
-      fixed: 'right',
-      render: (_, record) => (
-        <div className="admin-action-stack">
-          <Button onClick={() => {
-            setSelectedBookingId(record.id)
-            statusForm.setFieldsValue({
-              trangThaiBooking: record.trangThaiBooking,
-              trangThaiThanhToan: record.trangThaiThanhToan,
-              ghiChu: record.ghiChu ?? undefined,
-            })
-          }}>
-            Xem chi tiết
-          </Button>
-          <Button
-            onClick={async () => {
-              try {
-                const token = useAuthStore.getState().accessToken
-                const response = await fetch(`${API_BASE_URL}/admin/booking/export-invoice/${record.id}`, {
-                  headers: { Authorization: `Bearer ${token}` },
-                })
-                if (!response.ok) throw new Error('Không thể xuất hóa đơn')
-                const blob = await response.blob()
-                const url = URL.createObjectURL(blob)
-                const a = document.createElement('a')
-                a.href = url
-                a.download = `HoaDon_${record.maBooking}.pdf`
-                a.click()
-                URL.revokeObjectURL(url)
-              } catch {
-                Modal.error({ title: 'Lỗi', content: 'Không thể xuất hóa đơn. Vui lòng thử lại.' })
-              }
-            }}
-          >
-            Xuất PDF
-          </Button>
-          <Popconfirm
-            title={record.trangThaiBooking === 'da_xac_nhan' ? 'Hoàn tất booking?' : 'Xác nhận booking?'}
-            description={record.trangThaiBooking === 'da_xac_nhan'
-              ? 'Booking sẽ được đánh dấu là hoàn tất. Bạn không thể hoàn tác.'
-              : 'Booking sẽ được xác nhận và khách hàng sẽ được thông báo.'}
-            onConfirm={() => void updateBookingStatusMutation.mutateAsync({
-              id: record.id,
-              payload: {
-                trangThaiBooking: record.trangThaiBooking === 'da_xac_nhan' ? 'hoan_tat' : 'da_xac_nhan',
-                trangThaiThanhToan: record.trangThaiThanhToan,
-                ghiChu: record.ghiChu ?? undefined,
-              },
-            })}
-            okText={record.trangThaiBooking === 'da_xac_nhan' ? 'Hoàn tất' : 'Xác nhận'}
-            cancelText="Hủy"
-          >
-            <Button type="primary" className="admin-primary-button" loading={updateBookingStatusMutation.isPending}>
-              {record.trangThaiBooking === 'da_xac_nhan' ? 'Hoàn tất' : 'Xác nhận'}
-            </Button>
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ]
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [keyword, bookingStatusFilter, paymentStatusFilter])
+
+  const paginatedBookings = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    return filteredBookings.slice(start, start + pageSize)
+  }, [filteredBookings, currentPage])
+
+  const handleExportPdf = async (booking: AdminBookingItem) => {
+    try {
+      const token = useAuthStore.getState().accessToken
+      const response = await fetch(`${API_BASE_URL}/admin/booking/export-invoice/${booking.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!response.ok) throw new Error('Không thể xuất hóa đơn')
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `HoaDon_${booking.maBooking}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      Modal.error({ title: 'Lỗi', content: 'Không thể xuất hóa đơn. Vui lòng thử lại.' })
+    }
+  }
+
+  const handleStatusChange = async (booking: AdminBookingItem, newStatus: AdminBookingStatus) => {
+    Modal.confirm({
+      title: newStatus === 'hoan_tat' ? 'Hoàn tất booking?' : 'Xác nhận booking?',
+      content: newStatus === 'hoan_tat'
+        ? 'Booking sẽ được đánh dấu là hoàn tất. Bạn không thể hoàn tác.'
+        : 'Booking sẽ được xác nhận và khách hàng sẽ được thông báo.',
+      okText: newStatus === 'hoan_tat' ? 'Hoàn tất' : 'Xác nhận',
+      cancelText: 'Hủy',
+      onOk: async () => {
+        await updateBookingStatusMutation.mutateAsync({
+          id: booking.id,
+          payload: {
+            trangThaiBooking: newStatus,
+            trangThaiThanhToan: booking.trangThaiThanhToan,
+            ghiChu: booking.ghiChu ?? undefined,
+          },
+        })
+      }
+    })
+  }
+
+  const getBookingActions = (record: AdminBookingItem): MenuProps['items'] => {
+    const items: MenuProps['items'] = [
+      {
+        key: 'pdf',
+        label: 'Xuất PDF',
+        icon: <FilePdfOutlined />,
+        onClick: () => void handleExportPdf(record)
+      },
+      { type: 'divider' },
+    ]
+
+    if (record.trangThaiBooking === 'cho_xac_nhan') {
+      items.push({
+        key: 'confirm',
+        label: 'Xác nhận booking',
+        icon: <CheckCircleOutlined />,
+        onClick: () => void handleStatusChange(record, 'da_xac_nhan')
+      })
+    } else if (record.trangThaiBooking === 'da_xac_nhan') {
+      items.push({
+        key: 'complete',
+        label: 'Hoàn tất booking',
+        icon: <CheckCircleOutlined />,
+        onClick: () => void handleStatusChange(record, 'hoan_tat')
+      })
+    }
+
+    return items
+  }
 
   const hasError = bookingsQuery.isError
   const errorMessage = bookingsQuery.error instanceof Error ? bookingsQuery.error.message : 'Không thể tải dữ liệu booking quản trị'
@@ -193,12 +139,13 @@ export default function AdminBookingListPage() {
       </div>
 
       <div className="admin-page-card">
-        <div className="admin-filter-toolbar is-compact">
+        <div className="admin-filter-toolbar is-compact" style={{ gridTemplateColumns: 'minmax(0, 1fr) 200px 200px 100px' }}>
           <Input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
             placeholder="Tìm theo mã booking, tour, khách hàng..."
             className="admin-filter-field"
+            style={{ height: 40, borderRadius: 8 }}
           />
           <Select
             allowClear
@@ -207,6 +154,7 @@ export default function AdminBookingListPage() {
             options={bookingStatusOptions}
             placeholder="Trạng thái booking"
             className="admin-filter-field"
+            style={{ height: 40, borderRadius: 8 }}
           />
           <Select
             allowClear
@@ -215,28 +163,106 @@ export default function AdminBookingListPage() {
             options={paymentStatusOptions}
             placeholder="Trạng thái thanh toán"
             className="admin-filter-field"
+            style={{ height: 40, borderRadius: 8 }}
           />
-          <Button className="admin-filter-button" onClick={() => {
-            setKeyword('')
-            setBookingStatusFilter(undefined)
-            setPaymentStatusFilter(undefined)
-          }}>
+          <Button 
+            className="admin-filter-button" 
+            style={{ height: 40, borderRadius: 8 }}
+            onClick={() => {
+              setKeyword('')
+              setBookingStatusFilter(undefined)
+              setPaymentStatusFilter(undefined)
+            }}
+          >
             Xoá bộ lọc
           </Button>
         </div>
 
         {hasError ? <Alert type="error" showIcon title={errorMessage} /> : null}
 
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={filteredBookings}
-          loading={bookingsQuery.isLoading}
-          pagination={{ pageSize: 8, showSizeChanger: false }}
-          locale={{ emptyText: <Empty description="Chưa có booking quản trị" /> }}
-          scroll={{ x: 1600 }}
-          className="admin-table"
-        />
+        <div className="admin-booking-list-container">
+          {bookingsQuery.isLoading ? (
+            <Empty description="Đang tải dữ liệu..." />
+          ) : filteredBookings.length === 0 ? (
+            <Empty description="Chưa có booking quản trị" />
+          ) : (
+            paginatedBookings.map((booking) => (
+              <div key={booking.id} className="admin-booking-list-item">
+                <div className="admin-booking-item-main">
+                  <h3 className="admin-booking-item-title">{booking.maBooking}</h3>
+                  <div className="admin-booking-item-meta">
+                    <Text strong>{booking.hoTenNguoiDat}</Text>
+                    <span>• {booking.emailNguoiDat}</span>
+                  </div>
+                  <div className="admin-booking-item-meta">
+                    Ngày đặt: {formatDateTime(booking.ngayDat)}
+                  </div>
+                </div>
+
+                <div className="admin-booking-item-tour">
+                  <div className="admin-booking-item-tour-title">{booking.tenTour}</div>
+                  <div className="admin-booking-item-meta">
+                    {booking.maTour} • {booking.maDotTour}
+                  </div>
+                  <div className="admin-booking-item-meta">
+                    Khởi hành: <Text strong>{formatDate(booking.ngayKhoiHanh)}</Text>
+                  </div>
+                </div>
+
+                <div className="admin-booking-item-passengers">
+                  <Text strong style={{ fontSize: 14 }}>{booking.tongHanhKhach} Khách</Text>
+                  <Text className="admin-muted" style={{ fontSize: 13 }}>NL {booking.soNguoiLon} • TE {booking.soTreEm} • EB {booking.soEmBe}</Text>
+                  <div className="admin-booking-item-meta" style={{ marginTop: 4 }}>
+                    <Text>{booking.hoTenLienHe}</Text>
+                  </div>
+                </div>
+
+                <div className="admin-booking-item-pricing">
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <Tag color={adminPaymentStatusMeta[booking.trangThaiThanhToan].color} style={{ margin: 0, fontWeight: 600 }}>
+                      {adminPaymentStatusMeta[booking.trangThaiThanhToan].label}
+                    </Tag>
+                    <Tag color={adminBookingStatusMeta[booking.trangThaiBooking].color} style={{ margin: 0, fontWeight: 600 }}>
+                      {adminBookingStatusMeta[booking.trangThaiBooking].label}
+                    </Tag>
+                  </div>
+                  <div className="admin-booking-item-price">{formatMoney(booking.tongTien)}</div>
+                </div>
+
+                <div className="admin-booking-item-actions">
+                  <Button 
+                    icon={<InfoCircleOutlined />}
+                    onClick={() => {
+                      setSelectedBookingId(booking.id)
+                      statusForm.setFieldsValue({
+                        trangThaiBooking: booking.trangThaiBooking,
+                        trangThaiThanhToan: booking.trangThaiThanhToan,
+                        ghiChu: booking.ghiChu ?? undefined,
+                      })
+                    }}
+                  >
+                    Chi tiết
+                  </Button>
+                  <Dropdown menu={{ items: getBookingActions(booking) }} trigger={['click']} placement="bottomRight">
+                    <Button icon={<MoreOutlined />} />
+                  </Dropdown>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {filteredBookings.length > 0 && (
+          <div className="admin-booking-list-pagination">
+            <Pagination 
+              current={currentPage} 
+              total={filteredBookings.length} 
+              pageSize={pageSize} 
+              onChange={(page) => setCurrentPage(page)} 
+              showSizeChanger={false}
+            />
+          </div>
+        )}
       </div>
 
       <Drawer

@@ -1,6 +1,6 @@
-import { Alert, Button, Empty, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Switch, Table, Tag, Typography, message } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
-import { useMemo, useState } from 'react'
+import { Alert, Button, Empty, Form, Input, InputNumber, Modal, Popconfirm, Select, Switch, Tag, Typography, message, Pagination, Dropdown } from 'antd'
+import type { MenuProps } from 'antd'
+import { useMemo, useState, useEffect } from 'react'
 import {
   useAdminDiaDiems,
   useAdminLoaiTours,
@@ -21,7 +21,8 @@ import {
   StarFilled,
   EditOutlined,
   DeleteOutlined,
-  CheckCircleOutlined,
+  MoreOutlined,
+  PictureOutlined
 } from '@ant-design/icons'
 
 const { Paragraph, Title, Text } = Typography
@@ -52,6 +53,9 @@ export default function AdminTourListPage() {
   const [activeStatus, setActiveStatus] = useState<'tat_ca' | AdminTourStatus>('tat_ca')
   const [loaiTourFilter, setLoaiTourFilter] = useState<number | undefined>()
   const [diaDiemFilter, setDiaDiemFilter] = useState<number | undefined>()
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 8
+
   const [modalOpen, setModalOpen] = useState(false)
   const [editingTour, setEditingTour] = useState<AdminTourItem | null>(null)
   const [form] = Form.useForm()
@@ -87,6 +91,15 @@ export default function AdminTourListPage() {
       return matchesKeyword && matchesStatus && matchesLoaiTour && matchesDiaDiem
     })
   }, [activeStatus, diaDiemFilter, keyword, loaiTourFilter, tours])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [keyword, activeStatus, loaiTourFilter, diaDiemFilter])
+
+  const paginatedTours = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    return filteredTours.slice(start, start + pageSize)
+  }, [filteredTours, currentPage])
 
   const handleOpenModal = (tour?: AdminTourItem) => {
     if (tour) {
@@ -217,108 +230,6 @@ export default function AdminTourListPage() {
     } catch { /* form validation error handled by antd */ }
   }
 
-  const columns: ColumnsType<AdminTourItem> = [
-    {
-      title: 'Tour',
-      key: 'tour',
-      width: 300,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <Text strong>{record.tenTour}</Text>
-          <Text className="admin-muted">{record.maTour} • {record.tenLoaiTour}</Text>
-          <Text className="admin-muted">Điểm đi: {record.tenDiemXuatPhat}</Text>
-        </div>
-      ),
-    },
-    {
-      title: 'Hành trình',
-      key: 'itinerary',
-      width: 280,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <Text>{getDurationLabel(record)} • {record.phuongTien || 'Chưa có phương tiện'}</Text>
-          <Text className="admin-muted">Điểm đến: {record.diemDens.length > 0 ? record.diemDens.map((item) => item.tenDiaDiem).join(', ') : 'Chưa có'}</Text>
-        </div>
-      ),
-    },
-    {
-      title: 'Giá & nổi bật',
-      key: 'pricing',
-      width: 160,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <span className="admin-tour-list-price">{formatMoney(record.giaTuThamKhao)}</span>
-          {record.isNoiBat ? <Tag color="gold">Nổi bật</Tag> : <Text className="admin-muted">Tour thường</Text>}
-        </div>
-      ),
-    },
-    {
-      title: 'Ảnh',
-      key: 'images',
-      width: 80,
-      align: 'center',
-      render: (_, record) => (
-        record.anhTours && record.anhTours.length > 0
-          ? <Tag color="blue">{record.anhTours.length} ảnh</Tag>
-          : <Text className="admin-muted">—</Text>
-      ),
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'trangThai',
-      key: 'trangThai',
-      width: 140,
-      render: (value: AdminTourStatus) => <Tag color={adminTourStatusMeta[value].color}>{adminTourStatusMeta[value].label}</Tag>,
-    },
-    {
-      title: 'Cập nhật',
-      dataIndex: 'updatedAt',
-      key: 'updatedAt',
-      width: 160,
-      render: (value: string) => <Text className="admin-muted">{formatDateTime(value)}</Text>,
-    },
-    {
-      title: 'Thao tác',
-      key: 'actions',
-      width: 260,
-      fixed: 'right',
-      render: (_, record) => (
-        <Space size={8} className="admin-tour-list-action-stack">
-          <Button size="small" onClick={() => void handleOpenModal(record)}>Sửa</Button>
-          <Select
-            size="small"
-            value={record.trangThai}
-            onChange={(nextStatus) => void updateStatusMutation.mutateAsync({ id: record.id, trangThai: nextStatus as AdminTourStatus })}
-            options={statusOptions}
-            className="admin-tour-list-status-select"
-          />
-          {record.trangThai === 'an' ? (
-            <Popconfirm
-              title="Khôi phục tour?"
-              description="Tour sẽ trở về trạng thái nháp và có thể được mở bán lại."
-              onConfirm={() => void updateStatusMutation.mutateAsync({ id: record.id, trangThai: 'nhap' })}
-              okText="Khôi phục"
-              cancelText="Hủy"
-            >
-              <Button size="small">Khôi phục</Button>
-            </Popconfirm>
-          ) : (
-            <Popconfirm
-              title="Ẩn tour?"
-              description="Tour sẽ không hiển thị với khách hàng. Bạn có thể khôi phục sau."
-              onConfirm={() => void hideTourMutation.mutateAsync(record.id)}
-              okText="Ẩn tour"
-              cancelText="Hủy"
-              okButtonProps={{ danger: true }}
-            >
-              <Button size="small" danger ghost>Ẩn tour</Button>
-            </Popconfirm>
-          )}
-        </Space>
-      ),
-    },
-  ]
-
   const hasError = toursQuery.isError || loaiToursQuery.isError || diaDiemsQuery.isError
   const errorMessage = toursQuery.error instanceof Error
     ? toursQuery.error.message
@@ -329,6 +240,47 @@ export default function AdminTourListPage() {
         : 'Không thể tải dữ liệu quản lý tour'
 
   const isSubmitting = createTourMutation.isPending || updateTourMutation.isPending
+
+  const getTourActions = (record: AdminTourItem): MenuProps['items'] => {
+    const items: MenuProps['items'] = [
+      {
+        key: 'edit',
+        label: 'Chỉnh sửa tour',
+        icon: <EditOutlined />,
+        onClick: () => void handleOpenModal(record)
+      },
+      { type: 'divider' },
+    ]
+
+    statusOptions.forEach((status) => {
+      if (status.value !== record.trangThai) {
+        items.push({
+          key: `status-${status.value}`,
+          label: `Chuyển sang: ${status.label}`,
+          onClick: () => void updateStatusMutation.mutateAsync({ id: record.id, trangThai: status.value as AdminTourStatus })
+        })
+      }
+    })
+
+    items.push({ type: 'divider' })
+
+    if (record.trangThai === 'an') {
+      items.push({
+        key: 'restore',
+        label: 'Khôi phục tour',
+        onClick: () => void updateStatusMutation.mutateAsync({ id: record.id, trangThai: 'nhap' })
+      })
+    } else {
+      items.push({
+        key: 'hide',
+        label: 'Ẩn tour',
+        danger: true,
+        onClick: () => void hideTourMutation.mutateAsync(record.id)
+      })
+    }
+
+    return items
+  }
 
   return (
     <div className="admin-tour-list-page">
@@ -395,16 +347,74 @@ export default function AdminTourListPage() {
 
         {hasError ? <Alert type="error" showIcon title={errorMessage} /> : null}
 
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={filteredTours}
-          loading={toursQuery.isLoading || loaiToursQuery.isLoading || diaDiemsQuery.isLoading}
-          pagination={{ pageSize: 8, showSizeChanger: false }}
-          locale={{ emptyText: <Empty description="Không có tour phù hợp" /> }}
-          scroll={{ x: 1680 }}
-          className="admin-tour-list-table"
-        />
+        <div className="admin-tour-list-container">
+          {toursQuery.isLoading || loaiToursQuery.isLoading || diaDiemsQuery.isLoading ? (
+            <Empty description="Đang tải dữ liệu..." />
+          ) : filteredTours.length === 0 ? (
+            <Empty description="Không có tour phù hợp" />
+          ) : (
+            paginatedTours.map((tour) => {
+              const avatar = tour.anhTours?.find(a => a.isAvatar)?.linkAnh || tour.anhTours?.[0]?.linkAnh
+              
+              return (
+                <div key={tour.id} className="admin-tour-list-item">
+                  <div className="admin-tour-item-main">
+                    {avatar ? (
+                      <img src={avatar} alt={tour.tenTour} className="admin-tour-item-image" />
+                    ) : (
+                      <div className="admin-tour-item-image-placeholder">
+                        <PictureOutlined />
+                      </div>
+                    )}
+                    <div className="admin-tour-item-info">
+                      <h3 className="admin-tour-item-title">{tour.tenTour}</h3>
+                      <span className="admin-tour-item-meta">
+                        {tour.maTour} • {tour.tenLoaiTour}
+                      </span>
+                      <span className="admin-tour-item-meta">
+                        Khởi hành từ: {tour.tenDiemXuatPhat}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="admin-tour-item-itinerary">
+                    <Text strong style={{ fontSize: 13 }}>{getDurationLabel(tour)} • {tour.phuongTien || 'Chưa có phương tiện'}</Text>
+                    <Text type="secondary" style={{ fontSize: 13 }}>
+                      Điểm đến: {tour.diemDens.length > 0 ? tour.diemDens.map(d => d.tenDiaDiem).join(', ') : 'Chưa có'}
+                    </Text>
+                  </div>
+
+                  <div className="admin-tour-item-pricing">
+                    <Tag color={adminTourStatusMeta[tour.trangThai].color} style={{ margin: 0, fontWeight: 600 }}>
+                      {adminTourStatusMeta[tour.trangThai].label}
+                    </Tag>
+                    <div className="admin-tour-item-price">{formatMoney(tour.giaTuThamKhao)}</div>
+                    {tour.isNoiBat && <Tag color="gold" style={{ margin: 0 }}>Nổi bật</Tag>}
+                  </div>
+
+                  <div className="admin-tour-item-actions">
+                    <Button onClick={() => void handleOpenModal(tour)}>Sửa</Button>
+                    <Dropdown menu={{ items: getTourActions(tour) }} trigger={['click']} placement="bottomRight">
+                      <Button icon={<MoreOutlined />} />
+                    </Dropdown>
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+        
+        {filteredTours.length > 0 && (
+          <div className="admin-tour-list-pagination">
+            <Pagination 
+              current={currentPage} 
+              total={filteredTours.length} 
+              pageSize={pageSize} 
+              onChange={(page) => setCurrentPage(page)} 
+              showSizeChanger={false}
+            />
+          </div>
+        )}
       </div>
 
       <Modal
