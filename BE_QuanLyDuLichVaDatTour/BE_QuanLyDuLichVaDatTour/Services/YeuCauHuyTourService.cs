@@ -57,6 +57,27 @@ public class YeuCauHuyTourService : IYeuCauHuyTourService
         return MapToDto(entity, entity.Booking);
     }
 
+    public async Task<CancellationResponseDto?> GetStatusByBookingIdAsync(long userId, long bookingId)
+    {
+        var entity = await _repo.GetByBookingIdAsync(bookingId);
+        if (entity == null || entity.UserId != userId)
+            return null;
+
+        var booking = entity.Booking;
+        return new CancellationResponseDto
+        {
+            Id = entity.Id,
+            BookingId = entity.BookingId,
+            MaBooking = booking?.MaBooking ?? string.Empty,
+            TenTour = booking?.LichKhoiHanh?.Tour?.TenTour ?? string.Empty,
+            LyDo = entity.LyDo,
+            TrangThai = entity.TrangThai,
+            GhiChuAdmin = entity.GhiChuAdmin,
+            CreatedAt = entity.CreatedAt,
+            UpdatedAt = entity.UpdatedAt
+        };
+    }
+
     public async Task<List<CancellationResponseDto>> GetMyCancellationRequestsAsync(long userId)
     {
         var items = await _repo.GetByUserIdAsync(userId);

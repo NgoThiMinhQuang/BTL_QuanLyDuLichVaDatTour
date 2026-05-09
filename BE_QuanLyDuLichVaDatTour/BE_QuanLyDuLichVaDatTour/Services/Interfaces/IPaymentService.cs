@@ -15,4 +15,10 @@ public interface IPaymentService
     Task<PaymentResponseDto> GetAdminByIdAsync(long id);
 
     Task UpdateStatusAsync(long adminUserId, long id, UpdatePaymentStatusRequestDto request);
+
+    Task<PaymentResponseDto> ConfirmAsync(long adminUserId, long id, ConfirmPaymentRequestDto request);
+
+    Task<PaymentResponseDto> RefundAsync(long adminUserId, long id, RefundRequestDto request);
+
+    Task<object> PreviewPriceAsync(long currentUserId, PricePreviewRequestDto request);
 }

@@ -25,4 +25,15 @@ public interface ITourService
     Task UpdateStatusAsync(long id, UpdateTourStatusRequestDto request);
 
     Task HideAsync(long id);
+
+    Task<TourDiemDenResponseDto> AddDiemDenAsync(long tourId, AddTourDiemDenRequestDto request);
+    Task DeleteDiemDenAsync(long tourDiemDenId);
+    Task<TourDiemDenResponseDto> UpdateDiemDenAsync(long tourDiemDenId, UpdateTourDiemDenRequestDto request);
+    Task<List<TourDiemDenResponseDto>> ReorderDiemDensAsync(long tourId, List<long> diemDenIds);
+
+    Task<AnhTourResponseDto> AddAnhTourAsync(long tourId, AddAnhTourRequestDto request);
+    Task DeleteAnhTourAsync(long anhTourId);
+    Task<AnhTourResponseDto> UpdateAnhTourAsync(long anhTourId, UpdateAnhTourRequestDto request);
+    Task<AnhTourResponseDto> SetAvatarAsync(long anhTourId);
+    Task<List<AnhTourResponseDto>> ReorderAnhToursAsync(long tourId, List<long> anhTourIds);
 }

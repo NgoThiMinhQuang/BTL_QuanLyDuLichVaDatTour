@@ -48,6 +48,44 @@ public class AdminReviewController : ControllerBase
         }
     }
 
+    [HttpPost("approve/{id:long}")]
+    public async Task<IActionResult> Approve(long id, [FromBody] UpdateAdminReviewStatusRequestDto? request)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized(new { message = "Token không hợp lệ." });
+        }
+
+        try
+        {
+            await _reviewService.ApproveAsync(userId, id, request?.PhanHoiAdmin);
+            return Ok(new { message = "Đã duyệt đánh giá." });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("hide/{id:long}")]
+    public async Task<IActionResult> Hide(long id, [FromBody] UpdateAdminReviewStatusRequestDto? request)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized(new { message = "Token không hợp lệ." });
+        }
+
+        try
+        {
+            await _reviewService.HideAsync(userId, id, request?.PhanHoiAdmin);
+            return Ok(new { message = "Đã ẩn đánh giá." });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
     private bool TryGetCurrentUserId(out long userId)
     {
         return User.TryGetCurrentUserId(out userId);

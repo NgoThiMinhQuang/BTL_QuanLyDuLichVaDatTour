@@ -254,6 +254,217 @@ public class TourService : ITourService
         await _tourRepository.SaveChangesAsync();
     }
 
+    public async Task<TourDiemDenResponseDto> AddDiemDenAsync(long tourId, AddTourDiemDenRequestDto request)
+    {
+        var tour = await _tourRepository.GetTrackedByIdAsync(tourId)
+            ?? throw new KeyNotFoundException("Tour không tồn tại.");
+
+        var diaDiem = await _dbContext.DiaDiems
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == request.DiaDiemId)
+            ?? throw new KeyNotFoundException("Điểm đến không tồn tại.");
+
+        var maxThuTu = tour.TourDiemDens.Count == 0
+            ? (short)0
+            : tour.TourDiemDens.Max(x => x.ThuTu);
+
+        var tourDiemDen = new TourDiemDen
+        {
+            TourId = tourId,
+            DiaDiemId = request.DiaDiemId,
+            ThuTu = checked((short)(maxThuTu + 1)),
+            GhiChu = string.IsNullOrWhiteSpace(request.GhiChu) ? null : request.GhiChu.Trim(),
+            DiaDiem = diaDiem,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        tour.TourDiemDens.Add(tourDiemDen);
+        tour.UpdatedAt = DateTime.UtcNow;
+        await _tourRepository.SaveChangesAsync();
+
+        return MapTourDiemDenResponse(tourDiemDen);
+    }
+
+    public async Task DeleteDiemDenAsync(long tourDiemDenId)
+    {
+        var tourDiemDen = await _dbContext.TourDiemDens
+            .Include(x => x.Tour)
+            .FirstOrDefaultAsync(x => x.Id == tourDiemDenId)
+            ?? throw new KeyNotFoundException("Điểm đến không tồn tại.");
+
+        var tour = tourDiemDen.Tour!;
+        tour.UpdatedAt = DateTime.UtcNow;
+        _dbContext.TourDiemDens.Remove(tourDiemDen);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<TourDiemDenResponseDto> UpdateDiemDenAsync(long tourDiemDenId, UpdateTourDiemDenRequestDto request)
+    {
+        var tourDiemDen = await _dbContext.TourDiemDens
+            .Include(x => x.DiaDiem)
+            .FirstOrDefaultAsync(x => x.Id == tourDiemDenId)
+            ?? throw new KeyNotFoundException("Điểm đến không tồn tại.");
+
+        tourDiemDen.GhiChu = string.IsNullOrWhiteSpace(request.GhiChu) ? null : request.GhiChu.Trim();
+
+        await _dbContext.SaveChangesAsync();
+
+        return MapTourDiemDenResponse(tourDiemDen);
+    }
+
+    public async Task<List<TourDiemDenResponseDto>> ReorderDiemDensAsync(long tourId, List<long> diemDenIds)
+    {
+        var tour = await _tourRepository.GetTrackedByIdAsync(tourId)
+            ?? throw new KeyNotFoundException("Tour không tồn tại.");
+
+        var diemDenLookup = tour.TourDiemDens.ToDictionary(x => x.Id);
+
+        if (diemDenIds.Count != tour.TourDiemDens.Count)
+        {
+            throw new InvalidOperationException("Danh sách điểm đến không khớp với số lượng hiện tại.");
+        }
+
+        for (var i = 0; i < diemDenIds.Count; i++)
+        {
+            if (!diemDenLookup.TryGetValue(diemDenIds[i], out var diemDen))
+            {
+                throw new KeyNotFoundException($"Điểm đến ID {diemDenIds[i]} không thuộc tour này.");
+            }
+
+            diemDen.ThuTu = checked((short)(i + 1));
+        }
+
+        tour.UpdatedAt = DateTime.UtcNow;
+        await _tourRepository.SaveChangesAsync();
+
+        return tour.TourDiemDens
+            .OrderBy(x => x.ThuTu)
+            .Select(MapTourDiemDenResponse)
+            .ToList();
+    }
+
+    public async Task<AnhTourResponseDto> AddAnhTourAsync(long tourId, AddAnhTourRequestDto request)
+    {
+        var tour = await _tourRepository.GetTrackedByIdAsync(tourId)
+            ?? throw new KeyNotFoundException("Tour không tồn tại.");
+
+        var linkAnh = request.LinkAnh.Trim();
+        if (string.IsNullOrWhiteSpace(linkAnh))
+        {
+            throw new InvalidOperationException("Link ảnh không được để trống.");
+        }
+
+        var maxThuTu = tour.AnhTours.Count == 0
+            ? (short)0
+            : tour.AnhTours.Max(x => x.ThuTu);
+
+        var isFirst = tour.AnhTours.Count == 0;
+        var now = DateTime.UtcNow;
+        var anhTour = new AnhTour
+        {
+            TourId = tourId,
+            LinkAnh = linkAnh,
+            MoTa = string.IsNullOrWhiteSpace(request.MoTa) ? null : request.MoTa.Trim(),
+            ThuTu = checked((short)(maxThuTu + 1)),
+            IsAvatar = isFirst,
+            CreatedAt = now,
+            UpdatedAt = now
+        };
+
+        tour.AnhTours.Add(anhTour);
+        tour.UpdatedAt = now;
+        await _tourRepository.SaveChangesAsync();
+
+        return MapAnhTourResponse(anhTour);
+    }
+
+    public async Task<AnhTourResponseDto> UpdateAnhTourAsync(long anhTourId, UpdateAnhTourRequestDto request)
+    {
+        var anhTour = await _dbContext.AnhTours.FindAsync(anhTourId)
+            ?? throw new KeyNotFoundException("Ảnh tour không tồn tại.");
+
+        anhTour.MoTa = string.IsNullOrWhiteSpace(request.MoTa) ? null : request.MoTa.Trim();
+        anhTour.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync();
+
+        return MapAnhTourResponse(anhTour);
+    }
+
+    public async Task DeleteAnhTourAsync(long anhTourId)
+    {
+        var anhTour = await _dbContext.AnhTours
+            .Include(x => x.Tour)
+            .FirstOrDefaultAsync(x => x.Id == anhTourId)
+            ?? throw new KeyNotFoundException("Ảnh tour không tồn tại.");
+
+        var tour = anhTour.Tour!;
+        tour.UpdatedAt = DateTime.UtcNow;
+        _dbContext.AnhTours.Remove(anhTour);
+
+        if (anhTour.IsAvatar && tour.AnhTours.Count > 1)
+        {
+            var newAvatar = tour.AnhTours
+                .Where(x => x.Id != anhTourId)
+                .OrderBy(x => x.ThuTu)
+                .First();
+            newAvatar.IsAvatar = true;
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<AnhTourResponseDto> SetAvatarAsync(long anhTourId)
+    {
+        var anhTour = await _dbContext.AnhTours
+            .Include(x => x.Tour).ThenInclude(t => t.AnhTours)
+            .FirstOrDefaultAsync(x => x.Id == anhTourId)
+            ?? throw new KeyNotFoundException("Ảnh tour không tồn tại.");
+
+        var tour = anhTour.Tour!;
+        foreach (var img in tour.AnhTours)
+        {
+            img.IsAvatar = img.Id == anhTourId;
+            img.UpdatedAt = DateTime.UtcNow;
+        }
+
+        tour.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync();
+
+        return MapAnhTourResponse(anhTour);
+    }
+
+    public async Task<List<AnhTourResponseDto>> ReorderAnhToursAsync(long tourId, List<long> anhTourIds)
+    {
+        var tour = await _tourRepository.GetTrackedByIdAsync(tourId)
+            ?? throw new KeyNotFoundException("Tour không tồn tại.");
+
+        var anhTourLookup = tour.AnhTours.ToDictionary(x => x.Id);
+
+        if (anhTourIds.Count != tour.AnhTours.Count)
+        {
+            throw new InvalidOperationException("Danh sách ảnh không khớp với số lượng hiện tại.");
+        }
+
+        for (var i = 0; i < anhTourIds.Count; i++)
+        {
+            if (!anhTourLookup.TryGetValue(anhTourIds[i], out var anhTour))
+            {
+                throw new KeyNotFoundException($"Ảnh tour ID {anhTourIds[i]} không thuộc tour này.");
+            }
+
+            anhTour.ThuTu = checked((short)(i + 1));
+            anhTour.UpdatedAt = DateTime.UtcNow;
+        }
+
+        tour.UpdatedAt = DateTime.UtcNow;
+        await _tourRepository.SaveChangesAsync();
+
+        return tour.AnhTours
+            .OrderBy(x => x.ThuTu)
+            .Select(MapAnhTourResponse)
+            .ToList();
+    }
+
     public async Task HideAsync(long id)
     {
         var tour = await _tourRepository.GetTrackedByIdAsync(id)

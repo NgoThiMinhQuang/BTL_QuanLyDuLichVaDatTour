@@ -1,8 +1,10 @@
+using BE_QuanLyDuLichVaDatTour.Data;
 using BE_QuanLyDuLichVaDatTour.DTOs.LichKhoiHanh;
 using BE_QuanLyDuLichVaDatTour.Models.Entities;
 using BE_QuanLyDuLichVaDatTour.Models.Enums;
 using BE_QuanLyDuLichVaDatTour.Repositories.Interfaces;
 using BE_QuanLyDuLichVaDatTour.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BE_QuanLyDuLichVaDatTour.Services;
 
@@ -12,17 +14,20 @@ public class LichKhoiHanhService : ILichKhoiHanhService
     private readonly ITourRepository _tourRepository;
     private readonly IBangGiaLichKhoiHanhRepository _bangGiaLichKhoiHanhRepository;
     private readonly IBookingRepository _bookingRepository;
+    private readonly AppDbContext _dbContext;
 
     public LichKhoiHanhService(
         ILichKhoiHanhRepository lichKhoiHanhRepository,
         ITourRepository tourRepository,
         IBangGiaLichKhoiHanhRepository bangGiaLichKhoiHanhRepository,
-        IBookingRepository bookingRepository)
+        IBookingRepository bookingRepository,
+        AppDbContext dbContext)
     {
         _lichKhoiHanhRepository = lichKhoiHanhRepository;
         _tourRepository = tourRepository;
         _bangGiaLichKhoiHanhRepository = bangGiaLichKhoiHanhRepository;
         _bookingRepository = bookingRepository;
+        _dbContext = dbContext;
     }
 
     public async Task<List<LichKhoiHanhAdminResponseDto>> GetAllAsync()
@@ -140,6 +145,56 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         await _lichKhoiHanhRepository.SaveChangesAsync();
 
         return await MapAdminResponseAsync(lichKhoiHanh);
+    }
+
+    public async Task<BangGiaLichKhoiHanhResponseDto> UpsertBangGiaAsync(long lichKhoiHanhId, BangGiaLichKhoiHanhRequestDto request)
+    {
+        var lichKhoiHanh = await _lichKhoiHanhRepository.GetByIdAsync(lichKhoiHanhId)
+            ?? throw new KeyNotFoundException("Lịch khởi hành không tồn tại.");
+
+        var now = DateTime.UtcNow;
+        var existing = await _dbContext.BangGiaLichKhoiHanhs
+            .Where(x => x.LichKhoiHanhId == lichKhoiHanhId)
+            .ToListAsync();
+
+        _dbContext.BangGiaLichKhoiHanhs.RemoveRange(existing);
+
+        var bangGias = new List<BangGiaLichKhoiHanh>
+        {
+            new() { LichKhoiHanhId = lichKhoiHanhId, LoaiKhach = LoaiKhach.nguoi_lon, LoaiGia = LoaiGiaApDung.ngay_thuong, DonGia = request.GiaNguoiLonNgayThuong, CreatedAt = now, UpdatedAt = now },
+            new() { LichKhoiHanhId = lichKhoiHanhId, LoaiKhach = LoaiKhach.tre_em, LoaiGia = LoaiGiaApDung.ngay_thuong, DonGia = request.GiaTreEmNgayThuong, CreatedAt = now, UpdatedAt = now },
+            new() { LichKhoiHanhId = lichKhoiHanhId, LoaiKhach = LoaiKhach.em_be, LoaiGia = LoaiGiaApDung.ngay_thuong, DonGia = request.GiaEmBeNgayThuong, CreatedAt = now, UpdatedAt = now },
+            new() { LichKhoiHanhId = lichKhoiHanhId, LoaiKhach = LoaiKhach.nguoi_lon, LoaiGia = LoaiGiaApDung.cuoi_tuan, DonGia = request.GiaNguoiLonCuoiTuan, CreatedAt = now, UpdatedAt = now },
+            new() { LichKhoiHanhId = lichKhoiHanhId, LoaiKhach = LoaiKhach.tre_em, LoaiGia = LoaiGiaApDung.cuoi_tuan, DonGia = request.GiaTreEmCuoiTuan, CreatedAt = now, UpdatedAt = now },
+            new() { LichKhoiHanhId = lichKhoiHanhId, LoaiKhach = LoaiKhach.em_be, LoaiGia = LoaiGiaApDung.cuoi_tuan, DonGia = request.GiaEmBeCuoiTuan, CreatedAt = now, UpdatedAt = now },
+        };
+
+        _dbContext.BangGiaLichKhoiHanhs.AddRange(bangGias);
+        await _dbContext.SaveChangesAsync();
+
+        return new BangGiaLichKhoiHanhResponseDto
+        {
+            LichKhoiHanhId = lichKhoiHanhId,
+            GiaNguoiLonNgayThuong = request.GiaNguoiLonNgayThuong,
+            GiaTreEmNgayThuong = request.GiaTreEmNgayThuong,
+            GiaEmBeNgayThuong = request.GiaEmBeNgayThuong,
+            GiaNguoiLonCuoiTuan = request.GiaNguoiLonCuoiTuan,
+            GiaTreEmCuoiTuan = request.GiaTreEmCuoiTuan,
+            GiaEmBeCuoiTuan = request.GiaEmBeCuoiTuan,
+        };
+    }
+
+    public async Task DeleteBangGiaAsync(long lichKhoiHanhId)
+    {
+        var lichKhoiHanh = await _lichKhoiHanhRepository.GetByIdAsync(lichKhoiHanhId)
+            ?? throw new KeyNotFoundException("Lịch khởi hành không tồn tại.");
+
+        var existing = await _dbContext.BangGiaLichKhoiHanhs
+            .Where(x => x.LichKhoiHanhId == lichKhoiHanhId)
+            .ToListAsync();
+
+        _dbContext.BangGiaLichKhoiHanhs.RemoveRange(existing);
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task UpdateStatusAsync(long id, UpdateLichKhoiHanhStatusRequestDto request)

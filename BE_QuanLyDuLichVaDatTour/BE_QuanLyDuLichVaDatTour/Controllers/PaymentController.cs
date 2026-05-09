@@ -45,6 +45,30 @@ public class PaymentController : ControllerBase
         }
     }
 
+    [HttpPost("preview")]
+    public async Task<IActionResult> PreviewPrice([FromBody] PricePreviewRequestDto request)
+    {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            var response = await _paymentService.PreviewPriceAsync(userId, request);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     [HttpGet("booking/{bookingId:long}")]
     public async Task<IActionResult> GetByBookingId(long bookingId)
     {

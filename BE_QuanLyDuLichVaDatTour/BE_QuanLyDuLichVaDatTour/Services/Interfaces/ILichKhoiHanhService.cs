@@ -19,4 +19,7 @@ public interface ILichKhoiHanhService
     Task<LichKhoiHanhAdminResponseDto> UpdateAsync(long id, UpdateLichKhoiHanhRequestDto request);
 
     Task UpdateStatusAsync(long id, UpdateLichKhoiHanhStatusRequestDto request);
+
+    Task<BangGiaLichKhoiHanhResponseDto> UpsertBangGiaAsync(long lichKhoiHanhId, BangGiaLichKhoiHanhRequestDto request);
+    Task DeleteBangGiaAsync(long lichKhoiHanhId);
 }

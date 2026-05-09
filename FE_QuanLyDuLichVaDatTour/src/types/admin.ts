@@ -568,3 +568,36 @@ export interface AdminSearchAuditLogParams {
   page?: number
   pageSize?: number
 }
+
+export interface AdminAddTourDiemDenPayload {
+  diaDiemId: number
+  ghiChu?: string | null
+}
+
+export interface AdminUpdateTourDiemDenPayload {
+  ghiChu?: string | null
+}
+
+export interface AdminAddAnhTourPayload {
+  linkAnh: string
+  moTa?: string | null
+}
+
+export interface AdminBangGiaLichKhoiHanh {
+  lichKhoiHanhId: number
+  giaNguoiLonNgayThuong: number
+  giaTreEmNgayThuong: number
+  giaEmBeNgayThuong: number
+  giaNguoiLonCuoiTuan: number
+  giaTreEmCuoiTuan: number
+  giaEmBeCuoiTuan: number
+}
+
+export interface AdminBangGiaLichKhoiHanhPayload {
+  giaNguoiLonNgayThuong: number
+  giaTreEmNgayThuong: number
+  giaEmBeNgayThuong: number
+  giaNguoiLonCuoiTuan: number
+  giaTreEmCuoiTuan: number
+  giaEmBeCuoiTuan: number
+}

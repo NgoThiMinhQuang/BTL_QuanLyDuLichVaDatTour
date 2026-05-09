@@ -228,6 +228,30 @@ public class VoucherService : IVoucherService
             .ToList();
     }
 
+    public async Task<List<VoucherStatisticsResponseDto>> GetStatisticsAsync()
+    {
+        var vouchers = await _voucherRepository.GetAllAsync();
+        var bookings = await _bookingRepository.GetAllAsync();
+
+        return vouchers.Select(v =>
+        {
+            var voucherBookings = bookings.Where(b => b.VoucherId == v.Id).ToList();
+            return new VoucherStatisticsResponseDto
+            {
+                Id = v.Id,
+                MaVoucher = v.MaVoucher,
+                TenVoucher = v.TenVoucher,
+                KieuGiam = v.KieuGiam.ToString(),
+                GiaTriGiam = v.GiaTriGiam,
+                SoLuotDaDung = v.SoLuongDaDung,
+                SoLuongToiDa = v.SoLuongToiDa,
+                TongDoanhThuTuVoucher = voucherBookings.Sum(b => b.TongTien),
+                TongGiamGia = voucherBookings.Sum(b => b.GiamGia),
+                TrangThai = v.TrangThai.ToString()
+            };
+        }).ToList();
+    }
+
     private static VoucherAdminResponseDto MapResponse(Voucher voucher)
     {
         return new VoucherAdminResponseDto

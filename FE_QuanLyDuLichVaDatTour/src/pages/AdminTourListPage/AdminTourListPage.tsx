@@ -9,8 +9,17 @@ import {
   useHideAdminTour,
   useUpdateAdminTour,
   useUpdateAdminTourStatus,
+  useAddTourDiemDen,
+  useDeleteTourDiemDen,
+  useUpdateTourDiemDen,
+  useReorderTourDiemDen,
+  useAddAnhTour,
+  useDeleteAnhTour,
+  useSetAvatarAnhTour,
+  useReorderAnhTour,
+  useUpdateAnhTour,
 } from '../../services/admin/admin.hooks'
-import type { AdminTourItem, AdminTourStatus } from '../../types/admin'
+import type { AdminTourItem, AdminTourStatus, AdminTourDestination, AdminTourImage } from '../../types/admin'
 import { formatMoney } from '../../utils/formatMoney'
 import { adminTourStatusMeta, formatDateTime, mapStatusOptions } from '../../utils/admin'
 import './AdminTourListPage.css'
@@ -22,16 +31,10 @@ import {
   EditOutlined,
   DeleteOutlined,
   MoreOutlined,
-  PictureOutlined
+  PictureOutlined,
 } from '@ant-design/icons'
 
 const { Paragraph, Title, Text } = Typography
-
-interface TourImageItem {
-  url: string
-  moTa?: string
-  isAvatar: boolean
-}
 
 const statusTabs: Array<{ key: 'tat_ca' | AdminTourStatus; label: string }> = [
   { key: 'tat_ca', label: 'Tất cả' },
@@ -56,14 +59,26 @@ export default function AdminTourListPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 8
 
-  const [modalOpen, setModalOpen] = useState(false)
+  const [tourModalOpen, setTourModalOpen] = useState(false)
   const [editingTour, setEditingTour] = useState<AdminTourItem | null>(null)
   const [form] = Form.useForm()
-  const [imageInput, setImageInput] = useState('')
-  const [images, setImages] = useState<TourImageItem[]>([])
-  const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null)
-  const [imageDescInput, setImageDescInput] = useState('')
+
+  // ── Destination management state ──
+  const [destinationModalOpen, setDestinationModalOpen] = useState(false)
+  const [destTourId, setDestTourId] = useState<number | null>(null)
+  const [destTourName, setDestTourName] = useState('')
+  const [destEditingId, setDestEditingId] = useState<number | null>(null)
+  const [destForm] = Form.useForm()
+  const [destEditForm] = Form.useForm()
+
+  // ── Image management state ──
   const [imageModalOpen, setImageModalOpen] = useState(false)
+  const [imageTourId, setImageTourId] = useState<number | null>(null)
+  const [imageTourName, setImageTourName] = useState('')
+  const [imageInput, setImageInput] = useState('')
+  const [imageDescEditOpen, setImageDescEditOpen] = useState(false)
+  const [imageEditingItem, setImageEditingItem] = useState<AdminTourImage | null>(null)
+  const [imageDescForm] = Form.useForm()
 
   const toursQuery = useAdminTours()
   const loaiToursQuery = useAdminLoaiTours()
@@ -73,9 +88,26 @@ export default function AdminTourListPage() {
   const createTourMutation = useCreateAdminTour()
   const updateTourMutation = useUpdateAdminTour()
 
+  const addDiemDenMutation = useAddTourDiemDen()
+  const deleteDiemDenMutation = useDeleteTourDiemDen()
+  const updateDiemDenMutation = useUpdateTourDiemDen()
+  const reorderDiemDenMutation = useReorderTourDiemDen()
+
+  const addAnhTourMutation = useAddAnhTour()
+  const deleteAnhTourMutation = useDeleteAnhTour()
+  const setAvatarMutation = useSetAvatarAnhTour()
+  const reorderAnhTourMutation = useReorderAnhTour()
+  const updateAnhTourMutation = useUpdateAnhTour()
+
   const tours = toursQuery.data ?? []
   const loaiTours = loaiToursQuery.data ?? []
   const diaDiems = diaDiemsQuery.data ?? []
+
+  const selectedTour = useMemo(() => {
+    if (imageTourId) return tours.find(t => t.id === imageTourId) ?? null
+    if (destTourId) return tours.find(t => t.id === destTourId) ?? null
+    return null
+  }, [tours, imageTourId, destTourId])
 
   const filteredTours = useMemo(() => {
     return tours.filter((tour) => {
@@ -101,15 +133,10 @@ export default function AdminTourListPage() {
     return filteredTours.slice(start, start + pageSize)
   }, [filteredTours, currentPage])
 
-  const handleOpenModal = (tour?: AdminTourItem) => {
+  // ── Tour modal ──
+  const handleOpenTourModal = (tour?: AdminTourItem) => {
     if (tour) {
       setEditingTour(tour)
-      const existingImages: TourImageItem[] = (tour.anhTours ?? []).map((a) => ({
-        url: a.linkAnh,
-        moTa: a.moTa,
-        isAvatar: a.isAvatar,
-      }))
-      setImages(existingImages)
       form.setFieldsValue({
         maTour: tour.maTour,
         tenTour: tour.tenTour,
@@ -125,10 +152,10 @@ export default function AdminTourListPage() {
         isNoiBat: tour.isNoiBat,
         trangThai: tour.trangThai,
         diemDenIds: tour.diemDens.map((d) => d.diaDiemId),
+        anhTours: tour.anhTours.map((a) => a.linkAnh),
       })
     } else {
       setEditingTour(null)
-      setImages([])
       form.setFieldsValue({
         trangThai: 'nhap',
         isNoiBat: false,
@@ -137,99 +164,119 @@ export default function AdminTourListPage() {
         giaTuThamKhao: 0,
       })
     }
-    setImageInput('')
-    setModalOpen(true)
+    setTourModalOpen(true)
   }
 
-  const handleAddImage = () => {
-    if (imageInput.trim()) {
-      const newImage: TourImageItem = {
-        url: imageInput.trim(),
-        isAvatar: images.length === 0,
+  const handleSubmitTour = async () => {
+    try {
+      const values = await form.validateFields()
+      if (editingTour) {
+        await updateTourMutation.mutateAsync({ id: editingTour.id, payload: values })
+      } else {
+        await createTourMutation.mutateAsync(values)
       }
-      setImages([...images, newImage])
-      setImageInput('')
-      void message.success('Đã thêm ảnh')
-    }
+      setTourModalOpen(false)
+      setEditingTour(null)
+      form.resetFields()
+      void message.success(editingTour ? 'Cập nhật tour thành công' : 'Tạo tour thành công')
+    } catch { /* antd validation */ }
   }
 
-  const handleRemoveImage = (index: number) => {
-    const removed = images[index]
-    const newImages = images.filter((_, i) => i !== index)
-    if (removed.isAvatar && newImages.length > 0) {
-      newImages[0].isAvatar = true
-    }
-    setImages(newImages)
-    void message.success('Đã xóa ảnh')
+  // ── Destination management ──
+  const handleOpenDestinationModal = (tour: AdminTourItem) => {
+    setDestTourId(tour.id)
+    setDestTourName(tour.tenTour)
+    setDestEditingId(null)
+    destForm.resetFields()
+    setDestinationModalOpen(true)
   }
 
-  const handleMoveImageUp = (index: number) => {
-    if (index > 0) {
-      const newImages = [...images]
-      ;[newImages[index - 1], newImages[index]] = [newImages[index], newImages[index - 1]]
-      setImages(newImages)
-    }
+  const handleAddDestination = async () => {
+    if (destTourId === null) return
+    try {
+      const values = await destForm.validateFields()
+      await addDiemDenMutation.mutateAsync({ tourId: destTourId, payload: values })
+      destForm.resetFields()
+      void message.success('Đã thêm điểm đến')
+    } catch { /* validation */ }
   }
 
-  const handleMoveImageDown = (index: number) => {
-    if (index < images.length - 1) {
-      const newImages = [...images]
-      ;[newImages[index], newImages[index + 1]] = [newImages[index + 1], newImages[index]]
-      setImages(newImages)
-    }
+  const handleDeleteDestination = async (id: number) => {
+    await deleteDiemDenMutation.mutateAsync(id)
+    void message.success('Đã xoá điểm đến')
   }
 
-  const handleSetAvatar = (index: number) => {
-    const newImages = images.map((img, i) => ({
-      ...img,
-      isAvatar: i === index,
-    }))
-    setImages(newImages)
-    void message.success('Đã đặt ảnh đại diện')
+  const handleEditDestination = (dest: AdminTourDestination) => {
+    setDestEditingId(dest.id)
+    destEditForm.setFieldsValue({ ghiChu: dest.ghiChu ?? '' })
   }
 
-  const handleOpenImageEdit = (index: number) => {
-    setEditingImageIndex(index)
-    setImageDescInput(images[index].moTa || '')
+  const handleSaveEditDestination = async () => {
+    if (destEditingId === null) return
+    try {
+      const values = await destEditForm.validateFields()
+      await updateDiemDenMutation.mutateAsync({ tourDiemDenId: destEditingId, payload: values })
+      setDestEditingId(null)
+      destEditForm.resetFields()
+      void message.success('Đã cập nhật điểm đến')
+    } catch { /* validation */ }
+  }
+
+  const handleMoveDestination = async (destinations: AdminTourDestination[], index: number, direction: 'up' | 'down') => {
+    if (destTourId === null) return
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+    if (newIndex < 0 || newIndex >= destinations.length) return
+    const reordered = [...destinations]
+    ;[reordered[index], reordered[newIndex]] = [reordered[newIndex], reordered[index]]
+    const ids = reordered.map(d => d.id)
+    await reorderDiemDenMutation.mutateAsync({ tourId: destTourId, diemDenIds: ids })
+    void message.success('Đã sắp xếp lại điểm đến')
+  }
+
+  // ── Image management ──
+  const handleOpenImageModal = (tour: AdminTourItem) => {
+    setImageTourId(tour.id)
+    setImageTourName(tour.tenTour)
+    setImageInput('')
     setImageModalOpen(true)
   }
 
-  const handleSaveImageEdit = () => {
-    if (editingImageIndex !== null) {
-      const newImages = [...images]
-      newImages[editingImageIndex] = {
-        ...newImages[editingImageIndex],
-        moTa: imageDescInput.trim() || undefined,
-      }
-      setImages(newImages)
-    }
-    setImageModalOpen(false)
-    setEditingImageIndex(null)
-    setImageDescInput('')
+  const handleAddImage = async () => {
+    if (imageTourId === null) return
+    if (!imageInput.trim()) return
+    await addAnhTourMutation.mutateAsync({ tourId: imageTourId, payload: { linkAnh: imageInput.trim() } })
+    setImageInput('')
+    void message.success('Đã thêm ảnh')
   }
 
-  const handleSubmit = async () => {
-    try {
-      const values = await form.validateFields()
-      const payload = {
-        ...values,
-        anhTours: images.length > 0 ? images.map((img) => img.url) : undefined,
-      }
-
-      if (editingTour) {
-        await updateTourMutation.mutateAsync({ id: editingTour.id, payload })
-      } else {
-        await createTourMutation.mutateAsync(payload)
-      }
-
-      setModalOpen(false)
-      setEditingTour(null)
-      form.resetFields()
-      setImages([])
-      void message.success(editingTour ? 'Cập nhật tour thành công' : 'Tạo tour thành công')
-    } catch { /* form validation error handled by antd */ }
+  const handleDeleteImage = async (id: number) => {
+    await deleteAnhTourMutation.mutateAsync(id)
+    void message.success('Đã xoá ảnh')
   }
 
+  const handleSetAvatar = async (id: number) => {
+    await setAvatarMutation.mutateAsync(id)
+    void message.success('Đã đặt ảnh đại diện')
+  }
+
+  const handleMoveImage = async (images: AdminTourImage[], index: number, direction: 'up' | 'down') => {
+    if (imageTourId === null) return
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+    if (newIndex < 0 || newIndex >= images.length) return
+    const reordered = [...images]
+    ;[reordered[index], reordered[newIndex]] = [reordered[newIndex], reordered[index]]
+    const ids = reordered.map(img => img.id)
+    await reorderAnhTourMutation.mutateAsync({ tourId: imageTourId, anhTourIds: ids })
+    void message.success('Đã sắp xếp lại ảnh')
+  }
+
+  const handleOpenImageDescEdit = (img: AdminTourImage) => {
+    setImageEditingItem(img)
+    imageDescForm.setFieldsValue({ moTa: img.moTa ?? '' })
+    setImageDescEditOpen(true)
+  }
+
+  // ── Helpers ──
   const hasError = toursQuery.isError || loaiToursQuery.isError || diaDiemsQuery.isError
   const errorMessage = toursQuery.error instanceof Error
     ? toursQuery.error.message
@@ -247,7 +294,19 @@ export default function AdminTourListPage() {
         key: 'edit',
         label: 'Chỉnh sửa tour',
         icon: <EditOutlined />,
-        onClick: () => void handleOpenModal(record)
+        onClick: () => void handleOpenTourModal(record)
+      },
+      {
+        key: 'destinations',
+        label: 'Quản lý điểm đến',
+        icon: <EditOutlined />,
+        onClick: () => void handleOpenDestinationModal(record)
+      },
+      {
+        key: 'images',
+        label: 'Quản lý ảnh',
+        icon: <PictureOutlined />,
+        onClick: () => void handleOpenImageModal(record)
       },
       { type: 'divider' },
     ]
@@ -282,6 +341,9 @@ export default function AdminTourListPage() {
     return items
   }
 
+  const currentDestinations = selectedTour?.diemDens ?? []
+  const currentImages = selectedTour?.anhTours ?? []
+
   return (
     <div className="admin-tour-list-page">
       <div className="admin-tour-list-header">
@@ -289,8 +351,7 @@ export default function AdminTourListPage() {
           <Title level={1}>Quản lý tour</Title>
           <Paragraph>Điều phối danh mục tour, tình trạng mở bán, tuyến điểm và các thông tin hiển thị ra khách hàng.</Paragraph>
         </div>
-
-        <Button type="primary" size="large" className="admin-tour-list-create-button" onClick={() => void handleOpenModal()}>
+        <Button type="primary" size="large" className="admin-tour-list-create-button" onClick={() => void handleOpenTourModal()}>
           + Tạo tour mới
         </Button>
       </div>
@@ -303,7 +364,6 @@ export default function AdminTourListPage() {
             placeholder="Tìm theo tên tour, mã tour, loại tour hoặc điểm đến..."
             className="admin-tour-list-search"
           />
-
           <Select
             allowClear
             placeholder="Loại tour"
@@ -312,7 +372,6 @@ export default function AdminTourListPage() {
             options={loaiTours.map((item) => ({ value: item.id, label: item.ten }))}
             className="admin-tour-list-filter"
           />
-
           <Select
             allowClear
             placeholder="Điểm xuất phát"
@@ -321,7 +380,6 @@ export default function AdminTourListPage() {
             options={diaDiems.map((item) => ({ value: item.id, label: item.tenDiaDiem }))}
             className="admin-tour-list-filter"
           />
-
           <Button className="admin-tour-list-filter-button" onClick={() => {
             setKeyword('')
             setLoaiTourFilter(undefined)
@@ -355,7 +413,6 @@ export default function AdminTourListPage() {
           ) : (
             paginatedTours.map((tour) => {
               const avatar = tour.anhTours?.find(a => a.isAvatar)?.linkAnh || tour.anhTours?.[0]?.linkAnh
-              
               return (
                 <div key={tour.id} className="admin-tour-list-item">
                   <div className="admin-tour-item-main">
@@ -376,14 +433,13 @@ export default function AdminTourListPage() {
                       </span>
                     </div>
                   </div>
-
                   <div className="admin-tour-item-itinerary">
                     <Text strong style={{ fontSize: 13 }}>{getDurationLabel(tour)} • {tour.phuongTien || 'Chưa có phương tiện'}</Text>
                     <Text type="secondary" style={{ fontSize: 13 }}>
                       Điểm đến: {tour.diemDens.length > 0 ? tour.diemDens.map(d => d.tenDiaDiem).join(', ') : 'Chưa có'}
                     </Text>
+                    <Text type="secondary" style={{ fontSize: 12 }}>{tour.anhTours.length} ảnh</Text>
                   </div>
-
                   <div className="admin-tour-item-pricing">
                     <Tag color={adminTourStatusMeta[tour.trangThai].color} style={{ margin: 0, fontWeight: 600 }}>
                       {adminTourStatusMeta[tour.trangThai].label}
@@ -391,9 +447,8 @@ export default function AdminTourListPage() {
                     <div className="admin-tour-item-price">{formatMoney(tour.giaTuThamKhao)}</div>
                     {tour.isNoiBat && <Tag color="gold" style={{ margin: 0 }}>Nổi bật</Tag>}
                   </div>
-
                   <div className="admin-tour-item-actions">
-                    <Button onClick={() => void handleOpenModal(tour)}>Sửa</Button>
+                    <Button onClick={() => void handleOpenTourModal(tour)}>Sửa</Button>
                     <Dropdown menu={{ items: getTourActions(tour) }} trigger={['click']} placement="bottomRight">
                       <Button icon={<MoreOutlined />} />
                     </Dropdown>
@@ -403,25 +458,26 @@ export default function AdminTourListPage() {
             })
           )}
         </div>
-        
+
         {filteredTours.length > 0 && (
           <div className="admin-tour-list-pagination">
-            <Pagination 
-              current={currentPage} 
-              total={filteredTours.length} 
-              pageSize={pageSize} 
-              onChange={(page) => setCurrentPage(page)} 
+            <Pagination
+              current={currentPage}
+              total={filteredTours.length}
+              pageSize={pageSize}
+              onChange={(page) => setCurrentPage(page)}
               showSizeChanger={false}
             />
           </div>
         )}
       </div>
 
+      {/* ── Tour create/edit modal ── */}
       <Modal
         title={editingTour ? 'Cập nhật tour' : 'Tạo tour mới'}
-        open={modalOpen}
-        onCancel={() => { setModalOpen(false); setEditingTour(null); form.resetFields(); setImages([]) }}
-        onOk={() => void handleSubmit()}
+        open={tourModalOpen}
+        onCancel={() => { setTourModalOpen(false); setEditingTour(null); form.resetFields() }}
+        onOk={() => void handleSubmitTour()}
         confirmLoading={isSubmitting}
         width={780}
         destroyOnClose
@@ -463,86 +519,163 @@ export default function AdminTourListPage() {
               />
             </Form.Item>
           </div>
-
           <Form.Item name="isNoiBat" label="Tour nổi bật" valuePropName="checked">
             <Switch />
           </Form.Item>
-
           <Form.Item name="moTaNgan" label="Mô tả ngắn">
             <Input.TextArea rows={2} />
           </Form.Item>
-
           <Form.Item name="moTaChiTiet" label="Mô tả chi tiết">
             <Input.TextArea rows={4} />
           </Form.Item>
-
           <Form.Item name="dieuKienTour" label="Điều kiện tour">
             <Input.TextArea rows={3} />
           </Form.Item>
-
-          <div className="admin-tour-image-section">
-            <Text strong>Ảnh tour</Text>
-            <div className="admin-tour-image-input-row">
-              <Input
-                value={imageInput}
-                onChange={(e) => setImageInput(e.target.value)}
-                placeholder="Nhập URL ảnh..."
-                onPressEnter={() => void handleAddImage()}
-              />
-              <Button type="primary" onClick={() => void handleAddImage()}>Thêm ảnh</Button>
-            </div>
-            {images.length > 0 && (
-              <div className="admin-tour-image-list">
-                {images.map((img, index) => (
-                  <div key={index} className={`admin-tour-image-item ${img.isAvatar ? 'is-avatar' : ''}`}>
-                    <div className="admin-tour-image-thumb-wrap">
-                      <img src={img.url} alt={`Ảnh ${index + 1}`} className="admin-tour-image-thumb" />
-                      {img.isAvatar && (
-                        <div className="admin-tour-image-avatar-badge">
-                          <StarFilled style={{ color: '#faad14' }} /> Đại diện
-                        </div>
-                      )}
-                    </div>
-                    <div className="admin-tour-image-info">
-                      <Text className="admin-tour-image-url" ellipsis>{img.url}</Text>
-                      {img.moTa && <Text type="secondary" style={{ fontSize: 12 }}>{img.moTa}</Text>}
-                      <Text type="secondary" style={{ fontSize: 11 }}>Thứ tự: {index + 1}</Text>
-                    </div>
-                    <div className="admin-tour-image-actions">
-                      <Button size="small" icon={<ArrowUpOutlined />} onClick={() => void handleMoveImageUp(index)} disabled={index === 0} />
-                      <Button size="small" icon={<ArrowDownOutlined />} onClick={() => void handleMoveImageDown(index)} disabled={index === images.length - 1} />
-                      <Button size="small" icon={img.isAvatar ? <StarFilled /> : <StarOutlined />} onClick={() => void handleSetAvatar(index)}>
-                        {img.isAvatar ? 'Bỏ đại diện' : 'Đặt đại diện'}
-                      </Button>
-                      <Button size="small" icon={<EditOutlined />} onClick={() => void handleOpenImageEdit(index)}>Mô tả</Button>
-                      <Button size="small" danger icon={<DeleteOutlined />} onClick={() => void handleRemoveImage(index)}>Xóa</Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            {images.length === 0 && (
-              <Text type="secondary" className="admin-tour-image-hint">Chưa có ảnh nào. Nhập URL ảnh và nhấn Thêm.</Text>
-            )}
-          </div>
+          <Form.Item name="anhTours" label="Ảnh tour (URL, mỗi dòng 1 ảnh)">
+            <Input.TextArea rows={3} placeholder="Nhập URL ảnh, mỗi ảnh một dòng" />
+          </Form.Item>
         </Form>
       </Modal>
 
+      {/* ── Destination management modal ── */}
       <Modal
-        title="Chỉnh sửa mô tả ảnh"
+        title={`Quản lý điểm đến: ${destTourName}`}
+        open={destinationModalOpen}
+        onCancel={() => { setDestinationModalOpen(false); setDestTourId(null); setDestEditingId(null) }}
+        footer={null}
+        width={700}
+        destroyOnClose
+      >
+        <div style={{ marginBottom: 16 }}>
+          <Form form={destForm} layout="inline" onFinish={() => void handleAddDestination()}>
+            <Form.Item name="diaDiemId" label="Điểm đến" rules={[{ required: true, message: 'Chọn điểm đến' }]} style={{ flex: 1 }}>
+              <Select
+                options={diaDiems.map(d => ({ value: d.id, label: d.tenDiaDiem }))}
+                placeholder="Chọn điểm đến"
+                showSearch
+                filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+              />
+            </Form.Item>
+            <Form.Item name="ghiChu" label="Ghi chú">
+              <Input placeholder="Ghi chú (tuỳ chọn)" style={{ width: 200 }} />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={addDiemDenMutation.isPending}>Thêm</Button>
+            </Form.Item>
+          </Form>
+        </div>
+
+        {currentDestinations.length === 0 ? (
+          <Empty description="Chưa có điểm đến nào" />
+        ) : (
+          <div style={{ maxHeight: 400, overflowY: 'auto' }}>
+            {currentDestinations.map((dest, index) => (
+              <div key={dest.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
+                <Tag>{dest.thuTu}</Tag>
+                <div style={{ flex: 1 }}>
+                  <Text strong>{dest.tenDiaDiem}</Text>
+                  {dest.ghiChu && <div><Text type="secondary" style={{ fontSize: 12 }}>{dest.ghiChu}</Text></div>}
+                </div>
+                {destEditingId === dest.id ? (
+                  <Form form={destEditForm} layout="inline" onFinish={() => void handleSaveEditDestination()}>
+                    <Form.Item name="ghiChu" style={{ margin: 0 }}>
+                      <Input size="small" placeholder="Ghi chú" style={{ width: 140 }} />
+                    </Form.Item>
+                    <Button size="small" type="primary" htmlType="submit" loading={updateDiemDenMutation.isPending}>Lưu</Button>
+                    <Button size="small" onClick={() => setDestEditingId(null)}>Huỷ</Button>
+                  </Form>
+                ) : (
+                  <>
+                    <Button size="small" icon={<ArrowUpOutlined />} disabled={index === 0} onClick={() => handleMoveDestination(currentDestinations, index, 'up')} />
+                    <Button size="small" icon={<ArrowDownOutlined />} disabled={index === currentDestinations.length - 1} onClick={() => handleMoveDestination(currentDestinations, index, 'down')} />
+                    <Button size="small" icon={<EditOutlined />} onClick={() => handleEditDestination(dest)} />
+                    <Popconfirm title="Xoá điểm đến này?" onConfirm={() => handleDeleteDestination(dest.id)}>
+                      <Button size="small" danger icon={<DeleteOutlined />} />
+                    </Popconfirm>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
+
+      {/* ── Image management modal ── */}
+      <Modal
+        title={`Quản lý ảnh: ${imageTourName}`}
         open={imageModalOpen}
-        onCancel={() => { setImageModalOpen(false); setEditingImageIndex(null) }}
-        onOk={() => void handleSaveImageEdit()}
+        onCancel={() => { setImageModalOpen(false); setImageTourId(null) }}
+        footer={null}
+        width={750}
+        destroyOnClose
+      >
+        <div style={{ marginBottom: 16, display: 'flex', gap: 8 }}>
+          <Input
+            value={imageInput}
+            onChange={(e) => setImageInput(e.target.value)}
+            placeholder="Nhập URL ảnh..."
+            onPressEnter={() => void handleAddImage()}
+            style={{ flex: 1 }}
+          />
+          <Button type="primary" onClick={() => void handleAddImage()} loading={addAnhTourMutation.isPending}>Thêm ảnh</Button>
+        </div>
+
+        {currentImages.length === 0 ? (
+          <Empty description="Chưa có ảnh nào" />
+        ) : (
+          <div className="admin-tour-image-list">
+            {currentImages.map((img, index) => (
+              <div key={img.id} className={`admin-tour-image-item ${img.isAvatar ? 'is-avatar' : ''}`}>
+                <div className="admin-tour-image-thumb-wrap">
+                  <img src={img.linkAnh} alt={img.moTa ?? `Ảnh ${index + 1}`} className="admin-tour-image-thumb" />
+                  {img.isAvatar && (
+                    <div className="admin-tour-image-avatar-badge">
+                      <StarFilled style={{ color: '#faad14' }} /> Đại diện
+                    </div>
+                  )}
+                </div>
+                <div className="admin-tour-image-info">
+                  <Text className="admin-tour-image-url" ellipsis>{img.linkAnh}</Text>
+                  {img.moTa && <Text type="secondary" style={{ fontSize: 12 }}>{img.moTa}</Text>}
+                  <Text type="secondary" style={{ fontSize: 11 }}>Thứ tự: {index + 1}</Text>
+                </div>
+                <div className="admin-tour-image-actions">
+                  <Button size="small" icon={<ArrowUpOutlined />} disabled={index === 0} onClick={() => handleMoveImage(currentImages, index, 'up')} />
+                  <Button size="small" icon={<ArrowDownOutlined />} disabled={index === currentImages.length - 1} onClick={() => handleMoveImage(currentImages, index, 'down')} />
+                  {!img.isAvatar && (
+                    <Button size="small" icon={<StarOutlined />} onClick={() => handleSetAvatar(img.id)}>Đặt đại diện</Button>
+                  )}
+                  <Button size="small" icon={<EditOutlined />} onClick={() => handleOpenImageDescEdit(img)} />
+                  <Popconfirm title="Xoá ảnh này?" onConfirm={() => handleDeleteImage(img.id)}>
+                    <Button size="small" danger icon={<DeleteOutlined />} />
+                  </Popconfirm>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
+
+      {/* ── Image description edit modal ── */}
+      <Modal
+        title="Cập nhật mô tả ảnh"
+        open={imageDescEditOpen}
+        onCancel={() => { setImageDescEditOpen(false); setImageEditingItem(null) }}
+        onOk={async () => {
+          if (!imageEditingItem) return
+          try {
+            const values = await imageDescForm.validateFields()
+            await updateAnhTourMutation.mutateAsync({ anhTourId: imageEditingItem.id, payload: { moTa: values.moTa } })
+            setImageDescEditOpen(false)
+            setImageEditingItem(null)
+            void message.success('Đã cập nhật mô tả')
+          } catch { /* validation */ }
+        }}
         width={480}
       >
-        <Form layout="vertical">
-          <Form.Item label="Mô tả ảnh">
-            <Input.TextArea
-              value={imageDescInput}
-              onChange={(e) => setImageDescInput(e.target.value)}
-              rows={3}
-              placeholder="Nhập mô tả cho ảnh này (không bắt buộc)"
-            />
+        <Form form={imageDescForm} layout="vertical">
+          <Form.Item name="moTa" label="Mô tả ảnh">
+            <Input.TextArea rows={3} placeholder="Nhập mô tả cho ảnh này" />
           </Form.Item>
         </Form>
       </Modal>

@@ -9,4 +9,5 @@ public interface IThongBaoService
     Task MarkAsReadAsync(long userId, long notificationId);
     Task MarkAllAsReadAsync(long userId);
     Task DeleteAsync(long userId, long notificationId);
+    Task<int> BroadcastAsync(long adminUserId, BroadcastNotificationRequestDto request);
 }

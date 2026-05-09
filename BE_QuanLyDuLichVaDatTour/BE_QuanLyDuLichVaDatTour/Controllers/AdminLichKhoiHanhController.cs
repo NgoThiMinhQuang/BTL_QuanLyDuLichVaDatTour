@@ -116,4 +116,43 @@ public class AdminLichKhoiHanhController : ControllerBase
             return NotFound(new { message = ex.Message });
         }
     }
+
+    [HttpGet("get-by-id/{id}/bang-gia")]
+    public async Task<IActionResult> GetBangGia(long id)
+    {
+        try
+        {
+            var response = await _lichKhoiHanhService.GetBangGiaAsync(id);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut("{id:long}/bang-gia")]
+    public async Task<IActionResult> UpsertBangGia(long id, [FromBody] BangGiaLichKhoiHanhRequestDto request)
+    {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        try
+        {
+            var response = await _lichKhoiHanhService.UpsertBangGiaAsync(id, request);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    [HttpDelete("{id:long}/bang-gia")]
+    public async Task<IActionResult> DeleteBangGia(long id)
+    {
+        try
+        {
+            await _lichKhoiHanhService.DeleteBangGiaAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
 }

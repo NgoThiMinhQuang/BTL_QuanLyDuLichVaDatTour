@@ -12,8 +12,11 @@ public interface IBookingService
     Task<BookingResponseDto> GetMyBookingByIdAsync(long currentUserId, long id);
 
     Task<List<BookingAdminResponseDto>> GetAllAsync();
+    Task<List<BookingAdminResponseDto>> GetAllFilteredAsync(string? status, DateTime? fromDate, DateTime? toDate, string? sortBy, bool? ascending);
 
     Task<BookingAdminResponseDto> GetByIdAsync(long id);
 
     Task UpdateStatusAsync(long adminUserId, long id, UpdateBookingStatusRequestDto request);
+
+    Task<byte[]> ExportExcelAsync(string? status, DateTime? fromDate, DateTime? toDate);
 }

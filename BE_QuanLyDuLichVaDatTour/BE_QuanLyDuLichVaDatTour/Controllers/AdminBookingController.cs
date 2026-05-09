@@ -18,10 +18,20 @@ public class AdminBookingController : ControllerBase
     }
 
     [HttpGet("get-all")]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] string? status, [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate, [FromQuery] string? sortBy, [FromQuery] bool? ascending)
     {
-        var response = await _bookingService.GetAllAsync();
+        var hasFilter = !string.IsNullOrWhiteSpace(status) || fromDate.HasValue || toDate.HasValue || !string.IsNullOrWhiteSpace(sortBy);
+        var response = hasFilter
+            ? await _bookingService.GetAllFilteredAsync(status, fromDate, toDate, sortBy, ascending)
+            : await _bookingService.GetAllAsync();
         return Ok(response);
+    }
+
+    [HttpGet("export")]
+    public async Task<IActionResult> ExportExcel([FromQuery] string? status, [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
+    {
+        var excelBytes = await _bookingService.ExportExcelAsync(status, fromDate, toDate);
+        return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Bookings_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx");
     }
 
     [HttpGet("get-by-id/{id:long}")]

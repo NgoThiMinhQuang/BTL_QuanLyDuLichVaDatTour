@@ -102,4 +102,11 @@ public class AdminVoucherController : ControllerBase
             return NotFound(new { message = ex.Message });
         }
     }
+
+    [HttpGet("statistics")]
+    public async Task<IActionResult> GetStatistics()
+    {
+        var response = await _voucherService.GetStatisticsAsync();
+        return Ok(response);
+    }
 }

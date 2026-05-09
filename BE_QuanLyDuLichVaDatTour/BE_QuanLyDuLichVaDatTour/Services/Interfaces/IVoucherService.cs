@@ -17,4 +17,6 @@ public interface IVoucherService
     Task<List<VoucherUserResponseDto>> GetAvailableForUserAsync(long userId);
 
     Task<List<VoucherHistoryResponseDto>> GetVoucherHistoryAsync(long userId);
+
+    Task<List<VoucherStatisticsResponseDto>> GetStatisticsAsync();
 }

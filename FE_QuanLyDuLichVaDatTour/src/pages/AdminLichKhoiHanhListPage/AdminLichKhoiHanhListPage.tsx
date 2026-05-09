@@ -1,4 +1,4 @@
-import { Alert, Button, Empty, Form, Input, InputNumber, Modal, Select, Space, Table, Tag, Typography } from 'antd'
+import { Alert, Button, Empty, Form, Input, InputNumber, message, Modal, Select, Table, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
 import {
@@ -7,10 +7,14 @@ import {
   useCreateAdminLichKhoiHanh,
   useUpdateAdminLichKhoiHanh,
   useUpdateAdminLichKhoiHanhStatus,
+  useAdminBangGia,
+  useUpsertBangGiaLichKhoiHanh,
+  useDeleteBangGiaLichKhoiHanh,
 } from '../../services/admin/admin.hooks'
 import type { AdminLichKhoiHanhItem, AdminLichKhoiHanhStatus } from '../../types/admin'
 import { formatDate } from '../../utils/formatDate'
 import { adminLichKhoiHanhStatusMeta, formatDateTime, mapStatusOptions, toDateTimeLocalValue } from '../../utils/admin'
+import { formatMoney } from '../../utils/formatMoney'
 import './AdminLichKhoiHanhListPage.css'
 
 const { Paragraph, Text, Title } = Typography
@@ -36,11 +40,21 @@ export default function AdminLichKhoiHanhListPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [form] = Form.useForm<LichKhoiHanhFormValues>()
 
+  // Pricing modal
+  const [pricingModalOpen, setPricingModalOpen] = useState(false)
+  const [pricingLkhId, setPricingLkhId] = useState<number | null>(null)
+  const [pricingTen, setPricingTen] = useState('')
+  const [pricingForm] = Form.useForm()
+
   const lichKhoiHanhsQuery = useAdminLichKhoiHanhs()
   const toursQuery = useAdminTours()
   const createMutation = useCreateAdminLichKhoiHanh()
   const updateMutation = useUpdateAdminLichKhoiHanh()
   const updateStatusMutation = useUpdateAdminLichKhoiHanhStatus()
+
+  const bangGiaQuery = useAdminBangGia(pricingLkhId ?? undefined)
+  const upsertBangGiaMutation = useUpsertBangGiaLichKhoiHanh()
+  const deleteBangGiaMutation = useDeleteBangGiaLichKhoiHanh()
 
   const filteredItems = useMemo(() => {
     const items = lichKhoiHanhsQuery.data ?? []
@@ -53,6 +67,27 @@ export default function AdminLichKhoiHanhListPage() {
       return matchesKeyword && matchesStatus
     })
   }, [keyword, lichKhoiHanhsQuery.data, statusFilter])
+
+  const handleOpenPricingModal = (record: AdminLichKhoiHanhItem) => {
+    setPricingLkhId(record.id)
+    setPricingTen(`${record.maDotTour} - ${record.tenTour}`)
+    setPricingModalOpen(true)
+  }
+
+  const handleLoadPricing = () => {
+    if (bangGiaQuery.data) {
+      pricingForm.setFieldsValue(bangGiaQuery.data)
+    }
+  }
+
+  const handleSavePricing = async () => {
+    if (pricingLkhId === null) return
+    try {
+      const values = await pricingForm.validateFields()
+      await upsertBangGiaMutation.mutateAsync({ lichKhoiHanhId: pricingLkhId, payload: values })
+      void message.success('Đã cập nhật bảng giá')
+    } catch { /* validation */ }
+  }
 
   const columns: ColumnsType<AdminLichKhoiHanhItem> = [
     {
@@ -101,7 +136,7 @@ export default function AdminLichKhoiHanhListPage() {
     {
       title: 'Thao tác',
       key: 'actions',
-      width: 240,
+      width: 300,
       render: (_, record) => (
         <div className="admin-inline-actions">
           <Button onClick={() => {
@@ -119,7 +154,10 @@ export default function AdminLichKhoiHanhListPage() {
               trangThai: record.trangThai,
             })
           }}>
-            Chỉnh sửa
+            Sửa
+          </Button>
+          <Button onClick={() => handleOpenPricingModal(record)}>
+            Bảng giá
           </Button>
           <Button
             type="primary"
@@ -149,7 +187,6 @@ export default function AdminLichKhoiHanhListPage() {
     } else {
       await createMutation.mutateAsync(values)
     }
-
     setModalOpen(false)
     setEditingItem(null)
     form.resetFields()
@@ -215,6 +252,7 @@ export default function AdminLichKhoiHanhListPage() {
         />
       </div>
 
+      {/* ── Create/edit modal ── */}
       <Modal
         title={editingItem ? 'Cập nhật lịch khởi hành' : 'Tạo lịch khởi hành'}
         open={modalOpen}
@@ -259,6 +297,61 @@ export default function AdminLichKhoiHanhListPage() {
             </Form.Item>
           </div>
         </Form>
+      </Modal>
+
+      {/* ── Pricing modal ── */}
+      <Modal
+        title={`Bảng giá: ${pricingTen}`}
+        open={pricingModalOpen}
+        onCancel={() => { setPricingModalOpen(false); setPricingLkhId(null); pricingForm.resetFields() }}
+        onOk={() => void handleSavePricing()}
+        confirmLoading={upsertBangGiaMutation.isPending}
+        width={650}
+        destroyOnClose
+        afterOpenChange={(open) => { if (open) setTimeout(() => handleLoadPricing(), 100) }}
+      >
+        <Form form={pricingForm} layout="vertical">
+          <Title level={5} style={{ marginTop: 0 }}>Ngày thường</Title>
+          <div className="admin-modal-grid">
+            <Form.Item name="giaNguoiLonNgayThuong" label="Người lớn" rules={[{ required: true, message: 'Nhập giá' }]}>
+              <InputNumber style={{ width: '100%' }} min={0} formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+            </Form.Item>
+            <Form.Item name="giaTreEmNgayThuong" label="Trẻ em" rules={[{ required: true, message: 'Nhập giá' }]}>
+              <InputNumber style={{ width: '100%' }} min={0} formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+            </Form.Item>
+            <Form.Item name="giaEmBeNgayThuong" label="Em bé" rules={[{ required: true, message: 'Nhập giá' }]}>
+              <InputNumber style={{ width: '100%' }} min={0} formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+            </Form.Item>
+          </div>
+          <Title level={5}>Cuối tuần</Title>
+          <div className="admin-modal-grid">
+            <Form.Item name="giaNguoiLonCuoiTuan" label="Người lớn" rules={[{ required: true, message: 'Nhập giá' }]}>
+              <InputNumber style={{ width: '100%' }} min={0} formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+            </Form.Item>
+            <Form.Item name="giaTreEmCuoiTuan" label="Trẻ em" rules={[{ required: true, message: 'Nhập giá' }]}>
+              <InputNumber style={{ width: '100%' }} min={0} formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+            </Form.Item>
+            <Form.Item name="giaEmBeCuoiTuan" label="Em bé" rules={[{ required: true, message: 'Nhập giá' }]}>
+              <InputNumber style={{ width: '100%' }} min={0} formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+            </Form.Item>
+          </div>
+        </Form>
+
+        {deleteBangGiaMutation.isSuccess ? <Alert type="success" message="Đã xoá bảng giá" style={{ marginBottom: 16 }} /> : null}
+
+        <div style={{ marginTop: 8 }}>
+          <Button
+            danger
+            onClick={() => {
+              if (pricingLkhId !== null) {
+                void deleteBangGiaMutation.mutateAsync(pricingLkhId).then(() => pricingForm.resetFields())
+              }
+            }}
+            loading={deleteBangGiaMutation.isPending}
+          >
+            Xoá bảng giá
+          </Button>
+        </div>
       </Modal>
     </div>
   )

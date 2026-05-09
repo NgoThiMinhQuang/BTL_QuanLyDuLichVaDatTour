@@ -22,6 +22,69 @@ public class ReviewService : IReviewService
         _nguoiDungRepository = nguoiDungRepository;
     }
 
+    public async Task<ReviewResponseDto> UpdateAsync(long currentUserId, long reviewId, UpdateReviewRequestDto request)
+    {
+        _ = await _nguoiDungRepository.GetByIdAsync(currentUserId)
+            ?? throw new KeyNotFoundException("Người dùng không tồn tại.");
+
+        var danhGia = await _reviewRepository.GetTrackedByIdAsync(reviewId)
+            ?? throw new KeyNotFoundException("Đánh giá không tồn tại.");
+
+        if (danhGia.KhachHangId != currentUserId)
+            throw new KeyNotFoundException("Đánh giá không tồn tại.");
+
+        danhGia.SoSao = request.SoSao;
+        danhGia.NoiDung = request.NoiDung.Trim();
+        danhGia.HinhAnh = request.HinhAnh != null && request.HinhAnh.Count > 0 ? System.Text.Json.JsonSerializer.Serialize(request.HinhAnh) : danhGia.HinhAnh;
+        danhGia.UpdatedAt = DateTime.UtcNow;
+
+        await _reviewRepository.SaveChangesAsync();
+        return MapReviewResponse(danhGia);
+    }
+
+    public async Task DeleteAsync(long currentUserId, long reviewId)
+    {
+        _ = await _nguoiDungRepository.GetByIdAsync(currentUserId)
+            ?? throw new KeyNotFoundException("Người dùng không tồn tại.");
+
+        var danhGia = await _reviewRepository.GetTrackedByIdAsync(reviewId)
+            ?? throw new KeyNotFoundException("Đánh giá không tồn tại.");
+
+        if (danhGia.KhachHangId != currentUserId)
+            throw new KeyNotFoundException("Đánh giá không tồn tại.");
+
+        danhGia.TrangThai = "da_xoa";
+        danhGia.UpdatedAt = DateTime.UtcNow;
+        await _reviewRepository.SaveChangesAsync();
+    }
+
+    public async Task ApproveAsync(long adminUserId, long reviewId, string? phanHoi)
+    {
+        await UpdateAdminStatusCore(adminUserId, reviewId, "da_duyet", phanHoi);
+    }
+
+    public async Task HideAsync(long adminUserId, long reviewId, string? phanHoi)
+    {
+        await UpdateAdminStatusCore(adminUserId, reviewId, "da_an", phanHoi);
+    }
+
+    private async Task UpdateAdminStatusCore(long adminUserId, long reviewId, string trangThai, string? phanHoi)
+    {
+        _ = await _nguoiDungRepository.GetByIdAsync(adminUserId)
+            ?? throw new KeyNotFoundException("Người dùng không tồn tại.");
+
+        var review = await _reviewRepository.GetTrackedByIdAsync(reviewId)
+            ?? throw new KeyNotFoundException("Đánh giá không tồn tại.");
+
+        review.TrangThai = trangThai;
+        if (!string.IsNullOrWhiteSpace(phanHoi))
+            review.PhanHoiAdmin = phanHoi.Trim();
+        review.NgayPhanHoi = DateTime.UtcNow;
+        review.UpdatedAt = DateTime.UtcNow;
+
+        await _reviewRepository.SaveChangesAsync();
+    }
+
     public async Task<ReviewResponseDto> CreateAsync(long currentUserId, CreateReviewRequestDto request)
     {
         _ = await _nguoiDungRepository.GetByIdAsync(currentUserId)

@@ -1,3 +1,4 @@
+using BE_QuanLyDuLichVaDatTour.DTOs.ThongBao;
 using BE_QuanLyDuLichVaDatTour.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -73,5 +74,19 @@ public class ThongBaoController : ControllerBase
         {
             return NotFound(new { message = ex.Message });
         }
+    }
+
+    [HttpPost("broadcast")]
+    [Authorize(Roles = "admin,Admin")]
+    public async Task<IActionResult> Broadcast([FromBody] BroadcastNotificationRequestDto request)
+    {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        if (!User.TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        var count = await _service.BroadcastAsync(userId, request);
+        return Ok(new { message = $"Đã gửi thông báo đến {count} người dùng.", recipientCount = count });
     }
 }

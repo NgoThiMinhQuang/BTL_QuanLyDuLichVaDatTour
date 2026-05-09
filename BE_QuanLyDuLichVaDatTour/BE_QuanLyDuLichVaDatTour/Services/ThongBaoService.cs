@@ -1,5 +1,6 @@
 using BE_QuanLyDuLichVaDatTour.Data;
 using BE_QuanLyDuLichVaDatTour.DTOs.ThongBao;
+using BE_QuanLyDuLichVaDatTour.Models.Entities;
 using BE_QuanLyDuLichVaDatTour.Repositories.Interfaces;
 using BE_QuanLyDuLichVaDatTour.Services.Interfaces;
 
@@ -57,6 +58,52 @@ public class ThongBaoService : IThongBaoService
             throw new UnauthorizedAccessException();
         _context.ThongBaos.Remove(item);
         await _repo.SaveChangesAsync();
+    }
+
+    public async Task<int> BroadcastAsync(long adminUserId, BroadcastNotificationRequestDto request)
+    {
+        var now = DateTime.UtcNow;
+        var count = 0;
+
+        if (request.UserId.HasValue)
+        {
+            var thongBao = new Models.Entities.ThongBao
+            {
+                UserId = request.UserId.Value,
+                Loai = request.Loai,
+                TieuDe = request.TieuDe,
+                NoiDung = request.NoiDung,
+                DuongDan = request.DuongDan,
+                DaDoc = false,
+                ThoiGian = now
+            };
+            await _repo.AddAsync(thongBao);
+            count = 1;
+        }
+        else
+        {
+            var allUsers = _context.NguoiDungs
+                .Where(u => u.TrangThai == Models.Enums.TrangThaiNguoiDung.hoat_dong)
+                .Select(u => u.Id)
+                .ToList();
+
+            var thongBaos = allUsers.Select(userId => new Models.Entities.ThongBao
+            {
+                UserId = userId,
+                Loai = request.Loai,
+                TieuDe = request.TieuDe,
+                NoiDung = request.NoiDung,
+                DuongDan = request.DuongDan,
+                DaDoc = false,
+                ThoiGian = now
+            }).ToList();
+
+            await _repo.AddRangeAsync(thongBaos);
+            count = thongBaos.Count;
+        }
+
+        await _repo.SaveChangesAsync();
+        return count;
     }
 
     private static ThongBaoResponseDto MapToDto(Models.Entities.ThongBao entity)

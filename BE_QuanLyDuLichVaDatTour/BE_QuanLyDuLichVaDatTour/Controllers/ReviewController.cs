@@ -88,6 +88,43 @@ public class ReviewController : ControllerBase
         }
     }
 
+    [HttpPut("update/{id:long}")]
+    public async Task<IActionResult> Update(long id, [FromBody] UpdateReviewRequestDto request)
+    {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            var response = await _reviewService.UpdateAsync(userId, id, request);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpDelete("delete/{id:long}")]
+    public async Task<IActionResult> Delete(long id)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            await _reviewService.DeleteAsync(userId, id);
+            return Ok(new { message = "Đã xóa đánh giá." });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
     private bool TryGetCurrentUserId(out long userId)
     {
         return User.TryGetCurrentUserId(out userId);

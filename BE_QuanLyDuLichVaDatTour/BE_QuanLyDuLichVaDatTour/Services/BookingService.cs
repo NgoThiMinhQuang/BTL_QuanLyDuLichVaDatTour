@@ -5,6 +5,8 @@ using BE_QuanLyDuLichVaDatTour.Repositories.Interfaces;
 using BE_QuanLyDuLichVaDatTour.Services.Interfaces;
 using System.Security.Cryptography;
 using System.Linq;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace BE_QuanLyDuLichVaDatTour.Services;
 
@@ -178,6 +180,83 @@ public class BookingService : IBookingService
     {
         var bookings = await _bookingRepository.GetAllAsync();
         return bookings.Select(MapBookingAdminResponse).ToList();
+    }
+
+    public async Task<List<BookingAdminResponseDto>> GetAllFilteredAsync(string? status, DateTime? fromDate, DateTime? toDate, string? sortBy, bool? ascending)
+    {
+        var bookings = await _bookingRepository.GetAllAsync();
+        IEnumerable<Booking> query = bookings;
+
+        if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<TrangThaiBooking>(status, true, out var tt))
+        {
+            query = query.Where(b => b.TrangThaiBooking == tt);
+        }
+
+        if (fromDate.HasValue)
+        {
+            query = query.Where(b => b.NgayDat >= fromDate.Value);
+        }
+
+        if (toDate.HasValue)
+        {
+            var toEnd = toDate.Value.Date.AddDays(1).AddTicks(-1);
+            query = query.Where(b => b.NgayDat <= toEnd);
+        }
+
+        var asc = ascending ?? false;
+        query = sortBy switch
+        {
+            "tongTien" => asc ? query.OrderBy(b => b.TongTien) : query.OrderByDescending(b => b.TongTien),
+            "ngayKhoiHanh" => asc
+                ? query.OrderBy(b => b.LichKhoiHanh?.NgayKhoiHanh ?? DateTime.MaxValue)
+                : query.OrderByDescending(b => b.LichKhoiHanh?.NgayKhoiHanh ?? DateTime.MinValue),
+            _ => asc ? query.OrderBy(b => b.NgayDat) : query.OrderByDescending(b => b.NgayDat),
+        };
+
+        return query.Select(MapBookingAdminResponse).ToList();
+    }
+
+    public async Task<byte[]> ExportExcelAsync(string? status, DateTime? fromDate, DateTime? toDate)
+    {
+        var bookings = await GetAllFilteredAsync(status, fromDate, toDate, null, null);
+
+        using var package = new ExcelPackage();
+        var ws = package.Workbook.Worksheets.Add("Bookings");
+
+        var headers = new[] { "Mã Booking", "Tour", "Mã Đợt", "Ngày KH", "Khách hàng", "Email", "SĐT", "Người lớn", "Trẻ em", "Em bé", "Tạm tính", "Giảm giá", "Tổng tiền", "Đã thanh toán", "Trạng thái booking", "Trạng thái TT", "Ngày đặt" };
+        for (var i = 0; i < headers.Length; i++)
+        {
+            ws.Cells[1, i + 1].Value = headers[i];
+            ws.Cells[1, i + 1].Style.Font.Bold = true;
+            ws.Cells[1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            ws.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+        }
+
+        for (var r = 0; r < bookings.Count; r++)
+        {
+            var b = bookings[r];
+            var row = r + 2;
+            ws.Cells[row, 1].Value = b.MaBooking;
+            ws.Cells[row, 2].Value = b.TenTour;
+            ws.Cells[row, 3].Value = b.MaDotTour;
+            ws.Cells[row, 4].Value = b.NgayKhoiHanh.ToString("dd/MM/yyyy");
+            ws.Cells[row, 5].Value = b.HoTenNguoiDat;
+            ws.Cells[row, 6].Value = b.EmailNguoiDat;
+            ws.Cells[row, 7].Value = b.SoDienThoaiLienHe;
+            ws.Cells[row, 8].Value = b.SoNguoiLon;
+            ws.Cells[row, 9].Value = b.SoTreEm;
+            ws.Cells[row, 10].Value = b.SoEmBe;
+            ws.Cells[row, 11].Value = b.TamTinh;
+            ws.Cells[row, 12].Value = b.GiamGia;
+            ws.Cells[row, 13].Value = b.TongTien;
+            ws.Cells[row, 14].Value = b.SoTienDaThanhToan;
+            ws.Cells[row, 15].Value = b.TrangThaiBooking;
+            ws.Cells[row, 16].Value = b.TrangThaiThanhToan;
+            ws.Cells[row, 17].Value = b.NgayDat.ToString("dd/MM/yyyy HH:mm");
+        }
+
+        ws.Cells[ws.Dimension.Address].AutoFitColumns();
+        return await package.GetAsByteArrayAsync();
     }
 
     public async Task<BookingAdminResponseDto> GetByIdAsync(long id)

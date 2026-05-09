@@ -64,4 +64,17 @@ public class YeuCauHuyTourController : ControllerBase
 
         return Ok(item);
     }
+
+    [HttpGet("cancel-status/{bookingId:long}")]
+    public async Task<IActionResult> GetCancelStatus(long bookingId)
+    {
+        if (!User.TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        var item = await _service.GetStatusByBookingIdAsync(userId, bookingId);
+        if (item == null)
+            return Ok(new { hasRequest = false, message = "Chưa có yêu cầu hủy nào cho booking này." });
+
+        return Ok(new { hasRequest = true, status = item.TrangThai, reason = item.LyDo, adminNote = item.GhiChuAdmin, createdAt = item.CreatedAt, updatedAt = item.UpdatedAt });
+    }
 }

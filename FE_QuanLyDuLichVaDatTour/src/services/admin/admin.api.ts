@@ -335,3 +335,156 @@ export async function timKiemAuditLogQuanTri(params: AdminSearchAuditLogParams):
   query.set('pageSize', String(params.pageSize ?? 20))
   return getJson<AdminAuditLogListResponse>(`/admin/audit-log/search?${query}`, 'Không thể tải nhật ký hệ thống')
 }
+
+import type { AdminTourDestination, AdminTourImage, AdminAddTourDiemDenPayload, AdminUpdateTourDiemDenPayload, AdminAddAnhTourPayload, AdminBangGiaLichKhoiHanh, AdminBangGiaLichKhoiHanhPayload } from '../../types/admin'
+
+// ── TourDiemDen ──
+
+export async function themDiemDenTourQuanTri(tourId: number, payload: AdminAddTourDiemDenPayload): Promise<AdminTourDestination> {
+  return sendJson<AdminTourDestination, AdminAddTourDiemDenPayload>(`/admin/tour/${tourId}/diem-den`, 'POST', payload, 'Không thể thêm điểm đến')
+}
+
+export async function xoaDiemDenTourQuanTri(tourDiemDenId: number) {
+  return sendJson<void, undefined>(`/admin/tour/diem-den/${tourDiemDenId}`, 'DELETE', undefined, 'Không thể xoá điểm đến')
+}
+
+export async function capNhatDiemDenTourQuanTri(tourDiemDenId: number, payload: AdminUpdateTourDiemDenPayload): Promise<AdminTourDestination> {
+  return sendJson<AdminTourDestination, AdminUpdateTourDiemDenPayload>(`/admin/tour/diem-den/${tourDiemDenId}`, 'PUT', payload, 'Không thể cập nhật điểm đến')
+}
+
+export async function sapXepDiemDenTourQuanTri(tourId: number, diemDenIds: number[]): Promise<AdminTourDestination[]> {
+  return sendJson<AdminTourDestination[], number[]>(`/admin/tour/${tourId}/diem-den/reorder`, 'PUT', diemDenIds, 'Không thể sắp xếp điểm đến')
+}
+
+// ── AnhTour ──
+
+export async function themAnhTourQuanTri(tourId: number, payload: AdminAddAnhTourPayload): Promise<AdminTourImage> {
+  return sendJson<AdminTourImage, AdminAddAnhTourPayload>(`/admin/tour/${tourId}/anh`, 'POST', payload, 'Không thể thêm ảnh tour')
+}
+
+export async function xoaAnhTourQuanTri(anhTourId: number) {
+  return sendJson<void, undefined>(`/admin/tour/anh/${anhTourId}`, 'DELETE', undefined, 'Không thể xoá ảnh tour')
+}
+
+export async function datAnhDaiDienTourQuanTri(anhTourId: number): Promise<AdminTourImage> {
+  return sendJson<AdminTourImage, undefined>(`/admin/tour/anh/${anhTourId}/set-avatar`, 'PATCH', undefined, 'Không thể đặt ảnh đại diện')
+}
+
+export async function sapXepAnhTourQuanTri(tourId: number, anhTourIds: number[]): Promise<AdminTourImage[]> {
+  return sendJson<AdminTourImage[], number[]>(`/admin/tour/${tourId}/anh/reorder`, 'PUT', anhTourIds, 'Không thể sắp xếp ảnh')
+}
+
+export async function capNhatAnhTourQuanTri(anhTourId: number, payload: { moTa?: string | null }): Promise<AdminTourImage> {
+  return sendJson<AdminTourImage, { moTa?: string | null }>(`/admin/tour/anh/${anhTourId}`, 'PUT', payload, 'Không thể cập nhật ảnh tour')
+}
+
+// ── BangGiaLichKhoiHanh ──
+
+export async function layBangGiaLichKhoiHanhQuanTri(lichKhoiHanhId: number): Promise<AdminBangGiaLichKhoiHanh> {
+  return getJson<AdminBangGiaLichKhoiHanh>(`/admin/lich-khoi-hanh/get-by-id/${lichKhoiHanhId}/bang-gia`, 'Không thể tải bảng giá')
+}
+
+export async function capNhatBangGiaLichKhoiHanhQuanTri(lichKhoiHanhId: number, payload: AdminBangGiaLichKhoiHanhPayload): Promise<AdminBangGiaLichKhoiHanh> {
+  return sendJson<AdminBangGiaLichKhoiHanh, AdminBangGiaLichKhoiHanhPayload>(`/admin/lich-khoi-hanh/${lichKhoiHanhId}/bang-gia`, 'PUT', payload, 'Không thể cập nhật bảng giá')
+}
+
+export async function xoaBangGiaLichKhoiHanhQuanTri(lichKhoiHanhId: number) {
+  return sendJson<void, undefined>(`/admin/lich-khoi-hanh/${lichKhoiHanhId}/bang-gia`, 'DELETE', undefined, 'Không thể xoá bảng giá')
+}
+
+// ── Voucher Statistics ──
+
+export interface AdminVoucherStatistics {
+  id: number
+  maVoucher: string
+  tenVoucher: string
+  kieuGiam: string
+  giaTriGiam: number
+  soLuotDaDung: number
+  soLuongToiDa: number
+  tongDoanhThuTuVoucher: number
+  tongGiamGia: number
+  trangThai: string
+}
+
+export async function layThongKeVoucherQuanTri(): Promise<AdminVoucherStatistics[]> {
+  return getJson<AdminVoucherStatistics[]>('/admin/voucher/statistics', 'Không thể tải thống kê voucher')
+}
+
+// ── Payment Confirm & Refund ──
+
+export async function xacNhanThanhToanQuanTri(id: number, ghiChu?: string): Promise<AdminPaymentItem> {
+  return sendJson<AdminPaymentItem, { ghiChu?: string | null }>(`/admin/payment/confirm/${id}`, 'POST', { ghiChu: ghiChu ?? null }, 'Không thể xác nhận thanh toán')
+}
+
+export interface AdminRefundPayload {
+  soTien: number
+  lyDo: string
+  hoanToanBo: boolean
+}
+
+export async function hoanTienQuanTri(id: number, payload: AdminRefundPayload): Promise<AdminPaymentItem> {
+  return sendJson<AdminPaymentItem, AdminRefundPayload>(`/admin/payment/refund/${id}`, 'POST', payload, 'Không thể hoàn tiền')
+}
+
+// ── Review Approve/Hide ──
+
+export async function duyetDanhGiaQuanTri(id: number, phanHoi?: string) {
+  return sendJson<{ message: string }, { phanHoiAdmin?: string | null } | undefined>(`/admin/review/approve/${id}`, 'POST', phanHoi ? { phanHoiAdmin: phanHoi } : undefined, 'Không thể duyệt đánh giá')
+}
+
+export async function anDanhGiaQuanTri(id: number, phanHoi?: string) {
+  return sendJson<{ message: string }, { phanHoiAdmin?: string | null } | undefined>(`/admin/review/hide/${id}`, 'POST', phanHoi ? { phanHoiAdmin: phanHoi } : undefined, 'Không thể ẩn đánh giá')
+}
+
+// ── LienHe Reply ──
+
+export async function phanHoiLienHeQuanTri(id: number, phanHoi: string) {
+  return sendJson<{ message: string }, { trangThai: string; phanHoi: string }>(`/admin/lien-he/reply/${id}`, 'POST', { trangThai: 'da_xu_ly', phanHoi }, 'Không thể gửi phản hồi')
+}
+
+// ── Broadcast Notification ──
+
+export interface AdminBroadcastPayload {
+  tieuDe: string
+  noiDung: string
+  duongDan?: string | null
+  loai?: string
+  userId?: number | null
+}
+
+export async function guiThongBaoHangLoatQuanTri(payload: AdminBroadcastPayload) {
+  return sendJson<{ message: string; recipientCount: number }, AdminBroadcastPayload>('/thong-bao/broadcast', 'POST', payload, 'Không thể gửi thông báo')
+}
+
+// ── Booking Filter & Export ──
+
+export interface AdminBookingFilter {
+  status?: string
+  fromDate?: string
+  toDate?: string
+  sortBy?: string
+  ascending?: boolean
+}
+
+export async function layDanhSachBookingTheoBoLocQuanTri(filter: AdminBookingFilter): Promise<AdminBookingItem[]> {
+  const query = new URLSearchParams()
+  if (filter.status) query.set('status', filter.status)
+  if (filter.fromDate) query.set('fromDate', filter.fromDate)
+  if (filter.toDate) query.set('toDate', filter.toDate)
+  if (filter.sortBy) query.set('sortBy', filter.sortBy)
+  if (filter.ascending !== undefined) query.set('ascending', String(filter.ascending))
+  return getJson<AdminBookingItem[]>(`/admin/booking/get-all?${query}`, 'Không thể tải danh sách booking')
+}
+
+export async function xuatBookingExcelQuanTri(filter: AdminBookingFilter): Promise<Blob> {
+  const query = new URLSearchParams()
+  if (filter.status) query.set('status', filter.status)
+  if (filter.fromDate) query.set('fromDate', filter.fromDate)
+  if (filter.toDate) query.set('toDate', filter.toDate)
+  const response = await fetch(`${API_BASE_URL}/admin/booking/export?${query}`, {
+    headers: getAuthHeaders(),
+  })
+  if (!response.ok) throw new Error('Không thể xuất file Excel')
+  return response.blob()
+}

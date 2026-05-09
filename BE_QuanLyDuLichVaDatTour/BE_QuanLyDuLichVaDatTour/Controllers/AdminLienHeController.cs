@@ -83,4 +83,29 @@ public class AdminLienHeController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
+    [HttpPost("reply/{id:long}")]
+    public async Task<IActionResult> Reply(long id, [FromBody] UpdateLienHeStatusRequestDto request)
+    {
+        if (string.IsNullOrWhiteSpace(request.PhanHoi))
+            return BadRequest(new { message = "Nội dung phản hồi không được để trống." });
+
+        var adminIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!long.TryParse(adminIdClaim, out var adminId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            await _service.ReplyAsync(id, request.PhanHoi, adminId);
+            return Ok(new { message = "Đã gửi phản hồi." });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 }

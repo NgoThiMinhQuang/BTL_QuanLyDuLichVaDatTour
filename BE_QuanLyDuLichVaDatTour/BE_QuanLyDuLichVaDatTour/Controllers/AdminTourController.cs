@@ -116,4 +116,123 @@ public class AdminTourController : ControllerBase
             return NotFound(new { message = ex.Message });
         }
     }
+
+    // ── TourDiemDen ──
+
+    [HttpPost("{tourId:long}/diem-den")]
+    public async Task<IActionResult> AddDiemDen(long tourId, [FromBody] AddTourDiemDenRequestDto request)
+    {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        try
+        {
+            var response = await _tourService.AddDiemDenAsync(tourId, request);
+            return StatusCode(StatusCodes.Status201Created, response);
+        }
+        catch (InvalidOperationException ex) { return BadRequest(new { message = ex.Message }); }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    [HttpDelete("diem-den/{tourDiemDenId:long}")]
+    public async Task<IActionResult> DeleteDiemDen(long tourDiemDenId)
+    {
+        try
+        {
+            await _tourService.DeleteDiemDenAsync(tourDiemDenId);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    [HttpPut("diem-den/{tourDiemDenId:long}")]
+    public async Task<IActionResult> UpdateDiemDen(long tourDiemDenId, [FromBody] UpdateTourDiemDenRequestDto request)
+    {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        try
+        {
+            var response = await _tourService.UpdateDiemDenAsync(tourDiemDenId, request);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    [HttpPut("{tourId:long}/diem-den/reorder")]
+    public async Task<IActionResult> ReorderDiemDens(long tourId, [FromBody] List<long> diemDenIds)
+    {
+        try
+        {
+            var response = await _tourService.ReorderDiemDensAsync(tourId, diemDenIds);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex) { return BadRequest(new { message = ex.Message }); }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    // ── AnhTour ──
+
+    [HttpPost("{tourId:long}/anh")]
+    public async Task<IActionResult> AddAnhTour(long tourId, [FromBody] AddAnhTourRequestDto request)
+    {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        try
+        {
+            var response = await _tourService.AddAnhTourAsync(tourId, request);
+            return StatusCode(StatusCodes.Status201Created, response);
+        }
+        catch (InvalidOperationException ex) { return BadRequest(new { message = ex.Message }); }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    [HttpDelete("anh/{anhTourId:long}")]
+    public async Task<IActionResult> DeleteAnhTour(long anhTourId)
+    {
+        try
+        {
+            await _tourService.DeleteAnhTourAsync(anhTourId);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    [HttpPut("anh/{anhTourId:long}")]
+    public async Task<IActionResult> UpdateAnhTour(long anhTourId, [FromBody] UpdateAnhTourRequestDto request)
+    {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        try
+        {
+            var response = await _tourService.UpdateAnhTourAsync(anhTourId, request);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    [HttpPatch("anh/{anhTourId:long}/set-avatar")]
+    public async Task<IActionResult> SetAvatar(long anhTourId)
+    {
+        try
+        {
+            var response = await _tourService.SetAvatarAsync(anhTourId);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    [HttpPut("{tourId:long}/anh/reorder")]
+    public async Task<IActionResult> ReorderAnhTours(long tourId, [FromBody] List<long> anhTourIds)
+    {
+        try
+        {
+            var response = await _tourService.ReorderAnhToursAsync(tourId, anhTourIds);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex) { return BadRequest(new { message = ex.Message }); }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
 }

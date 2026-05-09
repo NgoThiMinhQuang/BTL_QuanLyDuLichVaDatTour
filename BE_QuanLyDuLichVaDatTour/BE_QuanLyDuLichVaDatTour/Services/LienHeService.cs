@@ -66,6 +66,45 @@ public class LienHeService : ILienHeService
         await _repository.SaveChangesAsync();
     }
 
+    public async Task ReplyAsync(long id, string phanHoi, long adminId)
+    {
+        if (string.IsNullOrWhiteSpace(phanHoi))
+            throw new InvalidOperationException("Nội dung phản hồi không được để trống.");
+
+        var item = await _repository.GetByIdTrackedAsync(id)
+            ?? throw new KeyNotFoundException("Liên hệ không tồn tại.");
+
+        item.PhanHoi = phanHoi.Trim();
+        item.NguoiXuLyId = adminId;
+        item.TrangThai = TrangThaiLienHe.da_xu_ly;
+        item.NgayXuLy = DateTime.UtcNow;
+        item.UpdatedAt = DateTime.UtcNow;
+
+        await _repository.SaveChangesAsync();
+    }
+
+    public async Task<List<UserLienHeResponseDto>> GetByEmailAsync(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return new List<UserLienHeResponseDto>();
+
+        var items = await _repository.SearchAsync(null, null, 1, 100);
+        return items
+            .Where(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase))
+            .Select(x => new UserLienHeResponseDto
+            {
+                Id = x.Id,
+                ChuDe = x.ChuDe,
+                NoiDung = x.NoiDung,
+                TrangThai = x.TrangThai.ToString(),
+                PhanHoi = x.PhanHoi,
+                NgayGui = x.NgayGui,
+                NgayXuLy = x.NgayXuLy
+            })
+            .OrderByDescending(x => x.NgayGui)
+            .ToList();
+    }
+
     public async Task<LienHeAdminResponseDto> CreateAsync(CreateLienHeRequestDto request)
     {
         var now = DateTime.UtcNow;

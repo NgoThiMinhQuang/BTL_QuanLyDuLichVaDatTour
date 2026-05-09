@@ -66,6 +66,62 @@ public class AdminPaymentController : ControllerBase
         }
     }
 
+    [HttpPost("confirm/{id:long}")]
+    public async Task<IActionResult> Confirm(long id, [FromBody] ConfirmPaymentRequestDto request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized(new { message = "Token không hợp lệ." });
+        }
+
+        try
+        {
+            var response = await _paymentService.ConfirmAsync(userId, id, request);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("refund/{id:long}")]
+    public async Task<IActionResult> Refund(long id, [FromBody] RefundRequestDto request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return Unauthorized(new { message = "Token không hợp lệ." });
+        }
+
+        try
+        {
+            var response = await _paymentService.RefundAsync(userId, id, request);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
     private bool TryGetCurrentUserId(out long userId)
     {
         return User.TryGetCurrentUserId(out userId);
