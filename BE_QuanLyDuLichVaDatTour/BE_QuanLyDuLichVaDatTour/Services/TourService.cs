@@ -421,13 +421,20 @@ public class TourService : ITourService
             ?? throw new KeyNotFoundException("Ảnh tour không tồn tại.");
 
         var tour = anhTour.Tour!;
-        foreach (var img in tour.AnhTours)
+
+        // Tắt IsAvatar của ảnh đại diện hiện tại
+        var currentAvatar = tour.AnhTours.FirstOrDefault(x => x.IsAvatar);
+        if (currentAvatar is not null && currentAvatar.Id != anhTourId)
         {
-            img.IsAvatar = img.Id == anhTourId;
-            img.UpdatedAt = DateTime.UtcNow;
+            currentAvatar.IsAvatar = false;
+            currentAvatar.UpdatedAt = DateTime.UtcNow;
         }
 
+        // Đặt ảnh mới làm đại diện
+        anhTour.IsAvatar = true;
+        anhTour.UpdatedAt = DateTime.UtcNow;
         tour.UpdatedAt = DateTime.UtcNow;
+
         await _dbContext.SaveChangesAsync();
 
         return MapAnhTourResponse(anhTour);
