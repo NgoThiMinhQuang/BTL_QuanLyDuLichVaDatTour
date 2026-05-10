@@ -6,7 +6,7 @@ public class TinNhan
 {
     public long Id { get; set; }
 
-    public long BookingId { get; set; }
+    public long? BookingId { get; set; }
 
     public long NguoiGuiId { get; set; }
 

@@ -1633,7 +1633,7 @@ public class AppDbContext : DbContext
             entity.Property(x => x.BookingId)
                 .HasColumnName("BookingId")
                 .HasColumnType("bigint")
-                .IsRequired();
+                .IsRequired(false);
 
             entity.Property(x => x.NguoiGuiId)
                 .HasColumnName("NguoiGuiId")

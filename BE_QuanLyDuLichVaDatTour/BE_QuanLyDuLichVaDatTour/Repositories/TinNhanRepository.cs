@@ -1,5 +1,6 @@
 using BE_QuanLyDuLichVaDatTour.Data;
 using BE_QuanLyDuLichVaDatTour.Models.Entities;
+using BE_QuanLyDuLichVaDatTour.Models.Enums;
 using BE_QuanLyDuLichVaDatTour.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,26 @@ public class TinNhanRepository : ITinNhanRepository
             .AsNoTracking()
             .Include(x => x.NguoiGui)
             .Where(x => x.BookingId == bookingId)
+            .OrderBy(x => x.ThoiGianGui)
+            .ToListAsync();
+    }
+
+    public async Task<List<TinNhan>> GetGeneralMessagesAsync(long userId, bool isAdmin)
+    {
+        if (isAdmin)
+        {
+            return await _dbContext.TinNhans
+                .AsNoTracking()
+                .Include(x => x.NguoiGui)
+                .Where(x => x.BookingId == null)
+                .OrderBy(x => x.ThoiGianGui)
+                .ToListAsync();
+        }
+
+        return await _dbContext.TinNhans
+            .AsNoTracking()
+            .Include(x => x.NguoiGui)
+            .Where(x => x.BookingId == null && (x.NguoiGuiId == userId || x.NguoiGui!.VaiTro == VaiTroNguoiDung.admin))
             .OrderBy(x => x.ThoiGianGui)
             .ToListAsync();
     }

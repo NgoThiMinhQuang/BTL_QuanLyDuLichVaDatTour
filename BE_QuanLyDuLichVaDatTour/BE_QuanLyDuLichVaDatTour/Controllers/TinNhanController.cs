@@ -38,6 +38,40 @@ public class TinNhanController : ControllerBase
         }
     }
 
+    [HttpGet("general")]
+    public async Task<IActionResult> GetGeneralMessages()
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            var response = await _tinNhanService.GetGeneralMessagesAsync(userId);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("general")]
+    public async Task<IActionResult> GuiGeneralMessage([FromBody] GuiGeneralMessageRequest request)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            var response = await _tinNhanService.GuiGeneralMessageAsync(userId, request.NoiDung);
+            return StatusCode(StatusCodes.Status201Created, response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> GuiTinNhan([FromBody] GuiTinNhanRequestDto request)
     {
@@ -57,5 +91,10 @@ public class TinNhanController : ControllerBase
         {
             return Forbid(ex.Message);
         }
+    }
+
+    private bool TryGetCurrentUserId(out long userId)
+    {
+        return User.TryGetCurrentUserId(out userId);
     }
 }

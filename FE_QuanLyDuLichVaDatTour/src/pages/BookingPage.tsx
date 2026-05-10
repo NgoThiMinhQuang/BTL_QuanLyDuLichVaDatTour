@@ -186,6 +186,17 @@ export default function Booking() {
 
   const stepsIndex = steps.findIndex((item) => item.key === currentStep)
 
+  // Release hold on unmount
+  useEffect(() => {
+    return () => {
+      if (holdTimerRef.current) clearInterval(holdTimerRef.current)
+      const token = holdTokenRef.current
+      if (token) {
+        huyGiuCho(token).catch(() => {})
+      }
+    }
+  }, [])
+
   if (!isValidParams) {
     return (
       <div className="booking-page-state">
@@ -273,17 +284,6 @@ export default function Booking() {
       setErrorMessage(err instanceof Error ? err.message : 'Không thể gia hạn giữ chỗ.')
     }
   }
-
-  // Release hold on unmount
-  useEffect(() => {
-    return () => {
-      if (holdTimerRef.current) clearInterval(holdTimerRef.current)
-      const token = holdTokenRef.current
-      if (token) {
-        huyGiuCho(token).catch(() => {})
-      }
-    }
-  }, [])
 
   const capNhatSoLuong = (type: PassengerType, delta: number) => {
     setErrorMessage(null)

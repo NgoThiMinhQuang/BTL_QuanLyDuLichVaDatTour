@@ -29,7 +29,6 @@ import { useAuthStore } from '../store/authStore'
 import { layChiTietBooking, layThanhToanTheoBooking, type BookingPassenger } from '../services/booking/booking'
 import { taoYeuCauHuyTour, layYeuCauHuyTourTheoBooking } from '../services/huy-tour/huyTour'
 import { PassengerEditDrawer } from '../components/booking/PassengerEditDrawer'
-import { ChatBox } from '../components/chat/ChatBox'
 
 const { Paragraph, Title, Text } = Typography
 const { TextArea } = Input
@@ -395,11 +394,6 @@ export default function BookingDetail() {
                         </Button>
                       </Link>
                     )}
-                  </div>
-
-                  {/* Chat Support */}
-                  <div style={{ marginTop: 24 }}>
-                    <ChatBox bookingId={bookingQuery.data.id} />
                   </div>
 
                   {/* Cancellation */}
