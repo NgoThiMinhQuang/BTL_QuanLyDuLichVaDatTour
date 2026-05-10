@@ -18,15 +18,18 @@ import {
   FileTextOutlined,
   BarcodeOutlined,
   DownloadOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
+  EditOutlined
 } from '@ant-design/icons'
 import { PATHS } from '../constants/paths'
 import { formatDate } from '../utils/formatDate'
 import { formatMoney } from '../utils/formatMoney'
 import { API_BASE_URL } from '../constants/api'
 import { useAuthStore } from '../store/authStore'
-import { layChiTietBooking, layThanhToanTheoBooking } from '../services/booking/booking'
+import { layChiTietBooking, layThanhToanTheoBooking, type BookingPassenger } from '../services/booking/booking'
 import { taoYeuCauHuyTour, layYeuCauHuyTourTheoBooking } from '../services/huy-tour/huyTour'
+import { PassengerEditDrawer } from '../components/booking/PassengerEditDrawer'
+import { ChatBox } from '../components/chat/ChatBox'
 
 const { Paragraph, Title, Text } = Typography
 const { TextArea } = Input
@@ -67,6 +70,7 @@ export default function BookingDetail() {
   const [cancelReason, setCancelReason] = useState('')
   const [cancelSubmitting, setCancelSubmitting] = useState(false)
   const [cancelError, setCancelError] = useState<string | null>(null)
+  const [editingPassenger, setEditingPassenger] = useState<BookingPassenger | null>(null)
 
   const bookingQuery = useQuery({
     queryKey: ['booking-detail', bookingId],
@@ -214,22 +218,48 @@ export default function BookingDetail() {
                   <Card className="detail-card" title={<span><IdcardOutlined /> Danh sách hành khách ({bookingQuery.data.tongHanhKhach})</span>} bordered={false}>
                     <List
                       dataSource={bookingQuery.data.hanhKhachs}
-                      renderItem={(item, index) => (
-                        <List.Item className="passenger-list-item">
-                          <List.Item.Meta
-                            avatar={<div className="passenger-avatar">{index + 1}</div>}
-                            title={<Text className="passenger-name">{item.hoTen}</Text>}
-                            description={
-                              <div className="passenger-desc">
-                                <Tag className="passenger-type-tag">{formatTrangThai(item.loaiKhach)}</Tag>
-                                <Text className="passenger-meta">{item.gioiTinh} • {item.quocTich || 'Việt Nam'}</Text>
-                              </div>
-                            }
-                          />
-                        </List.Item>
-                      )}
+                      renderItem={(item, index) => {
+                        const isEditable = bookingQuery.data.trangThaiBooking === 'da_xac_nhan' &&
+                          new Date(bookingQuery.data.ngayKhoiHanh) > new Date()
+                        return (
+                          <List.Item
+                            className="passenger-list-item"
+                            actions={[
+                              <Button
+                                key="edit"
+                                type="text"
+                                icon={<EditOutlined />}
+                                onClick={() => setEditingPassenger(item)}
+                                disabled={!isEditable}
+                                title={isEditable ? 'Chỉnh sửa thông tin' : 'Chỉ có thể chỉnh sửa khi booking đã xác nhận và chưa khởi hành'}
+                              >
+                                Sửa
+                              </Button>
+                            ]}
+                          >
+                            <List.Item.Meta
+                              avatar={<div className="passenger-avatar">{index + 1}</div>}
+                              title={<Text className="passenger-name">{item.hoTen}</Text>}
+                              description={
+                                <div className="passenger-desc">
+                                  <Tag className="passenger-type-tag">{formatTrangThai(item.loaiKhach)}</Tag>
+                                  <Text className="passenger-meta">{item.gioiTinh} • {item.quocTich || 'Việt Nam'}</Text>
+                                </div>
+                              }
+                            />
+                          </List.Item>
+                        )
+                      }}
                     />
                   </Card>
+
+                  {/* Passenger Edit Drawer */}
+                  <PassengerEditDrawer
+                    open={!!editingPassenger}
+                    bookingId={bookingQuery.data.id}
+                    passenger={editingPassenger}
+                    onClose={() => setEditingPassenger(null)}
+                  />
 
                 </div>
               </Col>
@@ -331,25 +361,32 @@ export default function BookingDetail() {
 
                   {/* Action Buttons */}
                   <div className="booking-actions">
-                    <Button 
-                      type="primary" 
-                      block 
-                      size="large" 
-                      icon={<DownloadOutlined />} 
-                      className="btn-download-primary"
-                      onClick={() => handleDownload(`/booking/export-confirmation/${bookingId}`, `XacNhanBooking_${bookingId}.pdf`)}
-                    >
-                      Tải xác nhận booking
-                    </Button>
-                    <Button 
-                      block 
-                      size="large" 
-                      icon={<FileTextOutlined />} 
-                      className="btn-download-secondary"
-                      onClick={() => handleDownload(`/booking/export-invoice/${bookingId}`, `HoaDon_${bookingId}.pdf`)}
-                    >
-                      Tải hóa đơn (PDF)
-                    </Button>
+                    {/* Confirmation PDF - hiển thị khi booking chưa hủy */}
+                    {bookingQuery.data.trangThaiBooking !== 'da_huy' && (
+                      <Button
+                        type="primary"
+                        block
+                        size="large"
+                        icon={<DownloadOutlined />}
+                        className="btn-download-primary"
+                        onClick={() => handleDownload(`/api/booking/export-confirmation/${bookingId}`, `XacNhanBooking_${bookingId}.pdf`)}
+                      >
+                        Tải xác nhận booking
+                      </Button>
+                    )}
+
+                    {/* Invoice PDF - chỉ hiển thị khi đã thanh toán đủ */}
+                    {bookingQuery.data.trangThaiThanhToan === 'da_thanh_toan_het' && (
+                      <Button
+                        block
+                        size="large"
+                        icon={<FileTextOutlined />}
+                        className="btn-download-secondary"
+                        onClick={() => handleDownload(`/api/booking/export-invoice/${bookingId}`, `HoaDon_${bookingId}.pdf`)}
+                      >
+                        Tải hóa đơn (PDF)
+                      </Button>
+                    )}
 
                     {bookingQuery.data.coTheDanhGia && (
                       <Link to={`${PATHS.myReviews}?bookingId=${bookingQuery.data.id}`}>
@@ -358,6 +395,11 @@ export default function BookingDetail() {
                         </Button>
                       </Link>
                     )}
+                  </div>
+
+                  {/* Chat Support */}
+                  <div style={{ marginTop: 24 }}>
+                    <ChatBox bookingId={bookingQuery.data.id} />
                   </div>
 
                   {/* Cancellation */}

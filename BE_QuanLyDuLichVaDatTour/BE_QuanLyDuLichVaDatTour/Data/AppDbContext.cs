@@ -51,6 +51,8 @@ public class AppDbContext : DbContext
 
     public DbSet<SeatHold> SeatHolds => Set<SeatHold>();
 
+    public DbSet<TinNhan> TinNhans => Set<TinNhan>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -1614,6 +1616,68 @@ public class AppDbContext : DbContext
             entity.HasOne(x => x.KhachHang)
                 .WithMany()
                 .HasForeignKey(x => x.KhachHangId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TinNhan>(entity =>
+        {
+            entity.ToTable("TinNhan");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("TinNhanId")
+                .HasColumnType("bigint")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.BookingId)
+                .HasColumnName("BookingId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
+            entity.Property(x => x.NguoiGuiId)
+                .HasColumnName("NguoiGuiId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
+            entity.Property(x => x.NoiDung)
+                .HasColumnName("NoiDung")
+                .HasColumnType("nvarchar(max)")
+                .IsRequired();
+
+            entity.Property(x => x.DaDoc)
+                .HasColumnName("DaDoc")
+                .HasColumnType("bit")
+                .IsRequired();
+
+            entity.Property(x => x.ThoiGianGui)
+                .HasColumnName("ThoiGianGui")
+                .HasColumnType("datetime2")
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("CreatedAt")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UpdatedAt)
+                .HasColumnName("UpdatedAt")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.HasIndex(x => new { x.BookingId, x.ThoiGianGui })
+                .HasDatabaseName("IdxTinNhanBooking");
+
+            entity.HasOne(x => x.Booking)
+                .WithMany()
+                .HasForeignKey(x => x.BookingId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.NguoiGui)
+                .WithMany()
+                .HasForeignKey(x => x.NguoiGuiId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

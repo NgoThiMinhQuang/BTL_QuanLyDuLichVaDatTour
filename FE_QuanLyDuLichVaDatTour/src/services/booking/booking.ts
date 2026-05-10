@@ -114,6 +114,15 @@ export interface BookingListItem {
   daDanhGia: boolean
 }
 
+export interface UpdatePassengerPayload {
+  hoTen?: string
+  ngaySinh?: string  // DD/MM/YYYY format
+  gioiTinh?: string
+  soGiayTo?: string
+  quocTich?: string
+  ghiChu?: string
+}
+
 function getAuthHeaders(contentType = false) {
   return {
     ...(contentType ? { 'Content-Type': 'application/json' } : {}),
@@ -283,4 +292,22 @@ export async function giaHanGiuCho(token: string): Promise<HoldResponse> {
   })
 
   return handleApiResponse<HoldResponse>(response, 'Không thể gia hạn giữ chỗ')
+}
+
+export async function capNhatHanhKhach(
+  bookingId: number,
+  hanhKhachId: number,
+  payload: UpdatePassengerPayload
+): Promise<BookingPassenger> {
+  const token = useAuthStore.getState().requireAccessToken()
+  const response = await fetch(`${API_BASE_URL}/booking/update-hanh-khach/${bookingId}/${hanhKhachId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  })
+
+  return handleApiResponse<BookingPassenger>(response, 'Cập nhật thông tin hành khách thất bại')
 }

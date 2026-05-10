@@ -10,6 +10,9 @@ public interface IBookingRepository
 
     Task<Booking?> GetTrackedByIdAsync(long id);
 
+    Task<HanhKhach?> GetHanhKhachByIdAsync(long hanhKhachId);
+    Task UpdateHanhKhachAsync(HanhKhach hanhKhach);
+
     Task<Booking?> GetByMaBookingAsync(string maBooking);
 
     Task<List<Booking>> GetByNguoiDungIdAsync(long nguoiDungId);

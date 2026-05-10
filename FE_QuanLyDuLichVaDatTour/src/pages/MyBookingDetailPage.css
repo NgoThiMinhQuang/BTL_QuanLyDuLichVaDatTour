@@ -622,3 +622,21 @@
     padding: 24px;
   }
 }
+
+/* Chat Box */
+.chat-box-card .ant-card-head {
+  padding: 12px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  min-height: auto;
+}
+
+.chat-box-card .ant-card-body {
+  height: 500px;
+  overflow: hidden;
+}
+
+.chat-box-card .ant-card-head-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}

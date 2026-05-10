@@ -11,6 +11,8 @@ public interface IBookingService
 
     Task<BookingResponseDto> GetMyBookingByIdAsync(long currentUserId, long id);
 
+    Task<HanhKhachResponseDto> CapNhatHanhKhachAsync(long currentUserId, long bookingId, long hanhKhachId, UpdateHanhKhachRequestDto request);
+
     Task<List<BookingAdminResponseDto>> GetAllAsync();
     Task<List<BookingAdminResponseDto>> GetAllFilteredAsync(string? status, DateTime? fromDate, DateTime? toDate, string? sortBy, bool? ascending);
 

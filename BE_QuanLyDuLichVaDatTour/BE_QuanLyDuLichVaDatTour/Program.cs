@@ -107,6 +107,8 @@ builder.Services.AddScoped<IThongBaoRepository, ThongBaoRepository>();
 builder.Services.AddScoped<IThongBaoService, ThongBaoService>();
 builder.Services.AddScoped<ISeatHoldRepository, SeatHoldRepository>();
 builder.Services.AddScoped<ISeatHoldService, SeatHoldService>();
+builder.Services.AddScoped<ITinNhanRepository, TinNhanRepository>();
+builder.Services.AddScoped<ITinNhanService, TinNhanService>();
 
 var app = builder.Build();
 

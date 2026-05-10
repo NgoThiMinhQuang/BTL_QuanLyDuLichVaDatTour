@@ -95,6 +95,35 @@ public class BookingController : ControllerBase
         }
     }
 
+    [HttpPut("update-hanh-khach/{bookingId:long}/{hanhKhachId:long}")]
+    public async Task<IActionResult> UpdateHanhKhach(long bookingId, long hanhKhachId, [FromBody] UpdateHanhKhachRequestDto request)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            var response = await _bookingService.CapNhatHanhKhachAsync(userId, bookingId, hanhKhachId, request);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (DbUpdateException ex)
+        {
+            return BadRequest(new { message = $"Lỗi database: {ex.InnerException?.Message ?? ex.Message}" });
+        }
+    }
+
     [HttpGet("export-invoice/{id:long}")]
     public async Task<IActionResult> ExportInvoice(long id)
     {

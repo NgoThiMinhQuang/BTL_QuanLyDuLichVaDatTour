@@ -95,6 +95,23 @@ public class BookingRepository : IBookingRepository
         return bookings.Sum(x => (int)x.SoNguoiLon + (int)x.SoTreEm + (int)x.SoEmBe);
     }
 
+    public async Task<HanhKhach?> GetHanhKhachByIdAsync(long hanhKhachId)
+    {
+        return await _dbContext.HanhKhachs
+            .AsNoTracking()
+            .Include(x => x.Booking)
+            .FirstOrDefaultAsync(x => x.Id == hanhKhachId);
+    }
+
+    public async Task UpdateHanhKhachAsync(HanhKhach hanhKhach)
+    {
+        var tracked = await _dbContext.HanhKhachs.FindAsync(hanhKhach.Id);
+        if (tracked is null) return;
+
+        _dbContext.Entry(tracked).CurrentValues.SetValues(hanhKhach);
+        tracked.UpdatedAt = DateTime.UtcNow;
+    }
+
     public Task<int> SaveChangesAsync()
     {
         return _dbContext.SaveChangesAsync();

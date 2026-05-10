@@ -191,6 +191,62 @@ public class BookingService : IBookingService
         return MapBookingResponse(booking);
     }
 
+    public async Task<HanhKhachResponseDto> CapNhatHanhKhachAsync(long currentUserId, long bookingId, long hanhKhachId, UpdateHanhKhachRequestDto request)
+    {
+        // 1. Verify booking ownership
+        var booking = await _bookingRepository.GetByIdAsync(bookingId)
+            ?? throw new KeyNotFoundException("Booking không tồn tại.");
+
+        if (booking.KhachHangId != currentUserId)
+        {
+            throw new UnauthorizedAccessException("Bạn không có quyền truy cập booking này.");
+        }
+
+        // 2. Validate booking status
+        if (booking.TrangThaiBooking != TrangThaiBooking.da_xac_nhan)
+        {
+            throw new InvalidOperationException("Chỉ có thể chỉnh sửa khi booking đã xác nhận.");
+        }
+
+        // 3. Check departure date hasn't passed
+        var lichKhoiHanh = await _lichKhoiHanhRepository.GetByIdAsync(booking.LichKhoiHanhId);
+        if (lichKhoiHanh?.NgayKhoiHanh <= DateTime.UtcNow)
+        {
+            throw new InvalidOperationException("Không thể chỉnh sửa sau ngày khởi hành.");
+        }
+
+        // 4. Get passenger and verify ownership
+        var hanhKhach = await _bookingRepository.GetHanhKhachByIdAsync(hanhKhachId);
+        if (hanhKhach is null || hanhKhach.BookingId != bookingId)
+        {
+            throw new KeyNotFoundException("Hành khách không thuộc booking này.");
+        }
+
+        // 5. Apply updates
+        if (request.HoTen is not null) hanhKhach.HoTen = request.HoTen;
+        if (request.NgaySinh.HasValue) hanhKhach.NgaySinh = request.NgaySinh.Value;
+        if (request.GioiTinh is not null) hanhKhach.GioiTinh = request.GioiTinh;
+        if (request.SoGiayTo is not null) hanhKhach.SoGiayTo = request.SoGiayTo;
+        if (request.QuocTich is not null) hanhKhach.QuocTich = request.QuocTich;
+        if (request.GhiChu is not null) hanhKhach.GhiChu = request.GhiChu;
+
+        await _bookingRepository.UpdateHanhKhachAsync(hanhKhach);
+        await _bookingRepository.SaveChangesAsync();
+
+        // 6. Return updated DTO
+        return new HanhKhachResponseDto
+        {
+            Id = hanhKhach.Id,
+            HoTen = hanhKhach.HoTen,
+            LoaiKhach = hanhKhach.LoaiKhach.ToString(),
+            NgaySinh = hanhKhach.NgaySinh,
+            GioiTinh = hanhKhach.GioiTinh,
+            SoGiayTo = hanhKhach.SoGiayTo,
+            QuocTich = hanhKhach.QuocTich,
+            GhiChu = hanhKhach.GhiChu
+        };
+    }
+
     public async Task<List<BookingAdminResponseDto>> GetAllAsync()
     {
         var bookings = await _bookingRepository.GetAllAsync();
