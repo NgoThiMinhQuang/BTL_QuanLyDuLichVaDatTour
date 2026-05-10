@@ -1,11 +1,13 @@
 import { Alert, Button, Empty, Input, Select, Space, Tag, Typography, Pagination, Avatar, Spin } from 'antd'
 import { useState, useEffect } from 'react'
 import {
-  useAdminLienHe,
   useAdminLienHeDetail,
+  useAdminSupportChat,
+  useAdminSupportTickets,
+  useReplyAdminSupportChat,
   useUpdateAdminLienHeStatus,
 } from '../../services/admin/admin.hooks'
-import type { AdminLienHeItem, AdminLienHeStatus } from '../../types/admin'
+import type { AdminLienHeItem, AdminLienHeStatus, AdminSupportTicketItem } from '../../types/admin'
 import { formatDateTime } from '../../utils/admin'
 import {
   MailOutlined,
@@ -31,26 +33,31 @@ export default function AdminLienHeListPage() {
   const [statusFilter, setStatusFilter] = useState<string | undefined>()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(15)
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [selectedTicket, setSelectedTicket] = useState<AdminSupportTicketItem | null>(null)
   const [phanHoiInput, setPhanHoiInput] = useState('')
   const [replyStatus, setReplyStatus] = useState<AdminLienHeStatus>('dang_xu_ly')
 
-  const lienHeQuery = useAdminLienHe({
+  const supportTicketsQuery = useAdminSupportTickets({
     keyword: keyword || undefined,
     trangThai: statusFilter,
     page,
     pageSize,
   })
-  const detailQuery = useAdminLienHeDetail(selectedId ?? undefined)
+  const visibleTickets = supportTicketsQuery.data?.slice((page - 1) * pageSize, page * pageSize) ?? []
+  const selectedLienHeId = selectedTicket?.source === 'lienhe' ? selectedTicket.id : undefined
+  const selectedKhachHangId = selectedTicket?.source === 'tinnhan' ? selectedTicket.khachHangId : undefined
+  const detailQuery = useAdminLienHeDetail(selectedLienHeId)
+  const chatQuery = useAdminSupportChat(selectedKhachHangId)
   const updateStatusMutation = useUpdateAdminLienHeStatus()
+  const replyChatMutation = useReplyAdminSupportChat()
+  const currentTicket = selectedTicket?.source === 'lienhe' ? detailQuery.data : selectedTicket
 
-  // Reset input when ticket changes
   useEffect(() => {
-    if (detailQuery.data) {
+    if (currentTicket) {
       setPhanHoiInput('')
-      setReplyStatus(detailQuery.data.trangThai === 'moi' ? 'dang_xu_ly' : detailQuery.data.trangThai)
+      setReplyStatus(currentTicket.trangThai === 'moi' ? 'dang_xu_ly' : currentTicket.trangThai)
     }
-  }, [detailQuery.data])
+  }, [currentTicket])
 
   const handleStatusChange = async (record: AdminLienHeItem, newStatus: AdminLienHeStatus, phanHoi?: string) => {
     await updateStatusMutation.mutateAsync({
@@ -63,6 +70,15 @@ export default function AdminLienHeListPage() {
   }
 
   const handleQuickReply = async () => {
+    if (!selectedTicket) return
+
+    if (selectedTicket.source === 'tinnhan') {
+      if (!phanHoiInput.trim()) return
+      await replyChatMutation.mutateAsync({ khachHangId: selectedTicket.khachHangId, noiDung: phanHoiInput.trim() })
+      setPhanHoiInput('')
+      return
+    }
+
     if (!detailQuery.data) return
     await handleStatusChange(detailQuery.data, replyStatus, phanHoiInput)
   }
@@ -104,25 +120,30 @@ export default function AdminLienHeListPage() {
           </div>
 
           <div className="mailbox-list-scroll">
-            {lienHeQuery.isLoading ? (
+            {supportTicketsQuery.isLoading ? (
               <div style={{ padding: 40, textAlign: 'center' }}><Spin /></div>
-            ) : lienHeQuery.isError ? (
+            ) : supportTicketsQuery.isError ? (
               <Alert type="error" message="Lỗi tải dữ liệu" style={{ margin: 16 }} />
-            ) : lienHeQuery.data?.items.length === 0 ? (
+            ) : visibleTickets.length === 0 ? (
               <Empty description="Không tìm thấy liên hệ nào" style={{ marginTop: 40 }} />
             ) : (
-              lienHeQuery.data?.items.map(item => (
-                <div 
-                  key={item.id} 
-                  className={`ticket-card ${selectedId === item.id ? 'active' : ''}`}
-                  onClick={() => setSelectedId(item.id)}
+              visibleTickets.map(item => (
+                <div
+                  key={`${item.source}-${item.id}`}
+                  className={`ticket-card ${selectedTicket?.source === item.source && selectedTicket.id === item.id ? 'active' : ''}`}
+                  onClick={() => setSelectedTicket(item)}
                 >
                   <div className={`ticket-status-dot ${item.trangThai}`} />
                   <div className="ticket-card-header">
                     <span className="ticket-card-sender">{item.hoTen}</span>
                     <span className="ticket-card-date">{new Date(item.ngayGui).toLocaleDateString('vi-VN')}</span>
                   </div>
-                  <div className="ticket-card-subject">{item.chuDe}</div>
+                  <div className="ticket-card-subject">
+                    <Tag color={item.source === 'tinnhan' ? 'cyan' : 'purple'} style={{ marginRight: 6 }}>
+                      {item.source === 'tinnhan' ? 'Chat' : 'Liên hệ'}
+                    </Tag>
+                    {item.chuDe}
+                  </div>
                   <div className="ticket-card-preview">{item.noiDung}</div>
                 </div>
               ))
@@ -134,7 +155,7 @@ export default function AdminLienHeListPage() {
               simple
               current={page}
               pageSize={pageSize}
-              total={lienHeQuery.data?.totalCount ?? 0}
+              total={supportTicketsQuery.data?.length ?? 0}
               onChange={(p) => setPage(p)}
             />
           </div>
@@ -142,63 +163,70 @@ export default function AdminLienHeListPage() {
 
         {/* RIGHT PANE: DETAIL & CHAT */}
         <div className="mailbox-detail-pane">
-          {!selectedId ? (
+          {!selectedTicket ? (
             <div className="mailbox-empty-state">
               <MessageOutlined className="mailbox-empty-icon" />
               <Title level={4} style={{ color: '#64748b', margin: 0 }}>Chọn một tin nhắn</Title>
               <Text type="secondary">Vui lòng chọn một tin nhắn từ danh sách bên trái để xem chi tiết và phản hồi.</Text>
             </div>
-          ) : detailQuery.isLoading ? (
+          ) : (selectedTicket.source === 'lienhe' && detailQuery.isLoading) || (selectedTicket.source === 'tinnhan' && chatQuery.isLoading) ? (
              <div className="mailbox-empty-state"><Spin size="large" /></div>
-          ) : detailQuery.data ? (
+          ) : currentTicket ? (
             <>
               <div className="ticket-detail-header">
                 <div>
-                  <Title level={3} className="ticket-detail-subject">{detailQuery.data.chuDe}</Title>
+                  <Title level={3} className="ticket-detail-subject">{currentTicket.chuDe}</Title>
                   <Space size={16}>
                     <Space size={6}>
                       <Avatar size="small" icon={<UserOutlined />} />
-                      <Text strong>{detailQuery.data.hoTen}</Text>
+                      <Text strong>{currentTicket.hoTen}</Text>
                     </Space>
-                    <Text type="secondary">{detailQuery.data.email}</Text>
-                    {detailQuery.data.soDienThoai && <Text type="secondary">• {detailQuery.data.soDienThoai}</Text>}
+                    <Text type="secondary">{currentTicket.email}</Text>
+                    {currentTicket.soDienThoai && <Text type="secondary">• {currentTicket.soDienThoai}</Text>}
                   </Space>
                 </div>
                 <div className="ticket-detail-tags">
-                  <Tag color={statusOptions.find(o => o.value === detailQuery.data.trangThai)?.color} style={{ margin: 0, padding: '4px 12px', fontSize: 13, borderRadius: 16 }}>
-                    {statusOptions.find(o => o.value === detailQuery.data.trangThai)?.label}
+                  <Tag color={statusOptions.find(o => o.value === currentTicket.trangThai)?.color} style={{ margin: 0, padding: '4px 12px', fontSize: 13, borderRadius: 16 }}>
+                    {statusOptions.find(o => o.value === currentTicket.trangThai)?.label}
                   </Tag>
                 </div>
               </div>
 
               <div className="ticket-detail-body">
-                {/* Customer Message */}
-                <div className="message-bubble customer">
-                  <div className="message-meta">
-                    <span className="message-author">{detailQuery.data.hoTen}</span>
-                    <span className="message-time">{formatDateTime(detailQuery.data.ngayGui)}</span>
-                  </div>
-                  <div className="message-content">
-                    {detailQuery.data.noiDung}
-                  </div>
-                </div>
-
-                {/* Admin Reply (if exists) */}
-                {detailQuery.data.phanHoi && (
-                  <div className="message-bubble admin">
-                    <div className="message-meta">
-                      <span className="message-author">{detailQuery.data.hoTenNguoiXuLy || 'Quản trị viên'}</span>
-                      <span className="message-time">{formatDateTime(detailQuery.data.ngayXuLy!)}</span>
+                {selectedTicket.source === 'tinnhan' ? (
+                  chatQuery.data?.map(message => (
+                    <div key={message.id} className={`message-bubble ${message.vaiTro === 'admin' || message.vaiTro === 'Admin' ? 'admin' : 'customer'}`}>
+                      <div className="message-meta">
+                        <span className="message-author">{message.hoTenNguoiGui}</span>
+                        <span className="message-time">{formatDateTime(message.thoiGianGui)}</span>
+                      </div>
+                      <div className="message-content">{message.noiDung}</div>
                     </div>
-                    <div className="message-content">
-                      {detailQuery.data.phanHoi}
+                  ))
+                ) : (
+                  <>
+                    <div className="message-bubble customer">
+                      <div className="message-meta">
+                        <span className="message-author">{currentTicket.hoTen}</span>
+                        <span className="message-time">{formatDateTime(currentTicket.ngayGui)}</span>
+                      </div>
+                      <div className="message-content">{currentTicket.noiDung}</div>
                     </div>
-                  </div>
+                    {currentTicket.phanHoi && (
+                      <div className="message-bubble admin">
+                        <div className="message-meta">
+                          <span className="message-author">{detailQuery.data?.hoTenNguoiXuLy || 'Quản trị viên'}</span>
+                          <span className="message-time">{formatDateTime(currentTicket.ngayXuLy!)}</span>
+                        </div>
+                        <div className="message-content">{currentTicket.phanHoi}</div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
               {/* Reply Box */}
-              {detailQuery.data.trangThai !== 'da_xu_ly' && detailQuery.data.trangThai !== 'bo_qua' && (
+              {(selectedTicket.source === 'tinnhan' || (currentTicket.trangThai !== 'da_xu_ly' && currentTicket.trangThai !== 'bo_qua')) && (
                 <div className="ticket-detail-footer">
                   <div className="reply-box">
                     <textarea
@@ -209,35 +237,37 @@ export default function AdminLienHeListPage() {
                       onChange={e => setPhanHoiInput(e.target.value)}
                     />
                     <div className="reply-actions">
-                      <Space>
-                        <Text type="secondary" style={{ fontSize: 13 }}>Đánh dấu là:</Text>
-                        <Select
-                          value={replyStatus}
-                          onChange={setReplyStatus}
-                          options={statusOptions.filter(o => o.value !== 'moi')}
-                          style={{ width: 140 }}
-                          bordered={false}
-                        />
-                      </Space>
+                      {selectedTicket.source === 'lienhe' && (
+                        <Space>
+                          <Text type="secondary" style={{ fontSize: 13 }}>Đánh dấu là:</Text>
+                          <Select
+                            value={replyStatus}
+                            onChange={setReplyStatus}
+                            options={statusOptions.filter(o => o.value !== 'moi')}
+                            style={{ width: 140 }}
+                            bordered={false}
+                          />
+                        </Space>
+                      )}
                       <Button
                         type="primary"
                         icon={<SendOutlined />}
-                        loading={updateStatusMutation.isPending}
+                        loading={selectedTicket.source === 'tinnhan' ? replyChatMutation.isPending : updateStatusMutation.isPending}
                         onClick={handleQuickReply}
-                        disabled={!phanHoiInput.trim() && replyStatus === 'dang_xu_ly'}
+                        disabled={selectedTicket.source === 'tinnhan' ? !phanHoiInput.trim() : (!phanHoiInput.trim() && replyStatus === 'dang_xu_ly')}
                         style={{ borderRadius: 8, padding: '0 24px', height: 36, background: '#10b981', borderColor: '#10b981' }}
                       >
                         Gửi phản hồi
                       </Button>
                     </div>
                   </div>
-                  {detailQuery.data.trangThai === 'moi' && (
+                  {selectedTicket.source === 'lienhe' && detailQuery.data && currentTicket.trangThai === 'moi' && (
                     <div style={{ marginTop: 12, textAlign: 'center' }}>
                       <Text type="secondary" style={{ fontSize: 13 }}>Hoặc </Text>
                       <Button 
                         type="link" 
                         icon={<CheckCircleOutlined />} 
-                        onClick={() => handleStatusChange(detailQuery.data, 'dang_xu_ly')}
+                        onClick={() => handleStatusChange(detailQuery.data!, 'dang_xu_ly')}
                         style={{ padding: 0 }}
                       >
                         Đánh dấu Đang xử lý

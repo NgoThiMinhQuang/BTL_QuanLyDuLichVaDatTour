@@ -36,7 +36,7 @@ export function ChatBox({ bookingId }: ChatBoxProps) {
   const { data, refetch } = useQuery({
     queryKey: ['chat-messages', bookingId],
     queryFn: async () => {
-      const response = await fetch(`${API_BASE_URL}/api/tin-nhan/booking/${bookingId}`, {
+      const response = await fetch(`${API_BASE_URL}/tin-nhan/booking/${bookingId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!response.ok) throw new Error('Không thể tải tin nhắn')
@@ -56,7 +56,7 @@ export function ChatBox({ bookingId }: ChatBoxProps) {
 
   const sendMutation = useMutation({
     mutationFn: async (noiDung: string) => {
-      const response = await fetch(`${API_BASE_URL}/api/tin-nhan`, {
+      const response = await fetch(`${API_BASE_URL}/tin-nhan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,3 +1,4 @@
+using BE_QuanLyDuLichVaDatTour.DTOs.Admin;
 using BE_QuanLyDuLichVaDatTour.DTOs.LienHe;
 using BE_QuanLyDuLichVaDatTour.Models.Entities;
 using BE_QuanLyDuLichVaDatTour.Models.Enums;
@@ -9,10 +10,12 @@ namespace BE_QuanLyDuLichVaDatTour.Services;
 public class LienHeService : ILienHeService
 {
     private readonly ILienHeRepository _repository;
+    private readonly ITinNhanRepository _tinNhanRepository;
 
-    public LienHeService(ILienHeRepository repository)
+    public LienHeService(ILienHeRepository repository, ITinNhanRepository tinNhanRepository)
     {
         _repository = repository;
+        _tinNhanRepository = tinNhanRepository;
     }
 
     public async Task<LienHeListResponseDto> SearchAsync(SearchLienHeRequestDto request)
@@ -33,6 +36,80 @@ public class LienHeService : ILienHeService
             Page = request.Page,
             PageSize = request.PageSize
         };
+    }
+
+    public async Task<List<AdminSupportTicketDto>> GetSupportTicketsAsync(SearchLienHeRequestDto request)
+    {
+        TrangThaiLienHe? trangThai = null;
+        if (!string.IsNullOrWhiteSpace(request.TrangThai) && Enum.TryParse<TrangThaiLienHe>(request.TrangThai, true, out var tt))
+        {
+            trangThai = tt;
+        }
+
+        var keyword = request.Keyword?.Trim().ToLower();
+        var tickets = new List<AdminSupportTicketDto>();
+
+        var lienHes = await _repository.SearchAsync(request.Keyword, trangThai, 1, 1000);
+        tickets.AddRange(lienHes.Select(x => new AdminSupportTicketDto
+        {
+            Id = x.Id,
+            Source = "lienhe",
+            KhachHangId = 0,
+            HoTen = x.HoTen,
+            Email = x.Email,
+            SoDienThoai = x.SoDienThoai,
+            ChuDe = x.ChuDe,
+            NoiDung = x.NoiDung,
+            TrangThai = x.TrangThai.ToString(),
+            PhanHoi = x.PhanHoi,
+            NgayGui = x.NgayGui,
+            NgayXuLy = x.NgayXuLy,
+        }));
+
+        var generalMessages = await _tinNhanRepository.GetAllGeneralWithNguoiGuiAsync();
+        foreach (var group in generalMessages.GroupBy(x => x.KhachHangId))
+        {
+            var ordered = group.OrderBy(x => x.ThoiGianGui).ToList();
+            var latest = ordered.Last();
+            var latestAdmin = ordered.LastOrDefault(x => x.NguoiGui?.VaiTro == VaiTroNguoiDung.admin);
+            var latestCustomer = ordered.LastOrDefault(x => x.NguoiGui?.VaiTro != VaiTroNguoiDung.admin);
+            var khachHang = latest.KhachHang ?? latestCustomer?.NguoiGui ?? latest.NguoiGui;
+            var status = latestCustomer != null && (latestAdmin is null || latestCustomer.ThoiGianGui > latestAdmin.ThoiGianGui)
+                ? TrangThaiLienHe.moi.ToString()
+                : TrangThaiLienHe.da_xu_ly.ToString();
+
+            if (trangThai.HasValue && status != trangThai.Value.ToString())
+                continue;
+
+            var ticket = new AdminSupportTicketDto
+            {
+                Id = group.Key,
+                Source = "tinnhan",
+                KhachHangId = group.Key,
+                HoTen = khachHang?.HoTen ?? "Khách hàng",
+                Email = khachHang?.Email,
+                SoDienThoai = khachHang?.SoDienThoai,
+                ChuDe = "Chat hỗ trợ",
+                NoiDung = latest.NoiDung,
+                TrangThai = status,
+                PhanHoi = latestAdmin?.NoiDung,
+                NgayGui = latest.ThoiGianGui,
+                NgayXuLy = latestAdmin?.ThoiGianGui,
+            };
+
+            if (!string.IsNullOrWhiteSpace(keyword) &&
+                !ticket.HoTen.ToLower().Contains(keyword) &&
+                !(ticket.Email?.ToLower().Contains(keyword) ?? false) &&
+                !(ticket.SoDienThoai?.Contains(keyword) ?? false) &&
+                !ticket.NoiDung.ToLower().Contains(keyword))
+            {
+                continue;
+            }
+
+            tickets.Add(ticket);
+        }
+
+        return tickets.OrderByDescending(x => x.NgayGui).ToList();
     }
 
     public async Task<LienHeAdminResponseDto> GetByIdAsync(long id)

@@ -46,6 +46,7 @@ public class TinNhanService : ITinNhanService
         {
             Id = t.Id,
             BookingId = t.BookingId,
+            KhachHangId = t.KhachHangId,
             NguoiGuiId = t.NguoiGuiId,
             HoTenNguoiGui = t.NguoiGui?.HoTen ?? "Ẩn danh",
             VaiTro = t.NguoiGui?.VaiTro.ToString() ?? "",
@@ -71,6 +72,7 @@ public class TinNhanService : ITinNhanService
         var tinNhan = new TinNhan
         {
             BookingId = request.BookingId,
+            KhachHangId = booking.KhachHangId,
             NguoiGuiId = nguoiGuiId,
             NoiDung = request.NoiDung.Trim(),
             DaDoc = false,
@@ -86,6 +88,7 @@ public class TinNhanService : ITinNhanService
         {
             Id = tinNhan.Id,
             BookingId = tinNhan.BookingId,
+            KhachHangId = tinNhan.KhachHangId,
             NguoiGuiId = tinNhan.NguoiGuiId,
             HoTenNguoiGui = nguoiGui.HoTen,
             VaiTro = nguoiGui.VaiTro.ToString(),
@@ -107,6 +110,7 @@ public class TinNhanService : ITinNhanService
         {
             Id = t.Id,
             BookingId = t.BookingId,
+            KhachHangId = t.KhachHangId,
             NguoiGuiId = t.NguoiGuiId,
             HoTenNguoiGui = t.NguoiGui?.HoTen ?? "Ẩn danh",
             VaiTro = t.NguoiGui?.VaiTro.ToString() ?? "",
@@ -124,6 +128,7 @@ public class TinNhanService : ITinNhanService
         var tinNhan = new TinNhan
         {
             BookingId = null,
+            KhachHangId = nguoiGuiId,
             NguoiGuiId = nguoiGuiId,
             NoiDung = noiDung.Trim(),
             DaDoc = false,
@@ -139,9 +144,48 @@ public class TinNhanService : ITinNhanService
         {
             Id = tinNhan.Id,
             BookingId = tinNhan.BookingId,
+            KhachHangId = tinNhan.KhachHangId,
             NguoiGuiId = tinNhan.NguoiGuiId,
             HoTenNguoiGui = nguoiGui.HoTen,
             VaiTro = nguoiGui.VaiTro.ToString(),
+            NoiDung = tinNhan.NoiDung,
+            DaDoc = tinNhan.DaDoc,
+            ThoiGianGui = tinNhan.ThoiGianGui
+        };
+    }
+
+    public async Task<TinNhanDto> AdminReplyGeneralMessageAsync(long adminId, long khachHangId, string noiDung)
+    {
+        var admin = await _nguoiDungRepository.GetByIdAsync(adminId);
+        if (admin is null) throw new KeyNotFoundException("Người dùng không tồn tại");
+        if (admin.VaiTro != VaiTroNguoiDung.admin) throw new UnauthorizedAccessException("Bạn không có quyền trả lời tin nhắn");
+
+        var khachHang = await _nguoiDungRepository.GetByIdAsync(khachHangId);
+        if (khachHang is null) throw new KeyNotFoundException("Khách hàng không tồn tại");
+
+        var tinNhan = new TinNhan
+        {
+            BookingId = null,
+            KhachHangId = khachHangId,
+            NguoiGuiId = adminId,
+            NoiDung = noiDung.Trim(),
+            DaDoc = false,
+            ThoiGianGui = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        await _tinNhanRepository.AddAsync(tinNhan);
+        await _tinNhanRepository.SaveChangesAsync();
+
+        return new TinNhanDto
+        {
+            Id = tinNhan.Id,
+            BookingId = tinNhan.BookingId,
+            KhachHangId = tinNhan.KhachHangId,
+            NguoiGuiId = tinNhan.NguoiGuiId,
+            HoTenNguoiGui = admin.HoTen,
+            VaiTro = admin.VaiTro.ToString(),
             NoiDung = tinNhan.NoiDung,
             DaDoc = tinNhan.DaDoc,
             ThoiGianGui = tinNhan.ThoiGianGui

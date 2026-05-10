@@ -25,6 +25,8 @@ import {
   layChiTietLichKhoiHanhQuanTri,
   layChiTietLichTrinhQuanTri,
   layChiTietLienHeQuanTri,
+  laySupportTicketsQuanTri,
+  layTinNhanHoTroQuanTri,
   layChiTietLoaiTourQuanTri,
   layChiTietPaymentQuanTri,
   layChiTietTinTucQuanTri,
@@ -49,6 +51,7 @@ import {
   taoLoaiTourQuanTri,
   taoTinTucQuanTri,
   taoTourQuanTri,
+  traLoiTinNhanHoTroQuanTri,
   taoVoucherQuanTri,
   timKiemAuditLogQuanTri,
   timKiemKhachHangQuanTri,
@@ -647,6 +650,36 @@ export function useAdminLienHe(params?: AdminSearchLienHeParams) {
   })
 }
 
+export function useAdminSupportTickets(params?: AdminSearchLienHeParams) {
+  return useQuery({
+    queryKey: ['admin', 'support-tickets', params],
+    queryFn: () => laySupportTicketsQuanTri(params ?? {}),
+  })
+}
+
+export function useAdminSupportChat(khachHangId?: number) {
+  return useQuery({
+    queryKey: ['admin', 'support-chat', khachHangId],
+    queryFn: () => layTinNhanHoTroQuanTri(khachHangId as number),
+    enabled: khachHangId !== undefined,
+  })
+}
+
+export function useReplyAdminSupportChat() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ khachHangId, noiDung }: { khachHangId: number; noiDung: string }) =>
+      traLoiTinNhanHoTroQuanTri(khachHangId, noiDung),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'support-tickets'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'support-chat', variables.khachHangId] }),
+      ])
+    },
+  })
+}
+
 export function useAdminLienHeDetail(id?: number) {
   return useQuery({
     queryKey: ['admin', 'lien-he', id],
@@ -662,7 +695,10 @@ export function useUpdateAdminLienHeStatus() {
     mutationFn: ({ id, payload }: { id: number; payload: { trangThai: AdminLienHeStatus; phanHoi?: string | null } }) =>
       capNhatTrangThaiLienHeQuanTri(id, payload),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['admin', 'lien-he'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin', 'lien-he'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin', 'support-tickets'] }),
+      ])
     },
   })
 }

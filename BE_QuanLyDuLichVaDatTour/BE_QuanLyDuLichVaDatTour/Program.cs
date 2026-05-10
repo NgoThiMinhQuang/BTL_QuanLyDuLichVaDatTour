@@ -153,6 +153,55 @@ using (var scope = app.Services.CreateScope())
             END";
         await cmd.ExecuteNonQueryAsync();
 
+        // Tạo bảng TinNhan nếu chưa có + thêm cột KhachHangId
+        cmd.CommandText = @"
+            IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'TinNhan')
+            BEGIN
+                CREATE TABLE TinNhan (
+                    TinNhanId       BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+                    BookingId       BIGINT NULL,
+                    KhachHangId     BIGINT NOT NULL,
+                    NguoiGuiId      BIGINT NOT NULL,
+                    NoiDung         NVARCHAR(MAX) NOT NULL,
+                    DaDoc           BIT NOT NULL CONSTRAINT DF_TinNhan_DaDoc DEFAULT 0,
+                    ThoiGianGui     DATETIME2 NOT NULL CONSTRAINT DF_TinNhan_ThoiGianGui DEFAULT SYSDATETIME(),
+                    CreatedAt       DATETIME2 NOT NULL CONSTRAINT DF_TinNhan_CreatedAt DEFAULT SYSDATETIME(),
+                    UpdatedAt       DATETIME2 NOT NULL CONSTRAINT DF_TinNhan_UpdatedAt DEFAULT SYSDATETIME(),
+                    CONSTRAINT FK_TinNhan_Booking FOREIGN KEY (BookingId) REFERENCES Booking(BookingId),
+                    CONSTRAINT FK_TinNhan_NguoiDung FOREIGN KEY (NguoiGuiId) REFERENCES NguoiDung(NguoiDungId),
+                    CONSTRAINT FK_TinNhan_KhachHang FOREIGN KEY (KhachHangId) REFERENCES NguoiDung(NguoiDungId)
+                );
+                CREATE INDEX IdxTinNhanBooking ON TinNhan (BookingId, ThoiGianGui);
+                CREATE INDEX IdxTinNhan_KhachHang ON TinNhan (KhachHangId);
+            END
+            ELSE
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE Name = N'KhachHangId' AND Object_ID = Object_ID(N'TinNhan'))
+                BEGIN
+                    ALTER TABLE TinNhan ADD KhachHangId BIGINT NOT NULL CONSTRAINT DF_TinNhan_KhachHangId DEFAULT 0;
+                    -- Backfill: tin nhắn general (BookingId NULL) gán KhachHangId = NguoiGuiId
+                    UPDATE TinNhan SET KhachHangId = NguoiGuiId WHERE BookingId IS NULL;
+                    -- Backfill: tin nhắn theo booking lấy KhachHangId từ Booking
+                    UPDATE tn SET KhachHangId = b.KhachHangId
+                    FROM TinNhan tn
+                    JOIN Booking b ON b.BookingId = tn.BookingId
+                    WHERE tn.BookingId IS NOT NULL;
+                    -- Tạo FK nếu chưa có (sau khi dữ liệu đã hợp lệ)
+                    IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'FK_TinNhan_KhachHang' AND parent_object_id = OBJECT_ID('TinNhan'))
+                    BEGIN
+                        ALTER TABLE TinNhan ADD CONSTRAINT FK_TinNhan_KhachHang FOREIGN KEY (KhachHangId) REFERENCES NguoiDung(NguoiDungId);
+                    END
+                    -- Tạo index nếu chưa có
+                    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IdxTinNhan_KhachHang' AND object_id = OBJECT_ID('TinNhan'))
+                    BEGIN
+                        CREATE INDEX IdxTinNhan_KhachHang ON TinNhan (KhachHangId);
+                    END
+                    -- Xóa default sau khi backfill
+                    ALTER TABLE TinNhan DROP CONSTRAINT DF_TinNhan_KhachHangId;
+                END
+            END";
+        await cmd.ExecuteNonQueryAsync();
+
         await sqlConnection.CloseAsync();
     }
     catch (SqlException ex)

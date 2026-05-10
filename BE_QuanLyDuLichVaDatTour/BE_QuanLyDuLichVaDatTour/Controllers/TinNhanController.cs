@@ -72,6 +72,27 @@ public class TinNhanController : ControllerBase
         }
     }
 
+    [HttpPost("general/admin-reply")]
+    public async Task<IActionResult> AdminReplyGeneralMessage([FromBody] AdminReplyRequest request)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            var response = await _tinNhanService.AdminReplyGeneralMessageAsync(userId, request.KhachHangId, request.NoiDung);
+            return StatusCode(StatusCodes.Status201Created, response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> GuiTinNhan([FromBody] GuiTinNhanRequestDto request)
     {

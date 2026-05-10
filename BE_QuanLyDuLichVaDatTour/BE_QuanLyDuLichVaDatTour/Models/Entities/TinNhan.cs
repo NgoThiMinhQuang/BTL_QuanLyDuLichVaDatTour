@@ -8,6 +8,8 @@ public class TinNhan
 
     public long? BookingId { get; set; }
 
+    public long KhachHangId { get; set; }
+
     public long NguoiGuiId { get; set; }
 
     public string NoiDung { get; set; } = string.Empty;
@@ -23,4 +25,6 @@ public class TinNhan
     public Booking? Booking { get; set; }
 
     public NguoiDung? NguoiGui { get; set; }
+
+    public NguoiDung? KhachHang { get; set; }
 }

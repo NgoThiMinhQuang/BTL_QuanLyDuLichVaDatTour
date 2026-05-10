@@ -30,7 +30,7 @@ export function FloatingChatButton() {
   const { data, refetch } = useQuery({
     queryKey: ['chat-general-messages'],
     queryFn: async () => {
-      const response = await fetch(`${API_BASE_URL}/api/tin-nhan/general`, {
+      const response = await fetch(`${API_BASE_URL}/tin-nhan/general`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!response.ok) throw new Error('Không thể tải tin nhắn')
@@ -50,7 +50,7 @@ export function FloatingChatButton() {
 
   const sendMutation = useMutation({
     mutationFn: async (noiDung: string) => {
-      const response = await fetch(`${API_BASE_URL}/api/tin-nhan/general`, {
+      const response = await fetch(`${API_BASE_URL}/tin-nhan/general`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

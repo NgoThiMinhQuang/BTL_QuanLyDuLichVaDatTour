@@ -30,7 +30,6 @@ export const PATHS = {
   adminKhachHangs: '/admin/khach-hang',
   adminLienHes: '/admin/lien-he',
   adminHuyTours: '/admin/huy-tour',
-  adminAuditLogs: '/admin/audit-log',
   profile: '/profile',
   myVouchers: '/my-vouchers',
 } as const

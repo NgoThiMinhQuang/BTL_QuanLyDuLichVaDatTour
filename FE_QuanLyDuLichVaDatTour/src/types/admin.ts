@@ -527,6 +527,35 @@ export interface AdminLienHeListResponse {
   totalPages: number
 }
 
+export type AdminSupportTicketSource = 'lienhe' | 'tinnhan'
+
+export interface AdminSupportTicketItem {
+  id: number
+  source: AdminSupportTicketSource
+  khachHangId: number
+  hoTen: string
+  email?: string | null
+  soDienThoai?: string | null
+  chuDe: string
+  noiDung: string
+  trangThai: AdminLienHeStatus
+  phanHoi?: string | null
+  ngayGui: string
+  ngayXuLy?: string | null
+}
+
+export interface AdminChatMessage {
+  id: number
+  bookingId?: number | null
+  khachHangId: number
+  nguoiGuiId: number
+  hoTenNguoiGui: string
+  vaiTro: string
+  noiDung: string
+  daDoc: boolean
+  thoiGianGui: string
+}
+
 export interface AdminSearchLienHeParams {
   keyword?: string
   trangThai?: string

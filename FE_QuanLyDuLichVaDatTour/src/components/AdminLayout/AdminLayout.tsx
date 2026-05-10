@@ -84,11 +84,6 @@ const navigationItems: MenuProps['items'] = [
         icon: <CloseCircleOutlined />,
         label: <Link to={PATHS.adminHuyTours}>Yêu cầu hủy tour</Link>,
       },
-      {
-        key: PATHS.adminAuditLogs,
-        icon: <FileTextOutlined />,
-        label: <Link to={PATHS.adminAuditLogs}>Nhật ký hệ thống</Link>,
-      },
     ],
   },
   {
@@ -152,7 +147,6 @@ const breadcrumbLabelMap: Record<string, string> = {
   [PATHS.adminReviews]: 'Duyệt đánh giá',
   [PATHS.adminKhachHangs]: 'Khách hàng',
   [PATHS.adminLienHes]: 'Liên hệ hỗ trợ',
-  [PATHS.adminAuditLogs]: 'Nhật ký hệ thống',
   [PATHS.adminLoaiTours]: 'Loại tour',
   [PATHS.adminDiaDiems]: 'Điểm đi',
   [PATHS.adminVouchers]: 'Voucher',

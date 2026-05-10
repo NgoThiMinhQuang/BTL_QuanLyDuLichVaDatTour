@@ -45,7 +45,18 @@ public class TinNhanRepository : ITinNhanRepository
         return await _dbContext.TinNhans
             .AsNoTracking()
             .Include(x => x.NguoiGui)
-            .Where(x => x.BookingId == null && (x.NguoiGuiId == userId || x.NguoiGui!.VaiTro == VaiTroNguoiDung.admin))
+            .Where(x => x.BookingId == null && x.KhachHangId == userId)
+            .OrderBy(x => x.ThoiGianGui)
+            .ToListAsync();
+    }
+
+    public async Task<List<TinNhan>> GetAllGeneralWithNguoiGuiAsync()
+    {
+        return await _dbContext.TinNhans
+            .AsNoTracking()
+            .Include(x => x.NguoiGui)
+            .Include(x => x.KhachHang)
+            .Where(x => x.BookingId == null)
             .OrderBy(x => x.ThoiGianGui)
             .ToListAsync();
     }

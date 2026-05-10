@@ -10,7 +10,6 @@ import AboutPage from '../pages/AboutPage'
 import AdminKhachHangListPage from '../pages/AdminKhachHangListPage/AdminKhachHangListPage'
 import AdminLienHeListPage from '../pages/AdminLienHeListPage/AdminLienHeListPage'
 import AdminCancellationPage from '../pages/AdminCancellationPage/AdminCancellationPage'
-import AdminAuditLogPage from '../pages/AdminAuditLogPage/AdminAuditLogPage'
 import AdminBookingListPage from '../pages/AdminBookingListPage/AdminBookingListPage'
 import AdminDashboardPage from '../pages/AdminDashboardPage/AdminDashboardPage'
 import AdminDiaDiemListPage from '../pages/AdminDiaDiemListPage/AdminDiaDiemListPage'
@@ -175,7 +174,6 @@ export default function AppRouter() {
           <Route path="khach-hang" element={<AdminKhachHangListPage />} />
           <Route path="lien-he" element={<AdminLienHeListPage />} />
           <Route path="huy-tour" element={<AdminCancellationPage />} />
-          <Route path="audit-log" element={<AdminAuditLogPage />} />
         </Route>
       </Routes>
     </AntApp>

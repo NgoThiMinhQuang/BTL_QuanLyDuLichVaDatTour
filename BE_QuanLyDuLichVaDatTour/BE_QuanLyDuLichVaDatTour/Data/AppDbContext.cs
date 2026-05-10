@@ -1635,6 +1635,11 @@ public class AppDbContext : DbContext
                 .HasColumnType("bigint")
                 .IsRequired(false);
 
+            entity.Property(x => x.KhachHangId)
+                .HasColumnName("KhachHangId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
             entity.Property(x => x.NguoiGuiId)
                 .HasColumnName("NguoiGuiId")
                 .HasColumnType("bigint")
@@ -1679,6 +1684,14 @@ public class AppDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(x => x.NguoiGuiId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.KhachHang)
+                .WithMany()
+                .HasForeignKey(x => x.KhachHangId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(x => x.KhachHangId)
+                .HasDatabaseName("IdxTinNhan_KhachHang");
         });
     }
 }

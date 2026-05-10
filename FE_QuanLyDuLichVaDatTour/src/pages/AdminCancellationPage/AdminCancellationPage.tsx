@@ -97,7 +97,7 @@ export default function AdminCancellationPage() {
                 </div>
                 <Text type="secondary" style={{ fontSize: 13 }}>{formatDate(item.createdAt)}</Text>
               </div>
-              
+
               <div className="cancel-card-body">
                 <div className="cancel-info-row">
                   <UserOutlined className="cancel-info-icon" />
@@ -134,14 +134,14 @@ export default function AdminCancellationPage() {
               </div>
 
               <div className="cancel-card-footer">
-                <Button 
-                  className="cancel-btn cancel-btn-reject" 
+                <Button
+                  className="cancel-btn cancel-btn-reject"
                   onClick={() => handleAction(item, 'tu_choi')}
                 >
                   Từ chối
                 </Button>
-                <Button 
-                  className="cancel-btn cancel-btn-approve" 
+                <Button
+                  className="cancel-btn cancel-btn-approve"
                   onClick={() => handleAction(item, 'da_duyet')}
                 >
                   Duyệt hủy
@@ -206,11 +206,11 @@ export default function AdminCancellationPage() {
               <Button size="large" onClick={() => { setModalOpen(false); setSelectedItem(null) }} style={{ borderRadius: 8 }}>
                 Hủy bỏ
               </Button>
-              <Button 
-                size="large" 
+              <Button
+                size="large"
                 type="primary"
-                danger={action === 'da_duyet'} 
-                loading={submitting} 
+                danger={action === 'da_duyet'}
+                loading={submitting}
                 onClick={handleConfirm}
                 style={{ borderRadius: 8 }}
               >

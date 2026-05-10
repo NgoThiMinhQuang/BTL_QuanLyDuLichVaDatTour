@@ -24,6 +24,13 @@ public class AdminLienHeController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("support-tickets")]
+    public async Task<IActionResult> GetSupportTickets([FromQuery] SearchLienHeRequestDto request)
+    {
+        var response = await _service.GetSupportTicketsAsync(request);
+        return Ok(response);
+    }
+
     [HttpGet("get-by-id/{id:long}")]
     public async Task<IActionResult> GetById(long id)
     {

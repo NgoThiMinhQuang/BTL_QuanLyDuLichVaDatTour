@@ -17,8 +17,10 @@ import type {
   AdminKhachHangStatus,
   AdminAuditLogItem,
   AdminAuditLogListResponse,
+  AdminChatMessage,
   AdminLienHeItem,
   AdminLienHeListResponse,
+  AdminSupportTicketItem,
   AdminLichKhoiHanhItem,
   AdminLichKhoiHanhStatus,
   AdminLichTrinhItem,
@@ -318,6 +320,29 @@ export async function timKiemLienHeQuanTri(params: AdminSearchLienHeParams): Pro
 
 export async function layChiTietLienHeQuanTri(id: number): Promise<AdminLienHeItem> {
   return getJson<AdminLienHeItem>(`/admin/lien-he/get-by-id/${id}`, 'Không thể tải chi tiết liên hệ')
+}
+
+export async function laySupportTicketsQuanTri(params: AdminSearchLienHeParams): Promise<AdminSupportTicketItem[]> {
+  const query = new URLSearchParams()
+  if (params.keyword) query.set('keyword', params.keyword)
+  if (params.trangThai) query.set('trangThai', params.trangThai)
+  query.set('page', String(params.page ?? 1))
+  query.set('pageSize', String(params.pageSize ?? 10))
+  return getJson<AdminSupportTicketItem[]>(`/admin/lien-he/support-tickets?${query}`, 'Không thể tải hộp thư hỗ trợ')
+}
+
+export async function layTinNhanHoTroQuanTri(khachHangId: number): Promise<AdminChatMessage[]> {
+  const messages = await getJson<AdminChatMessage[]>('/tin-nhan/general', 'Không thể tải tin nhắn hỗ trợ')
+  return messages.filter(message => message.khachHangId === khachHangId)
+}
+
+export async function traLoiTinNhanHoTroQuanTri(khachHangId: number, noiDung: string): Promise<AdminChatMessage> {
+  return sendJson<AdminChatMessage, { khachHangId: number; noiDung: string }>(
+    '/tin-nhan/general/admin-reply',
+    'POST',
+    { khachHangId, noiDung },
+    'Không thể gửi phản hồi hỗ trợ',
+  )
 }
 
 export async function capNhatTrangThaiLienHeQuanTri(id: number, payload: AdminUpdateLienHeStatusPayload) {
