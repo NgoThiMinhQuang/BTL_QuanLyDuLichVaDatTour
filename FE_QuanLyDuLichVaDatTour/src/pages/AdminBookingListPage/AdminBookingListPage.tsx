@@ -1,4 +1,4 @@
-import { Alert, Button, Descriptions, Drawer, Empty, Form, Input, Popconfirm, Select, Space, Tag, Typography, Modal, Pagination, Dropdown } from 'antd'
+import { Alert, Button, Descriptions, Drawer, Empty, Form, Input, Popconfirm, Select, Space, Tag, Typography, Modal, Pagination, Dropdown, Tooltip } from 'antd'
 import type { MenuProps } from 'antd'
 import { useMemo, useState, useEffect } from 'react'
 import { useAdminBooking, useAdminBookings, useUpdateAdminBookingStatus } from '../../services/admin/admin.hooks'
@@ -8,7 +8,7 @@ import { formatMoney } from '../../utils/formatMoney'
 import { adminBookingStatusMeta, adminPaymentStatusMeta, formatDateTime, mapStatusOptions } from '../../utils/admin'
 import { API_BASE_URL } from '../../constants/api'
 import { useAuthStore } from '../../store/authStore'
-import { MoreOutlined, FilePdfOutlined, CheckCircleOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { MoreOutlined, FilePdfOutlined, CheckCircleOutlined, InfoCircleOutlined, AppstoreOutlined, ClockCircleOutlined, CloseCircleOutlined, BookOutlined, EyeOutlined, SearchOutlined, MailOutlined, BarcodeOutlined, CalendarOutlined, TeamOutlined, PhoneOutlined } from '@ant-design/icons'
 import './AdminBookingListPage.css'
 
 const { Paragraph, Text, Title } = Typography
@@ -44,6 +44,16 @@ export default function AdminBookingListPage() {
       return matchesKeyword && matchesBookingStatus && matchesPaymentStatus
     })
   }, [bookingsQuery.data, keyword, bookingStatusFilter, paymentStatusFilter])
+
+  const stats = useMemo(() => {
+    const bookings = bookingsQuery.data ?? []
+    return {
+      total: bookings.length,
+      waiting: bookings.filter(b => b.trangThaiBooking === 'cho_xac_nhan').length,
+      success: bookings.filter(b => b.trangThaiBooking === 'da_xac_nhan' || b.trangThaiBooking === 'hoan_tat').length,
+      cancelled: bookings.filter(b => b.trangThaiBooking === 'da_huy' || b.trangThaiBooking === 'tu_choi').length,
+    }
+  }, [bookingsQuery.data])
 
   useEffect(() => {
     setCurrentPage(1)
@@ -132,50 +142,79 @@ export default function AdminBookingListPage() {
   return (
     <div className="admin-page">
       <div className="admin-page-header">
-        <div>
-          <Title level={1}>Quản lý booking</Title>
-          <Paragraph>Theo dõi trạng thái đặt tour, thanh toán và thông tin hành khách từ một nơi.</Paragraph>
+        <div className="booking-title-wrapper">
+          <div className="booking-header-icon">
+            <BookOutlined />
+          </div>
+          <div>
+            <Title level={1}>Quản lý booking</Title>
+            <Paragraph>Theo dõi trạng thái đặt tour, thanh toán và thông tin hành khách từ một nơi.</Paragraph>
+          </div>
         </div>
       </div>
 
-      <div className="admin-page-card">
-        <div className="admin-filter-toolbar is-compact" style={{ gridTemplateColumns: 'minmax(0, 1fr) 200px 200px 100px' }}>
-          <Input
-            value={keyword}
-            onChange={(event) => setKeyword(event.target.value)}
-            placeholder="Tìm theo mã booking, tour, khách hàng..."
-            className="admin-filter-field"
-            style={{ height: 40, borderRadius: 8 }}
-          />
-          <Select
-            allowClear
-            value={bookingStatusFilter}
-            onChange={(value) => setBookingStatusFilter(value)}
-            options={bookingStatusOptions}
-            placeholder="Trạng thái booking"
-            className="admin-filter-field"
-            style={{ height: 40, borderRadius: 8 }}
-          />
-          <Select
-            allowClear
-            value={paymentStatusFilter}
-            onChange={(value) => setPaymentStatusFilter(value)}
-            options={paymentStatusOptions}
-            placeholder="Trạng thái thanh toán"
-            className="admin-filter-field"
-            style={{ height: 40, borderRadius: 8 }}
-          />
-          <Button 
-            className="admin-filter-button" 
-            style={{ height: 40, borderRadius: 8 }}
-            onClick={() => {
+      <div className="admin-page-card" style={{ padding: '32px' }}>
+        <div className="booking-stats-grid">
+          <div className="booking-stat-card">
+            <div className="stat-icon"><AppstoreOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.total}</div>
+              <div className="stat-label">Tổng booking</div>
+            </div>
+          </div>
+          <div className="booking-stat-card waiting-stat">
+            <div className="stat-icon"><ClockCircleOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.waiting}</div>
+              <div className="stat-label">Chờ xác nhận</div>
+            </div>
+          </div>
+          <div className="booking-stat-card success-stat">
+            <div className="stat-icon"><CheckCircleOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.success}</div>
+              <div className="stat-label">Thành công</div>
+            </div>
+          </div>
+          <div className="booking-stat-card cancelled-stat">
+            <div className="stat-icon"><CloseCircleOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.cancelled}</div>
+              <div className="stat-label">Huỷ / Từ chối</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="booking-filter-card">
+          <div className="booking-filter-toolbar">
+            <Input
+              prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+              value={keyword}
+              onChange={(event) => setKeyword(event.target.value)}
+              placeholder="Tìm theo mã booking, tour, khách hàng..."
+            />
+            <Select
+              allowClear
+              value={bookingStatusFilter}
+              onChange={(value) => setBookingStatusFilter(value)}
+              options={bookingStatusOptions}
+              placeholder="Trạng thái booking"
+            />
+            <Select
+              allowClear
+              value={paymentStatusFilter}
+              onChange={(value) => setPaymentStatusFilter(value)}
+              options={paymentStatusOptions}
+              placeholder="Trạng thái thanh toán"
+            />
+            <Button onClick={() => {
               setKeyword('')
               setBookingStatusFilter(undefined)
               setPaymentStatusFilter(undefined)
-            }}
-          >
-            Xoá bộ lọc
-          </Button>
+            }}>
+              Xoá bộ lọc
+            </Button>
+          </div>
         </div>
 
         {hasError ? <Alert type="error" showIcon title={errorMessage} /> : null}
@@ -186,69 +225,80 @@ export default function AdminBookingListPage() {
           ) : filteredBookings.length === 0 ? (
             <Empty description="Chưa có booking quản trị" />
           ) : (
-            paginatedBookings.map((booking) => (
-              <div key={booking.id} className="admin-booking-list-item">
-                <div className="admin-booking-item-main">
-                  <h3 className="admin-booking-item-title">{booking.maBooking}</h3>
-                  <div className="admin-booking-item-meta">
-                    <Text strong>{booking.hoTenNguoiDat}</Text>
-                    <span>• {booking.emailNguoiDat}</span>
+            <>
+              <div className="booking-list-header">
+                <div className="booking-list-header-col booking-header-col-main">Thông tin Booking</div>
+                <div className="booking-list-header-col booking-header-col-tour">Lịch trình Tour</div>
+                <div className="booking-list-header-col booking-header-col-passengers">Hành khách</div>
+                <div className="booking-list-header-col booking-header-col-pricing">Giá & Trạng thái</div>
+                <div className="booking-list-header-col booking-header-col-actions">Thao tác</div>
+              </div>
+              {paginatedBookings.map((booking) => (
+              <div key={booking.id} className="booking-list-item">
+                <div className="booking-item-main">
+                  <div className="booking-text-accent">{booking.maBooking}</div>
+                  <div className="booking-text-primary">{booking.hoTenNguoiDat}</div>
+                  <div className="booking-text-secondary text-truncate" style={{ maxWidth: 200 }} title={booking.emailNguoiDat}>
+                    {booking.emailNguoiDat}
                   </div>
-                  <div className="admin-booking-item-meta">
-                    Ngày đặt: {formatDateTime(booking.ngayDat)}
+                  <div className="booking-text-secondary" style={{ marginTop: 4 }}>
+                    {formatDateTime(booking.ngayDat)}
                   </div>
                 </div>
 
-                <div className="admin-booking-item-tour">
-                  <div className="admin-booking-item-tour-title">{booking.tenTour}</div>
-                  <div className="admin-booking-item-meta">
+                <div className="booking-item-tour">
+                  <div className="booking-tour-name" title={booking.tenTour}>{booking.tenTour}</div>
+                  <div className="booking-text-secondary">
                     {booking.maTour} • {booking.maDotTour}
                   </div>
-                  <div className="admin-booking-item-meta">
+                  <div className="booking-text-secondary" style={{ marginTop: 4 }}>
                     Khởi hành: <Text strong>{formatDate(booking.ngayKhoiHanh)}</Text>
                   </div>
                 </div>
 
-                <div className="admin-booking-item-passengers">
-                  <Text strong style={{ fontSize: 14 }}>{booking.tongHanhKhach} Khách</Text>
-                  <Text className="admin-muted" style={{ fontSize: 13 }}>NL {booking.soNguoiLon} • TE {booking.soTreEm} • EB {booking.soEmBe}</Text>
-                  <div className="admin-booking-item-meta" style={{ marginTop: 4 }}>
-                    <Text>{booking.hoTenLienHe}</Text>
+                <div className="booking-item-passengers">
+                  <div className="booking-text-primary">{booking.tongHanhKhach} Khách</div>
+                  <div className="booking-text-secondary">
+                    {booking.soNguoiLon} NL • {booking.soTreEm} TE • {booking.soEmBe} EB
+                  </div>
+                  <div className="booking-text-secondary" style={{ marginTop: 4 }}>
+                    LH: {booking.hoTenLienHe}
                   </div>
                 </div>
 
-                <div className="admin-booking-item-pricing">
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    <Tag color={adminPaymentStatusMeta[booking.trangThaiThanhToan].color} style={{ margin: 0, fontWeight: 600 }}>
-                      {adminPaymentStatusMeta[booking.trangThaiThanhToan].label}
-                    </Tag>
-                    <Tag color={adminBookingStatusMeta[booking.trangThaiBooking].color} style={{ margin: 0, fontWeight: 600 }}>
-                      {adminBookingStatusMeta[booking.trangThaiBooking].label}
-                    </Tag>
-                  </div>
-                  <div className="admin-booking-item-price">{formatMoney(booking.tongTien)}</div>
+                <div className="booking-item-pricing">
+                  <div className="booking-price-text">{formatMoney(booking.tongTien)}</div>
+                  <Tag className="booking-status-pill" color={adminPaymentStatusMeta[booking.trangThaiThanhToan].color}>
+                    {adminPaymentStatusMeta[booking.trangThaiThanhToan].label}
+                  </Tag>
+                  <Tag className="booking-status-pill" color={adminBookingStatusMeta[booking.trangThaiBooking].color}>
+                    {adminBookingStatusMeta[booking.trangThaiBooking].label}
+                  </Tag>
                 </div>
 
-                <div className="admin-booking-item-actions">
-                  <Button 
-                    icon={<InfoCircleOutlined />}
-                    onClick={() => {
-                      setSelectedBookingId(booking.id)
-                      statusForm.setFieldsValue({
-                        trangThaiBooking: booking.trangThaiBooking,
-                        trangThaiThanhToan: booking.trangThaiThanhToan,
-                        ghiChu: booking.ghiChu ?? undefined,
-                      })
-                    }}
-                  >
-                    Chi tiết
-                  </Button>
+                <div className="booking-actions-group">
+                  <Tooltip title="Xem chi tiết">
+                    <button 
+                      className="booking-action-btn edit"
+                      onClick={() => {
+                        setSelectedBookingId(booking.id)
+                        statusForm.setFieldsValue({
+                          trangThaiBooking: booking.trangThaiBooking,
+                          trangThaiThanhToan: booking.trangThaiThanhToan,
+                          ghiChu: booking.ghiChu ?? undefined,
+                        })
+                      }}
+                    >
+                      <EyeOutlined />
+                    </button>
+                  </Tooltip>
                   <Dropdown menu={{ items: getBookingActions(booking) }} trigger={['click']} placement="bottomRight">
-                    <Button icon={<MoreOutlined />} />
+                    <button className="booking-action-btn"><MoreOutlined /></button>
                   </Dropdown>
                 </div>
               </div>
-            ))
+            ))}
+            </>
           )}
         </div>
 

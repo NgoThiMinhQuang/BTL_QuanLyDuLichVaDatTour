@@ -49,6 +49,8 @@ public class AppDbContext : DbContext
 
     public DbSet<ThongBao> ThongBaos => Set<ThongBao>();
 
+    public DbSet<SeatHold> SeatHolds => Set<SeatHold>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -1541,6 +1543,77 @@ public class AppDbContext : DbContext
             entity.HasOne(x => x.Booking)
                 .WithMany(x => x.ThanhToans)
                 .HasForeignKey(x => x.BookingId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SeatHold>(entity =>
+        {
+            entity.ToTable("SeatHold");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Id)
+                .HasColumnName("SeatHoldId")
+                .HasColumnType("bigint")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.LichKhoiHanhId)
+                .HasColumnName("LichKhoiHanhId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
+            entity.Property(x => x.KhachHangId)
+                .HasColumnName("KhachHangId")
+                .HasColumnType("bigint")
+                .IsRequired();
+
+            entity.Property(x => x.SoCho)
+                .HasColumnName("SoCho")
+                .HasColumnType("smallint")
+                .IsRequired();
+
+            entity.Property(x => x.HoldToken)
+                .HasColumnName("HoldToken")
+                .HasMaxLength(64)
+                .IsRequired();
+
+            entity.Property(x => x.ExpiresAt)
+                .HasColumnName("ExpiresAt")
+                .HasColumnType("datetime2")
+                .IsRequired();
+
+            entity.Property(x => x.TrangThai)
+                .HasColumnName("TrangThai")
+                .HasMaxLength(20)
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAt)
+                .HasColumnName("CreatedAt")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UpdatedAt)
+                .HasColumnName("UpdatedAt")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+            entity.HasIndex(x => x.HoldToken)
+                .IsUnique()
+                .HasDatabaseName("UQ_SeatHold_Token");
+
+            entity.HasIndex(x => new { x.LichKhoiHanhId, x.TrangThai })
+                .HasDatabaseName("IdxSeatHold_LichKhoiHanh_Active");
+
+            entity.HasOne(x => x.LichKhoiHanh)
+                .WithMany()
+                .HasForeignKey(x => x.LichKhoiHanhId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.KhachHang)
+                .WithMany()
+                .HasForeignKey(x => x.KhachHangId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

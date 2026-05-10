@@ -17,25 +17,40 @@ public class BookingService : IBookingService
     private readonly IBangGiaLichKhoiHanhRepository _bangGiaLichKhoiHanhRepository;
     private readonly INguoiDungRepository _nguoiDungRepository;
     private readonly IVoucherRepository _voucherRepository;
+    private readonly ISeatHoldRepository _seatHoldRepository;
+    private readonly ISeatHoldService _seatHoldService;
 
     public BookingService(
         IBookingRepository bookingRepository,
         ILichKhoiHanhRepository lichKhoiHanhRepository,
         IBangGiaLichKhoiHanhRepository bangGiaLichKhoiHanhRepository,
         INguoiDungRepository nguoiDungRepository,
-        IVoucherRepository voucherRepository)
+        IVoucherRepository voucherRepository,
+        ISeatHoldRepository seatHoldRepository,
+        ISeatHoldService seatHoldService)
     {
         _bookingRepository = bookingRepository;
         _lichKhoiHanhRepository = lichKhoiHanhRepository;
         _bangGiaLichKhoiHanhRepository = bangGiaLichKhoiHanhRepository;
         _nguoiDungRepository = nguoiDungRepository;
         _voucherRepository = voucherRepository;
+        _seatHoldRepository = seatHoldRepository;
+        _seatHoldService = seatHoldService;
     }
 
     public async Task<BookingResponseDto> CreateAsync(long currentUserId, CreateBookingRequestDto request)
     {
         var nguoiDung = await EnsureNguoiDungExistsAsync(currentUserId);
         var lichKhoiHanh = await EnsureLichKhoiHanhAvailableAsync(request.LichKhoiHanhId);
+
+        // Nếu có holdToken, xác nhận và consume hold
+        bool hasHold = !string.IsNullOrWhiteSpace(request.HoldToken);
+        if (hasHold)
+        {
+            await _seatHoldService.ConvertHoldToBookingAsync(
+                currentUserId, request.HoldToken!,
+                request.SoNguoiLon + request.SoTreEm + request.SoEmBe);
+        }
 
         ValidatePassengerCounts(request.SoNguoiLon, request.SoTreEm, request.SoEmBe, lichKhoiHanh.SoChoToiDa);
         await ValidateSeatAvailabilityAsync(lichKhoiHanh, request.SoNguoiLon + request.SoTreEm + request.SoEmBe);
@@ -345,7 +360,8 @@ public class BookingService : IBookingService
     private async Task ValidateSeatAvailabilityAsync(LichKhoiHanh lichKhoiHanh, int requestedSeats, long? excludeBookingId = null)
     {
         var bookedSeats = await _bookingRepository.GetBookedSeatsAsync(lichKhoiHanh.Id, excludeBookingId);
-        var remainingSeats = lichKhoiHanh.SoChoToiDa - bookedSeats;
+        var heldSeats = await _seatHoldRepository.GetHeldSeatsAsync(lichKhoiHanh.Id);
+        var remainingSeats = lichKhoiHanh.SoChoToiDa - bookedSeats - heldSeats;
 
         if (requestedSeats > remainingSeats)
         {

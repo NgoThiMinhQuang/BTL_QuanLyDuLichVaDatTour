@@ -3,13 +3,13 @@ import { Alert, Button, Card, Checkbox, Col, DatePicker, Form, Input, Row, Selec
 import { CheckOutlined, GiftOutlined, MinusOutlined, PlusOutlined, RightOutlined, TeamOutlined, UserOutlined, EnvironmentOutlined, IdcardOutlined, BankOutlined, CalendarOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useSearchParams } from 'react-router'
 import { formatDate } from '../utils/formatDate'
 import { formatMoney } from '../utils/formatMoney'
 import { getTourChiTietPath } from '../constants/paths'
-import { layDuLieuDatTour, taoBooking, type BookingPassengerPayload } from '../services/booking/booking'
+import { layDuLieuDatTour, taoBooking, taoGiuCho, huyGiuCho, giaHanGiuCho, type BookingPassengerPayload } from '../services/booking/booking'
 import { useAuthStore } from '../store/authStore'
 import { BOOKING_DETAIL_PATH } from '../constants/paths'
 import { layVoucherKhaDung } from '../services/voucher/voucher'
@@ -106,6 +106,13 @@ export default function Booking() {
   const [ghiChu, setGhiChu] = useState('')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [isVoucherModalOpen, setIsVoucherModalOpen] = useState(false)
+
+  // Hold booking state
+  const [holdToken, setHoldToken] = useState<string | null>(null)
+  const [holdRemainingSeconds, setHoldRemainingSeconds] = useState(0)
+  const [holdCreating, setHoldCreating] = useState(false)
+  const holdTokenRef = useRef<string | null>(null)
+  const holdTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const tourId = Number(searchParams.get('tourId'))
   const departureId = Number(searchParams.get('departureId'))
@@ -208,6 +215,76 @@ export default function Booking() {
   const { tour, departure } = bookingQuery.data
   const soChoConLai = Math.max(departure.soChoConLai, 0)
 
+  // Create hold when user reaches step "counts" (seats are being decided)
+  const createHold = async () => {
+    if (holdCreating || holdTokenRef.current) return
+    setHoldCreating(true)
+    try {
+      const hold = await taoGiuCho({
+        lichKhoiHanhId: departureId,
+        soNguoiLon: 1,
+        soTreEm: 0,
+        soEmBe: 0,
+      })
+      holdTokenRef.current = hold.holdToken
+      setHoldToken(hold.holdToken)
+      setHoldRemainingSeconds(hold.remainingSeconds)
+
+      // Start countdown
+      if (holdTimerRef.current) clearInterval(holdTimerRef.current)
+      holdTimerRef.current = setInterval(() => {
+        setHoldRemainingSeconds((prev) => {
+          const next = prev - 1
+          if (next <= 0) {
+            if (holdTimerRef.current) clearInterval(holdTimerRef.current)
+            holdTokenRef.current = null
+            setHoldToken(null)
+            setErrorMessage('Thời gian giữ chỗ đã hết. Vui lòng làm mới trang và thử lại.')
+            return 0
+          }
+          return next
+        })
+      }, 1000)
+    } catch {
+      // Hold creation failed - don't block user
+    } finally {
+      setHoldCreating(false)
+    }
+  }
+
+  const releaseHold = () => {
+    if (holdTimerRef.current) clearInterval(holdTimerRef.current)
+    const token = holdTokenRef.current
+    holdTokenRef.current = null
+    setHoldToken(null)
+    setHoldRemainingSeconds(0)
+    if (token) {
+      huyGiuCho(token).catch(() => {})
+    }
+  }
+
+  const handleExtendHold = async () => {
+    const token = holdTokenRef.current
+    if (!token) return
+    try {
+      const hold = await giaHanGiuCho(token)
+      setHoldRemainingSeconds(hold.remainingSeconds)
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : 'Không thể gia hạn giữ chỗ.')
+    }
+  }
+
+  // Release hold on unmount
+  useEffect(() => {
+    return () => {
+      if (holdTimerRef.current) clearInterval(holdTimerRef.current)
+      const token = holdTokenRef.current
+      if (token) {
+        huyGiuCho(token).catch(() => {})
+      }
+    }
+  }, [])
+
   const capNhatSoLuong = (type: PassengerType, delta: number) => {
     setErrorMessage(null)
     setPassengerCounts((prev) => {
@@ -272,6 +349,7 @@ export default function Booking() {
       })
       setErrorMessage(null)
       setCurrentStep('counts')
+      createHold()
     } catch {
       setErrorMessage('Vui lòng nhập đầy đủ thông tin liên hệ bắt buộc.')
     }
@@ -314,9 +392,14 @@ export default function Booking() {
         soEmBe: passengerCounts.em_be,
         phuongThucThanhToanDuKien: 'chuyen_khoan',
         maVoucher: voucherCode,
+        holdToken: holdTokenRef.current ?? undefined,
         hanhKhachs: taoPayloadHanhKhach(),
         ghiChu,
       })
+
+      // Clear hold since booking succeeded (hold was converted)
+      if (holdTimerRef.current) clearInterval(holdTimerRef.current)
+      holdTokenRef.current = null
 
       navigate(BOOKING_DETAIL_PATH(response.id))
     } catch (error) {
@@ -739,6 +822,21 @@ export default function Booking() {
               </div>
               
               <div className="booking-summary-body">
+                {/* Hold countdown timer */}
+                {holdToken && holdRemainingSeconds > 0 && (
+                  <Alert
+                    type={holdRemainingSeconds <= 60 ? 'warning' : 'info'}
+                    showIcon
+                    style={{ marginBottom: 16 }}
+                    message={`⏱ Thời gian giữ chỗ: ${Math.floor(holdRemainingSeconds / 60)}:${String(holdRemainingSeconds % 60).padStart(2, '0')}`}
+                    description="Vui lòng hoàn tất đặt tour trong thời gian trên để đảm bảo còn chỗ."
+                    action={
+                      <Button size="small" onClick={handleExtendHold}>
+                        Gia hạn
+                      </Button>
+                    }
+                  />
+                )}
                 <div className="booking-summary-image-wrap">
                   <img 
                     src={tour.anhTours?.find(img => img.isAvatar)?.linkAnh || tour.anhTours?.[0]?.linkAnh || 'https://placehold.co/600x400?text=Travel+Viet'} 

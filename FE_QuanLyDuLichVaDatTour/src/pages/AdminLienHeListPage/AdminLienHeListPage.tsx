@@ -1,6 +1,5 @@
-import { Alert, Button, Drawer, Empty, Input, Select, Space, Table, Tag, Typography } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
-import { useState } from 'react'
+import { Alert, Button, Empty, Input, Select, Space, Tag, Typography, Pagination, Avatar, Spin } from 'antd'
+import { useState, useEffect } from 'react'
 import {
   useAdminLienHe,
   useAdminLienHeDetail,
@@ -8,6 +7,14 @@ import {
 } from '../../services/admin/admin.hooks'
 import type { AdminLienHeItem, AdminLienHeStatus } from '../../types/admin'
 import { formatDateTime } from '../../utils/admin'
+import {
+  MailOutlined,
+  SearchOutlined,
+  CheckCircleOutlined,
+  UserOutlined,
+  SendOutlined,
+  MessageOutlined
+} from '@ant-design/icons'
 import './AdminLienHeListPage.css'
 
 const { Paragraph, Text, Title } = Typography
@@ -15,7 +22,7 @@ const { Paragraph, Text, Title } = Typography
 const statusOptions = [
   { value: 'moi', label: 'Mới', color: 'blue' },
   { value: 'dang_xu_ly', label: 'Đang xử lý', color: 'orange' },
-  { value: 'da_xu_ly', label: 'Đã xử lý', color: 'green' },
+  { value: 'da_xu_ly', label: 'Đã hoàn tất', color: 'green' },
   { value: 'bo_qua', label: 'Bỏ qua', color: 'default' },
 ]
 
@@ -23,7 +30,7 @@ export default function AdminLienHeListPage() {
   const [keyword, setKeyword] = useState('')
   const [statusFilter, setStatusFilter] = useState<string | undefined>()
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(15)
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [phanHoiInput, setPhanHoiInput] = useState('')
   const [replyStatus, setReplyStatus] = useState<AdminLienHeStatus>('dang_xu_ly')
@@ -37,6 +44,14 @@ export default function AdminLienHeListPage() {
   const detailQuery = useAdminLienHeDetail(selectedId ?? undefined)
   const updateStatusMutation = useUpdateAdminLienHeStatus()
 
+  // Reset input when ticket changes
+  useEffect(() => {
+    if (detailQuery.data) {
+      setPhanHoiInput('')
+      setReplyStatus(detailQuery.data.trangThai === 'moi' ? 'dang_xu_ly' : detailQuery.data.trangThai)
+    }
+  }, [detailQuery.data])
+
   const handleStatusChange = async (record: AdminLienHeItem, newStatus: AdminLienHeStatus, phanHoi?: string) => {
     await updateStatusMutation.mutateAsync({
       id: record.id,
@@ -47,256 +62,194 @@ export default function AdminLienHeListPage() {
     })
   }
 
-  const handleQuickReply = async (record: AdminLienHeItem, status: AdminLienHeStatus, phanHoi: string) => {
-    await handleStatusChange(record, status, phanHoi)
-    setSelectedId(null)
-    setPhanHoiInput('')
-  }
-
-  const columns: ColumnsType<AdminLienHeItem> = [
-    {
-      title: 'Người gửi',
-      key: 'sender',
-      width: 260,
-      render: (_, record) => (
-        <div className="admin-table-stack">
-          <Text strong>{record.hoTen}</Text>
-          <Text className="admin-muted">{record.email}</Text>
-          <Text className="admin-muted">{record.soDienThoai || '—'}</Text>
-        </div>
-      ),
-    },
-    {
-      title: 'Chủ đề',
-      dataIndex: 'chuDe',
-      key: 'chuDe',
-      width: 200,
-      render: (value) => <Text>{value}</Text>,
-    },
-    {
-      title: 'Nội dung',
-      key: 'noiDung',
-      width: 280,
-      render: (_, record) => (
-        <Text ellipsis={{ tooltip: record.noiDung }} style={{ maxWidth: 260 }}>
-          {record.noiDung}
-        </Text>
-      ),
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'trangThai',
-      key: 'trangThai',
-      width: 130,
-      render: (value: AdminLienHeStatus) => {
-        const meta = statusOptions.find((o) => o.value === value)
-        return <Tag color={meta?.color}>{meta?.label}</Tag>
-      },
-    },
-    {
-      title: 'Người xử lý',
-      key: 'processor',
-      width: 150,
-      render: (_, record) =>
-        record.hoTenNguoiXuLy ? (
-          <Text>{record.hoTenNguoiXuLy}</Text>
-        ) : (
-          <Text className="admin-muted">—</Text>
-        ),
-    },
-    {
-      title: 'Ngày gửi',
-      dataIndex: 'ngayGui',
-      key: 'ngayGui',
-      width: 160,
-      render: (value) => <Text className="admin-muted">{formatDateTime(value)}</Text>,
-    },
-    {
-      title: 'Thao tác',
-      key: 'actions',
-      width: 160,
-      render: (_, record) => (
-        <div className="admin-inline-actions">
-          <Button size="small" onClick={() => setSelectedId(record.id)}>
-            Xem
-          </Button>
-          {record.trangThai === 'moi' && (
-            <Button
-              size="small"
-              onClick={() => void handleStatusChange(record, 'dang_xu_ly')}
-            >
-              Tiếp nhận
-            </Button>
-          )}
-        </div>
-      ),
-    },
-  ]
-
-  const paginationConfig = {
-    current: page,
-    pageSize,
-    total: lienHeQuery.data?.totalCount ?? 0,
-    showSizeChanger: true,
-    showTotal: (total: number, range: [number, number]) => `${range[0]}–${range[1]} trong ${total} liên hệ`,
-    onChange: (newPage: number, newPageSize: number) => {
-      setPage(newPage)
-      setPageSize(newPageSize)
-    },
-  }
-
-  const handleDrawerClose = () => {
-    setSelectedId(null)
-    setPhanHoiInput('')
-    setReplyStatus('dang_xu_ly')
+  const handleQuickReply = async () => {
+    if (!detailQuery.data) return
+    await handleStatusChange(detailQuery.data, replyStatus, phanHoiInput)
   }
 
   return (
     <div className="admin-page">
-      <div className="admin-page-header">
-        <div>
-          <Title level={1}>Liên hệ & Hỗ trợ</Title>
-          <Paragraph>Quản lý tin nhắn hỗ trợ từ khách hàng, phản hồi và theo dõi trạng thái xử lý.</Paragraph>
+      <div className="admin-page-header" style={{ marginBottom: 0 }}>
+        <div className="mailbox-title-wrapper">
+          <div className="mailbox-header-icon">
+            <MailOutlined />
+          </div>
+          <div>
+            <Title level={1}>Hộp thư Hỗ trợ</Title>
+            <Paragraph>Hệ thống Ticket xử lý thắc mắc và khiếu nại của khách hàng.</Paragraph>
+          </div>
         </div>
       </div>
 
-      <div className="admin-page-card">
-        <div className="admin-filter-toolbar is-compact">
-          <Input
-            value={keyword}
-            onChange={(e) => { setKeyword(e.target.value); setPage(1) }}
-            placeholder="Tìm theo tên, email, SĐT, chủ đề..."
-            className="admin-filter-field"
-            allowClear
-          />
-          <Select
-            allowClear
-            value={statusFilter}
-            onChange={(v) => { setStatusFilter(v); setPage(1) }}
-            options={statusOptions}
-            placeholder="Trạng thái"
-            className="admin-filter-field"
-          />
-          <Button
-            className="admin-filter-button"
-            onClick={() => { setKeyword(''); setStatusFilter(undefined); setPage(1) }}
-          >
-            Xóa bộ lọc
-          </Button>
-        </div>
+      <div className="mailbox-container">
+        {/* LEFT PANE: TICKET LIST */}
+        <div className="mailbox-list-pane">
+          <div className="mailbox-list-header">
+            <Input
+              placeholder="Tìm tên, email, SĐT..."
+              prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
+              value={keyword}
+              onChange={(e) => { setKeyword(e.target.value); setPage(1) }}
+              allowClear
+              style={{ borderRadius: 8, height: 40 }}
+            />
+            <Select
+              placeholder="Lọc trạng thái"
+              options={statusOptions}
+              value={statusFilter}
+              onChange={(v) => { setStatusFilter(v); setPage(1) }}
+              allowClear
+              style={{ width: '100%', height: 40 }}
+            />
+          </div>
 
-        {lienHeQuery.isError && (
-          <Alert type="error" showIcon title={lienHeQuery.error instanceof Error ? lienHeQuery.error.message : 'Lỗi tải dữ liệu'} />
-        )}
-
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={lienHeQuery.data?.items ?? []}
-          loading={lienHeQuery.isLoading}
-          pagination={paginationConfig}
-          locale={{ emptyText: <Empty description="Chưa có liên hệ nào" /> }}
-          scroll={{ x: 1400 }}
-          className="admin-table"
-        />
-      </div>
-
-      <Drawer
-        title="Chi tiết liên hệ"
-        open={selectedId !== null}
-        onClose={handleDrawerClose}
-        width={560}
-        footer={
-          detailQuery.data && detailQuery.data.trangThai !== 'da_xu_ly' && detailQuery.data.trangThai !== 'bo_qua' ? (
-            <div className="admin-lien-he-drawer-footer">
-              <Select
-                value={replyStatus}
-                onChange={(v) => setReplyStatus(v)}
-                options={statusOptions.filter((o) => o.value !== 'moi')}
-                style={{ width: 160 }}
-              />
-              <Input.TextArea
-                value={phanHoiInput}
-                onChange={(e) => setPhanHoiInput(e.target.value)}
-                placeholder="Nhập nội dung phản hồi..."
-                rows={3}
-                style={{ flex: 1 }}
-              />
-              <Space>
-                <Button onClick={handleDrawerClose}>Đóng</Button>
-                <Button
-                  type="primary"
-                  loading={updateStatusMutation.isPending}
-                  onClick={() => {
-                    if (!detailQuery.data) return
-                    handleQuickReply(detailQuery.data, replyStatus, phanHoiInput)
-                  }}
-                  disabled={!phanHoiInput.trim() && replyStatus === 'dang_xu_ly'}
+          <div className="mailbox-list-scroll">
+            {lienHeQuery.isLoading ? (
+              <div style={{ padding: 40, textAlign: 'center' }}><Spin /></div>
+            ) : lienHeQuery.isError ? (
+              <Alert type="error" message="Lỗi tải dữ liệu" style={{ margin: 16 }} />
+            ) : lienHeQuery.data?.items.length === 0 ? (
+              <Empty description="Không tìm thấy liên hệ nào" style={{ marginTop: 40 }} />
+            ) : (
+              lienHeQuery.data?.items.map(item => (
+                <div 
+                  key={item.id} 
+                  className={`ticket-card ${selectedId === item.id ? 'active' : ''}`}
+                  onClick={() => setSelectedId(item.id)}
                 >
-                  Gửi phản hồi
-                </Button>
-              </Space>
-            </div>
-          ) : undefined
-        }
-      >
-        {detailQuery.isLoading ? null : detailQuery.data ? (
-          <div className="admin-lien-he-detail">
-            <div className="admin-info-list">
-              <div className="admin-info-item">
-                <Text className="admin-muted">Họ tên</Text>
-                <Text>{detailQuery.data.hoTen}</Text>
-              </div>
-              <div className="admin-info-item">
-                <Text className="admin-muted">Email</Text>
-                <Text>{detailQuery.data.email}</Text>
-              </div>
-              <div className="admin-info-item">
-                <Text className="admin-muted">Số điện thoại</Text>
-                <Text>{detailQuery.data.soDienThoai || '—'}</Text>
-              </div>
-              <div className="admin-info-item">
-                <Text className="admin-muted">Chủ đề</Text>
-                <Text>{detailQuery.data.chuDe}</Text>
-              </div>
-              <div className="admin-info-item">
-                <Text className="admin-muted">Trạng thái</Text>
-                <Tag color={statusOptions.find((o) => o.value === detailQuery.data!.trangThai)?.color}>
-                  {statusOptions.find((o) => o.value === detailQuery.data!.trangThai)?.label}
-                </Tag>
-              </div>
-              <div className="admin-info-item">
-                <Text className="admin-muted">Ngày gửi</Text>
-                <Text>{formatDateTime(detailQuery.data.ngayGui)}</Text>
-              </div>
-              {detailQuery.data.ngayXuLy && (
-                <div className="admin-info-item">
-                  <Text className="admin-muted">Ngày xử lý</Text>
-                  <Text>{formatDateTime(detailQuery.data.ngayXuLy)}</Text>
+                  <div className={`ticket-status-dot ${item.trangThai}`} />
+                  <div className="ticket-card-header">
+                    <span className="ticket-card-sender">{item.hoTen}</span>
+                    <span className="ticket-card-date">{new Date(item.ngayGui).toLocaleDateString('vi-VN')}</span>
+                  </div>
+                  <div className="ticket-card-subject">{item.chuDe}</div>
+                  <div className="ticket-card-preview">{item.noiDung}</div>
                 </div>
-              )}
-              {detailQuery.data.hoTenNguoiXuLy && (
-                <div className="admin-info-item">
-                  <Text className="admin-muted">Người xử lý</Text>
-                  <Text>{detailQuery.data.hoTenNguoiXuLy}</Text>
-                </div>
-              )}
-            </div>
-
-            <div className="admin-lien-he-content">
-              <Text className="admin-muted">Nội dung liên hệ</Text>
-              <div className="admin-lien-he-noi-dung">{detailQuery.data.noiDung}</div>
-            </div>
-
-            {detailQuery.data.phanHoi && (
-              <div className="admin-lien-he-content">
-                <Text className="admin-muted">Phản hồi của quản trị</Text>
-                <div className="admin-lien-he-phan-hoi">{detailQuery.data.phanHoi}</div>
-              </div>
+              ))
             )}
           </div>
-        ) : null}
-      </Drawer>
+
+          <div className="mailbox-list-footer">
+            <Pagination
+              simple
+              current={page}
+              pageSize={pageSize}
+              total={lienHeQuery.data?.totalCount ?? 0}
+              onChange={(p) => setPage(p)}
+            />
+          </div>
+        </div>
+
+        {/* RIGHT PANE: DETAIL & CHAT */}
+        <div className="mailbox-detail-pane">
+          {!selectedId ? (
+            <div className="mailbox-empty-state">
+              <MessageOutlined className="mailbox-empty-icon" />
+              <Title level={4} style={{ color: '#64748b', margin: 0 }}>Chọn một tin nhắn</Title>
+              <Text type="secondary">Vui lòng chọn một tin nhắn từ danh sách bên trái để xem chi tiết và phản hồi.</Text>
+            </div>
+          ) : detailQuery.isLoading ? (
+             <div className="mailbox-empty-state"><Spin size="large" /></div>
+          ) : detailQuery.data ? (
+            <>
+              <div className="ticket-detail-header">
+                <div>
+                  <Title level={3} className="ticket-detail-subject">{detailQuery.data.chuDe}</Title>
+                  <Space size={16}>
+                    <Space size={6}>
+                      <Avatar size="small" icon={<UserOutlined />} />
+                      <Text strong>{detailQuery.data.hoTen}</Text>
+                    </Space>
+                    <Text type="secondary">{detailQuery.data.email}</Text>
+                    {detailQuery.data.soDienThoai && <Text type="secondary">• {detailQuery.data.soDienThoai}</Text>}
+                  </Space>
+                </div>
+                <div className="ticket-detail-tags">
+                  <Tag color={statusOptions.find(o => o.value === detailQuery.data.trangThai)?.color} style={{ margin: 0, padding: '4px 12px', fontSize: 13, borderRadius: 16 }}>
+                    {statusOptions.find(o => o.value === detailQuery.data.trangThai)?.label}
+                  </Tag>
+                </div>
+              </div>
+
+              <div className="ticket-detail-body">
+                {/* Customer Message */}
+                <div className="message-bubble customer">
+                  <div className="message-meta">
+                    <span className="message-author">{detailQuery.data.hoTen}</span>
+                    <span className="message-time">{formatDateTime(detailQuery.data.ngayGui)}</span>
+                  </div>
+                  <div className="message-content">
+                    {detailQuery.data.noiDung}
+                  </div>
+                </div>
+
+                {/* Admin Reply (if exists) */}
+                {detailQuery.data.phanHoi && (
+                  <div className="message-bubble admin">
+                    <div className="message-meta">
+                      <span className="message-author">{detailQuery.data.hoTenNguoiXuLy || 'Quản trị viên'}</span>
+                      <span className="message-time">{formatDateTime(detailQuery.data.ngayXuLy!)}</span>
+                    </div>
+                    <div className="message-content">
+                      {detailQuery.data.phanHoi}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Reply Box */}
+              {detailQuery.data.trangThai !== 'da_xu_ly' && detailQuery.data.trangThai !== 'bo_qua' && (
+                <div className="ticket-detail-footer">
+                  <div className="reply-box">
+                    <textarea
+                      className="reply-textarea"
+                      rows={3}
+                      placeholder="Nhập nội dung phản hồi cho khách hàng..."
+                      value={phanHoiInput}
+                      onChange={e => setPhanHoiInput(e.target.value)}
+                    />
+                    <div className="reply-actions">
+                      <Space>
+                        <Text type="secondary" style={{ fontSize: 13 }}>Đánh dấu là:</Text>
+                        <Select
+                          value={replyStatus}
+                          onChange={setReplyStatus}
+                          options={statusOptions.filter(o => o.value !== 'moi')}
+                          style={{ width: 140 }}
+                          bordered={false}
+                        />
+                      </Space>
+                      <Button
+                        type="primary"
+                        icon={<SendOutlined />}
+                        loading={updateStatusMutation.isPending}
+                        onClick={handleQuickReply}
+                        disabled={!phanHoiInput.trim() && replyStatus === 'dang_xu_ly'}
+                        style={{ borderRadius: 8, padding: '0 24px', height: 36, background: '#10b981', borderColor: '#10b981' }}
+                      >
+                        Gửi phản hồi
+                      </Button>
+                    </div>
+                  </div>
+                  {detailQuery.data.trangThai === 'moi' && (
+                    <div style={{ marginTop: 12, textAlign: 'center' }}>
+                      <Text type="secondary" style={{ fontSize: 13 }}>Hoặc </Text>
+                      <Button 
+                        type="link" 
+                        icon={<CheckCircleOutlined />} 
+                        onClick={() => handleStatusChange(detailQuery.data, 'dang_xu_ly')}
+                        style={{ padding: 0 }}
+                      >
+                        Đánh dấu Đang xử lý
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
+          ) : null}
+        </div>
+      </div>
     </div>
   )
 }

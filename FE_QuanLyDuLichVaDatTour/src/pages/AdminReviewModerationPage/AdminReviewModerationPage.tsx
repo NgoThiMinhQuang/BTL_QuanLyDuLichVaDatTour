@@ -1,10 +1,11 @@
-import { Alert, Button, DatePicker, Empty, Form, Input, Popconfirm, Rate, Select, Space, Tag, Typography, Pagination } from 'antd'
+import { Alert, Button, DatePicker, Empty, Form, Input, Popconfirm, Rate, Select, Space, Tag, Typography, Table, Tooltip } from 'antd'
+import type { TableProps } from 'antd'
 import dayjs from 'dayjs'
 import { useMemo, useState, useEffect } from 'react'
 import { useAdminPendingReviews, useUpdateAdminReviewDisplayStatus } from '../../services/admin/admin.hooks'
 import type { AdminReviewDisplayStatus, AdminReviewItem } from '../../types/admin'
 import { adminReviewStatusMeta, formatDateTime } from '../../utils/admin'
-import { CheckCircleOutlined, EyeInvisibleOutlined, MessageOutlined } from '@ant-design/icons'
+import { CheckCircleOutlined, EyeInvisibleOutlined, MessageOutlined, StarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, SearchOutlined, LineChartOutlined } from '@ant-design/icons'
 import './AdminReviewModerationPage.css'
 
 const { Paragraph, Text, Title } = Typography
@@ -84,169 +85,201 @@ export default function AdminReviewModerationPage() {
     ? (filteredReviews.reduce((sum, review) => sum + review.soSao, 0) / filteredReviews.length).toFixed(1)
     : '0.0'
 
+  const tableColumns: TableProps<AdminReviewItem>['columns'] = [
+    {
+      title: 'Khách hàng & Thời gian',
+      key: 'customer',
+      width: 200,
+      render: (_, record) => (
+        <Space direction="vertical" size={2}>
+          <Text className="review-text-primary">{record.hoTenKhachHang}</Text>
+          <Text className="review-text-secondary">Booking: {record.maBooking}</Text>
+          <Text className="review-text-secondary">{formatDateTime(record.ngayDanhGia)}</Text>
+        </Space>
+      )
+    },
+    {
+      title: 'Nội dung đánh giá',
+      key: 'content',
+      render: (_, record) => (
+        <div>
+          <Space size={8} style={{ marginBottom: 4 }}>
+            <Rate disabled value={record.soSao} style={{ fontSize: 14, color: '#f59e0b' }} />
+            <Text strong style={{ color: '#334155' }}>{record.tenTour}</Text>
+          </Space>
+          <div className="review-content-box">
+            {record.noiDung}
+          </div>
+        </div>
+      )
+    },
+    {
+      title: 'Phản hồi Admin',
+      key: 'reply',
+      width: 300,
+      render: (_, record) => (
+        <Form form={responseForm} component={false}>
+          <Form.Item name={[record.id, 'phanHoiAdmin']} initialValue={record.phanHoiAdmin} style={{ marginBottom: 0 }}>
+            <Input.TextArea 
+              autoSize={{ minRows: 2, maxRows: 4 }} 
+              placeholder="Nhập phản hồi..." 
+              style={{ borderRadius: 8 }}
+            />
+          </Form.Item>
+        </Form>
+      )
+    },
+    {
+      title: 'Trạng thái',
+      key: 'status',
+      width: 120,
+      align: 'center',
+      render: (_, record) => {
+        const statusMeta = adminReviewStatusMeta[record.trangThai]
+        return (
+          <Tag className="review-status-pill" color={statusMeta.color}>
+            {statusMeta.label}
+          </Tag>
+        )
+      }
+    },
+    {
+      title: 'Thao tác',
+      key: 'action',
+      width: 100,
+      align: 'right',
+      render: (_, record) => (
+        <Space size={8}>
+          <Tooltip title="Duyệt">
+            <Popconfirm
+              title="Duyệt đánh giá này?"
+              onConfirm={() => void handleUpdateStatus(record, 'hien_thi')}
+              okText="Duyệt"
+              cancelText="Hủy"
+            >
+              <Button type="primary" shape="circle" icon={<CheckCircleOutlined />} size="small" />
+            </Popconfirm>
+          </Tooltip>
+          <Tooltip title="Ẩn">
+            <Popconfirm
+              title="Ẩn đánh giá này?"
+              onConfirm={() => void handleUpdateStatus(record, 'an')}
+              okText="Ẩn"
+              cancelText="Hủy"
+              okButtonProps={{ danger: true }}
+            >
+              <Button danger type="primary" shape="circle" icon={<EyeInvisibleOutlined />} size="small" />
+            </Popconfirm>
+          </Tooltip>
+        </Space>
+      )
+    }
+  ]
+
   return (
     <div className="admin-page">
       <div className="admin-page-header">
-        <div>
-          <Title level={1}>Duyệt đánh giá</Title>
-          <Paragraph>Quản trị phản hồi của khách hàng, kiểm soát đánh giá chờ duyệt và phản hồi nhanh cho từng nội dung.</Paragraph>
+        <div className="review-title-wrapper">
+          <div className="review-header-icon">
+            <StarOutlined />
+          </div>
+          <div>
+            <Title level={1}>Duyệt đánh giá</Title>
+            <Paragraph>Quản trị phản hồi của khách hàng, kiểm soát đánh giá chờ duyệt và phản hồi nhanh cho từng nội dung.</Paragraph>
+          </div>
         </div>
       </div>
 
-      <div className="admin-page-card">
-        <div className="admin-filter-toolbar is-compact" style={{ gridTemplateColumns: 'minmax(0, 1fr) 160px 120px 240px 100px', gap: 12 }}>
-          <Input
-            value={keyword}
-            onChange={(event) => setKeyword(event.target.value)}
-            placeholder="Tìm khách hàng, booking, tour, nội dung..."
-            className="admin-filter-field"
-            style={{ height: 40, borderRadius: 8 }}
-          />
-          <Select
-            allowClear
-            value={statusFilter}
-            onChange={(v) => setStatusFilter(v)}
-            options={statusFilterOptions}
-            placeholder="Trạng thái"
-            className="admin-filter-field"
-            style={{ height: 40, borderRadius: 8 }}
-          />
-          <Select
-            allowClear
-            value={starFilter}
-            onChange={(v) => setStarFilter(v)}
-            options={starFilterOptions}
-            placeholder="Số sao"
-            className="admin-filter-field"
-            style={{ height: 40, borderRadius: 8 }}
-          />
-          <RangePicker
-            value={dateRange}
-            onChange={(dates) => setDateRange(dates as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)}
-            className="admin-filter-field"
-            style={{ height: 40, borderRadius: 8, width: '100%' }}
-          />
-          <Button 
-            className="admin-filter-button" 
-            style={{ height: 40, borderRadius: 8 }}
-            onClick={() => {
-              setKeyword('')
-              setStatusFilter(undefined)
-              setStarFilter(undefined)
-              setDateRange(null)
-            }}
-          >
-            Xoá lọc
-          </Button>
-        </div>
-
-        <div className="admin-review-kpi-grid">
-          <div className="admin-review-kpi-card">
-            <span className="admin-review-kpi-label">Tổng review</span>
-            <span className="admin-review-kpi-value">{filteredReviews.length}</span>
+      <div className="admin-page-card" style={{ padding: '32px' }}>
+        <div className="review-stats-grid">
+          <div className="review-stat-card">
+            <div className="stat-icon"><MessageOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{filteredReviews.length}</div>
+              <div className="stat-label">Tổng review</div>
+            </div>
           </div>
-          <div className="admin-review-kpi-card">
-            <span className="admin-review-kpi-label">Review chờ duyệt</span>
-            <span className="admin-review-kpi-value">{filteredReviews.filter((r) => r.trangThai === 'cho_duyet').length}</span>
+          <div className="review-stat-card pending-stat">
+            <div className="stat-icon"><ExclamationCircleOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{filteredReviews.filter((r) => r.trangThai === 'cho_duyet').length}</div>
+              <div className="stat-label">Review chờ duyệt</div>
+            </div>
           </div>
-          <div className="admin-review-kpi-card">
-            <span className="admin-review-kpi-label">Đánh giá trung bình</span>
-            <span className="admin-review-kpi-value">{avgRating}</span>
+          <div className="review-stat-card avg-stat">
+            <div className="stat-icon"><LineChartOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{avgRating}</div>
+              <div className="stat-label">Đánh giá trung bình</div>
+            </div>
           </div>
-          <div className="admin-review-kpi-card">
-            <span className="admin-review-kpi-label">5 sao</span>
-            <span className="admin-review-kpi-value">{filteredReviews.filter((r) => r.soSao === 5).length}</span>
+          <div className="review-stat-card five-star-stat">
+            <div className="stat-icon"><StarOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{filteredReviews.filter((r) => r.soSao === 5).length}</div>
+              <div className="stat-label">5 Sao</div>
+            </div>
           </div>
         </div>
 
-        {hasError ? <Alert type="error" showIcon title={errorMessage} style={{ marginBottom: 20 }} /> : null}
-
-        <div className="admin-review-list-container">
-          {reviewsQuery.isLoading ? (
-            <Empty description="Đang tải dữ liệu..." />
-          ) : filteredReviews.length === 0 ? (
-            <Empty description="Không có đánh giá phù hợp" />
-          ) : (
-            paginatedReviews.map((review) => {
-              const statusMeta = adminReviewStatusMeta[review.trangThai]
-              
-              return (
-                <div key={review.id} className="admin-review-list-item">
-                  <div className="admin-review-item-header">
-                    <div className="admin-review-item-customer">
-                      <span className="admin-review-item-name">{review.hoTenKhachHang}</span>
-                      <span className="admin-review-item-meta">Booking: {review.maBooking} • {formatDateTime(review.ngayDanhGia)}</span>
-                    </div>
-                    <Space>
-                      <Rate disabled value={review.soSao} style={{ fontSize: 16 }} />
-                      <Tag color={statusMeta.color} style={{ margin: 0, fontWeight: 600 }}>{statusMeta.label}</Tag>
-                    </Space>
-                  </div>
-
-                  <div className="admin-review-item-content-wrap">
-                    <div className="admin-review-item-tour-tag">Tour: {review.tenTour}</div>
-                    <div className="admin-review-item-text">
-                      {review.noiDung}
-                      {review.phanHoiAdmin && (
-                        <div className="admin-review-item-reply">
-                          <MessageOutlined style={{ marginRight: 8 }} />
-                          Phản hồi của Admin: {review.phanHoiAdmin}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="admin-review-item-footer">
-                    <Form form={responseForm} component={false} className="admin-review-reply-input">
-                      <Form.Item name={[review.id, 'phanHoiAdmin']} style={{ marginBottom: 0 }}>
-                        <Input.TextArea 
-                          autoSize={{ minRows: 1, maxRows: 4 }} 
-                          placeholder="Viết phản hồi cho khách hàng tại đây..." 
-                          style={{ borderRadius: 8 }}
-                        />
-                      </Form.Item>
-                    </Form>
-                    <div className="admin-review-item-actions">
-                      <Popconfirm
-                        title="Duyệt đánh giá này?"
-                        onConfirm={() => void handleUpdateStatus(review, 'hien_thi')}
-                        okText="Duyệt"
-                        cancelText="Hủy"
-                      >
-                        <Button type="primary" icon={<CheckCircleOutlined />} loading={updateReviewStatusMutation.isPending}>
-                          Duyệt hiển thị
-                        </Button>
-                      </Popconfirm>
-                      <Popconfirm
-                        title="Ẩn đánh giá này?"
-                        onConfirm={() => void handleUpdateStatus(review, 'an')}
-                        okText="Ẩn"
-                        cancelText="Hủy"
-                        okButtonProps={{ danger: true }}
-                      >
-                        <Button danger icon={<EyeInvisibleOutlined />} loading={updateReviewStatusMutation.isPending}>
-                          Ẩn
-                        </Button>
-                      </Popconfirm>
-                    </div>
-                  </div>
-                </div>
-              )
-            })
-          )}
-        </div>
-
-        {filteredReviews.length > 0 && (
-          <div className="admin-review-list-pagination">
-            <Pagination 
-              current={currentPage} 
-              total={filteredReviews.length} 
-              pageSize={pageSize} 
-              onChange={(page) => setCurrentPage(page)} 
-              showSizeChanger={false}
+        <div className="review-filter-card">
+          <div className="admin-filter-toolbar is-compact" style={{ gridTemplateColumns: 'minmax(0, 1fr) 160px 120px 240px 100px', gap: 12, marginBottom: 0 }}>
+            <Input
+              prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+              value={keyword}
+              onChange={(event) => setKeyword(event.target.value)}
+              placeholder="Tìm khách hàng, booking, tour, nội dung..."
+              style={{ height: 44, borderRadius: 12 }}
             />
+            <Select
+              allowClear
+              value={statusFilter}
+              onChange={(v) => setStatusFilter(v)}
+              options={statusFilterOptions}
+              placeholder="Trạng thái"
+              style={{ height: 44, borderRadius: 12 }}
+            />
+            <Select
+              allowClear
+              value={starFilter}
+              onChange={(v) => setStarFilter(v)}
+              options={starFilterOptions}
+              placeholder="Số sao"
+              style={{ height: 44, borderRadius: 12 }}
+            />
+            <RangePicker
+              value={dateRange}
+              onChange={(dates) => setDateRange(dates as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)}
+              style={{ height: 44, borderRadius: 12, width: '100%' }}
+            />
+            <Button 
+              style={{ height: 44, borderRadius: 12 }}
+              onClick={() => {
+                setKeyword('')
+                setStatusFilter(undefined)
+                setStarFilter(undefined)
+                setDateRange(null)
+              }}
+            >
+              Xoá lọc
+            </Button>
           </div>
-        )}
+        </div>
+
+        {hasError ? <Alert type="error" showIcon title={errorMessage} style={{ marginBottom: 24 }} /> : null}
+
+        <div className="review-table">
+          <Table 
+            columns={tableColumns} 
+            dataSource={filteredReviews} 
+            rowKey="id" 
+            pagination={{ 
+              pageSize: 5,
+              showSizeChanger: false,
+            }} 
+            loading={reviewsQuery.isLoading}
+          />
+        </div>
       </div>
     </div>
   )

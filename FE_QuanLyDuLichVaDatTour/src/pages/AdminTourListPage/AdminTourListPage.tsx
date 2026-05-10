@@ -32,6 +32,18 @@ import {
   DeleteOutlined,
   MoreOutlined,
   PictureOutlined,
+  ClockCircleOutlined,
+  EnvironmentOutlined,
+  CarOutlined,
+  GlobalOutlined,
+  FileSyncOutlined,
+  ReloadOutlined,
+  EyeInvisibleOutlined,
+  FileTextOutlined,
+  CheckCircleOutlined,
+  PauseCircleOutlined,
+  StopOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons'
 
 const { Paragraph, Title, Text } = Typography
@@ -114,7 +126,7 @@ export default function AdminTourListPage() {
       const matchesKeyword = keyword.trim().length === 0
         ? true
         : [tour.maTour, tour.tenTour, tour.tenLoaiTour, tour.tenDiemXuatPhat, tour.phuongTien ?? '', ...(tour.diemDens ?? []).map((item) => item.tenDiaDiem)]
-            .some((value) => value.toLowerCase().includes(keyword.trim().toLowerCase()))
+          .some((value) => value.toLowerCase().includes(keyword.trim().toLowerCase()))
 
       const matchesStatus = activeStatus === 'tat_ca' ? true : tour.trangThai === activeStatus
       const matchesLoaiTour = loaiTourFilter === undefined ? true : tour.loaiTourId === loaiTourFilter
@@ -123,6 +135,15 @@ export default function AdminTourListPage() {
       return matchesKeyword && matchesStatus && matchesLoaiTour && matchesDiaDiem
     })
   }, [activeStatus, diaDiemFilter, keyword, loaiTourFilter, tours])
+
+  const stats = useMemo(() => {
+    return {
+      total: tours.length,
+      active: tours.filter(t => t.trangThai === 'dang_mo_ban').length,
+      paused: tours.filter(t => t.trangThai === 'tam_ngung').length,
+      inactive: tours.filter(t => t.trangThai === 'an' || t.trangThai === 'ngung_kinh_doanh').length,
+    }
+  }, [tours])
 
   useEffect(() => {
     setCurrentPage(1)
@@ -227,7 +248,7 @@ export default function AdminTourListPage() {
     const newIndex = direction === 'up' ? index - 1 : index + 1
     if (newIndex < 0 || newIndex >= destinations.length) return
     const reordered = [...destinations]
-    ;[reordered[index], reordered[newIndex]] = [reordered[newIndex], reordered[index]]
+      ;[reordered[index], reordered[newIndex]] = [reordered[newIndex], reordered[index]]
     const ids = reordered.map(d => d.id)
     await reorderDiemDenMutation.mutateAsync({ tourId: destTourId, diemDenIds: ids })
     void message.success('Đã sắp xếp lại điểm đến')
@@ -264,7 +285,7 @@ export default function AdminTourListPage() {
     const newIndex = direction === 'up' ? index - 1 : index + 1
     if (newIndex < 0 || newIndex >= images.length) return
     const reordered = [...images]
-    ;[reordered[index], reordered[newIndex]] = [reordered[newIndex], reordered[index]]
+      ;[reordered[index], reordered[newIndex]] = [reordered[newIndex], reordered[index]]
     const ids = reordered.map(img => img.id)
     await reorderAnhTourMutation.mutateAsync({ tourId: imageTourId, anhTourIds: ids })
     void message.success('Đã sắp xếp lại ảnh')
@@ -289,56 +310,80 @@ export default function AdminTourListPage() {
   const isSubmitting = createTourMutation.isPending || updateTourMutation.isPending
 
   const getTourActions = (record: AdminTourItem): MenuProps['items'] => {
-    const items: MenuProps['items'] = [
-      {
-        key: 'edit',
-        label: 'Chỉnh sửa tour',
-        icon: <EditOutlined />,
-        onClick: () => void handleOpenTourModal(record)
-      },
-      {
-        key: 'destinations',
-        label: 'Quản lý điểm đến',
-        icon: <EditOutlined />,
-        onClick: () => void handleOpenDestinationModal(record)
-      },
-      {
-        key: 'images',
-        label: 'Quản lý ảnh',
-        icon: <PictureOutlined />,
-        onClick: () => void handleOpenImageModal(record)
-      },
-      { type: 'divider' },
-    ]
-
-    statusOptions.forEach((status) => {
-      if (status.value !== record.trangThai) {
-        items.push({
-          key: `status-${status.value}`,
-          label: `Chuyển sang: ${status.label}`,
-          onClick: () => void updateStatusMutation.mutateAsync({ id: record.id, trangThai: status.value as AdminTourStatus })
-        })
+    const getStatusIcon = (status: string) => {
+      switch (status) {
+        case 'nhap': return <FileTextOutlined />
+        case 'dang_mo_ban': return <CheckCircleOutlined style={{ color: '#52c41a' }} />
+        case 'tam_ngung': return <PauseCircleOutlined style={{ color: '#faad14' }} />
+        case 'an': return <EyeInvisibleOutlined style={{ color: '#ff4d4f' }} />
+        case 'ngung_kinh_doanh': return <StopOutlined style={{ color: '#ff4d4f' }} />
+        default: return null
       }
-    })
-
-    items.push({ type: 'divider' })
-
-    if (record.trangThai === 'an') {
-      items.push({
-        key: 'restore',
-        label: 'Khôi phục tour',
-        onClick: () => void updateStatusMutation.mutateAsync({ id: record.id, trangThai: 'nhap' })
-      })
-    } else {
-      items.push({
-        key: 'hide',
-        label: 'Ẩn tour',
-        danger: true,
-        onClick: () => void hideTourMutation.mutateAsync(record.id)
-      })
     }
 
-    return items
+    const statusItems = statusOptions
+      .filter((status) => status.value !== record.trangThai)
+      .map((status) => ({
+        key: `status-${status.value}`,
+        label: status.label,
+        icon: getStatusIcon(status.value),
+        onClick: () => void updateStatusMutation.mutateAsync({ id: record.id, trangThai: status.value as AdminTourStatus })
+      }))
+
+    return [
+      {
+        key: 'grp-content',
+        type: 'group',
+        label: 'QUẢN LÝ NỘI DUNG',
+        children: [
+          {
+            key: 'edit',
+            label: 'Chỉnh sửa tour',
+            icon: <EditOutlined />,
+            onClick: () => void handleOpenTourModal(record)
+          },
+          {
+            key: 'destinations',
+            label: 'Quản lý điểm đến',
+            icon: <EnvironmentOutlined />,
+            onClick: () => void handleOpenDestinationModal(record)
+          },
+          {
+            key: 'images',
+            label: 'Quản lý ảnh',
+            icon: <PictureOutlined />,
+            onClick: () => void handleOpenImageModal(record)
+          },
+        ]
+      },
+      { type: 'divider' },
+      {
+        key: 'status-change',
+        label: 'Trạng thái hiển thị',
+        icon: <FileSyncOutlined />,
+        children: statusItems
+      },
+      { type: 'divider' },
+      {
+        key: 'grp-danger',
+        type: 'group',
+        label: 'HÀNH ĐỘNG KHÁC',
+        children: [
+          record.trangThai === 'an' ? {
+            key: 'restore',
+            label: 'Khôi phục tour',
+            icon: <ReloadOutlined />,
+            onClick: () => void updateStatusMutation.mutateAsync({ id: record.id, trangThai: 'nhap' })
+          } : {
+            key: 'hide',
+            label: 'Ẩn tour tạm thời',
+            icon: <EyeInvisibleOutlined />,
+            danger: true,
+            onClick: () => void hideTourMutation.mutateAsync(record.id)
+          }
+        ]
+      }
+    ]
   }
 
   const currentDestinations = selectedTour?.diemDens ?? []
@@ -356,7 +401,38 @@ export default function AdminTourListPage() {
         </Button>
       </div>
 
-      <div className="admin-tour-list-card">
+      <div className="admin-tour-list-card" style={{ padding: '32px' }}>
+        <div className="tour-stats-grid">
+          <div className="tour-stat-card">
+            <div className="stat-icon"><AppstoreOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.total}</div>
+              <div className="stat-label">Tổng số tour</div>
+            </div>
+          </div>
+          <div className="tour-stat-card active-stat">
+            <div className="stat-icon"><CheckCircleOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.active}</div>
+              <div className="stat-label">Đang mở bán</div>
+            </div>
+          </div>
+          <div className="tour-stat-card paused-stat">
+            <div className="stat-icon"><PauseCircleOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.paused}</div>
+              <div className="stat-label">Tạm ngưng</div>
+            </div>
+          </div>
+          <div className="tour-stat-card inactive-stat">
+            <div className="stat-icon"><StopOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.inactive}</div>
+              <div className="stat-label">Ngừng / Ẩn</div>
+            </div>
+          </div>
+        </div>
+
         <div className="admin-tour-list-toolbar">
           <Input
             value={keyword}
@@ -413,45 +489,87 @@ export default function AdminTourListPage() {
           ) : (
             paginatedTours.map((tour) => {
               const avatar = tour.anhTours?.find(a => a.isAvatar)?.linkAnh || tour.anhTours?.[0]?.linkAnh
+              
+              // Status dropdown menu
+              const statusMenu = {
+                items: statusOptions
+                  .filter((s) => s.value !== tour.trangThai)
+                  .map((s) => ({
+                    key: s.value,
+                    label: s.label,
+                    onClick: () => void updateStatusMutation.mutateAsync({ id: tour.id, trangThai: s.value as AdminTourStatus })
+                  }))
+              }
+
               return (
-                <div key={tour.id} className="admin-tour-list-item">
-                  <div className="admin-tour-item-main">
+                <div key={tour.id} className="admin-tour-row">
+                  <div className="tour-col-image">
                     {avatar ? (
-                      <img src={avatar} alt={tour.tenTour} className="admin-tour-item-image" />
+                      <img src={avatar} alt={tour.tenTour} className="tour-mini-image" />
                     ) : (
-                      <div className="admin-tour-item-image-placeholder">
-                        <PictureOutlined />
-                      </div>
+                      <div className="tour-mini-image-placeholder"><PictureOutlined /></div>
                     )}
-                    <div className="admin-tour-item-info">
-                      <h3 className="admin-tour-item-title">{tour.tenTour}</h3>
-                      <span className="admin-tour-item-meta">
-                        {tour.maTour} • {tour.tenLoaiTour}
-                      </span>
-                      <span className="admin-tour-item-meta">
-                        Khởi hành từ: {tour.tenDiemXuatPhat}
-                      </span>
+                  </div>
+
+                  <div className="tour-col-info">
+                    <div className="tour-title-wrap">
+                      <h3 className="tour-name">{tour.tenTour}</h3>
+                      {tour.isNoiBat && <Tag color="gold" size="small" className="tour-badge-featured">Nổi bật</Tag>}
+                    </div>
+                    <div className="tour-meta-row">
+                      <span className="tour-code-tag">{tour.maTour}</span>
+                      <span className="tour-type">{tour.tenLoaiTour}</span>
                     </div>
                   </div>
-                  <div className="admin-tour-item-itinerary">
-                    <Text strong style={{ fontSize: 13 }}>{getDurationLabel(tour)} • {tour.phuongTien || 'Chưa có phương tiện'}</Text>
-                    <Text type="secondary" style={{ fontSize: 13 }}>
-                      Điểm đến: {tour.diemDens.length > 0 ? tour.diemDens.map(d => d.tenDiaDiem).join(', ') : 'Chưa có'}
-                    </Text>
-                    <Text type="secondary" style={{ fontSize: 12 }}>{tour.anhTours.length} ảnh</Text>
+
+                  <div className="tour-col-stats">
+                    <div className="stat-line">
+                      <ClockCircleOutlined /> <span>{getDurationLabel(tour)}</span>
+                    </div>
+                    <div className="stat-line">
+                      <EnvironmentOutlined /> <span title={tour.tenDiemXuatPhat}>Từ: {tour.tenDiemXuatPhat}</span>
+                    </div>
                   </div>
-                  <div className="admin-tour-item-pricing">
-                    <Tag color={adminTourStatusMeta[tour.trangThai].color} style={{ margin: 0, fontWeight: 600 }}>
-                      {adminTourStatusMeta[tour.trangThai].label}
-                    </Tag>
-                    <div className="admin-tour-item-price">{formatMoney(tour.giaTuThamKhao)}</div>
-                    {tour.isNoiBat && <Tag color="gold" style={{ margin: 0 }}>Nổi bật</Tag>}
-                  </div>
-                  <div className="admin-tour-item-actions">
-                    <Button onClick={() => void handleOpenTourModal(tour)}>Sửa</Button>
-                    <Dropdown menu={{ items: getTourActions(tour) }} trigger={['click']} placement="bottomRight">
-                      <Button icon={<MoreOutlined />} />
+
+                  <div className="tour-col-status">
+                    <Dropdown menu={statusMenu} trigger={['click']} placement="bottomCenter">
+                      <Tag 
+                        color={adminTourStatusMeta[tour.trangThai].color} 
+                        className="status-dropdown-tag"
+                      >
+                        {adminTourStatusMeta[tour.trangThai].label} <ArrowDownOutlined style={{ fontSize: 10 }} />
+                      </Tag>
                     </Dropdown>
+                  </div>
+
+                  <div className="tour-col-price">
+                    <div className="price-value">{formatMoney(tour.giaTuThamKhao)}</div>
+                  </div>
+
+                  <div className="tour-col-actions">
+                    <div className="quick-actions">
+                      <Button 
+                        type="text" 
+                        icon={<EditOutlined />} 
+                        title="Sửa tour"
+                        onClick={() => void handleOpenTourModal(tour)}
+                      />
+                      <Button 
+                        type="text" 
+                        icon={<EnvironmentOutlined />} 
+                        title="Điểm đến"
+                        onClick={() => void handleOpenDestinationModal(tour)}
+                      />
+                      <Button 
+                        type="text" 
+                        icon={<PictureOutlined />} 
+                        title="Quản lý ảnh"
+                        onClick={() => void handleOpenImageModal(tour)}
+                      />
+                      <Dropdown menu={{ items: getTourActions(tour) }} trigger={['click']} placement="bottomRight">
+                        <Button type="text" icon={<MoreOutlined />} />
+                      </Dropdown>
+                    </div>
                   </div>
                 </div>
               )

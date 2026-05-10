@@ -1,4 +1,5 @@
-import { Alert, Button, Empty, Form, Input, Modal, Select, Space, Table, Tag, Typography } from 'antd'
+import { EnvironmentOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
+import { Alert, Button, Empty, Form, Input, Modal, Select, Space, Table, Tooltip, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
 import {
@@ -47,15 +48,24 @@ export default function AdminDiaDiemListPage() {
     })
   }, [diaDiemsQuery.data, keyword, statusFilter])
 
+  const stats = useMemo(() => {
+    const items = diaDiemsQuery.data ?? []
+    return {
+      total: items.length,
+      active: items.filter(i => i.trangThai === 'hoat_dong').length,
+      inactive: items.filter(i => i.trangThai === 'an').length,
+    }
+  }, [diaDiemsQuery.data])
+
   const columns: ColumnsType<AdminDiaDiemItem> = [
     {
       title: 'Điểm đi',
       key: 'location',
       render: (_, record) => (
         <div className="admin-table-stack">
-          <Text strong>{record.tenDiaDiem}</Text>
-          <Text className="admin-muted">{record.tinhThanh || 'Chưa có tỉnh thành'} • {record.quocGia}</Text>
-          <Text className="admin-muted">{record.moTa || 'Chưa có mô tả'}</Text>
+          <Text strong style={{ fontSize: '16px', color: '#1e293b' }}>{record.tenDiaDiem}</Text>
+          <Text className="admin-muted" style={{ fontSize: '14px' }}>{record.tinhThanh || 'Chưa có tỉnh thành'} • {record.quocGia}</Text>
+          <Text className="admin-muted" style={{ fontSize: '14px' }}>{record.moTa || 'Chưa có mô tả'}</Text>
         </div>
       ),
     },
@@ -64,7 +74,15 @@ export default function AdminDiaDiemListPage() {
       dataIndex: 'trangThai',
       key: 'trangThai',
       width: 160,
-      render: (value: AdminDiaDiemStatus) => <Tag color={adminDiaDiemStatusMeta[value].color}>{adminDiaDiemStatusMeta[value].label}</Tag>,
+      render: (value: AdminDiaDiemStatus) => {
+        const isActive = value === 'hoat_dong'
+        return (
+          <div className={`location-status-pill ${isActive ? 'active' : 'inactive'}`}>
+            <div className="status-dot"></div>
+            {adminDiaDiemStatusMeta[value].label}
+          </div>
+        )
+      },
     },
     {
       title: 'Cập nhật',
@@ -76,34 +94,44 @@ export default function AdminDiaDiemListPage() {
     {
       title: 'Thao tác',
       key: 'actions',
-      width: 220,
-      render: (_, record) => (
-        <div className="admin-inline-actions">
-          <Button onClick={() => {
-            setEditingItem(record)
-            setModalOpen(true)
-            form.setFieldsValue({
-              tenDiaDiem: record.tenDiaDiem,
-              tinhThanh: record.tinhThanh ?? undefined,
-              quocGia: record.quocGia,
-              moTa: record.moTa ?? undefined,
-              trangThai: record.trangThai,
-            })
-          }}>
-            Chỉnh sửa
-          </Button>
-          <Button
-            type="primary"
-            className="admin-primary-button"
-            onClick={() => void updateStatusMutation.mutateAsync({
-              id: record.id,
-              trangThai: record.trangThai === 'hoat_dong' ? 'an' : 'hoat_dong',
-            })}
-          >
-            {record.trangThai === 'hoat_dong' ? 'Ẩn' : 'Kích hoạt'}
-          </Button>
-        </div>
-      ),
+      width: 140,
+      align: 'center',
+      render: (_, record) => {
+        const isActive = record.trangThai === 'hoat_dong'
+        return (
+          <Space size="middle">
+            <Tooltip title="Chỉnh sửa">
+              <button 
+                className="location-action-btn edit"
+                onClick={() => {
+                  setEditingItem(record)
+                  setModalOpen(true)
+                  form.setFieldsValue({
+                    tenDiaDiem: record.tenDiaDiem,
+                    tinhThanh: record.tinhThanh ?? undefined,
+                    quocGia: record.quocGia,
+                    moTa: record.moTa ?? undefined,
+                    trangThai: record.trangThai,
+                  })
+                }}
+              >
+                <EditOutlined />
+              </button>
+            </Tooltip>
+            <Tooltip title={isActive ? 'Ẩn' : 'Kích hoạt'}>
+              <button 
+                className={`location-action-btn toggle ${isActive ? '' : 'activate'}`}
+                onClick={() => void updateStatusMutation.mutateAsync({
+                  id: record.id,
+                  trangThai: isActive ? 'an' : 'hoat_dong',
+                })}
+              >
+                {isActive ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+              </button>
+            </Tooltip>
+          </Space>
+        )
+      },
     },
   ]
 
@@ -126,46 +154,72 @@ export default function AdminDiaDiemListPage() {
     <div className="admin-page">
       <div className="admin-page-header">
         <div>
-          <Title level={1}>Quản lý điểm đi</Title>
-          <Paragraph>Chuẩn hoá dữ liệu địa điểm xuất phát để phục vụ tour, lịch khởi hành và tìm kiếm trên toàn hệ thống.</Paragraph>
+          <div className="location-title-wrapper">
+            <div className="location-header-icon">
+              <EnvironmentOutlined />
+            </div>
+            <div>
+              <Title level={1}>Quản lý điểm đi</Title>
+              <Paragraph>Chuẩn hoá dữ liệu địa điểm xuất phát để phục vụ tour, lịch khởi hành và tìm kiếm trên toàn hệ thống.</Paragraph>
+            </div>
+          </div>
         </div>
         <div className="admin-page-header-actions">
           <Button
             type="primary"
-            className="admin-primary-button"
+            className="location-add-btn"
+            icon={<PlusOutlined />}
             onClick={() => {
               setEditingItem(null)
               setModalOpen(true)
               form.setFieldsValue({ quocGia: 'Việt Nam', trangThai: 'hoat_dong' })
             }}
           >
-            + Thêm điểm đi
+            Thêm điểm đi
           </Button>
         </div>
       </div>
 
-      <div className="admin-page-card">
-        <div className="admin-filter-toolbar is-compact">
-          <Input
-            value={keyword}
-            onChange={(event) => setKeyword(event.target.value)}
-            placeholder="Tìm theo tên địa điểm, tỉnh thành hoặc quốc gia..."
-            className="admin-filter-field"
-          />
-          <Select
-            allowClear
-            value={statusFilter}
-            onChange={(value) => setStatusFilter(value)}
-            options={statusOptions}
-            placeholder="Trạng thái"
-            className="admin-filter-field"
-          />
-          <Button className="admin-filter-button" onClick={() => {
-            setKeyword('')
-            setStatusFilter(undefined)
-          }}>
-            Xoá bộ lọc
-          </Button>
+      <div className="admin-page-card" style={{ padding: '32px' }}>
+        <div className="location-stats-grid">
+          <div className="location-stat-card">
+            <div className="stat-label">Tổng số điểm đi</div>
+            <div className="stat-value">{stats.total}</div>
+          </div>
+          <div className="location-stat-card active-stat">
+            <div className="stat-label">Đang hoạt động</div>
+            <div className="stat-value">{stats.active}</div>
+          </div>
+          <div className="location-stat-card inactive-stat">
+            <div className="stat-label">Đã ẩn</div>
+            <div className="stat-value">{stats.inactive}</div>
+          </div>
+        </div>
+
+        <div className="location-filter-card">
+          <div className="location-filter-toolbar">
+            <Input
+              prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+              value={keyword}
+              onChange={(event) => setKeyword(event.target.value)}
+              placeholder="Tìm theo tên địa điểm, tỉnh thành hoặc quốc gia..."
+              className="admin-filter-field"
+            />
+            <Select
+              allowClear
+              value={statusFilter}
+              onChange={(value) => setStatusFilter(value)}
+              options={statusOptions}
+              placeholder="Trạng thái"
+              className="admin-filter-field"
+            />
+            <Button className="admin-filter-button" onClick={() => {
+              setKeyword('')
+              setStatusFilter(undefined)
+            }}>
+              Xoá bộ lọc
+            </Button>
+          </div>
         </div>
 
         {hasError ? <Alert type="error" showIcon title={errorMessage} /> : null}
@@ -177,7 +231,7 @@ export default function AdminDiaDiemListPage() {
           loading={diaDiemsQuery.isLoading}
           pagination={{ pageSize: 8, showSizeChanger: false }}
           locale={{ emptyText: <Empty description="Chưa có điểm đi" /> }}
-          className="admin-table"
+          className="admin-table location-table"
         />
       </div>
 

@@ -1,3 +1,241 @@
-.admin-cancellation-page {
+@import '../../styles/admin.css';
+
+/* Header Styling */
+.cancel-header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: white;
+  font-size: 24px;
+  margin-right: 16px;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+}
+
+.cancel-title-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.cancel-title-wrapper .ant-typography {
+  margin-bottom: 0 !important;
+}
+
+/* Grid Layout */
+.cancel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+/* Cancel Card */
+.cancel-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.cancel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  border-color: #cbd5e1;
+}
+
+.cancel-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+}
+
+.cancel-card-code {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cancel-card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.cancel-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.cancel-info-icon {
+  color: #94a3b8;
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+.cancel-info-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.cancel-info-label {
+  font-size: 12px;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.cancel-info-value {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Reason Box */
+.cancel-reason-box {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 8px;
+}
+
+.cancel-reason-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ef4444;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cancel-reason-text {
+  font-size: 14px;
+  color: #7f1d1d;
+  line-height: 1.5;
+}
+
+/* Footer Actions */
+.cancel-card-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #f1f5f9;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: white;
+}
+
+.cancel-btn {
+  height: 40px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+}
+
+.cancel-btn-reject {
+  background: white !important;
+  color: #ef4444 !important;
+  border-color: #fca5a5 !important;
+}
+
+.cancel-btn-reject:hover {
+  background: #fef2f2 !important;
+  border-color: #ef4444 !important;
+}
+
+.cancel-btn-approve {
+  background: #ef4444 !important;
+  color: white !important;
+  border: none !important;
+}
+
+.cancel-btn-approve:hover {
+  background: #dc2626 !important;
+}
+
+/* Empty State */
+.cancel-empty {
+  padding: 64px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 16px;
+  border: 1px dashed #cbd5e1;
+  margin-top: 24px;
+}
+
+.cancel-empty-icon {
+  font-size: 64px;
+  color: #10b981;
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+/* Modal Customization */
+.cancel-modal .ant-modal-content {
+  border-radius: 16px;
   padding: 24px;
+}
+
+.cancel-modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.cancel-modal-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.cancel-modal-icon.approve {
+  color: #ef4444;
+}
+
+.cancel-modal-icon.reject {
+  color: #f59e0b;
+}
+
+.cancel-modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.cancel-modal-desc {
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.cancel-modal-textarea {
+  border-radius: 12px !important;
+  padding: 12px !important;
+  background: #f8fafc !important;
+}
+
+.cancel-modal-textarea:focus {
+  background: white !important;
 }

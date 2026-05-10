@@ -12,11 +12,13 @@ namespace BE_QuanLyDuLichVaDatTour.Controllers;
 public class BookingController : ControllerBase
 {
     private readonly IBookingService _bookingService;
+    private readonly ISeatHoldService _seatHoldService;
     private readonly IInvoiceExportService _invoiceService;
 
-    public BookingController(IBookingService bookingService, IInvoiceExportService invoiceService)
+    public BookingController(IBookingService bookingService, ISeatHoldService seatHoldService, IInvoiceExportService invoiceService)
     {
         _bookingService = bookingService;
+        _seatHoldService = seatHoldService;
         _invoiceService = invoiceService;
     }
 
@@ -126,6 +128,89 @@ public class BookingController : ControllerBase
         catch (KeyNotFoundException ex)
         {
             return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("hold")]
+    public async Task<IActionResult> CreateHold([FromBody] CreateSeatHoldRequestDto request)
+    {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            var response = await _seatHoldService.CreateHoldAsync(userId, request);
+            return StatusCode(StatusCodes.Status201Created, response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("hold/{token}")]
+    public async Task<IActionResult> GetHold(string token)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        var response = await _seatHoldService.GetHoldAsync(userId, token);
+        if (response is null)
+            return NotFound(new { message = "Hold không tồn tại." });
+
+        return Ok(response);
+    }
+
+    [HttpDelete("hold/{token}")]
+    public async Task<IActionResult> ReleaseHold(string token)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            await _seatHoldService.ReleaseHoldAsync(userId, token);
+            return Ok(new { message = "Đã hủy giữ chỗ." });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
+        }
+    }
+
+    [HttpPost("hold/{token}/extend")]
+    public async Task<IActionResult> ExtendHold(string token)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            var response = await _seatHoldService.ExtendHoldAsync(userId, token);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
         }
     }
 

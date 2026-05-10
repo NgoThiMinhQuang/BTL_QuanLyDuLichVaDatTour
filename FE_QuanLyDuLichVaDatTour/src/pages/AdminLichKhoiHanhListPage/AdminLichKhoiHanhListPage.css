@@ -1,1 +1,236 @@
 @import '../../styles/admin.css';
+
+/* Header Styling */
+.schedule-header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  font-size: 22px;
+  margin-right: 16px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.admin-page-header .ant-btn-primary {
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* Reference-perfect Stats Grid */
+.schedule-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.schedule-stat-card {
+  background: white;
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.schedule-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+}
+
+.schedule-stat-card.total { border-left-color: #3b82f6; }
+.schedule-stat-card.fill { border-left-color: #10b981; }
+.schedule-stat-card.upcoming { border-left-color: #f59e0b; }
+.schedule-stat-card.revenue { border-left-color: #ef4444; }
+
+.schedule-stat-card .stat-icon-box {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.schedule-stat-card.total .stat-icon-box { background: #eff6ff; color: #3b82f6; }
+.schedule-stat-card.fill .stat-icon-box { background: #ecfdf5; color: #10b981; }
+.schedule-stat-card.upcoming .stat-icon-box { background: #fff7ed; color: #f59e0b; }
+.schedule-stat-card.revenue .stat-icon-box { background: #fef2f2; color: #ef4444; }
+
+.schedule-stat-card .stat-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.schedule-stat-card .stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.1;
+}
+
+.schedule-stat-card .stat-label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* Filter Section - Reference Style */
+.schedule-filter-section {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  margin-bottom: 24px;
+}
+
+.filter-inputs-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.schedule-filter-section .ant-input-affix-wrapper,
+.schedule-filter-section .ant-select-selector,
+.schedule-filter-section .ant-btn {
+  border-radius: 8px !important;
+  border-color: #e2e8f0 !important;
+}
+
+.status-tabs-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.status-tab {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.status-tab:hover {
+  background: #f1f5f9;
+}
+
+.status-tab.active {
+  background: #eff6ff;
+  color: #3b82f6;
+  box-shadow: inset 0 0 0 1px #bfdbfe;
+}
+
+/* Table Style Refinement */
+.inventory-table .ant-table-thead > tr > th {
+  background: #f8fafc;
+  padding: 16px 20px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.tour-name-bold {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.batch-tag {
+  font-size: 10px;
+  font-weight: 800;
+  color: #3b82f6;
+  background: #eff6ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  width: fit-content;
+  margin-bottom: 4px;
+  display: inline-block;
+}
+
+/* Action Buttons */
+.inventory-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #f1f5f9;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.inventory-action-btn:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #eff6ff;
+}
+
+/* Schedule Cell */
+.schedule-card-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.date-pill-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.nights-badge {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.location-subtext {
+  font-size: 12px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Capacity Progress */
+.capacity-progress-wrapper {
+  width: 180px;
+}
+
+.capacity-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}

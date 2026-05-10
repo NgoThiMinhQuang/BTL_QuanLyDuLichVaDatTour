@@ -105,6 +105,8 @@ builder.Services.AddScoped<IYeuCauHuyTourRepository, YeuCauHuyTourRepository>();
 builder.Services.AddScoped<IYeuCauHuyTourService, YeuCauHuyTourService>();
 builder.Services.AddScoped<IThongBaoRepository, ThongBaoRepository>();
 builder.Services.AddScoped<IThongBaoService, ThongBaoService>();
+builder.Services.AddScoped<ISeatHoldRepository, SeatHoldRepository>();
+builder.Services.AddScoped<ISeatHoldService, SeatHoldService>();
 
 var app = builder.Build();
 
@@ -123,6 +125,29 @@ using (var scope = app.Services.CreateScope())
             IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE Name = N'HinhAnh' AND Object_ID = Object_ID(N'DanhGiaTour'))
             BEGIN
                 ALTER TABLE DanhGiaTour ADD HinhAnh NVARCHAR(MAX) NULL;
+            END";
+        await cmd.ExecuteNonQueryAsync();
+
+        // Tạo bảng SeatHold nếu chưa có
+        cmd.CommandText = @"
+            IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'SeatHold')
+            BEGIN
+                CREATE TABLE SeatHold (
+                    SeatHoldId      BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+                    LichKhoiHanhId  BIGINT NOT NULL,
+                    KhachHangId     BIGINT NOT NULL,
+                    SoCho           SMALLINT NOT NULL,
+                    HoldToken       NVARCHAR(64) NOT NULL,
+                    ExpiresAt       DATETIME2 NOT NULL,
+                    TrangThai       NVARCHAR(20) NOT NULL DEFAULT N'active',
+                    CreatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                    UpdatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                    CONSTRAINT FK_SeatHold_LichKhoiHanh FOREIGN KEY (LichKhoiHanhId) REFERENCES LichKhoiHanh(LichKhoiHanhId),
+                    CONSTRAINT FK_SeatHold_KhachHang FOREIGN KEY (KhachHangId) REFERENCES NguoiDung(NguoiDungId),
+                    CONSTRAINT UQ_SeatHold_Token UNIQUE (HoldToken)
+                );
+                CREATE INDEX IdxSeatHold_LichKhoiHanh_Active ON SeatHold(LichKhoiHanhId, TrangThai);
+                CREATE INDEX IdxSeatHold_ExpiresAt ON SeatHold(ExpiresAt);
             END";
         await cmd.ExecuteNonQueryAsync();
 

@@ -1,4 +1,5 @@
-import { Alert, Button, Descriptions, Drawer, Empty, Form, Input, Select, Space, Tag, Typography, Modal, Pagination, Dropdown } from 'antd'
+import { Alert, Button, Descriptions, Drawer, Empty, Form, Input, Select, Space, Tag, Typography, Modal, Dropdown, Table, Tooltip } from 'antd'
+import type { TableProps } from 'antd'
 import type { MenuProps } from 'antd'
 import { useMemo, useState, useEffect } from 'react'
 import { useAdminPayment, useAdminPayments, useUpdateAdminPaymentStatus } from '../../services/admin/admin.hooks'
@@ -12,7 +13,7 @@ import {
   formatDateTime,
   mapStatusOptions,
 } from '../../utils/admin'
-import { MoreOutlined, InfoCircleOutlined, UndoOutlined, CheckCircleOutlined } from '@ant-design/icons'
+import { MoreOutlined, InfoCircleOutlined, UndoOutlined, CheckCircleOutlined, DollarOutlined, ClockCircleOutlined, SearchOutlined, EyeOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import './AdminPaymentListPage.css'
 
 const { Paragraph, Text, Title } = Typography
@@ -52,14 +53,106 @@ export default function AdminPaymentListPage() {
     })
   }, [keyword, payments, statusFilter])
 
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [keyword, statusFilter])
+  const stats = useMemo(() => {
+    return {
+      total: payments.length,
+      success: payments.filter(p => p.trangThai === 'thanh_cong').length,
+      pending: payments.filter(p => p.trangThai === 'dang_xu_ly' || p.trangThai === 'cho_thanh_toan').length,
+      failed: payments.filter(p => p.trangThai === 'da_hoan_tien' || p.trangThai === 'that_bai').length,
+    }
+  }, [payments])
 
-  const paginatedPayments = useMemo(() => {
-    const start = (currentPage - 1) * pageSize
-    return filteredPayments.slice(start, start + pageSize)
-  }, [filteredPayments, currentPage])
+  const tableColumns: TableProps<AdminPaymentItem>['columns'] = [
+    {
+      title: 'Giao dịch',
+      key: 'transaction',
+      render: (_, record) => (
+        <Space direction="vertical" size={0}>
+          <Text className="payment-text-accent">{record.maGiaoDichNoiBo || `#${record.id}`}</Text>
+          <Text className="payment-text-primary">{record.hoTenKhachHang}</Text>
+          <Text className="payment-text-secondary">{record.maBooking}</Text>
+        </Space>
+      )
+    },
+    {
+      title: 'Phân loại',
+      key: 'classification',
+      render: (_, record) => {
+        const typeMeta = adminPaymentTransactionTypeMeta[record.loaiGiaoDich as keyof typeof adminPaymentTransactionTypeMeta]
+        const channelMeta = adminPaymentChannelMeta[record.kenhThanhToan as keyof typeof adminPaymentChannelMeta]
+        return (
+          <Space direction="vertical" size={4}>
+            <Tag color={typeMeta?.color || 'default'} style={{ margin: 0 }}>
+              {typeMeta?.label || record.loaiGiaoDich}
+            </Tag>
+            <Space size={4}>
+              <Tag color="default" style={{ margin: 0, background: '#f8fafc', border: 'none', color: '#64748b' }}>
+                {channelMeta?.label || record.kenhThanhToan}
+              </Tag>
+              {record.phuongThucThanhToan && (
+                <Tag color="default" style={{ margin: 0, background: '#f8fafc', border: 'none', color: '#64748b' }}>
+                  {record.phuongThucThanhToan}
+                </Tag>
+              )}
+            </Space>
+          </Space>
+        )
+      }
+    },
+    {
+      title: 'Thời gian',
+      dataIndex: 'thoiGianTao',
+      key: 'time',
+      render: (time: string) => <Text className="payment-text-secondary">{formatDateTime(time)}</Text>
+    },
+    {
+      title: 'Số tiền',
+      dataIndex: 'soTien',
+      key: 'amount',
+      align: 'right',
+      render: (amount: number) => <Text className="payment-price-text">{formatMoney(amount)}</Text>
+    },
+    {
+      title: 'Trạng thái',
+      key: 'status',
+      align: 'right',
+      render: (_, record) => {
+        const statusMeta = adminPaymentTransactionStatusMeta[record.trangThai]
+        return (
+          <Tag className="payment-status-pill" color={statusMeta.color}>
+            {statusMeta.label}
+          </Tag>
+        )
+      }
+    },
+    {
+      title: 'Thao tác',
+      key: 'action',
+      align: 'right',
+      width: 100,
+      render: (_, record) => (
+        <Space size={8}>
+          <Tooltip title="Xem chi tiết">
+            <button 
+              className="payment-action-btn edit"
+              onClick={() => {
+                setSelectedPaymentId(record.id)
+                statusForm.setFieldsValue({
+                  trangThai: record.trangThai,
+                  ghiChu: record.ghiChu ?? undefined,
+                })
+              }}
+            >
+              <EyeOutlined />
+            </button>
+          </Tooltip>
+          <Dropdown menu={{ items: getPaymentActions(record) }} trigger={['click']} placement="bottomRight">
+            <button className="payment-action-btn"><MoreOutlined /></button>
+          </Dropdown>
+        </Space>
+      )
+    }
+  ]
 
   const handleStatusChange = async (payment: AdminPaymentItem, newStatus: AdminPaymentTransactionStatus) => {
     Modal.confirm({
@@ -132,130 +225,87 @@ export default function AdminPaymentListPage() {
   return (
     <div className="admin-page">
       <div className="admin-page-header">
-        <div>
-          <Title level={1}>Quản lý thanh toán</Title>
-          <Paragraph>Giám sát giao dịch đặt cọc, thanh toán còn lại và xử lý trạng thái giao dịch theo thời gian thực.</Paragraph>
+        <div className="payment-title-wrapper">
+          <div className="payment-header-icon">
+            <DollarOutlined />
+          </div>
+          <div>
+            <Title level={1}>Quản lý thanh toán</Title>
+            <Paragraph>Giám sát giao dịch đặt cọc, thanh toán còn lại và xử lý trạng thái giao dịch theo thời gian thực.</Paragraph>
+          </div>
         </div>
       </div>
 
-      <div className="admin-page-card">
-        <div className="admin-filter-toolbar is-compact" style={{ gridTemplateColumns: 'minmax(0, 1fr) 220px 100px' }}>
-          <Input
-            value={keyword}
-            onChange={(event) => setKeyword(event.target.value)}
-            placeholder="Tìm theo mã booking, khách hàng, giao dịch..."
-            className="admin-filter-field"
-            style={{ height: 40, borderRadius: 8 }}
-          />
-          <Select
-            allowClear
-            value={statusFilter}
-            onChange={(value) => setStatusFilter(value)}
-            options={paymentStatusOptions}
-            placeholder="Trạng thái giao dịch"
-            className="admin-filter-field"
-            style={{ height: 40, borderRadius: 8 }}
-          />
-          <Button 
-            className="admin-filter-button" 
-            style={{ height: 40, borderRadius: 8 }}
-            onClick={() => {
+      <div className="admin-page-card" style={{ padding: '32px' }}>
+        <div className="payment-stats-grid">
+          <div className="payment-stat-card">
+            <div className="stat-icon"><DollarOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.total}</div>
+              <div className="stat-label">Tổng giao dịch</div>
+            </div>
+          </div>
+          <div className="payment-stat-card success-stat">
+            <div className="stat-icon"><CheckCircleOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.success}</div>
+              <div className="stat-label">Thành công</div>
+            </div>
+          </div>
+          <div className="payment-stat-card pending-stat">
+            <div className="stat-icon"><ClockCircleOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.pending}</div>
+              <div className="stat-label">Đang chờ</div>
+            </div>
+          </div>
+          <div className="payment-stat-card failed-stat">
+            <div className="stat-icon"><CloseCircleOutlined /></div>
+            <div className="stat-content">
+              <div className="stat-value">{stats.failed}</div>
+              <div className="stat-label">Hoàn tiền/Lỗi</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="payment-filter-card">
+          <div className="payment-filter-toolbar">
+            <Input
+              prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+              value={keyword}
+              onChange={(event) => setKeyword(event.target.value)}
+              placeholder="Tìm theo mã booking, khách hàng, mã giao dịch..."
+            />
+            <Select
+              allowClear
+              value={statusFilter}
+              onChange={(value) => setStatusFilter(value)}
+              options={paymentStatusOptions}
+              placeholder="Trạng thái giao dịch"
+            />
+            <Button onClick={() => {
               setKeyword('')
               setStatusFilter(undefined)
-            }}
-          >
-            Xoá bộ lọc
-          </Button>
-        </div>
-
-        {hasError ? <Alert type="error" showIcon title={errorMessage} /> : null}
-
-        <div className="admin-payment-list-container">
-          {paymentsQuery.isLoading ? (
-            <Empty description="Đang tải dữ liệu..." />
-          ) : filteredPayments.length === 0 ? (
-            <Empty description="Chưa có giao dịch thanh toán" />
-          ) : (
-            paginatedPayments.map((payment) => {
-              const typeMeta = adminPaymentTransactionTypeMeta[payment.loaiGiaoDich as keyof typeof adminPaymentTransactionTypeMeta]
-              const channelMeta = adminPaymentChannelMeta[payment.kenhThanhToan as keyof typeof adminPaymentChannelMeta]
-              const methodMeta = adminPaymentMethodMeta[payment.phuongThucThanhToan as keyof typeof adminPaymentMethodMeta]
-              const statusMeta = adminPaymentTransactionStatusMeta[payment.trangThai]
-
-              return (
-                <div key={payment.id} className="admin-payment-list-item">
-                  <div className="admin-payment-item-main">
-                    <h3 className="admin-payment-item-title">{payment.maGiaoDichNoiBo || `#${payment.id}`}</h3>
-                    <div className="admin-payment-item-meta">
-                      <Text strong>{payment.maBooking}</Text>
-                      <span>• {payment.hoTenKhachHang}</span>
-                    </div>
-                    <div className="admin-payment-item-meta" style={{ fontSize: 12 }}>
-                      Ref: {payment.maGiaoDichBenThuBa || 'N/A'}
-                    </div>
-                  </div>
-
-                  <div className="admin-payment-item-type">
-                    <Text type="secondary" style={{ fontSize: 12 }}>Loại giao dịch</Text>
-                    <Tag color={typeMeta?.color || 'default'} style={{ margin: 0, width: 'fit-content' }}>
-                      {typeMeta?.label || payment.loaiGiaoDich}
-                    </Tag>
-                  </div>
-
-                  <div className="admin-payment-item-channel">
-                    <Text type="secondary" style={{ fontSize: 12 }}>Kênh / Phương thức</Text>
-                    <Space size={4}>
-                      <Tag color={channelMeta?.color || 'default'} style={{ margin: 0 }}>
-                        {channelMeta?.label || payment.kenhThanhToan}
-                      </Tag>
-                      <Tag color={methodMeta?.color || 'default'} style={{ margin: 0 }}>
-                        {methodMeta?.label || payment.phuongThucThanhToan}
-                      </Tag>
-                    </Space>
-                  </div>
-
-                  <div className="admin-payment-item-pricing">
-                    <Tag color={statusMeta.color} style={{ margin: 0, fontWeight: 600 }}>
-                      {statusMeta.label}
-                    </Tag>
-                    <div className="admin-payment-item-price">{formatMoney(payment.soTien)}</div>
-                    <div className="admin-payment-item-time">{formatDateTime(payment.thoiGianTao)}</div>
-                  </div>
-
-                  <div className="admin-payment-item-actions">
-                    <Button 
-                      icon={<InfoCircleOutlined />}
-                      onClick={() => {
-                        setSelectedPaymentId(payment.id)
-                        statusForm.setFieldsValue({
-                          trangThai: payment.trangThai,
-                          ghiChu: payment.ghiChu ?? undefined,
-                        })
-                      }}
-                    >
-                      Chi tiết
-                    </Button>
-                    <Dropdown menu={{ items: getPaymentActions(payment) }} trigger={['click']} placement="bottomRight">
-                      <Button icon={<MoreOutlined />} />
-                    </Dropdown>
-                  </div>
-                </div>
-              )
-            })
-          )}
-        </div>
-
-        {filteredPayments.length > 0 && (
-          <div className="admin-payment-list-pagination">
-            <Pagination 
-              current={currentPage} 
-              total={filteredPayments.length} 
-              pageSize={pageSize} 
-              onChange={(page) => setCurrentPage(page)} 
-              showSizeChanger={false}
-            />
+            }}>
+              Xoá bộ lọc
+            </Button>
           </div>
-        )}
+        </div>
+
+        {hasError ? <Alert type="error" showIcon title={errorMessage} style={{ marginBottom: 24 }} /> : null}
+
+        <div className="payment-table">
+          <Table 
+            columns={tableColumns} 
+            dataSource={filteredPayments} 
+            rowKey="id" 
+            pagination={{ 
+              pageSize: 8,
+              showSizeChanger: false,
+            }} 
+            loading={paymentsQuery.isLoading}
+          />
+        </div>
       </div>
 
       <Drawer

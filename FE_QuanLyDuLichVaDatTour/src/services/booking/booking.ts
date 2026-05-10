@@ -24,8 +24,25 @@ export interface CreateBookingPayload {
   soEmBe: number
   phuongThucThanhToanDuKien?: string
   maVoucher?: string
+  holdToken?: string
   hanhKhachs?: BookingPassengerPayload[]
   ghiChu?: string
+}
+
+export interface CreateHoldPayload {
+  lichKhoiHanhId: number
+  soNguoiLon: number
+  soTreEm: number
+  soEmBe: number
+}
+
+export interface HoldResponse {
+  holdToken: string
+  lichKhoiHanhId: number
+  soCho: number
+  trangThai: string
+  expiresAt: string
+  remainingSeconds: number
 }
 
 export interface BookingPassenger {
@@ -206,6 +223,7 @@ export async function taoBooking(payload: CreateBookingPayload): Promise<Booking
         ? paymentMethodMap[payload.phuongThucThanhToanDuKien] ?? payload.phuongThucThanhToanDuKien
         : undefined,
       maVoucher: payload.maVoucher?.trim() || undefined,
+      holdToken: payload.holdToken || undefined,
       hanhKhachs: payload.hanhKhachs?.map((item) => ({
         hoTen: item.hoTen,
         loaiKhach: item.loaiKhach,
@@ -226,4 +244,43 @@ export async function taoBooking(payload: CreateBookingPayload): Promise<Booking
   }
 
   return data as BookingResponse
+}
+
+export async function taoGiuCho(payload: CreateHoldPayload): Promise<HoldResponse> {
+  const response = await fetch(`${API_BASE_URL}/booking/hold`, {
+    method: 'POST',
+    headers: getAuthHeaders(true),
+    body: JSON.stringify(payload),
+  })
+
+  return handleApiResponse<HoldResponse>(response, 'Không thể giữ chỗ')
+}
+
+export async function kiemTraGiuCho(token: string): Promise<HoldResponse> {
+  const response = await fetch(`${API_BASE_URL}/booking/hold/${token}`, {
+    headers: getAuthHeaders(),
+  })
+
+  return handleApiResponse<HoldResponse>(response, 'Không thể kiểm tra giữ chỗ')
+}
+
+export async function huyGiuCho(token: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/booking/hold/${token}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  })
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null)
+    throw new Error(data?.message || 'Không thể hủy giữ chỗ')
+  }
+}
+
+export async function giaHanGiuCho(token: string): Promise<HoldResponse> {
+  const response = await fetch(`${API_BASE_URL}/booking/hold/${token}/extend`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+  })
+
+  return handleApiResponse<HoldResponse>(response, 'Không thể gia hạn giữ chỗ')
 }
