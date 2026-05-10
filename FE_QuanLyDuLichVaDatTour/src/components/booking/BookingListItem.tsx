@@ -20,90 +20,109 @@ function formatTrangThai(value: string) {
 }
 
 export function BookingListItemCard({ booking }: BookingListItemProps) {
+  const getBookingStatusText = (status: string) => {
+    const map: Record<string, string> = {
+      moi_tao: 'Mới tạo',
+      cho_thanh_toan: 'Chờ thanh toán',
+      da_coc: 'Đã cọc',
+      da_xac_nhan: 'Đã xác nhận',
+      da_huy: 'Đã hủy',
+      hoan_tat: 'Hoàn tất',
+    }
+    return map[status] || status
+  }
+
+  const getPaymentStatusText = (status: string) => {
+    const map: Record<string, string> = {
+      chua_thanh_toan: 'Chưa thanh toán',
+      cho_thanh_toan: 'Chờ thanh toán',
+      da_thanh_toan_coc: 'Đã cọc',
+      da_thanh_toan_het: 'Đã thanh toán hết',
+    }
+    return map[status] || status
+  }
+
   return (
-    <Card className="customer-booking-card" variant="borderless">
-      <div className="booking-card-main">
+    <div className="customer-booking-card">
+      <div className="booking-card-inner">
+        <div className="booking-card-visual" />
         <div className="booking-card-content">
-          <div className="booking-card-header-row">
-            <div className="booking-card-title-section">
-              <Title level={4} className="customer-booking-card-title">
+          <div className="booking-card-top">
+            <div className="booking-info-main">
+              <Title level={4} className="booking-tour-name">
                 {booking.tenTour}
               </Title>
-              <div className="booking-card-id">
-                <IdcardOutlined className="meta-icon" />
-                <Text type="secondary">Mã: {booking.maBooking}</Text>
+              <div className="booking-meta-id">
+                <IdcardOutlined />
+                <span>Mã: {booking.maBooking}</span>
               </div>
             </div>
-            
-            <div className="booking-card-price-section">
-              <Text className="price-label">Tổng thanh toán</Text>
-              <Title level={3} className="price-value">
-                {formatMoney(booking.tongTien)}
-              </Title>
+
+            <div className="booking-price-tag">
+              <span className="price-amount">{formatMoney(booking.tongTien)}</span>
+              <span className="price-label">Tổng thanh toán</span>
             </div>
           </div>
 
-          <Divider className="booking-card-divider" />
-
-          <div className="booking-card-meta-grid">
-            <div className="meta-item">
-              <CalendarOutlined className="meta-icon" />
-              <div>
-                <Text className="meta-label">Ngày đặt</Text>
-                <Text className="meta-value">{formatDate(booking.ngayDat)}</Text>
-              </div>
+          <div className="booking-details-grid">
+            <div className="detail-item">
+              <span className="detail-label">
+                <CalendarOutlined /> Ngày đặt
+              </span>
+              <span className="detail-value">{formatDate(booking.ngayDat)}</span>
             </div>
-            <div className="meta-item">
-              <CalendarOutlined className="meta-icon" />
-              <div>
-                <Text className="meta-label">Khởi hành</Text>
-                <Text className="meta-value">{formatDate(booking.ngayKhoiHanh)}</Text>
-              </div>
+            <div className="detail-item">
+              <span className="detail-label">
+                <CalendarOutlined /> Khởi hành
+              </span>
+              <span className="detail-value">{formatDate(booking.ngayKhoiHanh)}</span>
             </div>
-            <div className="meta-item">
-              <TagOutlined className="meta-icon" />
-              <div>
-                <Text className="meta-label">Đợt tour</Text>
-                <Text className="meta-value">{booking.maDotTour}</Text>
-              </div>
+            <div className="detail-item">
+              <span className="detail-label">
+                <TagOutlined /> Đợt tour
+              </span>
+              <span className="detail-value">{booking.maDotTour}</span>
             </div>
-            <div className="meta-item">
-              <TeamOutlined className="meta-icon" />
-              <div>
-                <Text className="meta-label">Hành khách</Text>
-                <Text className="meta-value">{booking.tongHanhKhach} người</Text>
-              </div>
+            <div className="detail-item">
+              <span className="detail-label">
+                <TeamOutlined /> Hành khách
+              </span>
+              <span className="detail-value">{booking.tongHanhKhach} người</span>
             </div>
           </div>
 
-          <div className="booking-card-footer">
-            <div className="booking-card-status">
-              <Tag icon={<CheckCircleOutlined />} color="processing" className="status-tag">
-                Booking: {formatTrangThai(booking.trangThaiBooking)}
+          <div className="booking-card-bottom">
+            <div className="status-group">
+              <Tag className={`custom-status-tag status-booking-${booking.trangThaiBooking}`}>
+                Booking: {getBookingStatusText(booking.trangThaiBooking)}
               </Tag>
-              <Tag icon={<WalletOutlined />} color="warning" className="status-tag">
-                {formatTrangThai(booking.trangThaiThanhToan)}
+              <Tag className={`custom-status-tag status-payment-${booking.trangThaiThanhToan}`}>
+                Thanh toán: {getPaymentStatusText(booking.trangThaiThanhToan)}
               </Tag>
               {booking.daDanhGia && (
-                <Tag icon={<CheckCircleOutlined />} color="success" className="status-tag">
+                <Tag color="success" className="custom-status-tag">
                   Đã đánh giá
                 </Tag>
               )}
             </div>
 
-            <Space size="middle" className="booking-card-actions">
-              <Button type="primary" icon={<EyeOutlined />} className="action-btn view-btn">
-                <Link to={PATHS.myBookingDetail.replace(':id', String(booking.id))}>Chi tiết</Link>
+            <div className="action-buttons">
+              <Button type="primary" icon={<EyeOutlined />} className="btn-premium btn-view">
+                <Link to={PATHS.myBookingDetail.replace(':id', String(booking.id))} style={{ color: 'inherit' }}>
+                  Chi tiết
+                </Link>
               </Button>
               {booking.coTheDanhGia && (
-                <Button icon={<MessageOutlined />} className="action-btn review-btn">
-                  <Link to={`${PATHS.myReviews}?bookingId=${booking.id}`}>Đánh giá</Link>
+                <Button icon={<MessageOutlined />} className="btn-premium btn-review">
+                  <Link to={`${PATHS.myReviews}?bookingId=${booking.id}`} style={{ color: 'inherit' }}>
+                    Đánh giá
+                  </Link>
                 </Button>
               )}
-            </Space>
+            </div>
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   )
 }
