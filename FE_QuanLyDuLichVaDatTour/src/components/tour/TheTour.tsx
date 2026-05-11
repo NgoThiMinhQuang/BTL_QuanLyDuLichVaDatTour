@@ -80,6 +80,7 @@ export function TheTour({
     .join(' ')
   const isFavorite = useFavoriteTourStore((state) => state.isFavorite(tour.id))
   const toggleFavorite = useFavoriteTourStore((state) => state.toggleFavorite)
+  const displayPrice = tour.giaThapNhat ?? tour.giaNguoiLonMacDinh
 
   return (
     <Card className={cardClassName} variant="borderless">
@@ -142,7 +143,7 @@ export function TheTour({
             <Text className="tour-card-price-label">Giá trọn gói</Text>
             <div className="tour-card-price-row">
               <Title level={2} className="tour-card-price-current">
-                {formatMoney(tour.giaNguoiLonMacDinh)}
+                {formatMoney(displayPrice)}
               </Title>
             </div>
           </div>

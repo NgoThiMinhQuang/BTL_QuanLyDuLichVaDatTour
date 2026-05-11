@@ -2,7 +2,7 @@ import { Alert, Button, DatePicker, Empty, Form, Input, Popconfirm, Rate, Select
 import type { TableProps } from 'antd'
 import dayjs from 'dayjs'
 import { useMemo, useState, useEffect } from 'react'
-import { useAdminPendingReviews, useUpdateAdminReviewDisplayStatus } from '../../services/admin/admin.hooks'
+import { useAdminReviews, useUpdateAdminReviewDisplayStatus } from '../../services/admin/admin.hooks'
 import type { AdminReviewDisplayStatus, AdminReviewItem } from '../../types/admin'
 import { adminReviewStatusMeta, formatDateTime } from '../../utils/admin'
 import { CheckCircleOutlined, EyeInvisibleOutlined, MessageOutlined, StarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, SearchOutlined, LineChartOutlined } from '@ant-design/icons'
@@ -35,7 +35,7 @@ export default function AdminReviewModerationPage() {
 
   const [responseForm] = Form.useForm<Record<number, { phanHoiAdmin?: string }>>()
 
-  const reviewsQuery = useAdminPendingReviews(100)
+  const reviewsQuery = useAdminReviews()
   const updateReviewStatusMutation = useUpdateAdminReviewDisplayStatus()
 
   const reviews = reviewsQuery.data ?? []

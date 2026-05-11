@@ -44,6 +44,7 @@ import {
   layLichKhoiHanhTheoTourQuanTri,
   layLichTrinhTheoTourQuanTri,
   layReviewChoDuyetQuanTri,
+  layTatCaReviewQuanTri,
   layTongQuanQuanTri,
   taoDiaDiemQuanTri,
   taoLichKhoiHanhQuanTri,
@@ -264,6 +265,13 @@ export function useAdminPendingReviews(limit = 50) {
   return useQuery({
     queryKey: ['admin', 'reviews', 'pending', limit],
     queryFn: () => layReviewChoDuyetQuanTri(limit),
+  })
+}
+
+export function useAdminReviews() {
+  return useQuery({
+    queryKey: ['admin', 'reviews'],
+    queryFn: layTatCaReviewQuanTri,
   })
 }
 

@@ -67,7 +67,7 @@ public class InvoiceExportService : IInvoiceExportService
             NgayIn = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
         };
 
-        invoice.HanhKhachs = booking.HanhKhachs.Select(h => new InvoiceTravelerDto
+        invoice.HanhKhachs = (booking.HanhKhachs ?? []).Select(h => new InvoiceTravelerDto
         {
             HoTen = h.HoTen,
             LoaiKhach = h.LoaiKhach.ToString(),
@@ -76,7 +76,7 @@ public class InvoiceExportService : IInvoiceExportService
             SoGiayTo = h.SoGiayTo,
         }).ToList();
 
-        invoice.ThanhToans = booking.ThanhToans.Select(t => new InvoicePaymentDto
+        invoice.ThanhToans = (booking.ThanhToans ?? []).Select(t => new InvoicePaymentDto
         {
             MaGiaoDich = t.MaGiaoDichNoiBo ?? t.Id.ToString(),
             LoaiGiaoDich = t.LoaiGiaoDich.ToString(),
@@ -298,6 +298,8 @@ public class InvoiceExportService : IInvoiceExportService
             .AsNoTracking()
             .Include(b => b.LichKhoiHanh).ThenInclude(l => l!.Tour)
             .Include(b => b.HanhKhachs)
+            .Include(b => b.ThanhToans)
+            .Include(b => b.Voucher)
             .Include(b => b.KhachHang)
             .FirstOrDefaultAsync(b => b.Id == bookingId)
             ?? throw new KeyNotFoundException("Không tìm thấy booking.");

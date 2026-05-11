@@ -1,5 +1,5 @@
 import './MyBookingDetailPage.css'
-import { Alert, Card, Empty, List, Skeleton, Tag, Typography, Row, Col, Divider, Steps, Button, Modal, Input } from 'antd'
+import { Alert, Card, Empty, List, Skeleton, Tag, Typography, Row, Col, Divider, Steps, Button, Modal, Input, message } from 'antd'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router'
 import { useState } from 'react'
@@ -33,24 +33,33 @@ import { PassengerEditDrawer } from '../components/booking/PassengerEditDrawer'
 const { Paragraph, Title, Text } = Typography
 const { TextArea } = Input
 
-function handleDownload(url: string, filename: string) {
+async function handleDownload(url: string, filename: string) {
   const token = useAuthStore.getState().accessToken
-  fetch(`${API_BASE_URL}${url}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((r) => {
-      if (!r.ok) throw new Error('Tải thất bại')
-      return r.blob()
+  if (!token) {
+    message.error('Vui lòng đăng nhập lại để tải file')
+    return
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      headers: { Authorization: `Bearer ${token}` },
     })
-    .then((blob) => {
-      const objUrl = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = objUrl
-      a.download = filename
-      a.click()
-      window.URL.revokeObjectURL(objUrl)
-    })
-    .catch(() => {})
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => '')
+      throw new Error(errorText || 'Tải file thất bại')
+    }
+
+    const blob = await response.blob()
+    const objUrl = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = objUrl
+    a.download = filename
+    a.click()
+    window.URL.revokeObjectURL(objUrl)
+  } catch (error) {
+    message.error(error instanceof Error ? error.message : 'Tải file thất bại')
+  }
 }
 
 function formatTrangThai(value: string) {

@@ -1,4 +1,5 @@
 import { Alert, Avatar, Badge, Button, Card, Col, Divider, Drawer, Empty, Input, Popconfirm, Row, Select, Space, Table, Tag, Typography, Tooltip } from 'antd'
+import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer } from 'recharts'
 import type { ColumnsType } from 'antd/es/table'
 import { useState, useMemo } from 'react'
 import {
@@ -246,8 +247,71 @@ export default function AdminKhachHangListPage() {
               <div className="stat-label">Doanh thu TB</div>
             </div>
           </div>
-        </div>
 
+        <div className="customer-analytics-row">
+          <div className="analytics-card">
+            <div className="analytics-header">
+              <Title level={5}>Cơ cấu tài khoản</Title>
+              <Text type="secondary">Phân bổ vai trò người dùng</Text>
+            </div>
+            <div style={{ height: 240 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={roleDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    <Cell fill="#3b82f6" />
+                    <Cell fill="#f59e0b" />
+                  </Pie>
+                  <ChartTooltip 
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="analytics-legend">
+              {roleDistribution.map((entry, index) => (
+                <div key={entry.name} className="legend-item">
+                  <div className="legend-dot" style={{ background: index === 0 ? '#3b82f6' : '#f59e0b' }} />
+                  <Text>{entry.name}: </Text>
+                  <Text strong>{entry.value}</Text>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="analytics-card">
+            <div className="analytics-header">
+              <Title level={5}>Xu hướng tương tác</Title>
+              <Text type="secondary">Tỷ lệ booking hệ thống theo tháng</Text>
+            </div>
+            <div style={{ height: 280 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={activityTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorTrend" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                  <ChartTooltip 
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                  />
+                  <Area type="monotone" dataKey="value" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorTrend)" animationDuration={1500} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
         <div className="customer-filter-card">
           <div className="customer-filter-toolbar">
             <Input

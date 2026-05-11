@@ -280,6 +280,10 @@ export async function layReviewChoDuyetQuanTri(limit = 50): Promise<AdminReviewI
   return getJson<AdminReviewItem[]>(`/admin/review/pending?limit=${limit}`, 'Không thể tải danh sách review chờ duyệt')
 }
 
+export async function layTatCaReviewQuanTri(): Promise<AdminReviewItem[]> {
+  return getJson<AdminReviewItem[]>('/admin/review/get-all', 'Không thể tải danh sách review')
+}
+
 export async function capNhatTrangThaiReviewQuanTri(id: number, payload: AdminUpdateReviewStatusPayload) {
   return sendJson<void, AdminUpdateReviewStatusPayload>(`/admin/review/update-status/${id}`, 'PATCH', payload, 'Không thể cập nhật trạng thái đánh giá')
 }

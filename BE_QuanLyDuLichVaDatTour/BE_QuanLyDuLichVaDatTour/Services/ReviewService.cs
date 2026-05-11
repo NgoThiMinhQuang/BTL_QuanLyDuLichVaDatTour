@@ -60,12 +60,12 @@ public class ReviewService : IReviewService
 
     public async Task ApproveAsync(long adminUserId, long reviewId, string? phanHoi)
     {
-        await UpdateAdminStatusCore(adminUserId, reviewId, "da_duyet", phanHoi);
+        await UpdateAdminStatusCore(adminUserId, reviewId, "hien_thi", phanHoi);
     }
 
     public async Task HideAsync(long adminUserId, long reviewId, string? phanHoi)
     {
-        await UpdateAdminStatusCore(adminUserId, reviewId, "da_an", phanHoi);
+        await UpdateAdminStatusCore(adminUserId, reviewId, "an", phanHoi);
     }
 
     private async Task UpdateAdminStatusCore(long adminUserId, long reviewId, string trangThai, string? phanHoi)

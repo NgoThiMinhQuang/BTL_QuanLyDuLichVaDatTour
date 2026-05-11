@@ -24,6 +24,13 @@ public class AdminReviewController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("get-all")]
+    public async Task<IActionResult> GetAll()
+    {
+        var response = await _reviewService.GetAllAdminReviewsAsync();
+        return Ok(response);
+    }
+
     [HttpPatch("update-status/{id:long}")]
     public async Task<IActionResult> UpdateStatus(long id, [FromBody] UpdateAdminReviewStatusRequestDto request)
     {

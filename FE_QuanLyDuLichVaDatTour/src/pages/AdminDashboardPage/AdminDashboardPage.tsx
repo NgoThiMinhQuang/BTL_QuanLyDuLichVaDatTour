@@ -1,4 +1,5 @@
 import { Alert, Button, Card, Col, Empty, Progress, Row, Skeleton, Space, Statistic, Table, Tag, Typography } from 'antd'
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import type { ColumnsType } from 'antd/es/table'
 import { Link } from 'react-router'
 import { useMemo } from 'react'
@@ -21,51 +22,91 @@ import './AdminDashboardPage.css'
 
 const { Paragraph, Title, Text } = Typography
 
-function MiniLineChart({ values }: { values: number[] }) {
-  if (values.length === 0) {
-    return <div className="admin-dashboard-chart-empty">Chưa có dữ liệu</div>
-  }
-
-  const max = Math.max(...values, 1)
-  const points = values.map((value, index) => {
-    const x = (index / Math.max(values.length - 1, 1)) * 100
-    const y = 100 - (value / max) * 80
-    return `${x},${y}`
-  }).join(' ')
-
+function RevenueChart({ data }: { data: { nhan: string, giaTri: number }[] }) {
   return (
-    <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="admin-dashboard-line-chart">
-      <defs>
-        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <polyline points={`0,100 ${points} 100,100`} fill="url(#lineGrad)" />
-      <polyline points={points} fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      {values.map((value, index) => {
-        const x = (index / Math.max(values.length - 1, 1)) * 100
-        const y = 100 - (value / max) * 80
-        return <circle key={`${index}-${value}`} cx={x} cy={y} r="3" fill="#ffffff" stroke="#3b82f6" strokeWidth="2" />
-      })}
-    </svg>
+    <div style={{ width: '100%', height: 280 }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <defs>
+            <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+          <XAxis 
+            dataKey="nhan" 
+            axisLine={false} 
+            tickLine={false} 
+            tick={{ fill: '#94a3b8', fontSize: 12 }} 
+            dy={10}
+          />
+          <YAxis 
+            axisLine={false} 
+            tickLine={false} 
+            tick={{ fill: '#94a3b8', fontSize: 12 }} 
+          />
+          <Tooltip 
+            contentStyle={{ 
+              borderRadius: '12px', 
+              border: 'none', 
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+              padding: '12px'
+            }}
+            formatter={(value: number) => [formatMoney(value), 'Doanh thu']}
+          />
+          <Area 
+            type="monotone" 
+            dataKey="giaTri" 
+            stroke="#3b82f6" 
+            strokeWidth={3}
+            fillOpacity={1} 
+            fill="url(#colorRevenue)" 
+            animationDuration={1500}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   )
 }
 
-function MiniBarChart({ values }: { values: number[] }) {
-  if (values.length === 0) {
-    return <div className="admin-dashboard-chart-empty">Chưa có dữ liệu</div>
-  }
-
-  const max = Math.max(...values, 1)
-
+function BookingChart({ data }: { data: { nhan: string, giaTri: number }[] }) {
   return (
-    <div className="admin-dashboard-bar-chart">
-      {values.map((value, index) => (
-        <div key={`${index}-${value}`} className="admin-dashboard-bar-group">
-          <div className="admin-dashboard-bar" style={{ height: `${Math.max((value / max) * 100, 5)}%` }} />
-        </div>
-      ))}
+    <div style={{ width: '100%', height: 280 }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+          <XAxis 
+            dataKey="nhan" 
+            axisLine={false} 
+            tickLine={false} 
+            tick={{ fill: '#94a3b8', fontSize: 12 }} 
+            dy={10}
+          />
+          <YAxis 
+            axisLine={false} 
+            tickLine={false} 
+            tick={{ fill: '#94a3b8', fontSize: 12 }} 
+          />
+          <Tooltip 
+            cursor={{ fill: '#f8fafc' }}
+            contentStyle={{ 
+              borderRadius: '12px', 
+              border: 'none', 
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+              padding: '12px'
+            }}
+            formatter={(value: number) => [value, 'Số booking']}
+          />
+          <Bar 
+            dataKey="giaTri" 
+            fill="#8b5cf6" 
+            radius={[6, 6, 0, 0]} 
+            barSize={32}
+            animationDuration={1500}
+          />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   )
 }
@@ -223,18 +264,12 @@ export default function AdminDashboardPage() {
       <Row gutter={[16, 16]}>
         <Col xs={24} xl={12}>
           <Card title="Doanh thu theo tháng" bordered={false} className="admin-dashboard-card">
-            <MiniLineChart values={revenueValues} />
-            <div className="admin-dashboard-chart-labels">
-              {data.doanhThuTheoThang.map((item) => <span key={item.nhan}>{item.nhan}</span>)}
-            </div>
+            <RevenueChart data={data.doanhThuTheoThang} />
           </Card>
         </Col>
         <Col xs={24} xl={12}>
           <Card title="Booking theo tháng" bordered={false} className="admin-dashboard-card">
-            <MiniBarChart values={bookingValues} />
-            <div className="admin-dashboard-chart-labels">
-              {data.bookingTheoThang.map((item) => <span key={item.nhan}>{item.nhan}</span>)}
-            </div>
+            <BookingChart data={data.bookingTheoThang} />
           </Card>
         </Col>
       </Row>
