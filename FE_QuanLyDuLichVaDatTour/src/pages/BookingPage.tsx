@@ -57,6 +57,12 @@ function taoPassengerId(type: PassengerType, index: number) {
   return `${type}-${index + 1}`
 }
 
+function resolveConfiguredPrice(primary?: number | null, fallback?: number | null, defaultPrice?: number | null) {
+  if (primary != null && primary > 0) return primary
+  if (fallback != null && fallback > 0) return fallback
+  return defaultPrice ?? 0
+}
+
 function buildPassengerDrafts(counts: Record<PassengerType, number>, current: PassengerDraft[]) {
   const byType = {
     nguoi_lon: current.filter((item) => item.loaiKhach === 'nguoi_lon'),
@@ -151,14 +157,14 @@ export default function Booking() {
     const pricing = bookingQuery.data.pricing
     return {
       nguoiLon: isWeekend
-        ? (pricing.giaNguoiLonCuoiTuan ?? pricing.giaNguoiLonNgayThuong ?? bookingQuery.data.tour.giaNguoiLonMacDinh ?? 0)
-        : (pricing.giaNguoiLonNgayThuong ?? bookingQuery.data.tour.giaNguoiLonMacDinh ?? 0),
+        ? resolveConfiguredPrice(pricing.giaNguoiLonCuoiTuan, pricing.giaNguoiLonNgayThuong, bookingQuery.data.tour.giaNguoiLonMacDinh)
+        : resolveConfiguredPrice(pricing.giaNguoiLonNgayThuong, pricing.giaNguoiLonCuoiTuan, bookingQuery.data.tour.giaNguoiLonMacDinh),
       treEm: isWeekend
-        ? (pricing.giaTreEmCuoiTuan ?? pricing.giaTreEmNgayThuong ?? 0)
-        : (pricing.giaTreEmNgayThuong ?? 0),
+        ? resolveConfiguredPrice(pricing.giaTreEmCuoiTuan, pricing.giaTreEmNgayThuong)
+        : resolveConfiguredPrice(pricing.giaTreEmNgayThuong, pricing.giaTreEmCuoiTuan),
       emBe: isWeekend
-        ? (pricing.giaEmBeCuoiTuan ?? pricing.giaEmBeNgayThuong ?? 0)
-        : (pricing.giaEmBeNgayThuong ?? 0),
+        ? resolveConfiguredPrice(pricing.giaEmBeCuoiTuan, pricing.giaEmBeNgayThuong)
+        : resolveConfiguredPrice(pricing.giaEmBeNgayThuong, pricing.giaEmBeCuoiTuan),
     }
   }, [bookingQuery.data])
 

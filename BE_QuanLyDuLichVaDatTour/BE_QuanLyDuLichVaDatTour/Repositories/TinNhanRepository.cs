@@ -1,6 +1,5 @@
 using BE_QuanLyDuLichVaDatTour.Data;
 using BE_QuanLyDuLichVaDatTour.Models.Entities;
-using BE_QuanLyDuLichVaDatTour.Models.Enums;
 using BE_QuanLyDuLichVaDatTour.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,29 +33,29 @@ public class TinNhanRepository : ITinNhanRepository
     {
         if (isAdmin)
         {
-            return await _dbContext.TinNhans
-                .AsNoTracking()
-                .Include(x => x.NguoiGui)
-                .Where(x => x.BookingId == null)
+            return await GeneralMessagesQuery()
                 .OrderBy(x => x.ThoiGianGui)
                 .ToListAsync();
         }
 
-        return await _dbContext.TinNhans
-            .AsNoTracking()
-            .Include(x => x.NguoiGui)
-            .Where(x => x.BookingId == null && x.KhachHangId == userId)
+        return await GeneralMessagesQuery()
+            .Where(x => x.KhachHangId == userId)
             .OrderBy(x => x.ThoiGianGui)
             .ToListAsync();
     }
 
     public async Task<List<TinNhan>> GetAllGeneralWithNguoiGuiAsync()
     {
-        return await _dbContext.TinNhans
-            .AsNoTracking()
-            .Include(x => x.NguoiGui)
+        return await GeneralMessagesQuery()
             .Include(x => x.KhachHang)
-            .Where(x => x.BookingId == null)
+            .OrderBy(x => x.ThoiGianGui)
+            .ToListAsync();
+    }
+
+    public async Task<List<TinNhan>> GetGeneralByKhachHangIdAsync(long khachHangId)
+    {
+        return await GeneralMessagesQuery()
+            .Where(x => x.KhachHangId == khachHangId)
             .OrderBy(x => x.ThoiGianGui)
             .ToListAsync();
     }
@@ -78,5 +77,13 @@ public class TinNhanRepository : ITinNhanRepository
     public Task<int> SaveChangesAsync()
     {
         return _dbContext.SaveChangesAsync();
+    }
+
+    private IQueryable<TinNhan> GeneralMessagesQuery()
+    {
+        return _dbContext.TinNhans
+            .AsNoTracking()
+            .Include(x => x.NguoiGui)
+            .Where(x => x.BookingId == null);
     }
 }

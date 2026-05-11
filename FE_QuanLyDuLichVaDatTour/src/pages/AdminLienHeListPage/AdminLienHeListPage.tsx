@@ -21,12 +21,27 @@ import './AdminLienHeListPage.css'
 
 const { Paragraph, Text, Title } = Typography
 
-const statusOptions = [
+const statusOptions: Array<{ value: AdminLienHeStatus; label: string; color: string }> = [
   { value: 'moi', label: 'Mới', color: 'blue' },
   { value: 'dang_xu_ly', label: 'Đang xử lý', color: 'orange' },
   { value: 'da_xu_ly', label: 'Đã hoàn tất', color: 'green' },
   { value: 'bo_qua', label: 'Bỏ qua', color: 'default' },
 ]
+
+const getStatusOption = (status: AdminLienHeStatus) => statusOptions.find(option => option.value === status)
+const isAdminRole = (vaiTro: string) => vaiTro.toLowerCase() === 'admin'
+
+function MessageBubble({ type, author, time, content }: { type: 'admin' | 'customer'; author: string; time: string; content: string }) {
+  return (
+    <div className={`message-bubble ${type}`}>
+      <div className="message-meta">
+        <span className="message-author">{author}</span>
+        <span className="message-time">{formatDateTime(time)}</span>
+      </div>
+      <div className="message-content">{content}</div>
+    </div>
+  )
+}
 
 export default function AdminLienHeListPage() {
   const [keyword, setKeyword] = useState('')
@@ -51,6 +66,12 @@ export default function AdminLienHeListPage() {
   const updateStatusMutation = useUpdateAdminLienHeStatus()
   const replyChatMutation = useReplyAdminSupportChat()
   const currentTicket = selectedTicket?.source === 'lienhe' ? detailQuery.data : selectedTicket
+
+  const isChatTicket = selectedTicket?.source === 'tinnhan'
+  const currentStatusOption = currentTicket ? getStatusOption(currentTicket.trangThai) : undefined
+  const isDetailLoading = isChatTicket ? chatQuery.isLoading : detailQuery.isLoading
+  const isSending = isChatTicket ? replyChatMutation.isPending : updateStatusMutation.isPending
+  const isSendDisabled = isChatTicket ? !phanHoiInput.trim() : !phanHoiInput.trim() && replyStatus === 'dang_xu_ly'
 
   useEffect(() => {
     if (currentTicket) {
@@ -169,7 +190,7 @@ export default function AdminLienHeListPage() {
               <Title level={4} style={{ color: '#64748b', margin: 0 }}>Chọn một tin nhắn</Title>
               <Text type="secondary">Vui lòng chọn một tin nhắn từ danh sách bên trái để xem chi tiết và phản hồi.</Text>
             </div>
-          ) : (selectedTicket.source === 'lienhe' && detailQuery.isLoading) || (selectedTicket.source === 'tinnhan' && chatQuery.isLoading) ? (
+          ) : isDetailLoading ? (
              <div className="mailbox-empty-state"><Spin size="large" /></div>
           ) : currentTicket ? (
             <>
@@ -186,40 +207,33 @@ export default function AdminLienHeListPage() {
                   </Space>
                 </div>
                 <div className="ticket-detail-tags">
-                  <Tag color={statusOptions.find(o => o.value === currentTicket.trangThai)?.color} style={{ margin: 0, padding: '4px 12px', fontSize: 13, borderRadius: 16 }}>
-                    {statusOptions.find(o => o.value === currentTicket.trangThai)?.label}
+                  <Tag color={currentStatusOption?.color} style={{ margin: 0, padding: '4px 12px', fontSize: 13, borderRadius: 16 }}>
+                    {currentStatusOption?.label}
                   </Tag>
                 </div>
               </div>
 
               <div className="ticket-detail-body">
-                {selectedTicket.source === 'tinnhan' ? (
+                {isChatTicket ? (
                   chatQuery.data?.map(message => (
-                    <div key={message.id} className={`message-bubble ${message.vaiTro === 'admin' || message.vaiTro === 'Admin' ? 'admin' : 'customer'}`}>
-                      <div className="message-meta">
-                        <span className="message-author">{message.hoTenNguoiGui}</span>
-                        <span className="message-time">{formatDateTime(message.thoiGianGui)}</span>
-                      </div>
-                      <div className="message-content">{message.noiDung}</div>
-                    </div>
+                    <MessageBubble
+                      key={message.id}
+                      type={isAdminRole(message.vaiTro) ? 'admin' : 'customer'}
+                      author={message.hoTenNguoiGui}
+                      time={message.thoiGianGui}
+                      content={message.noiDung}
+                    />
                   ))
                 ) : (
                   <>
-                    <div className="message-bubble customer">
-                      <div className="message-meta">
-                        <span className="message-author">{currentTicket.hoTen}</span>
-                        <span className="message-time">{formatDateTime(currentTicket.ngayGui)}</span>
-                      </div>
-                      <div className="message-content">{currentTicket.noiDung}</div>
-                    </div>
-                    {currentTicket.phanHoi && (
-                      <div className="message-bubble admin">
-                        <div className="message-meta">
-                          <span className="message-author">{detailQuery.data?.hoTenNguoiXuLy || 'Quản trị viên'}</span>
-                          <span className="message-time">{formatDateTime(currentTicket.ngayXuLy!)}</span>
-                        </div>
-                        <div className="message-content">{currentTicket.phanHoi}</div>
-                      </div>
+                    <MessageBubble type="customer" author={currentTicket.hoTen} time={currentTicket.ngayGui} content={currentTicket.noiDung} />
+                    {currentTicket.phanHoi && currentTicket.ngayXuLy && (
+                      <MessageBubble
+                        type="admin"
+                        author={detailQuery.data?.hoTenNguoiXuLy || 'Quản trị viên'}
+                        time={currentTicket.ngayXuLy}
+                        content={currentTicket.phanHoi}
+                      />
                     )}
                   </>
                 )}
@@ -252,9 +266,9 @@ export default function AdminLienHeListPage() {
                       <Button
                         type="primary"
                         icon={<SendOutlined />}
-                        loading={selectedTicket.source === 'tinnhan' ? replyChatMutation.isPending : updateStatusMutation.isPending}
+                        loading={isSending}
                         onClick={handleQuickReply}
-                        disabled={selectedTicket.source === 'tinnhan' ? !phanHoiInput.trim() : (!phanHoiInput.trim() && replyStatus === 'dang_xu_ly')}
+                        disabled={isSendDisabled}
                         style={{ borderRadius: 8, padding: '0 24px', height: 36, background: '#10b981', borderColor: '#10b981' }}
                       >
                         Gửi phản hồi

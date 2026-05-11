@@ -55,6 +55,27 @@ public class TinNhanController : ControllerBase
         }
     }
 
+    [HttpGet("general/khach/{khachHangId:long}")]
+    public async Task<IActionResult> GetGeneralMessagesByKhachHang(long khachHangId)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+            return Unauthorized(new { message = "Token không hợp lệ." });
+
+        try
+        {
+            var response = await _tinNhanService.GetGeneralByKhachHangIdAsync(userId, khachHangId);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
+        }
+    }
+
     [HttpPost("general")]
     public async Task<IActionResult> GuiGeneralMessage([FromBody] GuiGeneralMessageRequest request)
     {

@@ -75,12 +75,12 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         return new BangGiaLichKhoiHanhResponseDto
         {
             LichKhoiHanhId = lichKhoiHanh.Id,
-            GiaNguoiLonNgayThuong = bangGiaNgayThuong.GetValueOrDefault(LoaiKhach.nguoi_lon),
-            GiaTreEmNgayThuong = bangGiaNgayThuong.GetValueOrDefault(LoaiKhach.tre_em),
-            GiaEmBeNgayThuong = bangGiaNgayThuong.GetValueOrDefault(LoaiKhach.em_be),
-            GiaNguoiLonCuoiTuan = bangGiaCuoiTuan.GetValueOrDefault(LoaiKhach.nguoi_lon),
-            GiaTreEmCuoiTuan = bangGiaCuoiTuan.GetValueOrDefault(LoaiKhach.tre_em),
-            GiaEmBeCuoiTuan = bangGiaCuoiTuan.GetValueOrDefault(LoaiKhach.em_be),
+            GiaNguoiLonNgayThuong = GetConfiguredPrice(bangGiaNgayThuong, LoaiKhach.nguoi_lon),
+            GiaTreEmNgayThuong = GetConfiguredPrice(bangGiaNgayThuong, LoaiKhach.tre_em),
+            GiaEmBeNgayThuong = GetConfiguredPrice(bangGiaNgayThuong, LoaiKhach.em_be),
+            GiaNguoiLonCuoiTuan = GetConfiguredPrice(bangGiaCuoiTuan, LoaiKhach.nguoi_lon),
+            GiaTreEmCuoiTuan = GetConfiguredPrice(bangGiaCuoiTuan, LoaiKhach.tre_em),
+            GiaEmBeCuoiTuan = GetConfiguredPrice(bangGiaCuoiTuan, LoaiKhach.em_be),
         };
     }
 
@@ -258,6 +258,11 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         }
 
         return value.Trim();
+    }
+
+    private static decimal? GetConfiguredPrice(Dictionary<LoaiKhach, decimal> prices, LoaiKhach type)
+    {
+        return prices.TryGetValue(type, out var price) ? price : null;
     }
 
     private async Task<List<LichKhoiHanhAdminResponseDto>> MapAdminResponsesAsync(List<LichKhoiHanh> lichKhoiHanhs)

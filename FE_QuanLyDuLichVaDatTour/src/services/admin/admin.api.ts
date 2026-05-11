@@ -332,8 +332,7 @@ export async function laySupportTicketsQuanTri(params: AdminSearchLienHeParams):
 }
 
 export async function layTinNhanHoTroQuanTri(khachHangId: number): Promise<AdminChatMessage[]> {
-  const messages = await getJson<AdminChatMessage[]>('/tin-nhan/general', 'Không thể tải tin nhắn hỗ trợ')
-  return messages.filter(message => message.khachHangId === khachHangId)
+  return getJson<AdminChatMessage[]>(`/tin-nhan/general/khach/${khachHangId}`, 'Không thể tải tin nhắn hỗ trợ')
 }
 
 export async function traLoiTinNhanHoTroQuanTri(khachHangId: number, noiDung: string): Promise<AdminChatMessage> {
