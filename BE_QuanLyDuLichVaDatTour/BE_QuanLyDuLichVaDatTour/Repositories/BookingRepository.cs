@@ -95,6 +95,35 @@ public class BookingRepository : IBookingRepository
         return bookings.Sum(x => (int)x.SoNguoiLon + (int)x.SoTreEm + (int)x.SoEmBe);
     }
 
+    public async Task<Dictionary<long, int>> GetBookedSeatsBatchAsync(IEnumerable<long> lichKhoiHanhIds)
+    {
+        var idList = lichKhoiHanhIds.ToList();
+        if (!idList.Any())
+        {
+            return new Dictionary<long, int>();
+        }
+
+        var query = _dbContext.Bookings
+            .AsNoTracking()
+            .Where(b => idList.Contains(b.LichKhoiHanhId) && b.TrangThaiBooking != TrangThaiBooking.da_huy)
+            .Select(b => new
+            {
+                b.LichKhoiHanhId,
+                b.SoNguoiLon,
+                b.SoTreEm,
+                b.SoEmBe
+            });
+
+        var data = await query.ToListAsync();
+
+        return data
+            .GroupBy(b => b.LichKhoiHanhId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Sum(b => (int)b.SoNguoiLon + b.SoTreEm + b.SoEmBe)
+            );
+    }
+
     public async Task<HanhKhach?> GetHanhKhachByIdAsync(long hanhKhachId)
     {
         return await _dbContext.HanhKhachs

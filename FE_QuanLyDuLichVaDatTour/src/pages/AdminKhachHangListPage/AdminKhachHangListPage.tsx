@@ -1,7 +1,7 @@
 import { Alert, Avatar, Badge, Button, Card, Col, Divider, Drawer, Empty, Input, Popconfirm, Row, Select, Space, Table, Tag, Typography, Tooltip } from 'antd'
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer } from 'recharts'
 import type { ColumnsType } from 'antd/es/table'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, type ReactNode } from 'react'
 import {
   UserOutlined,
   TeamOutlined,
@@ -33,6 +33,15 @@ import { formatDateTime } from '../../utils/admin'
 import './AdminKhachHangListPage.css'
 
 const { Text, Title, Paragraph } = Typography
+
+function MetricBox({ label, value, suffix }: { label: string; value: ReactNode; suffix?: string }) {
+  return (
+    <div>
+      <Text type="secondary" style={{ fontSize: 12, display: 'block' }}>{label}</Text>
+      <Text strong>{value}{suffix}</Text>
+    </div>
+  )
+}
 
 // Configuration & Constants
 const statusOptions = [
@@ -247,6 +256,7 @@ export default function AdminKhachHangListPage() {
               <div className="stat-label">Doanh thu TB</div>
             </div>
           </div>
+        </div>
 
         <div className="customer-analytics-row">
           <div className="analytics-card">

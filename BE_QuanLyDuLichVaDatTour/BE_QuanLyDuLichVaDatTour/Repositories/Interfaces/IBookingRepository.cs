@@ -21,5 +21,7 @@ public interface IBookingRepository
 
     Task<int> GetBookedSeatsAsync(long lichKhoiHanhId, long? excludeBookingId = null);
 
+    Task<Dictionary<long, int>> GetBookedSeatsBatchAsync(IEnumerable<long> lichKhoiHanhIds);
+
     Task<int> SaveChangesAsync();
 }

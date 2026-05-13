@@ -1,4 +1,5 @@
 using BE_QuanLyDuLichVaDatTour.Data;
+using BE_QuanLyDuLichVaDatTour.DTOs.LichTrinh;
 using BE_QuanLyDuLichVaDatTour.DTOs.Tour;
 using BE_QuanLyDuLichVaDatTour.Models.Entities;
 using BE_QuanLyDuLichVaDatTour.Models.Enums;
@@ -754,6 +755,11 @@ public class TourService : ITourService
             AnhTours = tour.AnhTours
                 .OrderBy(x => x.ThuTu)
                 .Select(MapAnhTourResponse)
+                .ToList(),
+            LichTrinhs = tour.LichTrinhs
+                .OrderBy(x => x.NgayThu)
+                .ThenBy(x => x.ThuTuTrongNgay)
+                .Select(MapLichTrinhResponse)
                 .ToList(),
             TrangThai = tour.TrangThai.ToString()
         };

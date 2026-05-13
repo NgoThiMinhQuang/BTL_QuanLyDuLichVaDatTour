@@ -16,6 +16,17 @@ function formatTime(value: string | null) {
   return value.slice(0, 5)
 }
 
+function resolveConfiguredPrice(primary?: number | null, fallback?: number | null, defaultPrice?: number | null) {
+  if (primary != null && primary > 0) return primary
+  if (fallback != null && fallback > 0) return fallback
+  return defaultPrice ?? 0
+}
+
+function isWeekendNow() {
+  const day = new Date().getDay()
+  return day === 0 || day === 6
+}
+
 export default function TourDetail() {
   const navigate = useNavigate()
   const { id } = useParams()
@@ -62,6 +73,12 @@ export default function TourDetail() {
   }
 
   const detail = detailQuery.data
+  const isWeekend = isWeekendNow()
+  const selectedAdultPrice = isWeekend
+    ? resolveConfiguredPrice(pricingQuery.data?.giaNguoiLonCuoiTuan, pricingQuery.data?.giaNguoiLonNgayThuong, detail.giaNguoiLonMacDinh)
+    : resolveConfiguredPrice(pricingQuery.data?.giaNguoiLonNgayThuong, pricingQuery.data?.giaNguoiLonCuoiTuan, detail.giaNguoiLonMacDinh)
+  const selectedPriceNote = isWeekend ? 'Người lớn / Cuối tuần' : 'Người lớn / Ngày thường'
+  const selectedDeparturePrice = selectedAdultPrice
   const selectedDepartureUnavailable = !selectedDeparture || selectedDeparture.trangThai === 'het_cho' || selectedDeparture.soChoConLai <= 0
   const departureOptions = (departuresQuery.data ?? []).map((item) => ({
     value: item.id,
@@ -252,7 +269,7 @@ export default function TourDetail() {
                             </div>
                             <div className="tour-detail-departure-right">
                               <Text className="tour-detail-departure-price-label">Giá từ</Text>
-                              <Title className="tour-detail-departure-price">{formatMoney(pricingQuery.data?.giaNguoiLonNgayThuong ?? detail.giaNguoiLonMacDinh)}</Title>
+                              <Title className="tour-detail-departure-price">{formatMoney(selectedDeparturePrice)}</Title>
                               <Button
                                 type={selectedDeparture?.id === item.id ? 'primary' : 'default'}
                                 className="tour-detail-departure-button"
@@ -360,8 +377,8 @@ export default function TourDetail() {
           <div className="tour-detail-sidebar">
             <Card className="tour-detail-sidebar-card" variant="borderless">
               <Text className="tour-detail-sidebar-price-label">Giá từ</Text>
-              <Title className="tour-detail-sidebar-price">{formatMoney(pricingQuery.data?.giaNguoiLonNgayThuong ?? detail.giaNguoiLonMacDinh)}</Title>
-              <Text className="tour-detail-sidebar-price-note">Người lớn / Ngày thường</Text>
+              <Title className="tour-detail-sidebar-price">{formatMoney(selectedAdultPrice)}</Title>
+              <Text className="tour-detail-sidebar-price-note">{selectedPriceNote}</Text>
 
               <div className="tour-detail-sidebar-section">
                 <Title level={4}>Chọn lịch khởi hành</Title>

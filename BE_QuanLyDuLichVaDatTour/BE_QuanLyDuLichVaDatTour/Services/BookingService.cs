@@ -1,9 +1,12 @@
+using BE_QuanLyDuLichVaDatTour.Data;
 using BE_QuanLyDuLichVaDatTour.DTOs.Booking;
 using BE_QuanLyDuLichVaDatTour.Models.Entities;
 using BE_QuanLyDuLichVaDatTour.Models.Enums;
 using BE_QuanLyDuLichVaDatTour.Repositories.Interfaces;
 using BE_QuanLyDuLichVaDatTour.Services.Interfaces;
+using Microsoft.Data.SqlClient;
 using System.Security.Cryptography;
+using System.Transactions;
 using System.Linq;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -19,6 +22,7 @@ public class BookingService : IBookingService
     private readonly IVoucherRepository _voucherRepository;
     private readonly ISeatHoldRepository _seatHoldRepository;
     private readonly ISeatHoldService _seatHoldService;
+    private readonly AppDbContext _dbContext;
 
     public BookingService(
         IBookingRepository bookingRepository,
@@ -27,7 +31,8 @@ public class BookingService : IBookingService
         INguoiDungRepository nguoiDungRepository,
         IVoucherRepository voucherRepository,
         ISeatHoldRepository seatHoldRepository,
-        ISeatHoldService seatHoldService)
+        ISeatHoldService seatHoldService,
+        AppDbContext dbContext)
     {
         _bookingRepository = bookingRepository;
         _lichKhoiHanhRepository = lichKhoiHanhRepository;
@@ -36,101 +41,120 @@ public class BookingService : IBookingService
         _voucherRepository = voucherRepository;
         _seatHoldRepository = seatHoldRepository;
         _seatHoldService = seatHoldService;
+        _dbContext = dbContext;
     }
 
     public async Task<BookingResponseDto> CreateAsync(long currentUserId, CreateBookingRequestDto request)
     {
         var nguoiDung = await EnsureNguoiDungExistsAsync(currentUserId);
-        var lichKhoiHanh = await EnsureLichKhoiHanhAvailableAsync(request.LichKhoiHanhId);
+        const int maxAttempts = 3;
 
-        // Nếu có holdToken, xác nhận và consume hold
-        bool hasHold = !string.IsNullOrWhiteSpace(request.HoldToken);
-        if (hasHold)
+        for (var attempt = 1; ; attempt++)
         {
-            await _seatHoldService.ConvertHoldToBookingAsync(
-                currentUserId, request.HoldToken!,
-                request.SoNguoiLon + request.SoTreEm + request.SoEmBe);
+            using var transaction = new TransactionScope(
+                TransactionScopeOption.Required,
+                new TransactionOptions { IsolationLevel = IsolationLevel.Serializable },
+                TransactionScopeAsyncFlowOption.Enabled);
+
+            try
+            {
+                var lichKhoiHanh = await EnsureLichKhoiHanhAvailableAsync(request.LichKhoiHanhId);
+
+                var hasHold = !string.IsNullOrWhiteSpace(request.HoldToken);
+                if (hasHold)
+                {
+                    await _seatHoldService.ConvertHoldToBookingAsync(
+                        currentUserId, request.HoldToken!,
+                        request.SoNguoiLon + request.SoTreEm + request.SoEmBe);
+                }
+
+                ValidatePassengerCounts(request.SoNguoiLon, request.SoTreEm, request.SoEmBe, lichKhoiHanh.SoChoToiDa);
+                await ValidateSeatAvailabilityAsync(lichKhoiHanh, request.SoNguoiLon + request.SoTreEm + request.SoEmBe);
+                ValidateHanhKhachList(request.HanhKhachs, request.SoNguoiLon, request.SoTreEm, request.SoEmBe);
+
+                var now = DateTime.UtcNow;
+                var hanhKhachs = MapHanhKhachs(request.HanhKhachs, now);
+
+                var hoTenLienHe = NormalizeRequiredValue(request.HoTenLienHe ?? nguoiDung.HoTen, "Họ tên liên hệ không được để trống.");
+                var emailLienHe = NormalizeRequiredValue(request.EmailLienHe ?? nguoiDung.Email, "Email liên hệ không được để trống.");
+                var soDienThoaiLienHe = NormalizeRequiredValue(request.SoDienThoaiLienHe ?? nguoiDung.SoDienThoai, "Số điện thoại liên hệ không được để trống.");
+                var diaChiLienHe = NormalizeOptionalValue(request.DiaChiLienHe ?? nguoiDung.DiaChi);
+                var ghiChu = NormalizeOptionalValue(request.GhiChu);
+                var loaiGiaApDung = ResolveLoaiGiaApDung(lichKhoiHanh.NgayKhoiHanh);
+
+                var bangGia = await _bangGiaLichKhoiHanhRepository.GetBangGiaAsync(lichKhoiHanh.Id, loaiGiaApDung);
+                var donGiaNguoiLon = GetDonGia(bangGia, LoaiKhach.nguoi_lon, "người lớn");
+                var donGiaTreEm = GetDonGia(bangGia, LoaiKhach.tre_em, "trẻ em");
+                var donGiaEmBe = GetDonGia(bangGia, LoaiKhach.em_be, "em bé");
+
+                var maBooking = await GenerateUniqueMaBookingAsync();
+                var tamTinh = request.SoNguoiLon * donGiaNguoiLon
+                    + request.SoTreEm * donGiaTreEm
+                    + request.SoEmBe * donGiaEmBe;
+                var voucher = await ResolveVoucherAsync(request.VoucherId, request.MaVoucher, lichKhoiHanh.TourId, tamTinh);
+                var giamGia = voucher is null ? 0m : CalculateDiscount(voucher, tamTinh);
+
+                var booking = new Booking
+                {
+                    MaBooking = maBooking,
+                    LichKhoiHanhId = lichKhoiHanh.Id,
+                    KhachHangId = nguoiDung.Id,
+                    VoucherId = voucher?.Id,
+                    HoTenLienHe = hoTenLienHe,
+                    EmailLienHe = emailLienHe,
+                    SoDienThoaiLienHe = soDienThoaiLienHe,
+                    DiaChiLienHe = diaChiLienHe,
+                    NgayDat = now,
+                    SoNguoiLon = checked((short)request.SoNguoiLon),
+                    SoTreEm = checked((short)request.SoTreEm),
+                    SoEmBe = checked((short)request.SoEmBe),
+                    LoaiGiaApDung = loaiGiaApDung,
+                    DonGiaNguoiLon = donGiaNguoiLon,
+                    DonGiaTreEm = donGiaTreEm,
+                    DonGiaEmBe = donGiaEmBe,
+                    TamTinh = tamTinh,
+                    GiamGia = giamGia,
+                    TongTien = tamTinh - giamGia,
+                    SoTienDaThanhToan = 0m,
+                    TienCocYeuCau = 0m,
+                    PhuongThucThanhToanDuKien = request.PhuongThucThanhToanDuKien,
+                    TrangThaiBooking = TrangThaiBooking.cho_thanh_toan,
+                    TrangThaiThanhToan = TrangThaiThanhToan.chua_thanh_toan,
+                    HanThanhToan = now.AddHours(24),
+                    GhiChu = ghiChu,
+                    CreatedAt = now,
+                    UpdatedAt = now,
+                    HanhKhachs = new List<HanhKhach>()
+                };
+
+                await _bookingRepository.AddAsync(booking);
+                await _bookingRepository.SaveChangesAsync();
+
+                foreach (var hanhKhach in hanhKhachs)
+                {
+                    hanhKhach.BookingId = booking.Id;
+                    booking.HanhKhachs.Add(hanhKhach);
+                }
+
+                if (voucher is not null)
+                {
+                    voucher.SoLuongDaDung += 1;
+                    voucher.UpdatedAt = now;
+                }
+
+                await _bookingRepository.SaveChangesAsync();
+                await SyncLichKhoiHanhAvailabilityAsync(lichKhoiHanh, GetTongHanhKhach(booking));
+                await _bookingRepository.SaveChangesAsync();
+                transaction.Complete();
+
+                return MapBookingResponse(booking);
+            }
+            catch (SqlException ex) when (ex.Number == 1205 && attempt < maxAttempts)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(200 * attempt));
+                _dbContext.ChangeTracker.Clear();
+            }
         }
-
-        ValidatePassengerCounts(request.SoNguoiLon, request.SoTreEm, request.SoEmBe, lichKhoiHanh.SoChoToiDa);
-        await ValidateSeatAvailabilityAsync(lichKhoiHanh, request.SoNguoiLon + request.SoTreEm + request.SoEmBe);
-        ValidateHanhKhachList(request.HanhKhachs, request.SoNguoiLon, request.SoTreEm, request.SoEmBe);
-
-        var now = DateTime.UtcNow;
-        var hanhKhachs = MapHanhKhachs(request.HanhKhachs, now);
-
-        var hoTenLienHe = NormalizeRequiredValue(request.HoTenLienHe ?? nguoiDung.HoTen, "Họ tên liên hệ không được để trống.");
-        var emailLienHe = NormalizeRequiredValue(request.EmailLienHe ?? nguoiDung.Email, "Email liên hệ không được để trống.");
-        var soDienThoaiLienHe = NormalizeRequiredValue(request.SoDienThoaiLienHe ?? nguoiDung.SoDienThoai, "Số điện thoại liên hệ không được để trống.");
-        var diaChiLienHe = NormalizeOptionalValue(request.DiaChiLienHe ?? nguoiDung.DiaChi);
-        var ghiChu = NormalizeOptionalValue(request.GhiChu);
-        var loaiGiaApDung = ResolveLoaiGiaApDung(lichKhoiHanh.NgayKhoiHanh);
-
-        var bangGia = await _bangGiaLichKhoiHanhRepository.GetBangGiaAsync(lichKhoiHanh.Id, loaiGiaApDung);
-        var donGiaNguoiLon = GetDonGia(bangGia, LoaiKhach.nguoi_lon, "người lớn");
-        var donGiaTreEm = GetDonGia(bangGia, LoaiKhach.tre_em, "trẻ em");
-        var donGiaEmBe = GetDonGia(bangGia, LoaiKhach.em_be, "em bé");
-
-        var maBooking = await GenerateUniqueMaBookingAsync();
-        var tamTinh = request.SoNguoiLon * donGiaNguoiLon
-            + request.SoTreEm * donGiaTreEm
-            + request.SoEmBe * donGiaEmBe;
-        var voucher = await ResolveVoucherAsync(request.VoucherId, request.MaVoucher, lichKhoiHanh.TourId, tamTinh);
-        var giamGia = voucher is null ? 0m : CalculateDiscount(voucher, tamTinh);
-
-        var booking = new Booking
-        {
-            MaBooking = maBooking,
-            LichKhoiHanhId = lichKhoiHanh.Id,
-            KhachHangId = nguoiDung.Id,
-            VoucherId = voucher?.Id,
-            HoTenLienHe = hoTenLienHe,
-            EmailLienHe = emailLienHe,
-            SoDienThoaiLienHe = soDienThoaiLienHe,
-            DiaChiLienHe = diaChiLienHe,
-            NgayDat = now,
-            SoNguoiLon = checked((short)request.SoNguoiLon),
-            SoTreEm = checked((short)request.SoTreEm),
-            SoEmBe = checked((short)request.SoEmBe),
-            LoaiGiaApDung = loaiGiaApDung,
-            DonGiaNguoiLon = donGiaNguoiLon,
-            DonGiaTreEm = donGiaTreEm,
-            DonGiaEmBe = donGiaEmBe,
-            TamTinh = tamTinh,
-            GiamGia = giamGia,
-            TongTien = tamTinh - giamGia,
-            SoTienDaThanhToan = 0m,
-            TienCocYeuCau = 0m,
-            PhuongThucThanhToanDuKien = request.PhuongThucThanhToanDuKien,
-            TrangThaiBooking = TrangThaiBooking.cho_thanh_toan,
-            TrangThaiThanhToan = TrangThaiThanhToan.chua_thanh_toan,
-            HanThanhToan = now.AddHours(24),
-            GhiChu = ghiChu,
-            CreatedAt = now,
-            UpdatedAt = now,
-            HanhKhachs = new List<HanhKhach>()
-        };
-
-        await _bookingRepository.AddAsync(booking);
-        await _bookingRepository.SaveChangesAsync();
-
-        foreach (var hanhKhach in hanhKhachs)
-        {
-            hanhKhach.BookingId = booking.Id;
-            booking.HanhKhachs.Add(hanhKhach);
-        }
-
-        if (voucher is not null)
-        {
-            voucher.SoLuongDaDung += 1;
-            voucher.UpdatedAt = now;
-        }
-
-        await _bookingRepository.SaveChangesAsync();
-        await SyncLichKhoiHanhAvailabilityAsync(lichKhoiHanh, GetTongHanhKhach(booking));
-        await _bookingRepository.SaveChangesAsync();
-
-        return MapBookingResponse(booking);
     }
 
     public async Task<List<BookingListItemDto>> GetMyBookingsAsync(long currentUserId)

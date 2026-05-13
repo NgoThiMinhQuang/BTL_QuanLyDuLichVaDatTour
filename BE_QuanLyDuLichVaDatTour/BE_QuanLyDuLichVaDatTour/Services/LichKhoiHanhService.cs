@@ -33,7 +33,8 @@ public class LichKhoiHanhService : ILichKhoiHanhService
     public async Task<List<LichKhoiHanhAdminResponseDto>> GetAllAsync()
     {
         var lichKhoiHanhs = await _lichKhoiHanhRepository.GetAllAsync();
-        return await MapAdminResponsesAsync(lichKhoiHanhs);
+        var bookedSeats = await _bookingRepository.GetBookedSeatsBatchAsync(lichKhoiHanhs.Select(x => x.Id));
+        return await MapAdminResponsesAsync(lichKhoiHanhs, bookedSeats);
     }
 
     public async Task<LichKhoiHanhAdminResponseDto> GetByIdAsync(long id)
@@ -49,7 +50,8 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         await EnsureTourExistsAsync(tourId);
 
         var lichKhoiHanhs = await _lichKhoiHanhRepository.GetByTourIdAsync(tourId);
-        return await MapAdminResponsesAsync(lichKhoiHanhs);
+        var bookedSeats = await _bookingRepository.GetBookedSeatsBatchAsync(lichKhoiHanhs.Select(x => x.Id));
+        return await MapAdminResponsesAsync(lichKhoiHanhs, bookedSeats);
     }
 
     public async Task<List<LichKhoiHanhResponseDto>> GetVisibleByTourIdAsync(long tourId)
@@ -61,7 +63,8 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         }
 
         var lichKhoiHanhs = await _lichKhoiHanhRepository.GetVisibleByTourIdAsync(tour.Id);
-        return await MapPublicResponsesAsync(lichKhoiHanhs);
+        var bookedSeats = await _bookingRepository.GetBookedSeatsBatchAsync(lichKhoiHanhs.Select(x => x.Id));
+        return await MapPublicResponsesAsync(lichKhoiHanhs, bookedSeats);
     }
 
     public async Task<BangGiaLichKhoiHanhResponseDto> GetBangGiaAsync(long lichKhoiHanhId)
@@ -265,26 +268,70 @@ public class LichKhoiHanhService : ILichKhoiHanhService
         return prices.TryGetValue(type, out var price) ? price : null;
     }
 
-    private async Task<List<LichKhoiHanhAdminResponseDto>> MapAdminResponsesAsync(List<LichKhoiHanh> lichKhoiHanhs)
+    private async Task<List<LichKhoiHanhAdminResponseDto>> MapAdminResponsesAsync(List<LichKhoiHanh> lichKhoiHanhs, Dictionary<long, int>? bookedSeatsLookup = null)
     {
         var responses = new List<LichKhoiHanhAdminResponseDto>(lichKhoiHanhs.Count);
         foreach (var lichKhoiHanh in lichKhoiHanhs)
         {
-            responses.Add(await MapAdminResponseAsync(lichKhoiHanh));
+            var soChoDaDat = await GetBookedSeatsForResponseAsync(lichKhoiHanh.Id, bookedSeatsLookup);
+            responses.Add(new LichKhoiHanhAdminResponseDto
+            {
+                Id = lichKhoiHanh.Id,
+                TourId = lichKhoiHanh.TourId,
+                MaTour = lichKhoiHanh.Tour?.MaTour ?? string.Empty,
+                TenTour = lichKhoiHanh.Tour?.TenTour ?? string.Empty,
+                MaDotTour = lichKhoiHanh.MaDotTour,
+                NgayKhoiHanh = lichKhoiHanh.NgayKhoiHanh,
+                NgayKetThuc = lichKhoiHanh.NgayKetThuc,
+                NoiTapTrung = lichKhoiHanh.NoiTapTrung,
+                SoChoToiDa = lichKhoiHanh.SoChoToiDa,
+                SoChoDaDat = soChoDaDat,
+                SoChoConLai = Math.Max(lichKhoiHanh.SoChoToiDa - soChoDaDat, 0),
+                GhiChu = lichKhoiHanh.GhiChu,
+                LyDoHuy = lichKhoiHanh.LyDoHuy,
+                TrangThai = lichKhoiHanh.TrangThai.ToString(),
+                CreatedAt = lichKhoiHanh.CreatedAt,
+                UpdatedAt = lichKhoiHanh.UpdatedAt
+            });
         }
 
         return responses;
     }
 
-    private async Task<List<LichKhoiHanhResponseDto>> MapPublicResponsesAsync(List<LichKhoiHanh> lichKhoiHanhs)
+    private async Task<List<LichKhoiHanhResponseDto>> MapPublicResponsesAsync(List<LichKhoiHanh> lichKhoiHanhs, Dictionary<long, int>? bookedSeatsLookup = null)
     {
         var responses = new List<LichKhoiHanhResponseDto>(lichKhoiHanhs.Count);
         foreach (var lichKhoiHanh in lichKhoiHanhs)
         {
-            responses.Add(await MapPublicResponseAsync(lichKhoiHanh));
+            var soChoDaDat = await GetBookedSeatsForResponseAsync(lichKhoiHanh.Id, bookedSeatsLookup);
+            responses.Add(new LichKhoiHanhResponseDto
+            {
+                Id = lichKhoiHanh.Id,
+                TourId = lichKhoiHanh.TourId,
+                MaTour = lichKhoiHanh.Tour?.MaTour ?? string.Empty,
+                TenTour = lichKhoiHanh.Tour?.TenTour ?? string.Empty,
+                MaDotTour = lichKhoiHanh.MaDotTour,
+                NgayKhoiHanh = lichKhoiHanh.NgayKhoiHanh,
+                NgayKetThuc = lichKhoiHanh.NgayKetThuc,
+                NoiTapTrung = lichKhoiHanh.NoiTapTrung,
+                SoChoToiDa = lichKhoiHanh.SoChoToiDa,
+                SoChoDaDat = soChoDaDat,
+                SoChoConLai = Math.Max(lichKhoiHanh.SoChoToiDa - soChoDaDat, 0),
+                TrangThai = lichKhoiHanh.TrangThai.ToString()
+            });
         }
 
         return responses;
+    }
+
+    private async Task<int> GetBookedSeatsForResponseAsync(long lichKhoiHanhId, Dictionary<long, int>? bookedSeatsLookup)
+    {
+        if (bookedSeatsLookup is not null)
+        {
+            return bookedSeatsLookup.GetValueOrDefault(lichKhoiHanhId, 0);
+        }
+
+        return await _bookingRepository.GetBookedSeatsAsync(lichKhoiHanhId);
     }
 
     private async Task<LichKhoiHanhAdminResponseDto> MapAdminResponseAsync(LichKhoiHanh lichKhoiHanh)

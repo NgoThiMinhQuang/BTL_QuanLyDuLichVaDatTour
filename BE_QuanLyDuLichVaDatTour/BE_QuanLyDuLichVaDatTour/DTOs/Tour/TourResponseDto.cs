@@ -1,3 +1,5 @@
+using BE_QuanLyDuLichVaDatTour.DTOs.LichTrinh;
+
 namespace BE_QuanLyDuLichVaDatTour.DTOs.Tour;
 
 public class TourResponseDto
@@ -39,6 +41,8 @@ public class TourResponseDto
     public List<TourDiemDenResponseDto> DiemDens { get; set; } = new();
 
     public List<AnhTourResponseDto> AnhTours { get; set; } = new();
+
+    public List<LichTrinhResponseDto> LichTrinhs { get; set; } = new();
 
     public string TrangThai { get; set; } = string.Empty;
 

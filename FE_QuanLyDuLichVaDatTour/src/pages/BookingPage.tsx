@@ -152,8 +152,8 @@ export default function Booking() {
 
   const pricingSummary = useMemo(() => {
     if (!bookingQuery.data) return null
-    const departureDay = dayjs(bookingQuery.data.departure.ngayKhoiHanh).day()
-    const isWeekend = departureDay === 0 || departureDay === 6
+    const currentDay = dayjs().day()
+    const isWeekend = currentDay === 0 || currentDay === 6
     const pricing = bookingQuery.data.pricing
     return {
       nguoiLon: isWeekend
