@@ -1,7 +1,7 @@
 import './TheTour.css'
 import { Button, Card, Rate, Typography } from 'antd'
 import { CalendarOutlined, EnvironmentOutlined, HeartFilled, HeartOutlined, TagOutlined, TeamOutlined } from '@ant-design/icons'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { getTourChiTietPath } from '../../constants/paths'
 import bannerImage from '../../assets/Banner.jpg'
 import { resolveApiAssetUrl } from '../../constants/api'
@@ -25,16 +25,13 @@ function formatTrangThai(trangThai?: string | null) {
     case 'nhap':
       return 'Nháp'
     case 'tam_ngung':
-      return 'Tạm ngừng'
+      return 'Tạm ngưng'
     case 'an':
       return 'Ẩn'
     case 'ngung_kinh_doanh':
       return 'Ngừng kinh doanh'
     default:
-      return normalized
-        .split('_')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')
+      return 'Đang cập nhật'
   }
 }
 
@@ -78,6 +75,7 @@ export function TheTour({
   ]
     .filter(Boolean)
     .join(' ')
+  const navigate = useNavigate()
   const isFavorite = useFavoriteTourStore((state) => state.isFavorite(tour.id))
   const toggleFavorite = useFavoriteTourStore((state) => state.toggleFavorite)
   const displayPrice = tour.giaThapNhat ?? tour.giaNguoiLonMacDinh
@@ -148,8 +146,8 @@ export function TheTour({
             </div>
           </div>
 
-          <Button type="primary" className="tour-card-button">
-            <Link to={ctaHref}>{ctaLabel}</Link>
+          <Button type="primary" className="tour-card-button" onClick={() => navigate(ctaHref)}>
+            {ctaLabel}
           </Button>
         </div>
       </div>

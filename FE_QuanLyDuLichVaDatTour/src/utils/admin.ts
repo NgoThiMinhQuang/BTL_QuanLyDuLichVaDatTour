@@ -36,6 +36,38 @@ export const adminPaymentTransactionStatusMeta = {
   da_hoan_tien: { label: 'Đã hoàn tiền', color: 'purple' },
 } as const satisfies Record<string, StatusMeta>
 
+export const paymentStatusTextMap: Record<string, string> = {
+  chua_thanh_toan: 'Chưa thanh toán',
+  thanh_toan_mot_phan: 'Thanh toán một phần',
+  da_thanh_toan_du: 'Đã thanh toán đủ',
+  that_bai: 'Thất bại',
+  da_hoan_tien: 'Đã hoàn tiền',
+  cho_thanh_toan: 'Chờ thanh toán',
+  thanh_cong: 'Thành công',
+  khoi_tao: 'Khởi tạo',
+  cho_xu_ly: 'Chờ xử lý',
+}
+
+export const bookingStatusTextMap: Record<string, string> = {
+  moi_tao: 'Mới tạo',
+  cho_thanh_toan: 'Chờ thanh toán',
+  da_coc: 'Đã cọc',
+  da_xac_nhan: 'Đã xác nhận',
+  da_huy: 'Đã huỷ',
+  tu_choi: 'Từ chối',
+  hoan_tat: 'Hoàn tất',
+}
+
+export function formatBookingStatus(value?: string | null) {
+  if (!value) return '-'
+  return bookingStatusTextMap[value] ?? value
+}
+
+export function formatPaymentStatus(value?: string | null) {
+  if (!value) return '-'
+  return paymentStatusTextMap[value] ?? value
+}
+
 export const adminVoucherStatusMeta = {
   hoat_dong: { label: 'Hoạt động', color: 'green' },
   an: { label: 'Ẩn', color: 'red' },

@@ -1,10 +1,11 @@
 import { Button, Card, Divider, Space, Tag, Typography } from 'antd'
-import { Link } from 'react-router'
+import { useNavigate } from 'react-router'
 import { CalendarOutlined, IdcardOutlined, TagOutlined, TeamOutlined, EyeOutlined, MessageOutlined, CheckCircleOutlined, WalletOutlined } from '@ant-design/icons'
 import type { BookingListItem } from '../../services/booking/booking'
 import { PATHS } from '../../constants/paths'
 import { formatDate } from '../../utils/formatDate'
 import { formatMoney } from '../../utils/formatMoney'
+import { formatBookingStatus, formatPaymentStatus } from '../../utils/admin'
 
 const { Paragraph, Text, Title } = Typography
 
@@ -13,34 +14,15 @@ interface BookingListItemProps {
 }
 
 function formatTrangThai(value: string) {
-  return value
-    .split('_')
-    .map((item) => item.charAt(0).toUpperCase() + item.slice(1))
-    .join(' ')
+  return formatBookingStatus(value)
+}
+
+function formatPaymentTrangThai(value: string) {
+  return formatPaymentStatus(value)
 }
 
 export function BookingListItemCard({ booking }: BookingListItemProps) {
-  const getBookingStatusText = (status: string) => {
-    const map: Record<string, string> = {
-      moi_tao: 'Mới tạo',
-      cho_thanh_toan: 'Chờ thanh toán',
-      da_coc: 'Đã cọc',
-      da_xac_nhan: 'Đã xác nhận',
-      da_huy: 'Đã hủy',
-      hoan_tat: 'Hoàn tất',
-    }
-    return map[status] || status
-  }
-
-  const getPaymentStatusText = (status: string) => {
-    const map: Record<string, string> = {
-      chua_thanh_toan: 'Chưa thanh toán',
-      cho_thanh_toan: 'Chờ thanh toán',
-      da_thanh_toan_coc: 'Đã cọc',
-      da_thanh_toan_het: 'Đã thanh toán hết',
-    }
-    return map[status] || status
-  }
+  const navigate = useNavigate()
 
   return (
     <div className="customer-booking-card">
@@ -94,10 +76,10 @@ export function BookingListItemCard({ booking }: BookingListItemProps) {
           <div className="booking-card-bottom">
             <div className="status-group">
               <Tag className={`custom-status-tag status-booking-${booking.trangThaiBooking}`}>
-                Booking: {getBookingStatusText(booking.trangThaiBooking)}
+                Booking: {formatTrangThai(booking.trangThaiBooking)}
               </Tag>
               <Tag className={`custom-status-tag status-payment-${booking.trangThaiThanhToan}`}>
-                Thanh toán: {getPaymentStatusText(booking.trangThaiThanhToan)}
+                Thanh toán: {formatPaymentTrangThai(booking.trangThaiThanhToan)}
               </Tag>
               {booking.daDanhGia && (
                 <Tag color="success" className="custom-status-tag">
@@ -107,16 +89,12 @@ export function BookingListItemCard({ booking }: BookingListItemProps) {
             </div>
 
             <div className="action-buttons">
-              <Button type="primary" icon={<EyeOutlined />} className="btn-premium btn-view">
-                <Link to={PATHS.myBookingDetail.replace(':id', String(booking.id))} style={{ color: 'inherit' }}>
-                  Chi tiết
-                </Link>
+              <Button type="primary" icon={<EyeOutlined />} className="btn-premium btn-view" onClick={() => navigate(PATHS.myBookingDetail.replace(':id', String(booking.id)))}>
+                Chi tiết
               </Button>
               {booking.coTheDanhGia && (
-                <Button icon={<MessageOutlined />} className="btn-premium btn-review">
-                  <Link to={`${PATHS.myReviews}?bookingId=${booking.id}`} style={{ color: 'inherit' }}>
-                    Đánh giá
-                  </Link>
+                <Button icon={<MessageOutlined />} className="btn-premium btn-review" onClick={() => navigate(`${PATHS.myReviews}?bookingId=${booking.id}`)}>
+                  Đánh giá
                 </Button>
               )}
             </div>

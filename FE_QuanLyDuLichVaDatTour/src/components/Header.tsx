@@ -30,7 +30,17 @@ export function Header() {
     { key: PATHS.lienHe, label: <Link to={PATHS.lienHe}>Liên hệ</Link> },
   ]
 
-  const selectedKey = navItems.some((item) => item.key === location.pathname) ? location.pathname : PATHS.home
+  const selectedKey = (() => {
+    if (location.pathname === PATHS.home) return PATHS.home
+    if (location.pathname.startsWith(PATHS.favoriteTours)) return PATHS.favoriteTours
+    if (location.pathname.startsWith(PATHS.tour)) return PATHS.tour
+    if (location.pathname.startsWith(PATHS.lichKhoiHanh)) return PATHS.lichKhoiHanh
+    if (location.pathname.startsWith(PATHS.tinTuc)) return PATHS.tinTuc
+    if (location.pathname.startsWith(PATHS.lienHe)) return PATHS.lienHe
+    return PATHS.home
+  })()
+
+  const isFavoriteActive = location.pathname.startsWith(PATHS.favoriteTours)
 
   const userMenuItems = [
     {
@@ -75,7 +85,7 @@ export function Header() {
         <Menu mode="horizontal" selectedKeys={[selectedKey]} items={navItems} className="app-menu" />
 
         <Space size={16} className="app-header-actions">
-          <button type="button" className="app-header-icon" aria-label="Yêu thích" onClick={() => navigate(accessToken ? PATHS.favoriteTours : loginPath)}>
+          <button type="button" className={`app-header-icon ${isFavoriteActive ? 'app-header-icon-active' : ''}`} aria-label="Yêu thích" onClick={() => navigate(accessToken ? PATHS.favoriteTours : loginPath)}>
             <HeartOutlined />
           </button>
           <button type="button" className="app-header-icon" aria-label="Thông báo">

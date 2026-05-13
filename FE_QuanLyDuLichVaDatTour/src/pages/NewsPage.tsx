@@ -1,5 +1,5 @@
 import './NewsPage.css'
-import { Input, Tag, Typography, Empty, Spin } from 'antd'
+import { Input, Tag, Typography, Empty, Spin, Divider, Button } from 'antd'
 import { Link } from 'react-router'
 import { getTinTucChiTietPath } from '../constants/paths'
 import bannerImage from '../assets/Banner.jpg'
@@ -11,7 +11,8 @@ import {
   CalendarOutlined, 
   ArrowRightOutlined,
   SearchOutlined,
-  TagOutlined
+  TagOutlined,
+  ClockCircleOutlined
 } from '@ant-design/icons'
 
 const { Paragraph, Text, Title } = Typography
@@ -55,10 +56,17 @@ export default function TinTuc() {
 
   const getImageUrl = (path?: string | null) => resolveApiAssetUrl(path) ?? bannerImage
 
+  const calculateReadingTime = (content: string) => {
+    const wordsPerMinute = 200
+    const words = content.replace(/<[^>]+>/g, '').split(/\s+/).length
+    return Math.ceil(words / wordsPerMinute)
+  }
+
   if (isLoading) {
     return (
       <div className="news-page-loading">
-        <Spin size="large" description="Đang tải tin tức du lịch..." />
+        <Spin size="large" />
+        <Text strong>Đang tải cẩm nang du lịch...</Text>
       </div>
     )
   }
@@ -67,9 +75,10 @@ export default function TinTuc() {
     return (
       <div className="news-page-empty">
         <Empty 
-          description="Không thể tải danh sách tin tức. Vui lòng thử lại sau." 
+          description="Rất tiếc, không thể tải danh sách tin tức vào lúc này." 
           image={Empty.PRESENTED_IMAGE_SIMPLE}
         />
+        <Button type="primary" onClick={() => window.location.reload()}>Thử lại</Button>
       </div>
     )
   }
@@ -80,10 +89,10 @@ export default function TinTuc() {
       <section className="news-hero">
         <div className="news-hero-overlay" />
         <div className="news-hero-content">
-          <Tag className="news-hero-badge">CẨM NANG DU LỊCH</Tag>
-          <Title className="news-hero-title">Khám Phá Thế Giới <br/> Qua Từng Trang Viết</Title>
+          <Tag className="news-hero-badge">Cẩm Nang Du Lịch</Tag>
+          <Title className="news-hero-title">Hành Trình Khám Phá <br/> Bắt Đầu Từ Đây</Title>
           <Paragraph className="news-hero-description">
-            Cập nhật những thông tin mới nhất về du lịch, điểm đến văn hóa và mẹo hữu ích cho hành trình trọn vẹn của bạn.
+            Cung cấp những thông tin mới nhất, mẹo du lịch hữu ích và những câu chuyện truyền cảm hứng cho chuyến đi của bạn.
           </Paragraph>
         </div>
       </section>
@@ -96,7 +105,7 @@ export default function TinTuc() {
               prefix={<SearchOutlined className="search-icon" />}
               value={keyword}
               onChange={(e) => handleKeywordChange(e.target.value)}
-              placeholder="Tìm bài viết, mẹo du lịch..."
+              placeholder="Tìm kiếm bài viết, mẹo du lịch..."
               variant="borderless"
               className="news-search-field"
             />
@@ -118,7 +127,7 @@ export default function TinTuc() {
 
         {!featuredItem && !isLoading ? (
           <div className="news-no-results">
-            <Empty description="Không tìm thấy bài viết nào phù hợp với tìm kiếm của bạn." />
+            <Empty description="Không tìm thấy bài viết nào phù hợp." />
           </div>
         ) : (
           <>
@@ -127,14 +136,16 @@ export default function TinTuc() {
               <article className="news-featured-card">
                 <div className="featured-image-container">
                   <img src={getImageUrl(featuredItem.anhDaiDien)} alt={featuredItem.tieuDe} className="featured-image" />
-                  <div className="featured-overlay" />
-                  <Tag className="featured-tag">Nổi bật</Tag>
+                  <Tag className="featured-tag">Tiêu điểm</Tag>
                 </div>
 
                 <div className="featured-content">
                   <div className="featured-meta-top">
-                    <TagOutlined className="meta-icon" />
-                    <span className="featured-category">{featuredItem.danhMuc || 'Tin tức'}</span>
+                    <TagOutlined />
+                    <span>{featuredItem.danhMuc || 'Tin tức'}</span>
+                    <Divider type="vertical" />
+                    <ClockCircleOutlined />
+                    <span>{calculateReadingTime(featuredItem.noiDung)} phút đọc</span>
                   </div>
                   
                   <Title className="featured-title">
@@ -148,14 +159,14 @@ export default function TinTuc() {
                   <div className="featured-footer">
                     <div className="featured-author">
                       <UserOutlined className="footer-icon" />
-                      <span>Quản trị viên</span>
+                      <span>TravelViet Editor</span>
                     </div>
                     <div className="featured-date">
                       <CalendarOutlined className="footer-icon" />
                       <span>{formatDisplayDate(featuredItem.ngayDang)}</span>
                     </div>
                     <Link to={getTinTucChiTietPath(featuredItem.id)} className="featured-read-more">
-                      Chi tiết <ArrowRightOutlined />
+                      Xem chi tiết <ArrowRightOutlined />
                     </Link>
                   </div>
                 </div>
@@ -167,7 +178,9 @@ export default function TinTuc() {
               {paginatedItems.map((item) => (
                 <article key={item.id} className="article-card">
                   <div className="article-image-box">
-                    <img src={getImageUrl(item.anhDaiDien)} alt={item.tieuDe} className="article-image" />
+                    <Link to={getTinTucChiTietPath(item.id)}>
+                      <img src={getImageUrl(item.anhDaiDien)} alt={item.tieuDe} className="article-image" />
+                    </Link>
                     <Tag className="article-tag">{item.danhMuc || 'Du lịch'}</Tag>
                   </div>
 
@@ -175,6 +188,8 @@ export default function TinTuc() {
                     <div className="article-meta">
                       <span className="article-date">
                         <CalendarOutlined /> {formatDisplayDate(item.ngayDang)}
+                        <Divider type="vertical" />
+                        <ClockCircleOutlined /> {calculateReadingTime(item.noiDung)}'
                       </span>
                     </div>
                     
@@ -188,7 +203,7 @@ export default function TinTuc() {
 
                     <div className="article-footer">
                       <Link to={getTinTucChiTietPath(item.id)} className="article-link">
-                        Xem bài viết <ArrowRightOutlined />
+                        Đọc tiếp <ArrowRightOutlined />
                       </Link>
                     </div>
                   </div>
@@ -213,3 +228,4 @@ export default function TinTuc() {
     </div>
   )
 }
+

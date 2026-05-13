@@ -26,6 +26,7 @@ interface BookingContactValues {
   soDienThoaiLienHe: string
   tinhThanh?: string
   quanHuyen?: string
+  diaChiChiTiet?: string
   diaChiLienHe?: string
 }
 
@@ -337,22 +338,15 @@ export default function Booking() {
     try {
       const values = await contactForm.validateFields()
       
-      // Construct address string from Province and District
-      let diaChi = values.diaChiLienHe || ''
-      if (provincesQuery.data) {
-        const province = provincesQuery.data.find((p: any) => p.code === values.tinhThanh)
-        const district = province?.districts.find((d: any) => d.code === values.quanHuyen)
-        
-        const addressParts = []
-        if (district) addressParts.push(district.name)
-        if (province) addressParts.push(province.name)
-        diaChi = addressParts.join(', ')
-      }
+      const province = provincesQuery.data?.find((p: any) => p.code === values.tinhThanh)
+      const district = province?.districts.find((d: any) => d.code === values.quanHuyen)
+      const addressParts = [values.diaChiChiTiet, district?.name, province?.name].filter(Boolean)
 
       setContactInfo({
         ...values,
-        diaChiLienHe: diaChi || undefined
+        diaChiLienHe: addressParts.join(', ') || undefined,
       })
+
       setErrorMessage(null)
       setCurrentStep('counts')
       createHold()
@@ -511,6 +505,15 @@ export default function Booking() {
                       showSearch
                       filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                     />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={24}>
+                  <Form.Item
+                    label="Địa chỉ chi tiết"
+                    name="diaChiChiTiet"
+                    rules={[{ required: true, message: 'Vui lòng nhập địa chỉ chi tiết' }]}
+                  >
+                    <Input size="large" placeholder="Số nhà, tên đường, phường/xã..." className="booking-input" />
                   </Form.Item>
                 </Col>
               </Row>

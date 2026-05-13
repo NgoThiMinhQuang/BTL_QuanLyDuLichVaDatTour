@@ -4,14 +4,16 @@ import type { FeaturedTourApiItem } from '../../types/tour'
 import { useLichKhoiHanhGan } from '../../services/home/useLichKhoiHanhGan'
 import { TieuDeMuc } from '../../components/common/TieuDeMuc'
 import { formatDate } from '../../utils/formatDate'
-import { 
-  CalendarOutlined, 
-  EnvironmentOutlined, 
-  TeamOutlined, 
+import { getTourChiTietPath } from '../../constants/paths'
+import {
+  CalendarOutlined,
+  EnvironmentOutlined,
+  TeamOutlined,
   TagOutlined,
   ClockCircleOutlined,
   ArrowRightOutlined
 } from '@ant-design/icons'
+import { Link } from 'react-router'
 
 const { Title } = Typography
 
@@ -122,10 +124,10 @@ export function MucLichKhoiHanhGan({ tours }: MucLichKhoiHanhGanProps) {
                           type="primary"
                           block
                           className="departure-action-btn"
-                          href="#tour-noi-bat"
                           icon={<ArrowRightOutlined />}
                           iconPlacement="end"
                           disabled={isSoldOut}
+                          onClick={() => window.location.assign(getTourChiTietPath(item.tourId))}
                         >
                           {isSoldOut ? 'Đã hết chỗ' : 'Xem tour liên quan'}
                         </Button>

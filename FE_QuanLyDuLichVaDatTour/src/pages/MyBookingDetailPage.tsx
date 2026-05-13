@@ -25,6 +25,7 @@ import { PATHS } from '../constants/paths'
 import { formatDate } from '../utils/formatDate'
 import { formatMoney } from '../utils/formatMoney'
 import { API_BASE_URL } from '../constants/api'
+import { formatBookingStatus, formatPaymentStatus } from '../utils/admin'
 import { useAuthStore } from '../store/authStore'
 import { layChiTietBooking, layThanhToanTheoBooking, type BookingPassenger } from '../services/booking/booking'
 import { taoYeuCauHuyTour, layYeuCauHuyTourTheoBooking } from '../services/huy-tour/huyTour'
@@ -47,7 +48,7 @@ async function handleDownload(url: string, filename: string) {
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => '')
-      throw new Error(errorText || 'Tải file thất bại')
+      throw new Error(`${response.status} ${response.statusText}${errorText ? `: ${errorText}` : ''}`)
     }
 
     const blob = await response.blob()
@@ -63,10 +64,11 @@ async function handleDownload(url: string, filename: string) {
 }
 
 function formatTrangThai(value: string) {
-  return value
-    .split('_')
-    .map((item) => item.charAt(0).toUpperCase() + item.slice(1))
-    .join(' ')
+  return formatBookingStatus(value)
+}
+
+function formatThanhToan(value: string) {
+  return formatPaymentStatus(value)
 }
 
 export default function BookingDetail() {
@@ -152,7 +154,7 @@ export default function BookingDetail() {
                 <div className="hero-meta">
                   <Text className="hero-date"><CalendarOutlined /> Đặt ngày: {formatDate(bookingQuery.data.ngayDat)}</Text>
                   <Tag color={bookingQuery.data.trangThaiThanhToan === 'da_thanh_toan_du' ? 'success' : 'warning'} className="payment-status-tag">
-                    {formatTrangThai(bookingQuery.data.trangThaiThanhToan)}
+                    {formatThanhToan(bookingQuery.data.trangThaiThanhToan)}
                   </Tag>
                 </div>
               </div>
@@ -377,7 +379,7 @@ export default function BookingDetail() {
                         size="large"
                         icon={<DownloadOutlined />}
                         className="btn-download-primary"
-                        onClick={() => handleDownload(`/api/booking/export-confirmation/${bookingId}`, `XacNhanBooking_${bookingId}.pdf`)}
+                        onClick={() => handleDownload(`/booking/export-confirmation/${bookingId}`, `XacNhanBooking_${bookingId}.pdf`)}
                       >
                         Tải xác nhận booking
                       </Button>
@@ -390,7 +392,7 @@ export default function BookingDetail() {
                         size="large"
                         icon={<FileTextOutlined />}
                         className="btn-download-secondary"
-                        onClick={() => handleDownload(`/api/booking/export-invoice/${bookingId}`, `HoaDon_${bookingId}.pdf`)}
+                        onClick={() => handleDownload(`/booking/export-invoice/${bookingId}`, `HoaDon_${bookingId}.pdf`)}
                       >
                         Tải hóa đơn (PDF)
                       </Button>
