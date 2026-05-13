@@ -132,7 +132,12 @@ public class BookingController : ControllerBase
 
         try
         {
-            await _bookingService.GetMyBookingByIdAsync(userId, id);
+            var booking = await _bookingService.GetMyBookingByIdAsync(userId, id);
+            if (!string.Equals(booking.TrangThaiThanhToan, "da_thanh_toan_du", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest(new { message = "Chỉ booking đã thanh toán đủ mới tải được hóa đơn." });
+            }
+
             var pdfBytes = await _invoiceService.ExportInvoicePdfAsync(id);
             return File(pdfBytes, "application/pdf", $"HoaDon_{id}.pdf");
         }

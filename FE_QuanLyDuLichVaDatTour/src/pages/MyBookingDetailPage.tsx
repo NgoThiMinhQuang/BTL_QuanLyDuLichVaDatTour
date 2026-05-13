@@ -151,7 +151,7 @@ export default function BookingDetail() {
                 <Title level={1} className="hero-tour-title">{bookingQuery.data.tenTour}</Title>
                 <div className="hero-meta">
                   <Text className="hero-date"><CalendarOutlined /> Đặt ngày: {formatDate(bookingQuery.data.ngayDat)}</Text>
-                  <Tag color={bookingQuery.data.trangThaiThanhToan === 'da_thanh_toan' ? 'success' : 'warning'} className="payment-status-tag">
+                  <Tag color={bookingQuery.data.trangThaiThanhToan === 'da_thanh_toan_du' ? 'success' : 'warning'} className="payment-status-tag">
                     {formatTrangThai(bookingQuery.data.trangThaiThanhToan)}
                   </Tag>
                 </div>
@@ -384,7 +384,7 @@ export default function BookingDetail() {
                     )}
 
                     {/* Invoice PDF - chỉ hiển thị khi đã thanh toán đủ */}
-                    {bookingQuery.data.trangThaiThanhToan === 'da_thanh_toan_het' && (
+                    {bookingQuery.data.trangThaiThanhToan === 'da_thanh_toan_du' && (
                       <Button
                         block
                         size="large"
