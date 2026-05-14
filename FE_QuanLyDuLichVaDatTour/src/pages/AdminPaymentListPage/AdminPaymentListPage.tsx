@@ -57,7 +57,7 @@ export default function AdminPaymentListPage() {
     return {
       total: payments.length,
       success: payments.filter(p => p.trangThai === 'thanh_cong').length,
-      pending: payments.filter(p => p.trangThai === 'dang_xu_ly' || p.trangThai === 'cho_thanh_toan').length,
+      pending: payments.filter(p => p.trangThai === 'cho_xu_ly' || p.trangThai === 'khoi_tao').length,
       failed: payments.filter(p => p.trangThai === 'da_hoan_tien' || p.trangThai === 'that_bai').length,
     }
   }, [payments])
@@ -185,7 +185,7 @@ export default function AdminPaymentListPage() {
         danger: true,
         onClick: () => void handleStatusChange(record, 'da_hoan_tien')
       })
-    } else if (record.trangThai === 'dang_xu_ly' || record.trangThai === 'cho_thanh_toan') {
+    } else if (record.trangThai === 'cho_xu_ly' || record.trangThai === 'khoi_tao') {
       items.push({
         key: 'confirm',
         label: 'Xác nhận thành công',

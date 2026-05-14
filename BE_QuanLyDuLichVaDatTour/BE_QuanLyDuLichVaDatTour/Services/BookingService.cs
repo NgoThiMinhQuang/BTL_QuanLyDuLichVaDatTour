@@ -22,6 +22,7 @@ public class BookingService : IBookingService
     private readonly IVoucherRepository _voucherRepository;
     private readonly ISeatHoldRepository _seatHoldRepository;
     private readonly ISeatHoldService _seatHoldService;
+    private readonly IPaymentRepository _paymentRepository;
     private readonly AppDbContext _dbContext;
 
     public BookingService(
@@ -32,6 +33,7 @@ public class BookingService : IBookingService
         IVoucherRepository voucherRepository,
         ISeatHoldRepository seatHoldRepository,
         ISeatHoldService seatHoldService,
+        IPaymentRepository paymentRepository,
         AppDbContext dbContext)
     {
         _bookingRepository = bookingRepository;
@@ -41,6 +43,7 @@ public class BookingService : IBookingService
         _voucherRepository = voucherRepository;
         _seatHoldRepository = seatHoldRepository;
         _seatHoldService = seatHoldService;
+        _paymentRepository = paymentRepository;
         _dbContext = dbContext;
     }
 
@@ -83,7 +86,7 @@ public class BookingService : IBookingService
                 var loaiGiaApDung = ResolveLoaiGiaApDung(lichKhoiHanh.NgayKhoiHanh);
 
                 var bangGia = await _bangGiaLichKhoiHanhRepository.GetBangGiaAsync(lichKhoiHanh.Id, loaiGiaApDung);
-                var donGiaNguoiLon = GetDonGia(bangGia, LoaiKhach.nguoi_lon, "người lớn");
+                var donGiaNguoiLon = GetDonGia(bangGia, LoaiKhach.nguoi_lon, "người lớn", lichKhoiHanh.Tour.GiaTuThamKhao);
                 var donGiaTreEm = GetDonGia(bangGia, LoaiKhach.tre_em, "trẻ em");
                 var donGiaEmBe = GetDonGia(bangGia, LoaiKhach.em_be, "em bé");
 
@@ -93,6 +96,8 @@ public class BookingService : IBookingService
                     + request.SoEmBe * donGiaEmBe;
                 var voucher = await ResolveVoucherAsync(request.VoucherId, request.MaVoucher, lichKhoiHanh.TourId, tamTinh);
                 var giamGia = voucher is null ? 0m : CalculateDiscount(voucher, tamTinh);
+                var tongTien = tamTinh - giamGia;
+                var tienCocYeuCau = Math.Round(tongTien * 0.3m, 0, MidpointRounding.AwayFromZero);
 
                 var booking = new Booking
                 {
@@ -114,9 +119,9 @@ public class BookingService : IBookingService
                     DonGiaEmBe = donGiaEmBe,
                     TamTinh = tamTinh,
                     GiamGia = giamGia,
-                    TongTien = tamTinh - giamGia,
+                    TongTien = tongTien,
                     SoTienDaThanhToan = 0m,
-                    TienCocYeuCau = 0m,
+                    TienCocYeuCau = tienCocYeuCau,
                     PhuongThucThanhToanDuKien = request.PhuongThucThanhToanDuKien,
                     TrangThaiBooking = TrangThaiBooking.cho_thanh_toan,
                     TrangThaiThanhToan = TrangThaiThanhToan.chua_thanh_toan,
@@ -129,6 +134,21 @@ public class BookingService : IBookingService
 
                 await _bookingRepository.AddAsync(booking);
                 await _bookingRepository.SaveChangesAsync();
+
+                await _paymentRepository.AddAsync(new ThanhToan
+                {
+                    BookingId = booking.Id,
+                    LoaiGiaoDich = LoaiGiaoDichThanhToan.dat_coc,
+                    KenhThanhToan = KenhThanhToan.noi_bo,
+                    PhuongThucThanhToan = request.PhuongThucThanhToanDuKien ?? PhuongThucThanhToan.chuyen_khoan,
+                    SoTien = tienCocYeuCau,
+                    MaGiaoDichNoiBo = await _paymentRepository.GenerateInternalTransactionCodeAsync(),
+                    GhiChu = "Khách cần thanh toán đặt cọc 30%.",
+                    TrangThai = TrangThaiGiaoDichThanhToan.cho_xu_ly,
+                    ThoiGianTao = now,
+                    UpdatedAt = now,
+                    Booking = booking
+                });
 
                 foreach (var hanhKhach in hanhKhachs)
                 {
@@ -557,10 +577,15 @@ public class BookingService : IBookingService
             : LoaiGiaApDung.ngay_thuong;
     }
 
-    private static decimal GetDonGia(Dictionary<LoaiKhach, decimal> bangGia, LoaiKhach loaiKhach, string tenLoaiKhach)
+    private static decimal GetDonGia(Dictionary<LoaiKhach, decimal> bangGia, LoaiKhach loaiKhach, string tenLoaiKhach, decimal? fallback = null)
     {
         if (!bangGia.TryGetValue(loaiKhach, out var donGia))
         {
+            if (fallback.HasValue && fallback.Value > 0)
+            {
+                return fallback.Value;
+            }
+
             throw new InvalidOperationException($"Chưa cấu hình bảng giá cho {tenLoaiKhach}.");
         }
 

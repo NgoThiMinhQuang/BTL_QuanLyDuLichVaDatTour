@@ -127,6 +127,7 @@ export default function Booking() {
   const currentUser = useAuthStore((state) => state.currentUser)
 
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<string | null>(null)
+  const bookingResetKey = `${tourId}-${departureId}`
 
   const bookingQuery = useQuery({
     queryKey: ['booking-page', tourId, departureId],
@@ -193,16 +194,26 @@ export default function Booking() {
 
   const stepsIndex = steps.findIndex((item) => item.key === currentStep)
 
-  // Release hold on unmount
   useEffect(() => {
-    return () => {
-      if (holdTimerRef.current) clearInterval(holdTimerRef.current)
-      const token = holdTokenRef.current
-      if (token) {
-        huyGiuCho(token).catch(() => {})
-      }
-    }
-  }, [])
+    setSubmitting(false)
+    setErrorMessage(null)
+    setSuccessMessage(null)
+    setCurrentStep('contact')
+    setContactInfo(null)
+    setPassengerCounts({
+      nguoi_lon: 1,
+      tre_em: 0,
+      em_be: 0,
+    })
+    setPassengers([])
+    setVoucherCode('')
+    setGhiChu('')
+    setAcceptedTerms(false)
+    setIsVoucherModalOpen(false)
+    setSelectedProvinceCode(null)
+    contactForm.resetFields()
+    releaseHold()
+  }, [bookingResetKey])
 
   if (!isValidParams) {
     return (
@@ -270,7 +281,7 @@ export default function Booking() {
     }
   }
 
-  const releaseHold = () => {
+  function releaseHold() {
     if (holdTimerRef.current) clearInterval(holdTimerRef.current)
     const token = holdTokenRef.current
     holdTokenRef.current = null

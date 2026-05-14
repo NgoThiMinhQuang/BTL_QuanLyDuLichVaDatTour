@@ -791,6 +791,23 @@ public class TourService : ITourService
         };
     }
 
+    private static LichTrinhResponseDto MapLichTrinhResponse(LichTrinh lichTrinh)
+    {
+        return new LichTrinhResponseDto
+        {
+            Id = lichTrinh.Id,
+            TourId = lichTrinh.TourId,
+            NgayThu = lichTrinh.NgayThu,
+            ThuTuTrongNgay = lichTrinh.ThuTuTrongNgay,
+            GioBatDau = lichTrinh.GioBatDau,
+            GioKetThuc = lichTrinh.GioKetThuc,
+            TieuDe = lichTrinh.TieuDe,
+            NoiDung = lichTrinh.NoiDung,
+            DiaDiemId = lichTrinh.DiaDiemId,
+            TenDiaDiem = lichTrinh.DiaDiem?.TenDiaDiem
+        };
+    }
+
     private static TourAdminResponseDto MapAdminResponse(Tour tour)
     {
         return new TourAdminResponseDto

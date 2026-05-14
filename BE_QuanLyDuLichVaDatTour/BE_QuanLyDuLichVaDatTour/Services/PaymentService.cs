@@ -122,6 +122,7 @@ public class PaymentService : IPaymentService
 
     public async Task<List<PaymentResponseDto>> GetAllAsync()
     {
+        await EnsurePendingDepositPaymentsAsync();
         var payments = await _paymentRepository.GetAllAsync();
         return payments.Select(MapResponse).ToList();
     }
@@ -149,29 +150,14 @@ public class PaymentService : IPaymentService
         payment.GhiChu = NormalizeOptionalValue(request.GhiChu) ?? payment.GhiChu;
         payment.UpdatedAt = DateTime.UtcNow;
 
-        if (request.TrangThai == TrangThaiGiaoDichThanhToan.thanh_cong)
-        {
-            booking.SoTienDaThanhToan = await TinhTongTienThanhCongAsync(booking.Id, payment.Id, payment.SoTien);
-            booking.TrangThaiThanhToan = booking.SoTienDaThanhToan >= booking.TongTien
-                ? TrangThaiThanhToan.da_thanh_toan_du
-                : TrangThaiThanhToan.thanh_toan_mot_phan;
+        booking.SoTienDaThanhToan = await TinhTongTienThanhCongAsync(booking.Id, payment.Id, request.TrangThai, payment.SoTien, booking.TongTien);
+        booking.TrangThaiThanhToan = ResolveTrangThaiThanhToan(booking.SoTienDaThanhToan, booking.TongTien, request.TrangThai);
 
-            if (booking.SoTienDaThanhToan > 0 && booking.TrangThaiBooking == TrangThaiBooking.cho_thanh_toan)
-            {
-                booking.TrangThaiBooking = booking.SoTienDaThanhToan >= booking.TienCocYeuCau && booking.TienCocYeuCau > 0
-                    ? TrangThaiBooking.da_coc
-                    : TrangThaiBooking.cho_thanh_toan;
-            }
-        }
-        else if (request.TrangThai == TrangThaiGiaoDichThanhToan.that_bai)
+        if (booking.SoTienDaThanhToan > 0 && booking.TrangThaiBooking == TrangThaiBooking.cho_thanh_toan)
         {
-            booking.TrangThaiThanhToan = booking.SoTienDaThanhToan > 0
-                ? TrangThaiThanhToan.thanh_toan_mot_phan
-                : TrangThaiThanhToan.that_bai;
-        }
-        else if (request.TrangThai == TrangThaiGiaoDichThanhToan.da_hoan_tien)
-        {
-            booking.TrangThaiThanhToan = TrangThaiThanhToan.da_hoan_tien;
+            booking.TrangThaiBooking = booking.SoTienDaThanhToan >= booking.TienCocYeuCau && booking.TienCocYeuCau > 0
+                ? TrangThaiBooking.da_coc
+                : TrangThaiBooking.cho_thanh_toan;
         }
 
         booking.UpdatedAt = DateTime.UtcNow;
@@ -199,10 +185,8 @@ public class PaymentService : IPaymentService
         payment.GhiChu = ghiChu ?? payment.GhiChu;
         payment.UpdatedAt = DateTime.UtcNow;
 
-        booking.SoTienDaThanhToan = await TinhTongTienThanhCongAsync(booking.Id, payment.Id, payment.SoTien);
-        booking.TrangThaiThanhToan = booking.SoTienDaThanhToan >= booking.TongTien
-            ? TrangThaiThanhToan.da_thanh_toan_du
-            : TrangThaiThanhToan.thanh_toan_mot_phan;
+        booking.SoTienDaThanhToan = await TinhTongTienThanhCongAsync(booking.Id, payment.Id, TrangThaiGiaoDichThanhToan.thanh_cong, payment.SoTien, booking.TongTien);
+        booking.TrangThaiThanhToan = ResolveTrangThaiThanhToan(booking.SoTienDaThanhToan, booking.TongTien, TrangThaiGiaoDichThanhToan.thanh_cong);
 
         if (booking.SoTienDaThanhToan > 0 && booking.TrangThaiBooking == TrangThaiBooking.cho_thanh_toan)
         {
@@ -261,7 +245,7 @@ public class PaymentService : IPaymentService
         payment.TrangThai = TrangThaiGiaoDichThanhToan.da_hoan_tien;
         payment.UpdatedAt = now;
 
-        booking.SoTienDaThanhToan = Math.Max(0, await TinhTongTienThanhCongAsync(booking.Id, payment.Id, -soTienHoan));
+        booking.SoTienDaThanhToan = Math.Max(0, await TinhTongTienThanhCongAsync(booking.Id, payment.Id, TrangThaiGiaoDichThanhToan.da_hoan_tien, -soTienHoan, booking.TongTien));
         booking.TrangThaiThanhToan = booking.SoTienDaThanhToan <= 0
             ? TrangThaiThanhToan.da_hoan_tien
             : TrangThaiThanhToan.thanh_toan_mot_phan;
@@ -359,12 +343,70 @@ public class PaymentService : IPaymentService
         };
     }
 
-    private async Task<decimal> TinhTongTienThanhCongAsync(long bookingId, long currentPaymentId, decimal currentPaymentAmount)
+    private async Task EnsurePendingDepositPaymentsAsync()
+    {
+        var bookings = await _bookingRepository.GetAllAsync();
+        var payments = await _paymentRepository.GetAllAsync();
+        var bookingIdsWithPayment = payments.Select(x => x.BookingId).ToHashSet();
+        var now = DateTime.UtcNow;
+
+        foreach (var booking in bookings.Where(x => !bookingIdsWithPayment.Contains(x.Id) && x.TrangThaiBooking == TrangThaiBooking.cho_thanh_toan))
+        {
+            var tienCoc = booking.TienCocYeuCau > 0
+                ? booking.TienCocYeuCau
+                : Math.Round(booking.TongTien * 0.3m, 0, MidpointRounding.AwayFromZero);
+
+            if (tienCoc <= 0)
+            {
+                continue;
+            }
+
+            await _paymentRepository.AddAsync(new ThanhToan
+            {
+                BookingId = booking.Id,
+                LoaiGiaoDich = LoaiGiaoDichThanhToan.dat_coc,
+                KenhThanhToan = KenhThanhToan.noi_bo,
+                PhuongThucThanhToan = booking.PhuongThucThanhToanDuKien ?? PhuongThucThanhToan.chuyen_khoan,
+                SoTien = tienCoc,
+                MaGiaoDichNoiBo = await _paymentRepository.GenerateInternalTransactionCodeAsync(),
+                GhiChu = "Khách cần thanh toán đặt cọc 30%.",
+                TrangThai = TrangThaiGiaoDichThanhToan.cho_xu_ly,
+                ThoiGianTao = now,
+                UpdatedAt = now
+            });
+        }
+
+        await _paymentRepository.SaveChangesAsync();
+    }
+
+    private async Task<decimal> TinhTongTienThanhCongAsync(long bookingId, long currentPaymentId, TrangThaiGiaoDichThanhToan currentStatus, decimal currentPaymentAmount, decimal tongTien)
     {
         var payments = await _paymentRepository.GetByBookingIdAsync(bookingId);
-        return payments
-            .Where(x => x.TrangThai == TrangThaiGiaoDichThanhToan.thanh_cong || x.Id == currentPaymentId)
+        var tongDaThanhToan = payments
+            .Where(x => (x.Id == currentPaymentId ? currentStatus : x.TrangThai) == TrangThaiGiaoDichThanhToan.thanh_cong)
             .Sum(x => x.Id == currentPaymentId ? currentPaymentAmount : x.SoTien);
+
+        return Math.Min(Math.Max(0, tongDaThanhToan), tongTien);
+    }
+
+    private static TrangThaiThanhToan ResolveTrangThaiThanhToan(decimal soTienDaThanhToan, decimal tongTien, TrangThaiGiaoDichThanhToan trangThaiGiaoDich)
+    {
+        if (trangThaiGiaoDich == TrangThaiGiaoDichThanhToan.da_hoan_tien)
+        {
+            return soTienDaThanhToan <= 0 ? TrangThaiThanhToan.da_hoan_tien : TrangThaiThanhToan.thanh_toan_mot_phan;
+        }
+
+        if (trangThaiGiaoDich == TrangThaiGiaoDichThanhToan.that_bai && soTienDaThanhToan <= 0)
+        {
+            return TrangThaiThanhToan.that_bai;
+        }
+
+        if (soTienDaThanhToan >= tongTien)
+        {
+            return TrangThaiThanhToan.da_thanh_toan_du;
+        }
+
+        return soTienDaThanhToan > 0 ? TrangThaiThanhToan.thanh_toan_mot_phan : TrangThaiThanhToan.chua_thanh_toan;
     }
 
     private static void ValidateVoucherForPreview(Voucher voucher, long tourId, decimal tamTinh)

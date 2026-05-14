@@ -249,7 +249,10 @@ export async function taoBooking(payload: CreateBookingPayload): Promise<Booking
   const data = await response.json().catch(() => null)
 
   if (!response.ok) {
-    throw new Error(data?.message || 'Đặt tour thất bại')
+    const validationMessage = data?.errors
+      ? Object.values(data.errors).flat().join('\n')
+      : undefined
+    throw new Error(data?.message || validationMessage || data?.title || 'Đặt tour thất bại')
   }
 
   return data as BookingResponse
