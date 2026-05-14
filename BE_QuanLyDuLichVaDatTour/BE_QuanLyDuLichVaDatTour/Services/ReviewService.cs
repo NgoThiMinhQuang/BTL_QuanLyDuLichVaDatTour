@@ -98,9 +98,9 @@ public class ReviewService : IReviewService
             throw new KeyNotFoundException("Booking không tồn tại.");
         }
 
-        if (booking.TrangThaiBooking != TrangThaiBooking.hoan_tat)
+        if (!CanReview(booking))
         {
-            throw new InvalidOperationException("Chỉ có thể đánh giá booking đã hoàn tất.");
+            throw new InvalidOperationException("Chỉ có thể đánh giá booking đã xác nhận và thanh toán đủ.");
         }
 
         if (await _reviewRepository.ExistsByBookingIdAsync(booking.Id))
@@ -126,15 +126,16 @@ public class ReviewService : IReviewService
             TrangThai = "cho_duyet",
             NgayDanhGia = now,
             CreatedAt = now,
-            UpdatedAt = now,
-            Booking = booking,
-            Tour = booking.LichKhoiHanh?.Tour
+            UpdatedAt = now
         };
 
         await _reviewRepository.AddAsync(danhGia);
         await _reviewRepository.SaveChangesAsync();
 
-        return MapReviewResponse(danhGia);
+        var created = await _reviewRepository.GetByIdAsync(danhGia.Id)
+            ?? throw new KeyNotFoundException("Đánh giá không tồn tại.");
+
+        return MapReviewResponse(created);
     }
 
     public async Task<List<ReviewResponseDto>> GetMyReviewsAsync(long currentUserId)
@@ -201,6 +202,12 @@ public class ReviewService : IReviewService
         review.UpdatedAt = DateTime.UtcNow;
 
         await _reviewRepository.SaveChangesAsync();
+    }
+
+    private static bool CanReview(Booking booking)
+    {
+        return booking.TrangThaiBooking == TrangThaiBooking.hoan_tat
+            || (booking.TrangThaiBooking == TrangThaiBooking.da_xac_nhan && booking.TrangThaiThanhToan == TrangThaiThanhToan.da_thanh_toan_du);
     }
 
     private static ReviewResponseDto MapReviewResponse(DanhGia danhGia)

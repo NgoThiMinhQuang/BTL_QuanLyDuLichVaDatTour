@@ -6,4 +6,4 @@
 **/node_modules/
 *.user
 *.suo
-QuanLyDuLichVaDatTour/API/appsettings.Development.json
+**/appsettings.Development.json

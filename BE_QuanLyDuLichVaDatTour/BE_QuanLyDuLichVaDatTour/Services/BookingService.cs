@@ -734,10 +734,16 @@ public class BookingService : IBookingService
         return booking.SoNguoiLon + booking.SoTreEm + booking.SoEmBe;
     }
 
+    private static bool CanReview(Booking booking)
+    {
+        return booking.TrangThaiBooking == TrangThaiBooking.hoan_tat
+            || (booking.TrangThaiBooking == TrangThaiBooking.da_xac_nhan && booking.TrangThaiThanhToan == TrangThaiThanhToan.da_thanh_toan_du);
+    }
+
     private static BookingListItemDto MapBookingListItem(Booking booking)
     {
         var daDanhGia = booking.DanhGias.Any();
-        var coTheDanhGia = booking.TrangThaiBooking == TrangThaiBooking.hoan_tat && !daDanhGia;
+        var coTheDanhGia = CanReview(booking) && !daDanhGia;
 
         return new BookingListItemDto
         {
@@ -759,7 +765,7 @@ public class BookingService : IBookingService
     private static BookingResponseDto MapBookingResponse(Booking booking)
     {
         var daDanhGia = booking.DanhGias.Any();
-        var coTheDanhGia = booking.TrangThaiBooking == TrangThaiBooking.hoan_tat && !daDanhGia;
+        var coTheDanhGia = CanReview(booking) && !daDanhGia;
 
         return new BookingResponseDto
         {
