@@ -69,7 +69,6 @@ function mapDestination(item: RawTourDestination): TourDestinationItem {
     ghiChu: item.ghiChu ?? null,
   }
 }
-
 function mapTour(item: RawFeaturedTour): FeaturedTourApiItem {
   return {
     id: item.id,
@@ -105,7 +104,6 @@ function mapTour(item: RawFeaturedTour): FeaturedTourApiItem {
 function appendListParams(searchParams: URLSearchParams, key: string, values?: Array<string | number>) {
   values?.forEach((value) => searchParams.append(key, String(value)))
 }
-
 export async function layTourNoiBat(limit?: number): Promise<FeaturedTourApiItem[]> {
   const response = await fetch(`${API_BASE_URL}/tour/get-all`)
 
@@ -117,7 +115,6 @@ export async function layTourNoiBat(limit?: number): Promise<FeaturedTourApiItem
   const mapped = data.map(mapTour)
   return typeof limit === 'number' ? mapped.slice(0, limit) : mapped
 }
-
 export async function timTours(params: SearchTourParams): Promise<FeaturedTourApiItem[]> {
   const searchParams = new URLSearchParams()
 

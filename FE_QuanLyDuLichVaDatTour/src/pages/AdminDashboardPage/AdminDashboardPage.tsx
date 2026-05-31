@@ -21,7 +21,7 @@ import {
 import './AdminDashboardPage.css'
 
 const { Paragraph, Title, Text } = Typography
-
+// RevenueChart dùng để vẽ biểu đồ Doanh thu theo tháng.
 function RevenueChart({ data }: { data: { nhan: string, giaTri: number }[] }) {
   return (
     <div style={{ width: '100%', height: 280 }}>
@@ -53,7 +53,7 @@ function RevenueChart({ data }: { data: { nhan: string, giaTri: number }[] }) {
               boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
               padding: '12px'
             }}
-            formatter={(value: number) => [formatMoney(value), 'Doanh thu']}
+            formatter={(value) => [formatMoney(Number(value ?? 0)), 'Doanh thu']}
           />
           <Area 
             type="monotone" 
@@ -69,7 +69,7 @@ function RevenueChart({ data }: { data: { nhan: string, giaTri: number }[] }) {
     </div>
   )
 }
-
+// BookingChart dùng để vẽ biểu đồ Booking theo tháng.
 function BookingChart({ data }: { data: { nhan: string, giaTri: number }[] }) {
   return (
     <div style={{ width: '100%', height: 280 }}>
@@ -96,7 +96,7 @@ function BookingChart({ data }: { data: { nhan: string, giaTri: number }[] }) {
               boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
               padding: '12px'
             }}
-            formatter={(value: number) => [value, 'Số booking']}
+            formatter={(value) => [Number(value ?? 0), 'Số booking']}
           />
           <Bar 
             dataKey="giaTri" 
@@ -110,7 +110,7 @@ function BookingChart({ data }: { data: { nhan: string, giaTri: number }[] }) {
     </div>
   )
 }
-
+// truy cập nhanh
 const quickAccessItems = [
   { title: 'Quản lý tour', description: 'Danh mục tour, trạng thái', to: PATHS.adminTours },
   { title: 'Booking', description: 'Theo dõi đơn đặt tour', to: PATHS.adminBookings },
@@ -163,7 +163,7 @@ const recentBookingColumns: ColumnsType<AdminRecentBooking> = [
     render: (value: number) => <Text strong className="font-sm text-primary">{formatMoney(value)}</Text>,
   },
 ]
-
+// omponent chính của trang thống kê. đầu tiên
 export default function AdminDashboardPage() {
   const { data, isLoading, isError, error } = useAdminDashboardSummary()
   const updateReviewStatusMutation = useUpdateAdminReviewDisplayStatus()

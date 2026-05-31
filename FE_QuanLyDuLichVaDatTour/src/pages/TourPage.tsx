@@ -8,7 +8,6 @@ import { TOUR_PAGE_SIZE } from '../constants/tour'
 import { useTourPage } from './useTourPage'
 
 const { Paragraph, Title } = Typography
-
 export default function Tour() {
   const {
     categories,
@@ -47,7 +46,6 @@ export default function Tour() {
   const isLoading = isLoadingTours || isLoadingCategories || isLoadingDiaDiems
   const shouldShowEmpty = !isLoadingTours && !toursError && filteredTours.length === 0
   const shouldShowResults = !isLoadingTours && !toursError && filteredTours.length > 0
-
   const handleKeywordChange = (value: string) => {
     setKeyword(value)
     setPage(1)
@@ -93,7 +91,6 @@ export default function Tour() {
       Thử lại
     </button>
   )
-
   return (
     <div className="tour-page">
       <div className="tour-page-header">
@@ -131,7 +128,6 @@ export default function Tour() {
             onSortChange={handleSortChange}
             onViewModeChange={setViewMode}
           />
-
           {isLoading ? (
             <Row gutter={[24, 24]} className="tour-grid">
               {Array.from({ length: pageSize }).map((_, index) => (

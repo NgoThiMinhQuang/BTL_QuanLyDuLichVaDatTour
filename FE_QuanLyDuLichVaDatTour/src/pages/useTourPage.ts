@@ -64,7 +64,7 @@ function resolveSelectedDiemXuatPhatId(diemDen: string, diaDiems: Array<{ id: nu
 function resolveSelectedPhuongTiens(selectedPhuongTiens: string[]) {
   return selectedPhuongTiens.length > 0 ? selectedPhuongTiens : undefined
 }
-
+// chuyển các lựa chọn trên giao diện thành oject gửi sang API
 function buildSearchParams(input: {
   keyword: string
   diemDen: string
@@ -101,21 +101,35 @@ export function useTourPage() {
   const [sortBy, setSortBy] = useState('price-asc')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [page, setPage] = useState(1)
-
+// gọi API 
   const searchParams = useMemo(
-    () => buildSearchParams({ keyword, diemDen, giaRange, thoiGian, selectedLoaiTours, selectedPhuongTiens, selectedRating, categories, diaDiems }),
+    () => buildSearchParams({ 
+      keyword, 
+      diemDen,
+       giaRange, 
+       thoiGian, 
+       selectedLoaiTours, 
+       selectedPhuongTiens, 
+       selectedRating, 
+       categories, 
+       diaDiems }),
     [keyword, diemDen, giaRange, thoiGian, selectedLoaiTours, selectedPhuongTiens, selectedRating, categories, diaDiems],
   )
 
-  const { data: tours = [], isLoading: isLoadingTours, error: toursError, refetch: refetchTours } = useTourSearch(searchParams)
+  const { 
+    data: tours = [], 
+    isLoading: isLoadingTours, 
+    error: toursError, 
+    refetch: refetchTours 
+  } = useTourSearch(searchParams)
 
   const destinationOptions = useMemo(
     () => diaDiems.map((item) => item.tenDiaDiem).sort((a, b) => a.localeCompare(b, 'vi')),
     [diaDiems],
   )
-
+// ds tour sau khi được sắp xếp
   const filteredTours = useMemo(() => sortTours(tours, sortBy), [tours, sortBy])
-
+// ds tour chỉ thuộc trang hiện tại
   const paginatedTours = useMemo(() => {
     const start = (page - 1) * TOUR_PAGE_SIZE
     return filteredTours.slice(start, start + TOUR_PAGE_SIZE)

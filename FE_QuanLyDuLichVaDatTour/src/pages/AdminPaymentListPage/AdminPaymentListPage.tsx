@@ -33,6 +33,17 @@ export default function AdminPaymentListPage() {
   const paymentDetailQuery = useAdminPayment(selectedPaymentId)
   const updatePaymentStatusMutation = useUpdateAdminPaymentStatus()
 
+  // Reset form when selecting a new payment
+  useEffect(() => {
+    if (selectedPaymentId !== undefined && paymentDetailQuery.data) {
+      statusForm.resetFields()
+      statusForm.setFieldsValue({
+        trangThai: paymentDetailQuery.data.trangThai,
+        ghiChu: paymentDetailQuery.data.ghiChu ?? undefined,
+      })
+    }
+  }, [selectedPaymentId, paymentDetailQuery.data, statusForm])
+
   const payments = paymentsQuery.data ?? []
 
   const filteredPayments = useMemo(() => {
@@ -311,7 +322,10 @@ export default function AdminPaymentListPage() {
       <Drawer
         title={selectedPayment ? `Chi tiết giao dịch ${selectedPayment.maGiaoDichNoiBo || `#${selectedPayment.id}`}` : 'Chi tiết giao dịch'}
         open={selectedPaymentId !== undefined}
-        onClose={() => setSelectedPaymentId(undefined)}
+        onClose={() => {
+          statusForm.resetFields()
+          setSelectedPaymentId(undefined)
+        }}
         width={680}
         destroyOnClose
       >

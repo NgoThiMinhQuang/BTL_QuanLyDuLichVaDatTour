@@ -102,7 +102,7 @@ function invalidateAdminShell(queryClient: ReturnType<typeof useQueryClient>) {
     queryClient.invalidateQueries({ queryKey: ['admin', 'reviews', 'pending'] }),
   ])
 }
-
+// custom hook dùng React Query để lấy dữ liệu thống kê dashboard.
 export function useAdminDashboardSummary() {
   return useQuery({
     queryKey: ['admin', 'dashboard', 'summary'],

@@ -96,7 +96,7 @@ function mapDestination(item: RawTourDestination): TourDestinationItem {
     ghiChu: item.ghiChu ?? null,
   }
 }
-
+// chuyển dữ liệu chi tiết tour thô từ Backend sang format FE cần.
 function mapTourDetail(item: RawTourDetail): TourDetailApiItem {
   return {
     id: item.id,
@@ -171,7 +171,7 @@ function mapPricing(item: RawDeparturePricing): DeparturePricingItem {
     giaEmBeCuoiTuan: item.giaEmBeCuoiTuan ?? null,
   }
 }
-
+// gọi API lấy thông tin chi tiết 1 tour theo id
 export async function layTourChiTiet(id: number): Promise<TourDetailApiItem> {
   const response = await fetch(`${API_BASE_URL}/tour/get-by-id/${id}`)
 
@@ -180,7 +180,7 @@ export async function layTourChiTiet(id: number): Promise<TourDetailApiItem> {
   }
 
   const data = (await response.json()) as RawTourDetail
-  return mapTourDetail(data)
+  return mapTourDetail(data)  
 }
 
 export async function layLichTrinhTour(id: number): Promise<TourItineraryItem[]> {
@@ -189,7 +189,7 @@ export async function layLichTrinhTour(id: number): Promise<TourItineraryItem[]>
   if (!response.ok) {
     throw new Error('Không thể tải lịch trình tour')
   }
-
+// chuẩn hóa từng hoạt động trong lịch trình để Frontend dễ sử dụng hơn.
   const data = (await response.json()) as RawItineraryItem[]
   return data.map(mapItinerary)
 }

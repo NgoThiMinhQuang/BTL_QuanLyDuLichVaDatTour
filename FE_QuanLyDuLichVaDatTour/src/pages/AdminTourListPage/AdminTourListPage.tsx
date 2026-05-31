@@ -1,4 +1,4 @@
-import { Alert, Button, Empty, Form, Input, InputNumber, Modal, Popconfirm, Select, Switch, Tag, Typography, message, Pagination, Dropdown } from 'antd'
+import { Alert, Button, Empty, Form, Input, InputNumber, Modal, Popconfirm, Select, Switch, Tag, Typography, message, Pagination, Dropdown, Progress, Tooltip, Space } from 'antd'
 import type { MenuProps } from 'antd'
 import { useMemo, useState, useEffect } from 'react'
 import {
@@ -19,10 +19,12 @@ import {
   useReorderAnhTour,
   useUpdateAnhTour,
 } from '../../services/admin/admin.hooks'
-import type { AdminTourItem, AdminTourStatus, AdminTourDestination, AdminTourImage } from '../../types/admin'
+import type { AdminTourItem, AdminTourStatus, AdminTourDestination, AdminTourImage, AdminLichKhoiHanhItem } from '../../types/admin'
 import { formatMoney } from '../../utils/formatMoney'
-import { adminTourStatusMeta, formatDateTime, mapStatusOptions } from '../../utils/admin'
+import { adminTourStatusMeta, adminLichKhoiHanhStatusMeta, formatDateTime, mapStatusOptions } from '../../utils/admin'
 import './AdminTourListPage.css'
+import { useAdminLichKhoiHanhByTour, useAdminLichKhoiHanhs } from '../../services/admin/admin.hooks'
+import { formatDate } from '../../utils/formatDate'
 import {
   ArrowUpOutlined,
   ArrowDownOutlined,
@@ -36,25 +38,21 @@ import {
   EnvironmentOutlined,
   CarOutlined,
   GlobalOutlined,
-  FileSyncOutlined,
-  ReloadOutlined,
   EyeInvisibleOutlined,
-  FileTextOutlined,
   CheckCircleOutlined,
   PauseCircleOutlined,
   StopOutlined,
   AppstoreOutlined,
+  TeamOutlined,
 } from '@ant-design/icons'
 
 const { Paragraph, Title, Text } = Typography
 
 const statusTabs: Array<{ key: 'tat_ca' | AdminTourStatus; label: string }> = [
   { key: 'tat_ca', label: 'Tất cả' },
-  { key: 'nhap', label: 'Nháp' },
   { key: 'dang_mo_ban', label: 'Đang mở bán' },
-  { key: 'tam_ngung', label: 'Tạm ngưng' },
+  { key: 'nhap', label: 'Nháp' },
   { key: 'an', label: 'Ẩn' },
-  { key: 'ngung_kinh_doanh', label: 'Ngừng kinh doanh' },
 ]
 
 const statusOptions = mapStatusOptions(adminTourStatusMeta)
@@ -92,9 +90,15 @@ export default function AdminTourListPage() {
   const [imageEditingItem, setImageEditingItem] = useState<AdminTourImage | null>(null)
   const [imageDescForm] = Form.useForm()
 
+  // ── Seat capacity management state ──
+  const [capacityModalOpen, setCapacityModalOpen] = useState(false)
+  const [capacityTourId, setCapacityTourId] = useState<number | null>(null)
+  const [capacityTourName, setCapacityTourName] = useState('')
+
   const toursQuery = useAdminTours()
   const loaiToursQuery = useAdminLoaiTours()
   const diaDiemsQuery = useAdminDiaDiems()
+  const lichKhoiHanhsQuery = useAdminLichKhoiHanhs()
   const updateStatusMutation = useUpdateAdminTourStatus()
   const hideTourMutation = useHideAdminTour()
   const createTourMutation = useCreateAdminTour()
@@ -114,6 +118,21 @@ export default function AdminTourListPage() {
   const tours = toursQuery.data ?? []
   const loaiTours = loaiToursQuery.data ?? []
   const diaDiems = diaDiemsQuery.data ?? []
+  const lichKhoiHanhs = lichKhoiHanhsQuery.data ?? []
+
+  // Tính số chỗ tổng hợp cho mỗi tour
+  const tourSeatsStats = useMemo(() => {
+    const stats: Record<number, { total: number; sold: number; available: number }> = {}
+    lichKhoiHanhs.forEach(lkh => {
+      if (!stats[lkh.tourId]) {
+        stats[lkh.tourId] = { total: 0, sold: 0, available: 0 }
+      }
+      stats[lkh.tourId].total += lkh.soChoToiDa || 0
+      stats[lkh.tourId].sold += lkh.soChoDaDat || 0
+      stats[lkh.tourId].available += lkh.soChoConLai || 0
+    })
+    return stats
+  }, [lichKhoiHanhs])
 
   const selectedTour = useMemo(() => {
     if (imageTourId) return tours.find(t => t.id === imageTourId) ?? null
@@ -262,6 +281,13 @@ export default function AdminTourListPage() {
     setImageModalOpen(true)
   }
 
+  // ── Seat capacity management ──
+  const handleOpenCapacityModal = (tour: AdminTourItem) => {
+    setCapacityTourId(tour.id)
+    setCapacityTourName(tour.tenTour)
+    setCapacityModalOpen(true)
+  }
+
   const handleAddImage = async () => {
     if (imageTourId === null) return
     if (!imageInput.trim()) return
@@ -310,26 +336,6 @@ export default function AdminTourListPage() {
   const isSubmitting = createTourMutation.isPending || updateTourMutation.isPending
 
   const getTourActions = (record: AdminTourItem): MenuProps['items'] => {
-    const getStatusIcon = (status: string) => {
-      switch (status) {
-        case 'nhap': return <FileTextOutlined />
-        case 'dang_mo_ban': return <CheckCircleOutlined style={{ color: '#52c41a' }} />
-        case 'tam_ngung': return <PauseCircleOutlined style={{ color: '#faad14' }} />
-        case 'an': return <EyeInvisibleOutlined style={{ color: '#ff4d4f' }} />
-        case 'ngung_kinh_doanh': return <StopOutlined style={{ color: '#ff4d4f' }} />
-        default: return null
-      }
-    }
-
-    const statusItems = statusOptions
-      .filter((status) => status.value !== record.trangThai)
-      .map((status) => ({
-        key: `status-${status.value}`,
-        label: status.label,
-        icon: getStatusIcon(status.value),
-        onClick: () => void updateStatusMutation.mutateAsync({ id: record.id, trangThai: status.value as AdminTourStatus })
-      }))
-
     return [
       {
         key: 'grp-content',
@@ -356,33 +362,29 @@ export default function AdminTourListPage() {
           },
         ]
       },
-      { type: 'divider' },
       {
-        key: 'status-change',
-        label: 'Trạng thái hiển thị',
-        icon: <FileSyncOutlined />,
-        children: statusItems
+        key: 'grp-capacity',
+        type: 'group',
+        label: 'VẬN HÀNH',
+        children: [
+          {
+            key: 'capacity',
+            label: 'Quản lý số chỗ',
+            icon: <TeamOutlined />,
+            onClick: () => void handleOpenCapacityModal(record)
+          },
+        ]
       },
       { type: 'divider' },
       {
-        key: 'grp-danger',
-        type: 'group',
-        label: 'HÀNH ĐỘNG KHÁC',
-        children: [
-          record.trangThai === 'an' ? {
-            key: 'restore',
-            label: 'Khôi phục tour',
-            icon: <ReloadOutlined />,
-            onClick: () => void updateStatusMutation.mutateAsync({ id: record.id, trangThai: 'nhap' })
-          } : {
-            key: 'hide',
-            label: 'Ẩn tour tạm thời',
-            icon: <EyeInvisibleOutlined />,
-            danger: true,
-            onClick: () => void hideTourMutation.mutateAsync(record.id)
-          }
-        ]
-      }
+        key: 'toggle-visibility',
+        label: record.trangThai === 'an' ? 'Khôi phục tour' : 'Ẩn tour',
+        icon: <EyeInvisibleOutlined />,
+        danger: record.trangThai !== 'an',
+        onClick: () => void (record.trangThai === 'an'
+          ? updateStatusMutation.mutateAsync({ id: record.id, trangThai: 'nhap' })
+          : hideTourMutation.mutateAsync(record.id)),
+      },
     ]
   }
 
@@ -490,17 +492,6 @@ export default function AdminTourListPage() {
             paginatedTours.map((tour) => {
               const avatar = tour.anhTours?.find(a => a.isAvatar)?.linkAnh || tour.anhTours?.[0]?.linkAnh
               
-              // Status dropdown menu
-              const statusMenu = {
-                items: statusOptions
-                  .filter((s) => s.value !== tour.trangThai)
-                  .map((s) => ({
-                    key: s.value,
-                    label: s.label,
-                    onClick: () => void updateStatusMutation.mutateAsync({ id: tour.id, trangThai: s.value as AdminTourStatus })
-                  }))
-              }
-
               return (
                 <div key={tour.id} className="admin-tour-row">
                   <div className="tour-col-image">
@@ -532,18 +523,39 @@ export default function AdminTourListPage() {
                   </div>
 
                   <div className="tour-col-status">
-                    <Dropdown menu={statusMenu} trigger={['click']} placement="bottomCenter">
-                      <Tag 
-                        color={adminTourStatusMeta[tour.trangThai].color} 
-                        className="status-dropdown-tag"
-                      >
-                        {adminTourStatusMeta[tour.trangThai].label} <ArrowDownOutlined style={{ fontSize: 10 }} />
-                      </Tag>
-                    </Dropdown>
+                    <Tag color={adminTourStatusMeta[tour.trangThai].color} className="status-dropdown-tag">
+                      {adminTourStatusMeta[tour.trangThai].label}
+                    </Tag>
                   </div>
 
                   <div className="tour-col-price">
                     <div className="price-value">{formatMoney(tour.giaTuThamKhao)}</div>
+                  </div>
+
+                  <div className="tour-col-seats">
+                    {(() => {
+                      const seats = tourSeatsStats[tour.id]
+                      if (!seats) {
+                        return <span style={{ color: '#94a3b8', fontSize: 12 }}>Chưa có lịch</span>
+                      }
+                      const fillRate = seats.total > 0 ? Math.round((seats.sold / seats.total) * 100) : 0
+                      const isLow = seats.available > 0 && seats.available <= 5
+                      return (
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ fontWeight: 600, fontSize: 13, color: isLow ? '#f59e0b' : '#1e293b' }}>
+                            {seats.available} / {seats.total}
+                          </div>
+                          <div style={{ fontSize: 11, color: '#64748b' }}>
+                            {fillRate}% đã đặt
+                          </div>
+                          {isLow && (
+                            <Tag color="warning" style={{ fontSize: 10, marginTop: 2 }}>
+                              Sắp hết
+                            </Tag>
+                          )}
+                        </div>
+                      )
+                    })()}
                   </div>
 
                   <div className="tour-col-actions">
@@ -598,7 +610,7 @@ export default function AdminTourListPage() {
         onOk={() => void handleSubmitTour()}
         confirmLoading={isSubmitting}
         width={780}
-        destroyOnClose
+        destroyOnHidden
       >
         <Form form={form} layout="vertical" className="admin-tour-form">
           <div className="admin-modal-grid">
@@ -662,7 +674,7 @@ export default function AdminTourListPage() {
         onCancel={() => { setDestinationModalOpen(false); setDestTourId(null); setDestEditingId(null) }}
         footer={null}
         width={700}
-        destroyOnClose
+        destroyOnHidden
       >
         <div style={{ marginBottom: 16 }}>
           <Form form={destForm} layout="inline" onFinish={() => void handleAddDestination()}>
@@ -725,7 +737,7 @@ export default function AdminTourListPage() {
         onCancel={() => { setImageModalOpen(false); setImageTourId(null) }}
         footer={null}
         width={750}
-        destroyOnClose
+        destroyOnHidden
       >
         <div style={{ marginBottom: 16, display: 'flex', gap: 8 }}>
           <Input
@@ -797,6 +809,163 @@ export default function AdminTourListPage() {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* ── Seat capacity management modal ── */}
+      <SeatCapacityModal
+        open={capacityModalOpen}
+        tourId={capacityTourId}
+        tourName={capacityTourName}
+        onClose={() => { setCapacityModalOpen(false); setCapacityTourId(null) }}
+      />
     </div>
+  )
+}
+
+// ── Seat Capacity Modal Component ──
+interface SeatCapacityModalProps {
+  open: boolean
+  tourId: number | null
+  tourName: string
+  onClose: () => void
+}
+
+function SeatCapacityModal({ open, tourId, tourName, onClose }: SeatCapacityModalProps) {
+  const { data: lichKhoiHanhs, isLoading } = useAdminLichKhoiHanhByTour(tourId ?? undefined)
+
+  const stats = useMemo(() => {
+    if (!lichKhoiHanhs) return { totalSlots: 0, soldSlots: 0, availableSlots: 0 }
+    const totalSlots = lichKhoiHanhs.reduce((sum, item) => sum + (item.soChoToiDa || 0), 0)
+    const soldSlots = lichKhoiHanhs.reduce((sum, item) => sum + (item.soChoDaDat || 0), 0)
+    const availableSlots = lichKhoiHanhs.reduce((sum, item) => sum + (item.soChoConLai || 0), 0)
+    return { totalSlots, soldSlots, availableSlots }
+  }, [lichKhoiHanhs])
+
+  const statusColorMap: Record<string, { bg: string; text: string }> = {
+    mo_ban: { bg: '#f0fdf4', text: '#16a34a' },
+    het_cho: { bg: '#fef2f2', text: '#dc2626' },
+    da_khoi_hanh: { bg: '#eff6ff', text: '#2563eb' },
+    da_ket_thuc: { bg: '#f8fafc', text: '#64748b' },
+    da_huy: { bg: '#fef3c7', text: '#d97706' },
+  }
+
+  return (
+    <Modal
+      title={
+        <Space>
+          <TeamOutlined style={{ color: '#6366f1' }} />
+          <span>Quản lý số chỗ: {tourName}</span>
+        </Space>
+      }
+      open={open}
+      onCancel={onClose}
+      footer={null}
+      width={900}
+      destroyOnClose
+    >
+      <div style={{ marginTop: 16 }}>
+        {/* Stats summary */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
+          <div style={{ background: '#f8fafc', padding: 16, borderRadius: 12, textAlign: 'center' }}>
+            <div style={{ fontSize: 24, fontWeight: 700, color: '#6366f1' }}>{stats.totalSlots}</div>
+            <div style={{ fontSize: 13, color: '#64748b' }}>Tổng số chỗ</div>
+          </div>
+          <div style={{ background: '#fef2f2', padding: 16, borderRadius: 12, textAlign: 'center' }}>
+            <div style={{ fontSize: 24, fontWeight: 700, color: '#dc2626' }}>{stats.soldSlots}</div>
+            <div style={{ fontSize: 13, color: '#64748b' }}>Đã đặt</div>
+          </div>
+          <div style={{ background: '#f0fdf4', padding: 16, borderRadius: 12, textAlign: 'center' }}>
+            <div style={{ fontSize: 24, fontWeight: 700, color: '#16a34a' }}>{stats.availableSlots}</div>
+            <div style={{ fontSize: 13, color: '#64748b' }}>Còn trống</div>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <Empty description="Đang tải dữ liệu..." />
+        ) : !lichKhoiHanhs || lichKhoiHanhs.length === 0 ? (
+          <Empty description="Chưa có lịch khởi hành nào cho tour này" />
+        ) : (
+          <div style={{ maxHeight: 400, overflowY: 'auto' }}>
+            {lichKhoiHanhs.map((lkh) => {
+              const percent = lkh.soChoToiDa > 0 ? Math.round((lkh.soChoDaDat / lkh.soChoToiDa) * 100) : 0
+              const statusStyle = statusColorMap[lkh.trangThai] || { bg: '#f8fafc', text: '#64748b' }
+
+              return (
+                <div key={lkh.id} style={{
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 12,
+                  padding: 16,
+                  marginBottom: 12,
+                  background: '#fff'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>
+                        <Tag style={{ background: '#e0e7ff', color: '#4338ca', border: 'none' }}>{lkh.maDotTour}</Tag>
+                        <span style={{ marginLeft: 8 }}>{formatDate(lkh.ngayKhoiHanh)} → {formatDate(lkh.ngayKetThuc)}</span>
+                      </div>
+                      {lkh.noiTapTrung && (
+                        <div style={{ fontSize: 12, color: '#64748b' }}>
+                          <EnvironmentOutlined style={{ marginRight: 4 }} />
+                          {lkh.noiTapTrung}
+                        </div>
+                      )}
+                    </div>
+                    <Tag style={{ background: statusStyle.bg, color: statusStyle.text, border: 'none', borderRadius: 8 }}>
+                      {adminLichKhoiHanhStatusMeta[lkh.trangThai]?.label || lkh.trangThai}
+                    </Tag>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                        <span style={{ fontSize: 13 }}>
+                          <Text strong>{lkh.soChoDaDat}</Text> / {lkh.soChoToiDa} chỗ
+                        </span>
+                        <span style={{ fontSize: 12, color: percent >= 80 ? '#f59e0b' : '#64748b' }}>
+                          {percent}% đã đặt
+                        </span>
+                      </div>
+                      <Progress
+                        percent={percent}
+                        size="small"
+                        showInfo={false}
+                        strokeColor={{
+                          '0%': percent >= 80 ? '#f59e0b' : '#6366f1',
+                          '100%': percent >= 100 ? '#ef4444' : percent >= 80 ? '#fbbf24' : '#a855f7',
+                        }}
+                        strokeWidth={8}
+                      />
+                    </div>
+                    <Tooltip title="Số chỗ còn lại">
+                      <div style={{
+                        background: lkh.soChoConLai <= 0 ? '#fef2f2' : lkh.soChoConLai <= 5 ? '#fffbeb' : '#f0fdf4',
+                        color: lkh.soChoConLai <= 0 ? '#dc2626' : lkh.soChoConLai <= 5 ? '#d97706' : '#16a34a',
+                        padding: '8px 16px',
+                        borderRadius: 8,
+                        fontWeight: 600,
+                        minWidth: 60,
+                        textAlign: 'center'
+                      }}>
+                        {lkh.soChoConLai}
+                        <div style={{ fontSize: 10, fontWeight: 400 }}>còn</div>
+                      </div>
+                    </Tooltip>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {lichKhoiHanhs && lichKhoiHanhs.length > 0 && (
+          <div style={{ marginTop: 16, textAlign: 'center' }}>
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              Để quản lý chi tiết lịch khởi hành và số chỗ, vui lòng truy cập trang
+              <a href="/admin/lich-khoi-hanh" style={{ marginLeft: 4 }}>Quản lý Lịch khởi hành</a>
+            </Text>
+          </div>
+        )}
+      </div>
+    </Modal>
   )
 }

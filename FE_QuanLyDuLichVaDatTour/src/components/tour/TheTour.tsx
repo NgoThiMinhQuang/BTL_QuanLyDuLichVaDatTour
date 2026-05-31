@@ -50,7 +50,6 @@ const tourGradients = [
   'linear-gradient(135deg, rgba(2, 132, 199, 0.28), rgba(2, 132, 199, 0.08))',
   'linear-gradient(135deg, rgba(234, 88, 12, 0.26), rgba(234, 88, 12, 0.08))',
 ]
-
 export function TheTour({
   tour,
   imageIndex,
@@ -59,9 +58,9 @@ export function TheTour({
   ctaHref = getTourChiTietPath(tour.id),
   variant = 'default',
 }: TheTourProps) {
-  const coverImage = [...tour.anhTours]
-    .sort((a, b) => Number(b.isAvatar) - Number(a.isAvatar) || a.thuTu - b.thuTu)
-    .at(0)?.linkAnh
+  const coverImage = [...tour.anhTours].sort(
+    (a, b) => Number(b.isAvatar) - Number(a.isAvatar) || a.thuTu - b.thuTu,
+  )[0]?.linkAnh
 
   const normalizedCoverImage = resolveApiAssetUrl(coverImage) ?? bannerImage
 
@@ -145,7 +144,6 @@ export function TheTour({
               </Title>
             </div>
           </div>
-
           <Button type="primary" className="tour-card-button" onClick={() => navigate(ctaHref)}>
             {ctaLabel}
           </Button>

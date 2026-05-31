@@ -12,7 +12,7 @@ import { LyDoChonChungToi } from '../components/home/LyDoChonChungToi'
 import { DanhGiaKhachHang } from '../components/home/DanhGiaKhachHang'
 import { TuVanTrangChu } from '../components/home/TuVanTrangChu'
 import { useTourNoiBat } from '../services/tour/tour.hooks'
-
+// tour nổi bật
 export default function Home() {
   const {
     data: featuredTours = [],
@@ -20,14 +20,14 @@ export default function Home() {
     isError: isFeaturedToursError,
     refetch: refetchFeaturedTours,
   } = useTourNoiBat()
-
+// ghi nhớ
   const visibleFeaturedTours = useMemo(() => featuredTours.slice(0, 3), [featuredTours])
 
   return (
     <Space orientation="vertical" size={0} className="home-page">
       <BannerTrangChu />
       <GioiThieuTrangChu />
-      <MucTourNoiBat
+      <MucTourNoiBat // các trạng thái lỗi
         tours={visibleFeaturedTours}
         isLoading={isFeaturedToursLoading}
         isError={isFeaturedToursError}

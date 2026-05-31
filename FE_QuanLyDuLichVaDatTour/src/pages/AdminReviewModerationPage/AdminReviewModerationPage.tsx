@@ -81,8 +81,15 @@ export default function AdminReviewModerationPage() {
   const hasError = reviewsQuery.isError
   const errorMessage = reviewsQuery.error instanceof Error ? reviewsQuery.error.message : 'Không thể tải danh sách review chờ duyệt'
 
-  const avgRating = filteredReviews.length > 0
-    ? (filteredReviews.reduce((sum, review) => sum + review.soSao, 0) / filteredReviews.length).toFixed(1)
+  const stats = useMemo(() => ({
+    total: filteredReviews.length,
+    visible: filteredReviews.filter(r => r.trangThai === 'hien_thi').length,
+    hidden: filteredReviews.filter(r => r.trangThai === 'an').length,
+    pending: filteredReviews.filter(r => r.trangThai === 'cho_duyet').length,
+  }), [filteredReviews])
+
+  const avgRating = stats.total > 0
+    ? (filteredReviews.reduce((sum, review) => sum + review.soSao, 0) / stats.total).toFixed(1)
     : '0.0'
 
   const tableColumns: TableProps<AdminReviewItem>['columns'] = [
@@ -101,17 +108,63 @@ export default function AdminReviewModerationPage() {
     {
       title: 'Nội dung đánh giá',
       key: 'content',
-      render: (_, record) => (
-        <div>
-          <Space size={8} style={{ marginBottom: 4 }}>
-            <Rate disabled value={record.soSao} style={{ fontSize: 14, color: '#f59e0b' }} />
-            <Text strong style={{ color: '#334155' }}>{record.tenTour}</Text>
-          </Space>
-          <div className="review-content-box">
-            {record.noiDung}
+      render: (_, record) => {
+        const isVisible = record.trangThai === 'hien_thi'
+        const isHidden = record.trangThai === 'an'
+        return (
+          <div style={{ position: 'relative' }}>
+            {isHidden && (
+              <div style={{
+                position: 'absolute',
+                top: -8,
+                right: -8,
+                background: '#fef2f2',
+                color: '#dc2626',
+                borderRadius: '50%',
+                width: 24,
+                height: 24,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12,
+                border: '2px solid #fecaca'
+              }}>
+                <Tooltip title="Đánh giá đang bị Ẩn">
+                  <EyeInvisibleOutlined />
+                </Tooltip>
+              </div>
+            )}
+            {isVisible && (
+              <div style={{
+                position: 'absolute',
+                top: -8,
+                right: -8,
+                background: '#f0fdf4',
+                color: '#16a34a',
+                borderRadius: '50%',
+                width: 24,
+                height: 24,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12,
+                border: '2px solid #bbf7d0'
+              }}>
+                <Tooltip title="Đánh giá đang Hiển thị">
+                  <CheckCircleOutlined />
+                </Tooltip>
+              </div>
+            )}
+            <Space size={8} style={{ marginBottom: 4 }}>
+              <Rate disabled value={record.soSao} style={{ fontSize: 14, color: '#f59e0b' }} />
+              <Text strong style={{ color: '#334155' }}>{record.tenTour}</Text>
+            </Space>
+            <div className="review-content-box">
+              {record.noiDung}
+            </div>
           </div>
-        </div>
-      )
+        )
+      }
     },
     {
       title: 'Phản hồi Admin',
@@ -147,30 +200,36 @@ export default function AdminReviewModerationPage() {
       title: 'Thao tác',
       key: 'action',
       width: 100,
-      align: 'right',
+      align: 'center',
       render: (_, record) => (
         <Space size={8}>
-          <Tooltip title="Duyệt">
-            <Popconfirm
-              title="Duyệt đánh giá này?"
-              onConfirm={() => void handleUpdateStatus(record, 'hien_thi')}
-              okText="Duyệt"
-              cancelText="Hủy"
-            >
-              <Button type="primary" shape="circle" icon={<CheckCircleOutlined />} size="small" />
-            </Popconfirm>
-          </Tooltip>
-          <Tooltip title="Ẩn">
-            <Popconfirm
-              title="Ẩn đánh giá này?"
-              onConfirm={() => void handleUpdateStatus(record, 'an')}
-              okText="Ẩn"
-              cancelText="Hủy"
-              okButtonProps={{ danger: true }}
-            >
-              <Button danger type="primary" shape="circle" icon={<EyeInvisibleOutlined />} size="small" />
-            </Popconfirm>
-          </Tooltip>
+          {record.trangThai !== 'hien_thi' && (
+            <Tooltip title="Duyệt">
+              <Popconfirm
+                title="Duyệt đánh giá này?"
+                description="Đánh giá sẽ được hiển thị công khai."
+                onConfirm={() => void handleUpdateStatus(record, 'hien_thi')}
+                okText="Duyệt"
+                cancelText="Hủy"
+              >
+                <Button type="primary" shape="circle" icon={<CheckCircleOutlined />} size="small" style={{ background: '#10b981', borderColor: '#10b981' }} />
+              </Popconfirm>
+            </Tooltip>
+          )}
+          {record.trangThai !== 'an' && (
+            <Tooltip title="Ẩn">
+              <Popconfirm
+                title="Ẩn đánh giá này?"
+                description="Đánh giá sẽ bị ẩn khỏi trang công khai."
+                onConfirm={() => void handleUpdateStatus(record, 'an')}
+                okText="Ẩn"
+                cancelText="Hủy"
+                okButtonProps={{ danger: true }}
+              >
+                <Button danger type="primary" shape="circle" icon={<EyeInvisibleOutlined />} size="small" />
+              </Popconfirm>
+            </Tooltip>
+          )}
         </Space>
       )
     }
@@ -195,29 +254,29 @@ export default function AdminReviewModerationPage() {
           <div className="review-stat-card">
             <div className="stat-icon"><MessageOutlined /></div>
             <div className="stat-content">
-              <div className="stat-value">{filteredReviews.length}</div>
+              <div className="stat-value">{stats.total}</div>
               <div className="stat-label">Tổng review</div>
             </div>
           </div>
           <div className="review-stat-card pending-stat">
             <div className="stat-icon"><ExclamationCircleOutlined /></div>
             <div className="stat-content">
-              <div className="stat-value">{filteredReviews.filter((r) => r.trangThai === 'cho_duyet').length}</div>
-              <div className="stat-label">Review chờ duyệt</div>
+              <div className="stat-value">{stats.pending}</div>
+              <div className="stat-label">Chờ duyệt</div>
             </div>
           </div>
-          <div className="review-stat-card avg-stat">
-            <div className="stat-icon"><LineChartOutlined /></div>
+          <div className="review-stat-card">
+            <div className="stat-icon" style={{ background: '#f0fdf4', color: '#16a34a' }}><CheckCircleOutlined /></div>
             <div className="stat-content">
-              <div className="stat-value">{avgRating}</div>
-              <div className="stat-label">Đánh giá trung bình</div>
+              <div className="stat-value">{stats.visible}</div>
+              <div className="stat-label">Đang hiển thị</div>
             </div>
           </div>
-          <div className="review-stat-card five-star-stat">
-            <div className="stat-icon"><StarOutlined /></div>
+          <div className="review-stat-card">
+            <div className="stat-icon" style={{ background: '#fef2f2', color: '#dc2626' }}><EyeInvisibleOutlined /></div>
             <div className="stat-content">
-              <div className="stat-value">{filteredReviews.filter((r) => r.soSao === 5).length}</div>
-              <div className="stat-label">5 Sao</div>
+              <div className="stat-value">{stats.hidden}</div>
+              <div className="stat-label">Đang ẩn</div>
             </div>
           </div>
         </div>

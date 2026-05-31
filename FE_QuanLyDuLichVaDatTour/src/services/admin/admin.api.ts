@@ -21,6 +21,8 @@ import type {
   AdminLienHeItem,
   AdminLienHeListResponse,
   AdminSupportTicketItem,
+  AdminUpdateLienHeStatusPayload,
+  GlobalSearchResponse,
   AdminLichKhoiHanhItem,
   AdminLichKhoiHanhStatus,
   AdminLichTrinhItem,
@@ -51,14 +53,14 @@ import type {
   AdminVoucherItem,
   AdminVoucherStatus,
 } from '../../types/admin'
-
+// getAuthHeaders() tạo header gửi lên Backend.
 function getAuthHeaders(contentType = false) {
   return {
     ...(contentType ? { 'Content-Type': 'application/json' } : {}),
     Authorization: `Bearer ${useAuthStore.getState().requireAccessToken()}`,
   }
 }
-
+// xử lý kết quả API trả về.
 async function handleApiResponse<T>(response: Response, fallbackMessage: string): Promise<T> {
   if (response.status === 401) {
     useAuthStore.getState().clearAuthSession()
@@ -72,7 +74,7 @@ async function handleApiResponse<T>(response: Response, fallbackMessage: string)
 
   return data as T
 }
-
+// getJson() là hàm dùng chung để gọi API dạng GET.
 async function getJson<T>(path: string, fallbackMessage: string) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: getAuthHeaders(),
@@ -95,7 +97,7 @@ async function sendJson<TResponse, TBody>(
 
   return handleApiResponse<TResponse>(response, fallbackMessage)
 }
-
+// hàm service gọi API sang Backend để lấy dữ liệu thống kê tổng quan.
 export async function layTongQuanQuanTri(): Promise<AdminDashboardSummary> {
   return getJson<AdminDashboardSummary>('/admin/dashboard/summary', 'Không thể tải dashboard quản trị')
 }
@@ -103,7 +105,7 @@ export async function layTongQuanQuanTri(): Promise<AdminDashboardSummary> {
 export async function layDanhSachTourQuanTri(): Promise<AdminTourItem[]> {
   return getJson<AdminTourItem[]>('/admin/tour/get-all', 'Không thể tải danh sách tour quản trị')
 }
-
+// getJson() là hàm dùng chung để gọi API dạng GET., giúp tự động gắn token vào header
 export async function layChiTietTourQuanTri(id: number): Promise<AdminTourItem> {
   return getJson<AdminTourItem>(`/admin/tour/get-by-id/${id}`, 'Không thể tải chi tiết tour')
 }

@@ -11,9 +11,13 @@ import { layDanhGiaDaDuyetTheoTour } from '../services/review/review'
 
 const { Paragraph, Text, Title } = Typography
 
-function formatTime(value: string | null) {
+function formatTime(value: string | null | undefined) {
   if (!value) return ''
   return value.slice(0, 5)
+}
+
+function toMoneyValue(value: number | null | undefined) {
+  return value ?? null
 }
 
 function resolveConfiguredPrice(primary?: number | null, fallback?: number | null, defaultPrice?: number | null) {
@@ -26,13 +30,13 @@ function isWeekendNow() {
   const day = new Date().getDay()
   return day === 0 || day === 6
 }
-
+// trang lấy id tour trên URL và hiển thị thông tin chi tiết tour.
 export default function TourDetail() {
   const navigate = useNavigate()
   const { id } = useParams()
   const tourId = Number(id)
   const isValidId = Number.isInteger(tourId) && tourId > 0
-
+// Gọi hook xử lý toàn bộ dữ liệu cho trang chi tiết tour.
   const {
     detailQuery,
     itineraryQuery,
@@ -53,7 +57,7 @@ export default function TourDetail() {
   })
 
   const reviewSummary = detailQuery.data
-
+// id trên URL sai
   if (!isValidId) {
     return <div className="tour-detail-page-state">Tour không hợp lệ.</div>
   }
@@ -85,7 +89,8 @@ export default function TourDetail() {
     label: `${item.maDotTour} - ${formatDate(item.ngayKhoiHanh)} - còn ${item.soChoConLai} chỗ`,
     disabled: item.trangThai === 'het_cho' || item.soChoConLai <= 0,
   }))
-
+  //////////////////////////////////////////////////////////////
+// xử lý khi người dùng bấm Đặt tour ngay.
   const handleBooking = () => {
     if (selectedDepartureUnavailable) {
       return
@@ -113,7 +118,7 @@ export default function TourDetail() {
             { title: detail.maTour },
           ]}
         />
-
+{/* // SAU KHI CÓ DỮ LIÊU CHI TIẾT TOUR MỚI HIỂN THỊ RA THÌ PHẦN NÀY SẼ HIỂN THỊ NÚT ĐẶT TOUR, NẾU CHƯA CÓ LỊCH KHỞI HÀNH THÌ NÚT SẼ BỊ VÔ HIỆU HÓA. */}
         <div className="tour-detail-layout">
           <div className="tour-detail-main-column">
             <Card className="tour-detail-hero-card" variant="borderless">
@@ -292,14 +297,14 @@ export default function TourDetail() {
                         <div className="tour-detail-price-card price-card-weekday">
                           <Title level={3}>Giá ngày thường</Title>
                           <div className="tour-detail-price-item"><span>Người lớn</span><strong>{formatMoney(pricingQuery.data?.giaNguoiLonNgayThuong ?? detail.giaNguoiLonMacDinh)}</strong></div>
-                          <div className="tour-detail-price-item"><span>Trẻ em</span><strong>{formatMoney(pricingQuery.data?.giaTreEmNgayThuong)}</strong></div>
-                          <div className="tour-detail-price-item"><span>Em bé</span><strong>{formatMoney(pricingQuery.data?.giaEmBeNgayThuong)}</strong></div>
+                          <div className="tour-detail-price-item"><span>Trẻ em</span><strong>{formatMoney(toMoneyValue(pricingQuery.data?.giaTreEmNgayThuong))}</strong></div>
+                          <div className="tour-detail-price-item"><span>Em bé</span><strong>{formatMoney(toMoneyValue(pricingQuery.data?.giaEmBeNgayThuong))}</strong></div>
                         </div>
                         <div className="tour-detail-price-card price-card-weekend">
                           <Title level={3}>Giá cuối tuần</Title>
                           <div className="tour-detail-price-item"><span>Người lớn</span><strong>{formatMoney(pricingQuery.data?.giaNguoiLonCuoiTuan ?? detail.giaNguoiLonMacDinh)}</strong></div>
-                          <div className="tour-detail-price-item"><span>Trẻ em</span><strong>{formatMoney(pricingQuery.data?.giaTreEmCuoiTuan)}</strong></div>
-                          <div className="tour-detail-price-item"><span>Em bé</span><strong>{formatMoney(pricingQuery.data?.giaEmBeCuoiTuan)}</strong></div>
+                          <div className="tour-detail-price-item"><span>Trẻ em</span><strong>{formatMoney(toMoneyValue(pricingQuery.data?.giaTreEmCuoiTuan))}</strong></div>
+                          <div className="tour-detail-price-item"><span>Em bé</span><strong>{formatMoney(toMoneyValue(pricingQuery.data?.giaEmBeCuoiTuan))}</strong></div>
                         </div>
                       </div>
                     ),

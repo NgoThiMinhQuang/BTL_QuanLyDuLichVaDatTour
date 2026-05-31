@@ -65,6 +65,7 @@ export function MucTourNoiBat({ tours, isLoading, isError, onRetry }: MucTourNoi
           <Row gutter={[20, 20]} className="featured-tour-grid">
             {data.map((tour, index) => (
               <Col xs={24} md={12} xl={8} key={tour.id}>
+{/* // Hiển thị từng tour thành một card */}
                 <TheTour
                   tour={tour}
                   imageIndex={index}

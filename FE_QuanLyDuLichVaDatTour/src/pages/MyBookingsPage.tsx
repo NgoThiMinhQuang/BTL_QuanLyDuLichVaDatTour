@@ -16,7 +16,7 @@ import { useAuthStore } from '../store/authStore'
 import { formatMoney } from '../utils/formatMoney'
 
 const { Paragraph, Title, Text } = Typography
-
+// danh sách trạng thái để hiển thị trong dropdown lọc.
 const STATUS_OPTIONS = [
   { label: 'Tất cả trạng thái', value: '' },
   { label: 'Mới tạo', value: 'moi_tao' },
@@ -26,7 +26,7 @@ const STATUS_OPTIONS = [
   { label: 'Đã hủy', value: 'da_huy' },
   { label: 'Hoàn tất', value: 'hoan_tat' },
 ]
-
+// dùng cho phần lọc và sắp xếp ở màn hình “Đơn đã đặt”.
 export default function MyBookings() {
   const [status, setStatus] = useState('')
   const [sortBy, setSortBy] = useState('ngayDat')
@@ -55,7 +55,7 @@ export default function MyBookings() {
       return json
     },
   })
-
+// stats dùng để tính 4 ô thống kê ở đầu trang: tổng số đơn, số đơn sắp khởi hành, số đơn chờ thanh toán và tổng chi tiêu.
   const stats = useMemo(() => {
     if (!data || data.length === 0) return { total: 0, upcoming: 0, pending: 0, totalSpent: 0 }
 
@@ -157,7 +157,7 @@ export default function MyBookings() {
             </Button>
           </div>
         </div>
-
+{/* // Nếu API đang tải, trang hiển thị 3 khung skeleton/loading giả. */}
         {isLoading ? (
           <div className="customer-page-stack">
             {Array.from({ length: 3 }).map((_, index) => (
@@ -193,7 +193,7 @@ export default function MyBookings() {
             />
           </div>
         ) : null}
-
+{/* // trực tiếp hiển thị tour đã đặt */}
         {!isLoading && !isError && data.length > 0 ? (
           <div className="customer-page-stack">
             {data.map((booking: any) => (
